@@ -1,0 +1,21 @@
+.navbarLink {
+    color: #fff;
+    text-decoration: none;
+    font-size: 30px;
+    padding: 10px 20px;
+    transition: all 0.2s ease;
+    transition-property: border, color;
+    border: transparent 3px solid;
+    display: flex;
+    justify-content: center;
+}
+.navbarLink:hover {
+    color: #8cc4b9;
+}
+.active {
+    border-left: solid 3px;
+    color: #00ffa1;
+}
+.active .icon-button {
+    border-radius: 20%;
+}

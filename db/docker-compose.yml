@@ -1,0 +1,14 @@
+version: "3.3"
+
+services:
+  contractorPro_db:
+    image: postgres:alpine
+    volumes:
+      - ./data:/var/lib/postgresql/data
+      - ./scripts:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=contractorPro

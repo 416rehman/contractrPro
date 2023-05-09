@@ -1,0 +1,4 @@
+.alink, .alink:hover, .alink:focus, .alink:active {
+    text-decoration: none;
+    color: inherit;
+}
