@@ -11,8 +11,13 @@ The project follows a branching structure with two main branches: `main` and `de
    ```
    git clone git@github.com:416rehman/contractrPro.git
    ```
+   
+2. **Switch to Dev branch**: Before making a new branch, switch to dev branch so your new branch will be based off of the dev branch.
+   ```
+   git checkout dev
+   ```
 
-2. **Create a Branch**: Before making any changes, create a new branch based on the `dev` branch. Use the following naming conventions for branch names:
+3. **Create a Branch**: Before making any changes, create a new branch based on the `dev` branch. Use the following naming conventions for branch names:
     - **feat**: Indicates the addition or implementation of a new feature. Example: `feat/user-authentication` - Branch for implementing user authentication feature.
     - **bug**: Indicates a branch dedicated to fixing bugs or addressing issues. Example: `bug/login-crash` - Branch for fixing a bug that causes a crash during login.
     - **docs**: Used for documentation-related tasks, such as updating or creating new documentation. Example: `docs/update-readme` - Branch for updating the README documentation.
@@ -22,9 +27,9 @@ The project follows a branching structure with two main branches: `main` and `de
    git checkout -b <branch_name> dev
    ```
 
-3. **Work on the Issue**: Assign yourself to an open issue from the project's issue tracker. Review the issue description, requirements, and any related discussions. Make the necessary changes to address the issue.
+4. **Work on the Issue**: Assign yourself to an open issue from the project's issue tracker. Review the issue description, requirements, and any related discussions. Make the necessary changes to address the issue.
 
-4. **Commit and Push Changes**: Once you've made the required changes, commit your work using descriptive commit messages. It's recommended to break down your work into small, logical commits. Use the following commands to commit and push your changes:
+5. **Commit and Push Changes**: Once you've made the required changes, commit your work using descriptive commit messages. It's recommended to break down your work into small, logical commits. Use the following commands to commit and push your changes:
 
    ```
    git add .
@@ -32,11 +37,11 @@ The project follows a branching structure with two main branches: `main` and `de
    git push origin <branch_name>
    ```
 
-5. **Create a Pull Request**: Go to the project's repository on GitHub and navigate to the "Pull requests" tab. Click on "New pull request" and select your branch (`<branch_name>`) as the source branch, and `dev` as the target branch. Provide a clear title and description for the pull request, referencing the associated issue(s).
+6. **Create a Pull Request**: Go to the project's repository on GitHub and navigate to the "Pull requests" tab. Click on "New pull request" and select your branch (`<branch_name>`) as the source branch, and `dev` as the target branch. Provide a clear title and description for the pull request, referencing the associated issue(s).
 
-6. **Review and Address Feedback**: The project maintainers and other collaborators will review your pull request. Address any feedback or suggestions provided during the review process by making additional commits to your branch.
+7. **Review and Address Feedback**: The project maintainers and other collaborators will review your pull request. Address any feedback or suggestions provided during the review process by making additional commits to your branch.
 
-7. **Merge into `dev`**: Once your pull request has been approved and all feedback has been addressed, it will be merged into the `dev` branch.
+8. **Merge into `dev`**: Once your pull request has been approved and all feedback has been addressed, it will be merged into the `dev` branch.
 
 ### Best Practices and Tips
 
