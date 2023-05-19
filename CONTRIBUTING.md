@@ -9,7 +9,7 @@ The project follows a branching structure with two main branches: `main` and `de
 1. **Clone the Repository**: Start by cloning the project repository to your local machine using the following command:
 
    ```
-   git clone https://github.com/416rehman/contractrPro.git
+   git clone git@github.com:416rehman/contractrPro.git
    ```
 
 2. **Create a Branch**: Before making any changes, create a new branch based on the `dev` branch. Use the following naming conventions for branch names:
