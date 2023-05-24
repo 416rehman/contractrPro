@@ -13,7 +13,7 @@ The project follows a branching structure with two main branches: `main` and `de
    git fetch --all
    ```
    
-2. **Switch to Dev branch**: Before making a new branch, switch to dev branch so your new branch will be based off of the dev branch.
+2. **Switch to Dev branch**: Before making a new branch, switch to dev branch so your new branch will be based off of the dev branch, and pull any changes.
    ```
    git checkout dev
    git pull
