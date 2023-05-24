@@ -10,11 +10,13 @@ The project follows a branching structure with two main branches: `main` and `de
 
    ```
    git clone git@github.com:416rehman/contractrPro.git
+   git fetch --all
    ```
    
 2. **Switch to Dev branch**: Before making a new branch, switch to dev branch so your new branch will be based off of the dev branch.
    ```
    git checkout dev
+   git pull
    ```
 
 3. **Create a Branch**: Before making any changes, create a new branch based on the `dev` branch. Use the following naming conventions for branch names:
