@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "cookie-session": "^2.0.0",
+    "helmet": "^7.0.0"
+  }
+}
