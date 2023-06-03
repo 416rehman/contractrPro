@@ -17,7 +17,7 @@ const expiryDate = new Date(Date.now() + 60 * 60 * 1000)
 
 app.use(cookieSession({
     name: 'contractrPro',
-    keys: ['KaPdSgUk', 'cQfTjWnZ'],
+    keys: [process.env.SESSION_SECRET_KEY_1, process.env.SESSION_SECRET_KEY_2],
     cookie: {
         secure: true,
         httpOnly: true,
