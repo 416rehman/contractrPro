@@ -1,7 +1,25 @@
+const {attachment} = require('./attachment');
+
 module.exports.comment = (sequelize, DataTypes) => {
     return sequelize.define("Comment", {
-        comment_text: DataTypes.STRING(1024),
-        attachments: DataTypes.STRING(512),
-        created_by: DataTypes.INTEGER(),
+        id: {
+            type: DataTypes.BIGINT,
+            primaryKey: true,
+            autoIncrement: true,
+            allowNull: false,
+        },
+        comment_text: {
+            type: DataTypes.STRING
+        },
+        attachments: {
+            type: DataTypes.STRING,
+            references: {
+                model: attachment,
+                key: 'id'
+            }
+        },
+        created_by: {
+            type: DataTypes.INTEGER
+        }
     });
 }
