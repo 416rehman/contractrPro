@@ -8,9 +8,7 @@ module.exports.comment = (sequelize, DataTypes) => {
             autoIncrement: true,
             allowNull: false,
         },
-        comment_text: {
-            type: DataTypes.STRING
-        },
+        comment_text: DataTypes.STRING,
         attachments: {
             type: DataTypes.STRING,
             references: {
@@ -18,8 +16,6 @@ module.exports.comment = (sequelize, DataTypes) => {
                 key: 'id'
             }
         },
-        created_by: {
-            type: DataTypes.INTEGER
-        }
+        created_by: DataTypes.BIGINT,
     });
 }
