@@ -15,17 +15,9 @@ module.exports.attachment = (sequelize, DataTypes) => {
                 key: 'id'
             }
         },
-        file_name: {
-            type: DataTypes.STRING
-        },
-        file_type: {
-            type: DataTypes.STRING
-        },
-        file_size_kb: {
-            type: DataTypes.BIGINT
-        },
-        access_url: {
-            type: DataTypes.STRING
-        } 
+        file_name: DataTypes.STRING,
+        file_type: DataTypes.STRING,
+        file_size_kb: DataTypes.BIGINT,
+        access_url: DataTypes.STRING,
     });
 }
