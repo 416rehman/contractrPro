@@ -8,7 +8,7 @@ module.exports.comment = (sequelize, DataTypes) => {
             autoIncrement: true,
             allowNull: false,
         },
-        comment_text: DataTypes.STRING,
+        content: DataTypes.STRING,
         attachments: {
             type: DataTypes.STRING,
             references: {
