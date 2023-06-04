@@ -1,5 +1,7 @@
 const {DataTypes, Sequelize} = require("sequelize");
 const {address} = require("./address"),
+    {attachment} = require("./address"),
+    {comment} = require("./comment"),
     {contract} = require("./contract"),
     {expense} = require("./expense"),
     {invite} = require("./invite"),
@@ -31,6 +33,8 @@ sequelize.authenticate().then(function () {
 });
 
 const Address = address(sequelize, DataTypes);
+const Attachment = attachment(sequelize, DataTypes);
+const Comment = comment (sequelize, DataTypes);
 const Contract = contract(sequelize, DataTypes);
 const Expense = expense(sequelize, DataTypes);
 const Invite = invite(sequelize, DataTypes);
@@ -42,11 +46,58 @@ const Contract_Users = contract_users(sequelize, DataTypes);
 const Job_Users = job_users(sequelize, DataTypes);
 const Organization_Users = organization_users(sequelize, DataTypes);
 
+
+/** 
+ * Comment can have many contracts
+ * Comment can have many jobs
+ * Comment can have many expenses
+ * Comment can have many invoices
+ * Comment can have many attachments
+*/
+
+// Contract can have many comments but a comment can only belong to one contract
+Contract.hasMany(Comment, {
+    foreignKey: "contract_id",
+    allowNull: false,
+});
+Comment.belongsTo(Contract, {foreignKey: "contract_id", allowNull: false,});
+
+
+// Job can have many comments but a comment can only belong to one job
+Job.hasMany(Comment, {
+    foreignKey: "job_id",
+    allowNull: false,
+});
+Comment.belongsTo(Job, {foreignKey: "job_id", allowNull: false,});
+
+
+// Expense can have many comments but a comment can only belong to one expense
+Expense.hasMany(Comment, {
+    foreignKey: "expense_id",
+    allowNull: false,
+});
+Comment.belongsTo(Expense, {foreignKey: "expense_id", allowNull: false,});
+
+
+// Invoice can have many comments but a comment can only belong to one invoice
+Invoice.hasMany(Comment, {
+    foreignKey: "invoice_id",
+    allowNull: false,
+});
+Comment.belongsTo(Invoice, {foreignKey: "invoice_id", allowNull: false,});
+
+Comment.hasMany(Attachment, {
+    foreignKey: "comment_id",
+    allowNull: false,
+});
+Attachment.belongsTo(Comment, {foreignKey: "comment_id", allowNull: false,});
+
 /**
  * Contract can have many invoices
  * Contract can have many jobs
  * Contract can have many expenses
  */
+
 // Contract can have many invoices but an invoice can only have one contract
 Contract.hasMany(Invoice, {
     foreignKey: "contract_id",
@@ -108,13 +159,15 @@ Expense.belongsTo(Job,{ foreignKey: 'job_id', as: 'job_expenses'});
  * User can have many invites
  * User can own many organizations
  */
-// user can create many invites, but an invite can only be created by one user
+
+// User can create many invites, but an invite can only be created by one user
 User.hasMany(Invite, {
     foreignKey: 'created_by',
     allowNull: false,
 });
 Invite.belongsTo(User, { foreignKey: 'created_by', allowNull: false,});
-// user can OWN many organizations, but an organization can only be owned by one user
+
+// User can OWN many organizations, but an organization can only be owned by one user
 User.hasMany(Organization, {
     foreignKey: 'owner_id',
     allowNull: false,
@@ -126,7 +179,7 @@ Organization.belongsTo(User, {foreignKey: 'owner_id', allowNull: false,});
  * MANY TO MANY RELATIONSHIPS
  **/
 
-//Invoice can have many jobs and jobs can have many invoices
+// Invoice can have many jobs and jobs can have many invoices
 Invoice.belongsToMany(Job, {
     through: "Invoice_Jobs",
     allowNull: false,
@@ -136,7 +189,7 @@ Job.belongsToMany(Invoice, {
     allowNull: false,
 });
 
-//user can be in many organizations and organizations can have many users
+// User can be in many organizations and organizations can have many users
 User.belongsToMany(Organization, {
     through: 'Organization_Users',
     foreignKey: 'user_id',
@@ -160,7 +213,7 @@ Contract_Users.belongsToMany(Job, {
     allowNull: false,
 });
 
-//Contract has many Users, and User has many Contracts
+// Contract has many Users, and User has many Contracts
 Contract.belongsToMany(Organization_Users, {
     through: "Contract_Users",
     foreignKey: "contract_id",
@@ -174,13 +227,16 @@ Organization_Users.belongsToMany(Contract, {
 
 module.exports.sequelize = sequelize
 module.exports.Address = Address;
-module.exports.Contract = Contract
-module.exports.Expense = Expense
-module.exports.Invite = Invite
-module.exports.Invoice = Invoice
-module.exports.Job = Job
-module.exports.Organization = Organization
-module.exports.User = User
-module.exports.Contract_Users = Contract_Users
-module.exports.Job_Users = Job_Users
-module.exports.Organization_Users = Organization_Users
+module.exports.Attachment = Attachment;
+module.exports.Contract = Contract;
+module.exports.Comment = Comment;
+module.exports.Expense = Expense;
+module.exports.Invite = Invite;
+module.exports.Invoice = Invoice;
+module.exports.Job = Job;
+module.exports.Organization = Organization;
+module.exports.User = User;
+module.exports.Contract_Users = Contract_Users;
+module.exports.Job_Users = Job_Users;
+module.exports.Organization_Users = Organization_Users;
+
