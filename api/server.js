@@ -15,16 +15,6 @@ const app = express()
 
 const expiryDate = new Date(Date.now() + 60 * 60 * 1000)
 
-app.use(cookieSession({
-    name: 'contractrPro',
-    keys: [process.env.SESSION_SECRET_KEY_1, process.env.SESSION_SECRET_KEY_2],
-    cookie: {
-        secure: true,
-        httpOnly: true,
-        domain: 'contractr.pro',
-        expires: expiryDate,
-    }
-}))
 
 app.use(cors());
 app.use(express.json())
@@ -32,6 +22,17 @@ app.use(express.urlencoded({extended: true}))
 app.use(helmet())
 
 app.disable('x-powered-by')
+
+app.use(cookieSession({
+    name: 'contractrPro',
+    keys: [process.env.SECRET_SESSION_KEY_1, process.env.SECRET_SESSION_KEY_2],
+    cookie: {
+        secure: true,
+        httpOnly: true,
+        domain: 'contractr.pro',
+        expires: expiryDate,
+    }
+}))
 
 app.use((req, res, next) => {
     const path = (__filename.split('/').slice(-1)[0]).split('\\').slice(-1)[0]
