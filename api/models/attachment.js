@@ -15,7 +15,7 @@ module.exports.attachment = (sequelize, DataTypes) => {
             allowNull: false
         },
         file_type: {
-            type: DataTypes.STRING(15),
+            type: DataTypes.STRING(5),
             allowNull: false
         }, 
         file_size_kb: {
