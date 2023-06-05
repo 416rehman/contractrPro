@@ -1,4 +1,5 @@
-const {attachment} = require('./attachment');
+const { Attachment } = require('./attachment');
+const { User } = require('./user');
 
 module.exports.comment = (sequelize, DataTypes) => {
     return sequelize.define("Comment", {
@@ -8,14 +9,25 @@ module.exports.comment = (sequelize, DataTypes) => {
             autoIncrement: true,
             allowNull: false,
         },
-        content: DataTypes.STRING,
+        content: {
+            type: DataTypes.STRING(1024),
+            allowNull: false
+        },
         attachments: {
-            type: DataTypes.STRING,
+            type: DataTypes.STRING(1024),
             references: {
-                model: attachment,
-                key: 'id'
+                model: Attachment,
+                key: 'id',
             }
         },
-        created_by: DataTypes.BIGINT,
+        created_by: {
+            type: DataTypes.BIGINT,
+            references: {
+                model: User,
+                key: 'id',
+            }
+        },
+    }, {
+        paranoid: true,
     });
 }
