@@ -2,11 +2,12 @@
  * Model: https://www.figma.com/file/oXjOLhFELvDrGkTz8BIJUI/Untitled
  */
 
-require('dotenv').config()
+require('dotenv').config();
 const cors = require('cors');
 const express = require('express'),
-    routes = require('./routes'),
-    {sequelize} = require('./models')
+      
+routes = require('./routes'),
+{sequelize} = require('./models')
 const helmet = require('helmet')
 const cookieSession = require('cookie-session')
 const {tokenAuthHandler} = require("./middleware/auth-middleware");
@@ -34,20 +35,28 @@ app.use(cookieSession({
     }
 }))
 
+// Use logging middleware
+const logger = require('./logger');
+const pino = require('pino-http')({
+  // Use our default logger instance, which is already configured
+  logger,
+});
+app.use(pino);
+
 app.use((req, res, next) => {
-    const path = (__filename.split('/').slice(-1)[0]).split('\\').slice(-1)[0]
-    res.set('Router', path)
-    next()
-})
+  const path = __filename.split('/').slice(-1)[0].split('\\').slice(-1)[0];
+  res.set('Router', path);
+  next();
+});
 
 app.get('/', (req, res) => {
-    res.send('Connected!')
-})
+  res.send('Connected!');
+});
 
-app.use('/auth', routes.auth)
-app.use(tokenAuthHandler)   // security middleware, uses tokenAuthHandler to authenticate via access tokens in the authorization header
-app.use('/users/', routes.user)
-app.use('/organizations/',  routes.organization)
+app.use('/auth', routes.auth);
+app.use(tokenAuthHandler); // security middleware, uses tokenAuthHandler to authenticate via access tokens in the authorization header
+app.use('/users/', routes.user);
+app.use('/organizations/', routes.organization);
 
 app.use((req, res, next) => {
     res.status(404).send("Cannot find this route.")
@@ -58,11 +67,13 @@ app.use((err, req, res, next) => {
     res.status(500).send("An unexpected problem has occured.")
 })
 
-
-sequelize.sync().then(() => {
+sequelize
+  .sync()
+  .then(() => {
     app.listen(port, () => {
-        console.log(`listening at http://localhost:${port}/`)
-    })
-}).catch(err => {
-    console.log(err)
-})
+      console.log(`listening at http://localhost:${port}/`);
+    });
+  })
+  .catch((err) => {
+    console.log(err);
+  });
