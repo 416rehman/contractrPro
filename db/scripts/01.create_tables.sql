@@ -292,3 +292,62 @@ CREATE TABLE IF NOT EXISTS expense
 COMMENT ON COLUMN expense.id IS 'Primary key for expense table';
 COMMENT ON COLUMN expense.cost IS 'Cost of the expense';
 COMMENT ON COLUMN expense.is_billable IS 'If true, the expense will be billed to the client on the invoice';
+
+-- Comment -----------------------------------------------------------------------
+-- Comments can belong to any entity, and can contain attachments
+CREATE SEQUENCE IF NOT EXISTS comment_id_seq;
+CREATE TABLE IF NOT EXISTS comment
+(
+    id          BIGINT PRIMARY KEY                DEFAULT NEXTVAL('comment_id_seq'),
+    content        VARCHAR(1024),
+    created_by  BIGINT                   NOT NULL
+        REFERENCES "user" (id)
+            ON UPDATE CASCADE ON DELETE CASCADE,
+    created_at  TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    updated_at  TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    deleted_at  TIMESTAMP WITH TIME ZONE,
+    invoice_id BIGINT
+        REFERENCES invoice (id)
+            ON UPDATE CASCADE ON DELETE CASCADE,
+    expense_id BIGINT
+        REFERENCES expense (id)
+            ON UPDATE CASCADE ON DELETE CASCADE,
+    job_id      BIGINT
+        REFERENCES job (id)
+            ON UPDATE CASCADE ON DELETE CASCADE,
+    project_id BIGINT
+        REFERENCES project (id)
+            ON UPDATE CASCADE ON DELETE CASCADE,
+    vendor_id   BIGINT                NOT NULL
+        REFERENCES vendor (id)
+            ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT chk_comment CHECK (invoice_id IS NOT NULL OR expense_id IS NOT NULL OR job_id IS NOT NULL OR project_id IS NOT NULL OR vendor_id IS NOT NULL) -- Only one of invoice_id, expense_id, job_id, project_id, or vendor_id can be set, or neither
+);
+
+COMMENT ON COLUMN comment.body IS 'body is the body of the comment';
+COMMENT ON COLUMN comment.entity_id IS 'entity_id is the id of the entity that the comment belongs to';
+COMMENT ON COLUMN comment.entity_type IS 'entity_type is the type of the entity that the comment belongs to';
+
+-- Attachment -----------------------------------------------------------------------
+-- Attachments can belong to comments
+CREATE SEQUENCE IF NOT EXISTS attachment_id_seq;
+CREATE TABLE IF NOT EXISTS attachment
+(
+    id          BIGINT PRIMARY KEY                DEFAULT NEXTVAL('attachment_id_seq'),
+    file_name   VARCHAR(255),
+    file_type   VARCHAR(255),
+    file_size   BIGINT,
+    file_path   VARCHAR(1024),
+    comment_id  BIGINT                 NOT NULL
+        REFERENCES comment (id)
+            ON UPDATE CASCADE ON DELETE CASCADE,
+    created_at  TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    updated_at  TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    deleted_at  TIMESTAMP WITH TIME ZONE
+);
+
+COMMENT ON COLUMN attachment.file_name IS 'file_name is the name of the file';
+COMMENT ON COLUMN attachment.file_type IS 'file_type is the type of the file';
+COMMENT ON COLUMN attachment.file_size IS 'file_size is the size of the file in bytes';
+COMMENT ON COLUMN attachment.file_path IS 'file_path is the path of the file';
+COMMENT ON COLUMN attachment.comment_id IS 'comment_id is the comment that the attachment belongs to';
