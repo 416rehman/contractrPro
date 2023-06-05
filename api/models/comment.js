@@ -1,6 +1,3 @@
-const { Attachment } = require('./attachment');
-const { User } = require('./user');
-
 module.exports.comment = (sequelize, DataTypes) => {
     return sequelize.define("Comment", {
         id: {
@@ -15,17 +12,11 @@ module.exports.comment = (sequelize, DataTypes) => {
         },
         attachments: {
             type: DataTypes.STRING(1024),
-            references: {
-                model: Attachment,
-                key: 'id',
-            }
+            allowNull: false
         },
         created_by: {
             type: DataTypes.BIGINT,
-            references: {
-                model: User,
-                key: 'id',
-            }
+            allowNull: false
         },
     }, {
         paranoid: true,
