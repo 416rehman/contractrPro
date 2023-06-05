@@ -1,4 +1,4 @@
-const {comment} = require('./comment');
+const {Comment} = require('./comment');
 
 module.exports.attachment = (sequelize, DataTypes) => {
     return sequelize.define("Attachment", {
@@ -6,18 +6,31 @@ module.exports.attachment = (sequelize, DataTypes) => {
             type: DataTypes.BIGINT,
             primaryKey: true,
             autoIncrement: true,
-            allowNull: false,
+            allowNull: false
         },
         comment: {
             type: DataTypes.STRING,
             references: {
-                model: comment,
+                model: Comment,
                 key: 'id'
-            }
+            },
+            allowNull: false
         },
-        file_name: DataTypes.STRING,
-        file_type: DataTypes.STRING,
-        file_size_kb: DataTypes.BIGINT,
-        access_url: DataTypes.STRING,
+        file_name: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        file_type: {
+            type: DataTypes.STRING,
+            allowNull: false
+        }, 
+        file_size_kb: {
+            type: DataTypes.BIGINT,
+            allowNull: false
+        }, 
+        access_url: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
     });
 }
