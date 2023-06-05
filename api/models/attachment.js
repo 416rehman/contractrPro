@@ -1,5 +1,3 @@
-const {Comment} = require('./comment');
-
 module.exports.attachment = (sequelize, DataTypes) => {
     return sequelize.define("Attachment", {
         id: {
@@ -8,20 +6,16 @@ module.exports.attachment = (sequelize, DataTypes) => {
             autoIncrement: true,
             allowNull: false
         },
-        comment: {
-            type: DataTypes.STRING,
-            references: {
-                model: Comment,
-                key: 'id'
-            },
+        comments: {
+            type: DataTypes.STRING(1024),
             allowNull: false
         },
         file_name: {
-            type: DataTypes.STRING,
+            type: DataTypes.STRING(256),
             allowNull: false
         },
         file_type: {
-            type: DataTypes.STRING,
+            type: DataTypes.STRING(15),
             allowNull: false
         }, 
         file_size_kb: {
@@ -29,7 +23,7 @@ module.exports.attachment = (sequelize, DataTypes) => {
             allowNull: false
         }, 
         access_url: {
-            type: DataTypes.STRING,
+            type: DataTypes.STRING(2048),
             allowNull: false
         },
     }, {
