@@ -32,5 +32,7 @@ module.exports.attachment = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false
         },
+    }, {
+        paranoid: true,
     });
 }
