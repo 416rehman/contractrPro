@@ -4,8 +4,8 @@ services:
   cp_api:
     container_name: cp_api
     build: .
-#    volumes:
-#      - ./:/home/node/app
+    volumes:
+      - ./:/home/node/app
     ports:
       - "4000:4000"
     expose:
