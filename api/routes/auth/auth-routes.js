@@ -63,7 +63,7 @@ routes.post('/account', RegisterAccountValidator, ValidationErrorsHandler, (req,
  * @apiName DeleteAccount
  */
 routes.delete('/account',  tokenAuthHandler, (req, res) => {
-    auth_service.deleteUser(req.decoded.username).then(user => {
+    auth_service.deleteUser(req.auth.username).then(user => {
         res.json(user)
     }).catch(err => {
         res.status(401).json(err.message)

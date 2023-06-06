@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 
 /**
- * Checks the token and if it is valid, sets the decoded field on the request object.
+ * Checks the token and if it is valid, sets the auth field on the request object.
  * @param req
  * @param res
  * @param next
@@ -20,7 +20,7 @@ module.exports.tokenAuthHandler = function(req, res, next) {
             if (err) {
                 return res.status(401).send("Access token is invalid");
             }
-            req.decoded = decoded;
+            req.auth = decoded;
             return next();
         });
     } catch (err) {
