@@ -1,6 +1,6 @@
 const auth_service = require('../../services/auth-service')
 const {ValidationErrorsHandler} = require('../../middleware/validation-middleware')
-const {tokenAuthHandler} = require('../../middleware/auth-middleware')
+const checkAuth = require('../../middleware/auth-middleware')
 const {GetAccountTokenValidator, RegisterAccountValidator} = require('../../validators/auth-validator')
 const {signJWT} = require('../../utils.js')
 const routes = require('express').Router();
@@ -62,8 +62,8 @@ routes.post('/account', RegisterAccountValidator, ValidationErrorsHandler, (req,
  * @api {delete} /auth/account Delete account
  * @apiName DeleteAccount
  */
-routes.delete('/account',  tokenAuthHandler, (req, res) => {
-    auth_service.deleteUser(req.decoded.username).then(user => {
+routes.delete('/account',  checkAuth, (req, res) => {
+    auth_service.deleteUser(req.auth.username).then(user => {
         res.json(user)
     }).catch(err => {
         res.status(401).json(err.message)
