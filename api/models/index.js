@@ -1,6 +1,6 @@
 const {DataTypes, Sequelize} = require("sequelize");
 const {address} = require("./address"),
-    {attachment} = require("./address"),
+    {attachment} = require("./attachment"),
     {comment} = require("./comment"),
     {contract} = require("./contract"),
     {expense} = require("./expense"),
@@ -47,7 +47,7 @@ const Job_Users = job_users(sequelize, DataTypes);
 const Organization_Users = organization_users(sequelize, DataTypes);
 
 
-/** 
+/**
  * Comment can have many contracts
  * Comment can have many jobs
  * Comment can have many expenses

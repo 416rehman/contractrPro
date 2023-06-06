@@ -23,13 +23,13 @@ export default function TopBar() {
                     alignContent: "center",
                     justifyContent: "center",
                 }}>
-                    <img src="/logo.svg" alt="Contractor Pro's Logo" style={{height: "40px", width: "40px"}}/>
+                    <img src="/logo.svg" alt="Contractr Pro's Logo" style={{height: "40px", width: "40px"}}/>
                 </div>
                 <span style={{
                     userSelect: "none",
                     fontWeight: "500",
                     fontSize: "24px",
-                }}>Contractor Pro</span>
+                }}>Contractr Pro</span>
             </Link>
         </div>
     )

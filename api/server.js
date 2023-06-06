@@ -72,15 +72,6 @@ app.use(checkAuth)   // authentication middleware
 app.use('/users/', routes.user)
 app.use('/organizations/', routes.organization)
 
-app.use((req, res, next) => {
-    res.status(404).send("Cannot find this route.")
-})
-
-app.use((err, req, res, next) => {
-    console.error(err.stack)
-    res.status(500).send("An unexpected problem has occured.")
-})
-
 // TODO: Move this so this is part of each resource, i.e /users/:id/comments, /users/:id/organizations, etc.
 app.post('/comments', async (req, res) => {
     const commentContent = req.body.content;
@@ -112,6 +103,17 @@ app.post('/comments', async (req, res) => {
         filesUploaded: filesUploaded,
     });
 });
+
+
+app.use((req, res) => {
+    res.status(404).send("Cannot find this route.")
+})
+
+app.use((err, req, res) => {
+    console.error(err.stack)
+    res.status(500).send("An unexpected problem has occured.")
+})
+
 
 sequelize
     .authenticate()

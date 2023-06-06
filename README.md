@@ -1,4 +1,4 @@
-# Contractor Pro
+# Contractr Pro
 
 This project consists of 3 parts:
 
