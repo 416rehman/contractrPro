@@ -4,13 +4,25 @@
 
 require('dotenv').config()
 const cors = require('cors');
-const express = require('express'),
-    routes = require('./routes'),
-    {sequelize} = require('./models')
+const express = require('express');
+const fileUpload = require("express-fileupload");
+const routes = require('./routes');
+const {sequelize} = require('./models');
 const {tokenAuthHandler} = require("./middleware/auth-middleware");
+const { S3Client } = require("@aws-sdk/client-s3");
+
+const s3Config = {
+    accessKeyId: process.env.AWS_ACCESS_KEY,
+    secretAccessKey: process.env.AWS_ACCESS_SECRET,
+    region: "ca-central-1",
+};
+
+const s3Client = new S3Client(s3Config);
 
 const port = process.env.PORT || 3000
 const app = express()
+app.use(fileUpload());
+
 app.use(cors());
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
@@ -28,7 +40,7 @@ app.get('/', (req, res) => {
 app.use('/auth', routes.auth)
 app.use(tokenAuthHandler)   // security middleware, uses tokenAuthHandler to authenticate via access tokens in the authorization header
 app.use('/users/', routes.user)
-app.use('/organizations/',  routes.organization)
+app.use('/organizations/', routes.organization)
 
 sequelize.sync().then(() => {
     app.listen(port, () => {
