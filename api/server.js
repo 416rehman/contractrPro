@@ -24,7 +24,11 @@ const app = express()
 app.use(cors());
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
-app.use(multer().array("attachments", 10)); // a comment can have up to 10 attachments
+app.use(multer({
+    limits: {
+        fileSize: 10 * 1024 * 1024, // limit filesize
+    }
+}).array("attachments", 10)); // a comment can have up to 10 attachments
 
 // if development.
 if (process.env.NODE_ENV === 'development') {
