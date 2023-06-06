@@ -1,4 +1,12 @@
 const jwt = require("jsonwebtoken");
+
+/**
+ * Checks the token and if it is valid, sets the auth field on the request object.
+ * @param req
+ * @param res
+ * @param next
+ * @returns {*}
+ */
 if (process.env.NODE_ENV === "development") {
     // default export
     module.exports = function (req, res, next) {
@@ -11,14 +19,7 @@ if (process.env.NODE_ENV === "development") {
         return next();
     }
 } else {
-    /**
-     * Checks the token and if it is valid, sets the auth field on the request object.
-     * @param req
-     * @param res
-     * @param next
-     * @returns {*}
-     */
-    module.exports.tokenAuthHandler = function (req, res, next) {
+    module.exports = function (req, res, next) {
         let token =
             req.headers["authorization"] || req.body.token || req.query.token || req.headers["x-access-token"];
 

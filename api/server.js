@@ -10,12 +10,14 @@ const {S3Client, PutObjectCommand} = require("@aws-sdk/client-s3");
 
 const routes = require('./routes');
 const {sequelize} = require('./models');
-const {tokenAuthHandler} = require("./middleware/auth-middleware");
+const checkAuth = require("./middleware/auth-middleware");
 
 const s3Client = new S3Client({
-    accessKeyId: process.env.AWS_ACCESS_KEY,
-    secretAccessKey: process.env.AWS_ACCESS_SECRET,
-    region: "us-east-1",
+    region: "ca-central-1",
+    credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY,
+        secretAccessKey: process.env.AWS_ACCESS_SECRET,
+    }
 });
 
 const port = process.env.PORT || 3000
@@ -45,14 +47,15 @@ app.get('/', (req, res) => {
 })
 
 app.use('/auth', routes.auth)
-app.use(tokenAuthHandler)   // security middleware, uses tokenAuthHandler to authenticate via access tokens in the authorization header
+app.use(checkAuth)   // authentication middleware
 app.use('/users/', routes.user)
 app.use('/organizations/', routes.organization)
 
 // TODO: Move this so this is part of each resource, i.e /users/:id/comments, /users/:id/organizations, etc.
 app.post('/comments', async (req, res) => {
     const commentContent = req.body.content;
-    const commentAttachments = req.files;
+    const commentAttachments = req.files || [];
+    const commentUsername = req.auth.username;
     const commentUserId = req.auth.id;
 
     let filesUploaded = 0;
@@ -75,14 +78,25 @@ app.post('/comments', async (req, res) => {
         content: commentContent,
         attachments: commentAttachments.map(attachment => attachment.originalname),
         userId: commentUserId,
+        username: commentUsername,
         filesUploaded: filesUploaded,
     });
 });
 
-sequelize.sync().then(() => {
-    app.listen(port, () => {
-        console.log(`listening at http://localhost:${port}/`)
+sequelize
+    .authenticate()
+    .then(() => {
+        console.log('Connection has been established successfully.');
+        return sequelize.sync();
     })
-}).catch(err => {
-    console.log(err)
-})
+    .then(() => {
+        console.log('Synced successfully.');
+        return app.listen(port);
+    })
+    .then(() => {
+        console.log(`listening at http://localhost:${port}/`);
+    })
+    .catch((err) => {
+        console.error('Unable to connect to the database:', err);
+    });
+

@@ -1,14 +1,25 @@
-version: "3.3"
+version: "3.5"
 
 services:
-  contractorPro_db:
-    image: postgres:alpine
-    volumes:
-      - ./data:/var/lib/postgresql/data
-      - ./scripts:/docker-entrypoint-initdb.d
-    ports:
-      - "5432:5432"
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=contractorPro
+    contractorPro_db:
+        container_name: contractorPro_db
+        image: postgres:alpine
+        volumes:
+            - ./data:/var/lib/postgresql/data
+            - ./scripts:/docker-entrypoint-initdb.d
+        ports:
+            - "5432:5432"
+        expose:
+            - "5432"
+        environment:
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=postgres
+            - POSTGRES_DB=contractorPro
+        networks:
+            - cp_net
+
+networks:
+    cp_net:
+        name: cp_net
+        driver: bridge
+
