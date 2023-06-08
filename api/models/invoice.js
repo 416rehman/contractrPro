@@ -4,7 +4,3 @@ module.exports.invoice = (sequelize, DataTypes) => {
         contract_id: DataTypes.INTEGER,
     });
 }
-
-module.exports.calc = function (test) {
-
-}

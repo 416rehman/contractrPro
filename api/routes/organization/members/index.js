@@ -9,36 +9,26 @@ routes.use((req, res, next) => {
 /**
  * @api {get} /organizations/:org_id/members Get organization members
  */
-routes.get('/', (req, res) => {
-    res.send('Get organization members')
-});
+routes.get('/', require('./getMembers'));
 
 /**
  * @api {get} /organizations/:org_id/members/:user_id Get organization member
  */
-routes.get('/:user_id', (req, res) => {
-
-});
+routes.get('/:user_id', require('./getMember'));
 
 /**
  * @api {post} /organizations/:org_id/members Add to organization
  */
-routes.post('/', (req, res) => {
-
-});
+routes.post('/', require('./addMember'));
 
 /**
  * @api {put} /organizations/:org_id/members Update organization members
  */
-routes.put('/', (req, res) => {
-
-});
+routes.put('/', require('./updateMembers'));
 
 /**
  * @api {delete} /organizations/:org_id/members/:member_id Remove from organization
  */
-routes.delete('/:member_id', (req, res) => {
-
-});
+routes.delete('/:member_id', require('./deleteMember'));
 
 module.exports = routes;

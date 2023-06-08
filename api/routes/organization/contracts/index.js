@@ -1,6 +1,5 @@
-const contract_service = require('../../../services/contract-service')
 const routes = require('express').Router({mergeParams: true })
-const job_routes = require('./jobs/job-routes')
+const job_routes = require('./jobs')
 
 routes.use((req, res, next) => {
     const path = (__filename.split('/').slice(-1)[0]).split('\\').slice(-1)[0]
@@ -11,107 +10,77 @@ routes.use((req, res, next) => {
 /**
  * @api {get} /organizations/:org_id/contracts/ Get all contracts by organization
  */
-routes.get('/', (req, res) => {
-    contract_service.ping(req, res)
-});
+routes.get('/', require('./getContracts'));
 
 /**
  * @api {get} /organizations/:org_id/contracts/:contract_id Get organization contract by id
  */
-routes.get('/:contract_id', (req, res) => {
-    contract_service.getContractById(req, res)
-});
+routes.get('/:contract_id', require('./getContractById'));
 
 /**
  * @api {post} /organizations/:org_id/contracts/ Create organization contract
  */
-routes.post('/', (req, res) => {
-    contract_service.createContract(req, res)
-});
+routes.post('/', require('./createContract'));
 
 /**
  * @api {put} /organizations/:org_id/contracts/:contract_id Update organization contract
  */
-routes.put('/:contract_id', (req, res) => {
-    contract_service.updateContract(req, res)
-});
+routes.put('/:contract_id', require('./updateContract'));
 
 /**
  * @api {delete} /organizations/:org_id/contracts/:contract_id Delete organization contract
  */
-routes.delete('/:contract_id', (req, res) => {
-    contract_service.deleteContract(req, res)
-});
+routes.delete('/:contract_id', require('./deleteContract'));
 
 /**
  * @api {get} /organizations/:org_id/contracts/:contract_id/expenses Get all contract expenses by contract
  */
-routes.get('/:contract_id/expenses', (req, res) => {
-    contract_service.getExpensesByContract(req, res)
-});
+routes.get('/:contract_id/expenses', require('./getExpensesByContract'));
 
 /**
  * @api {get} /organizations/:org_id/contracts/:contract_id/expenses/:expense_id Get contract expense by id
  */
-routes.get('/:contract_id/expenses/:expense_id', (req, res) => {
-    contract_service.getExpenseById(req, res)
-});
+routes.get('/:contract_id/expenses/:expense_id', require('./getContractExpenseById'));
 
 /**
  * @api {post} /organizations/:org_id/contracts/:contract_id/expenses Create contract expense
  */
-routes.post('/:contract_id/expenses', (req, res) => {
-    contract_service.createExpense(req, res)
-});
+routes.post('/:contract_id/expenses', require('./createContractExpense'));
 
 /**
  * @api {put} /organizations/:org_id/contracts/:contract_id/expenses/:expense_id Update contract expense
  */
-routes.put('/:contract_id/expenses/:expense_id', (req, res) => {
-    contract_service.updateExpense(req, res)
-});
+routes.put('/:contract_id/expenses/:expense_id', require('./updateContractExpense'));
 
 /**
  * @api {delete} /organizations/:org_id/contracts/:contract_id/expenses/:expense_id Delete contract expense
  */
-routes.delete('/:contract_id/expenses/:expense_id', (req, res) => {
-    contract_service.deleteExpense(req, res)
-});
+routes.delete('/:contract_id/expenses/:expense_id', require('./deleteContractExpense'));
 
 /**
  * @api {get} /organizations/:org_id/contracts/:contract_id/invoices Get all invoices by contract
  */
-routes.get('/:contract_id/invoices', (req, res) => {
-    contract_service.getInvoicesByContract(req, res)
-});
+routes.get('/:contract_id/invoices', require('./getInvoicesByContract'));
 
 /**
  * @api {get} /organizations/:org_id/contracts/:contract_id/invoices/:invoice_id Get contract invoice by id
  */
-routes.get('/:contract_id/invoices/:invoice_id', (req, res) => {
-    contract_service.getInvoiceById(req, res)
-});
+routes.get('/:contract_id/invoices/:invoice_id', require('./getContractInvoiceById'));
 
 /**
  * @api {post} /organizations/:org_id/contracts/:contract_id/invoices Create contract invoice
  */
-routes.post('/:contract_id/invoices', (req, res) => {
-    contract_service.createInvoice(req, res)
-});
+routes.post('/:contract_id/invoices', require('./createContractInvoice'));
 
 /**
  * @api {put} /organizations/:org_id/contracts/:contract_id/invoices/:invoice_id Update contract invoice
  */
-routes.put('/:contract_id/invoices/:invoice_id', (req, res) => {
-    contract_service.updateInvoice(req, res)
-});
+routes.put('/:contract_id/invoices/:invoice_id', require('./updateContractInvoice'));
 
 /**
  * @api {delete} /organizations/:org_id/contracts/:contract_id/invoices/:invoice_id Delete contract invoice
  */
-routes.delete('/:contract_id/invoices/:invoice_id', (req, res) => {
-    contract_service.deleteInvoice(req, res)
-});
+routes.delete('/:contract_id/invoices/:invoice_id', require('./deleteContractInvoice'));
 
 
 /**

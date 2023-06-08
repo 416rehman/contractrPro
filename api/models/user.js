@@ -33,7 +33,3 @@ module.exports.user = (sequelize, DataTypes) => {
 
     return User;
 }
-
-module.exports.calc = function (test) {
-
-}
