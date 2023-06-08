@@ -1,4 +1,3 @@
-const user_service = require('../../services/user-service')
 const routes = require('express').Router();
 
 routes.use((req, res, next) => {
@@ -7,27 +6,19 @@ routes.use((req, res, next) => {
     next()
 })
 
-routes.get('/', (req, res) => {
-    user_service.ping(req, res);
-});
+routes.get('/', require('./getUsers'));
 
-routes.get('/:user_id', (req, res) => {
-
-});
+routes.get('/:user_id', require('./getUser'));
 
 /**
  * @api {post} /user/:user_id/organizations Get organizations of a user
  */
-routes.get('/:user_id/organizations', (req, res) => {
-
-});
+routes.get('/:user_id/organizations', require('./getUserOrganizations'));
 
 /**
  * @api {delete} /user/:user_id/organizations/:org_id leave the organization
  */
-routes.delete('/:user_id/organizations/:org_id', (req, res) => {
-
-});
+routes.delete('/:user_id/organizations/:org_id', require('./leaveOrganization'));
 
 
 module.exports = routes;

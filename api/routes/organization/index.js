@@ -1,9 +1,7 @@
-const organization_service = require('../../services/organization-service')
-const {AuditLogHandler} = require('../../middleware/organization-middleware')
 const routes = require('express').Router({mergeParams: true });
-const contract_router = require('./contracts/contract-routes')
-const member_router = require('./members/members-routes')
-const invite_router = require('./invites/invites-routes')
+const contract_router = require('./contracts')
+const member_router = require('./members')
+const invite_router = require('./invites')
 
 routes.use((req, res, next) => {
     const path = (__filename.split('/').slice(-1)[0]).split('\\').slice(-1)[0]
@@ -14,31 +12,22 @@ routes.use((req, res, next) => {
 /**
  * @api {get} /organizations/:org_id Get organization by id
  */
-routes.get('/:org_id', (req, res) => {
-    res.send('Not implemented')
-});
+routes.get('/:org_id', require('./getOrganization'));
 
 /**
  * @api {post} /organizations/ Create organization
  */
-routes.post('/', (req, res) => {
-    organization_service.create(req, res)
-});
-
+routes.post('/', require('./postOrganization'));
 
 /**
  * @api {delete} /organizations/:org_id Delete organization
  */
-routes.delete('/:org_id', (req, res) => {
-
-});
+routes.delete('/:org_id', require('./deleteOrganization'));
 
 /**
  * @api {put} /organizations/:org_id Update organization
  */
-routes.put('/:org_id', (req, res) => {
-
-});
+routes.put('/:org_id', require('./putOrganization'));
 
 /**
  * @api {get} /organizations/:org_id/members Uses the organization's member router

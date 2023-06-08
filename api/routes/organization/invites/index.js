@@ -9,36 +9,26 @@ routes.use((req, res, next) => {
 /**
  * @api {get} /organizations/:org_id/invites Get organization invites
  */
-routes.get('/', (req, res) => {
-
-});
+routes.get('/', require('./getOrganizationInvites'));
 
 /**
  * @api {get} /organizations/:org_id/invites/:invite_id Get organization invite
  */
-routes.get('/:invite_id', (req, res) => {
-
-});
+routes.get('/:invite_id', require('./getOrganizationInviteById'));
 
 /**
  * @api {post} /organizations/:org_id/invites Create organization invite
  */
-routes.post('/', (req, res) => {
-
-});
+routes.post('/', require('./createOrganizationInvite'));
 
 /**
  * @api {put} /organizations/:org_id/invites/:invite_id Update organization invite
  */
-routes.put('/:invite_id', (req, res) => {
-
-});
+routes.put('/:invite_id', require('./updateOrganizationInvite'));
 
 /**
  * @api {delete} /organizations/:org_id/invites/:invite_id Delete organization invite
  */
-routes.delete('/:invite_id', (req, res) => {
-
-});
+routes.delete('/:invite_id', require('./deleteOrganizationInvite'));
 
 module.exports = routes;

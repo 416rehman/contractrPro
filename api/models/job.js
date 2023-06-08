@@ -12,7 +12,3 @@ module.exports.job = (sequelize, DataTypes) => {
         contract_id: DataTypes.INTEGER, //Job can be associated with one contract
     });
 }
-
-module.exports.calc = function (test) {
-
-}
