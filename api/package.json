@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc",
     "prestart": "npm run build",
-    "start": "node ..",
+    "start": "node .",
     "dev": "NODE_ENV=development node .",
     "lint": "eslint --config .eslintrc.js **/*.js"
   },
