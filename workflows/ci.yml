@@ -34,6 +34,7 @@ jobs:
             - name: Build
               # Checks to see if there are no build errors
               run: npm run build
+              
             # - name: Test with Cypress
             #   uses: cypress-io/github-action@v2
             #   with:
