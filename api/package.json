@@ -9,7 +9,8 @@
     "prestart": "npm run build",
     "start": "node .",
     "dev": "NODE_ENV=development node .",
-    "lint": "eslint --config .eslintrc.js **/*.js"
+    "lint": "eslint --config .eslintrc.js **/*.js",
+    "prettier": "prettier --write ."
   },
   "author": "Bytech Labs",
   "license": "ISC",
@@ -36,6 +37,7 @@
     "@types/express": "^4.17.13",
     "@types/node": "^16.11.10",
     "eslint": "^8.41.0",
-    "nodemon": "^2.0.22"
+    "nodemon": "^2.0.22",
+    "prettier": "2.8.8"
   }
 }
