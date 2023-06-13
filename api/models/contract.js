@@ -1,10 +1,40 @@
 module.exports.contract = (sequelize, DataTypes) => {
     return sequelize.define("Contract", {
-        name: DataTypes.STRING(255),
-        description: DataTypes.STRING(1024),
-        bill_to: DataTypes.STRING(510),
-        email: DataTypes.STRING(255),
-        phone: DataTypes.STRING(24),
-        organization_id: DataTypes.INTEGER,
+        id: {
+            type: DataTypes.BIGINT,
+            primaryKey: true,
+            autoIncrement: true,
+            allowNull: false
+        },
+        name: {
+          type: DataTypes.STRING(255),
+          allowNull: false  
+        },
+        description: {
+            type: DataTypes.STRING(1024),
+            allowNull: false
+        },
+        bill_to: {
+            type: DataTypes.STRING(510),
+            allowNull: false
+        },
+        email: {
+            type: DataTypes.STRING(255),
+            allowNull: false
+        },
+        phone: {
+            type: DataTypes.STRING(24),
+            allowNull: false
+        },
+        organization_id: {
+            type: DataTypes.BIGINT,
+            allowNull: false
+        },
+        updated_by: {
+            type: DataTypes.BIGINT,
+            allowNull: false
+        },
+    }, {
+        paranoid: true
     });
 }

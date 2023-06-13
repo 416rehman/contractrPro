@@ -1,6 +1,12 @@
 
 module.exports.user = (sequelize, DataTypes) => {
     const User = sequelize.define('User', {
+        id: {
+            type: DataTypes.BIGINT,
+            primaryKey: true,
+            autoIncrement: true,
+            allowNull: false
+        },
         username: {
             type: DataTypes.STRING(255),
             allowNull: false,
@@ -24,11 +30,20 @@ module.exports.user = (sequelize, DataTypes) => {
             type: DataTypes.STRING(255),
             allowNull: false
         },
-        avatar: DataTypes.STRING,
+        avatar: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
         refresh_token: {
             type: DataTypes.STRING(255),
             allowNull: false
         },
+        updated_by: {
+            type: DataTypes.BIGINT,
+            allowNull: false
+        },
+    }, {
+        paranoid: true,
     });
 
     return User;

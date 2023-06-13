@@ -8,7 +8,7 @@ module.exports.attachment = (sequelize, DataTypes) => {
         },
         comments: {
             type: DataTypes.STRING(1024),
-            allowNull: false
+            allowNull: true
         },
         file_name: {
             type: DataTypes.STRING(256),
@@ -24,6 +24,10 @@ module.exports.attachment = (sequelize, DataTypes) => {
         }, 
         access_url: {
             type: DataTypes.STRING(2048),
+            allowNull: false
+        },
+        updated_by: {
+            type: DataTypes.BIGINT,
             allowNull: false
         },
     }, {
