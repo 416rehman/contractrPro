@@ -38,6 +38,6 @@ module.exports.invite = (sequelize, DataTypes) => {
             allowNull: false
         },
     }, {
-        paranoid: true
+        paranoid: true,
     });
 }

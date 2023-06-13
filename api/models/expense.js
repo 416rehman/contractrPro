@@ -35,6 +35,6 @@ module.exports.expense = (sequelize, DataTypes) => {
             allowNull: false
         },
     }, {
-        paranoid: true
+        paranoid: true,
     });
 }

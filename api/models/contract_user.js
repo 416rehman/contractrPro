@@ -22,6 +22,6 @@ module.exports.contract_users = (sequelize, DataTypes) => {
             allowNull: false
         },
     }, {
-        paranoid: true
+        paranoid: true,
     });
 }

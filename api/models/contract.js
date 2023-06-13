@@ -35,6 +35,6 @@ module.exports.contract = (sequelize, DataTypes) => {
             allowNull: false
         },
     }, {
-        paranoid: true
+        paranoid: true,
     });
 }

@@ -19,6 +19,6 @@ module.exports.invoice = (sequelize, DataTypes) => {
             allowNull: false
         },
     }, {
-        paranoid: true
+        paranoid: true,
     });
 }
