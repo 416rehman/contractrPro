@@ -28,15 +28,15 @@ const sequelize = new Sequelize(
         host: process.env.DB_Host,
         port: process.env.DB_Port,
         dialect: 'postgres',
-    },
+    }
 )
 
 sequelize
     .authenticate()
-    .then(function() {
+    .then(function () {
         console.log('Connection has been established successfully.')
     })
-    .catch(function(err) {
+    .catch(function (err) {
         console.log('Unable to connect to the database:', err)
     })
 

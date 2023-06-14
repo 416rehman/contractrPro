@@ -51,5 +51,5 @@ module.exports.define = (sequelize, DataTypes) => {
 }
 
 module.exports.associate = (user, models) => {
-    user.hasOne(models.Address, {allowNull: true})
+    user.hasOne(models.Address, { allowNull: true })
 }

@@ -7,7 +7,7 @@ module.exports.define = (sequelize, DataTypes) => {
                 type: Sequelize.UUID,
                 defaultValue: Sequelize.UUIDV4,
                 allowNull: false,
-                primaryKey: true
+                primaryKey: true,
             },
             country: {
                 type: DataTypes.STRING(100),
