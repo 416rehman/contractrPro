@@ -1,5 +1,11 @@
 module.exports.organization = (sequelize, DataTypes) => {
     return sequelize.define("Organization", {
+        id: {
+            type: DataTypes.BIGINT,
+            primaryKey: true,
+            autoIncrement: true,
+            allowNull: false
+        },
         name: {
             type: DataTypes.STRING(255),
             allowNull: false
@@ -16,8 +22,23 @@ module.exports.organization = (sequelize, DataTypes) => {
             type: DataTypes.STRING(25),
             allowNull: false
         },
-        website: DataTypes.STRING(255),
-        logo: DataTypes.STRING,
-        owner_id: DataTypes.INTEGER,
+        website: {
+            type: DataTypes.STRING(255),
+            allowNull: true
+        },
+        logo: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        owner_id: {
+            type: DataTypes.BIGINT,
+            allowNull: false
+        },
+        updated_by: {
+            type: DataTypes.BIGINT,
+            allowNull: false
+        },
+    }, {
+        paranoid: true,
     });
 }

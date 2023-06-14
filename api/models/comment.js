@@ -18,6 +18,10 @@ module.exports.comment = (sequelize, DataTypes) => {
             type: DataTypes.BIGINT,
             allowNull: false
         },
+        updated_by: {
+            type: DataTypes.BIGINT,
+            allowNull: false
+        },
     }, {
         paranoid: true,
     });
