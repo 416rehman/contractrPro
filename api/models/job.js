@@ -1,4 +1,4 @@
-module.exports.job = (sequelize, DataTypes) => {
+module.exports.define = (sequelize, DataTypes) => {
     return sequelize.define(
         'Job',
         {

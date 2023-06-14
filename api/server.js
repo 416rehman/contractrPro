@@ -126,7 +126,7 @@ sequelize
     .authenticate()
     .then(() => {
         console.log('Connection has been established successfully.')
-        return sequelize.sync()
+        return sequelize.sync({ force: true})
     })
     .then(() => {
         console.log('Synced successfully.')

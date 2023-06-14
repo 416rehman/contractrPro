@@ -1,4 +1,4 @@
-module.exports.attachment = (sequelize, DataTypes) => {
+module.exports.define = (sequelize, DataTypes) => {
     return sequelize.define(
         'Attachment',
         {

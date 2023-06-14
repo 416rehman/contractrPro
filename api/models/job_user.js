@@ -1,4 +1,4 @@
-module.exports.job_users = (sequelize, DataTypes) => {
+module.exports.define = (sequelize, DataTypes) => {
     return sequelize.define(
         'Job_Users',
         {

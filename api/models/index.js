@@ -1,17 +1,17 @@
 const { DataTypes, Sequelize } = require('sequelize')
-const { address } = require('./address'),
-    { attachment } = require('./attachment'),
-    { comment } = require('./comment'),
-    { contract } = require('./contract'),
-    { expense } = require('./expense'),
-    { invite } = require('./invite'),
-    { invoice } = require('./invoice'),
-    { job } = require('./job'),
-    { organization } = require('./organization'),
-    { user } = require('./user'),
-    { contract_users } = require('./contract_user'),
-    { job_users } = require('./job_user'),
-    { organization_users } = require('./organization_user')
+const address = require('./address'),
+    attachment = require('./attachment'),
+    comment = require('./comment'),
+    contract = require('./contract'),
+    expense = require('./expense'),
+    invite = require('./invite'),
+    invoice = require('./invoice'),
+    job = require('./job'),
+    organization = require('./organization'),
+    user = require('./user'),
+    contract_users = require('./contract_user'),
+    job_users = require('./job_user'),
+    organization_users = require('./organization_user')
 
 console.log(`DB Connection Info:
     host: ${process.env.DB_HOST}
@@ -28,31 +28,31 @@ const sequelize = new Sequelize(
         host: process.env.DB_Host,
         port: process.env.DB_Port,
         dialect: 'postgres',
-    }
+    },
 )
 
 sequelize
     .authenticate()
-    .then(function () {
+    .then(function() {
         console.log('Connection has been established successfully.')
     })
-    .catch(function (err) {
+    .catch(function(err) {
         console.log('Unable to connect to the database:', err)
     })
 
-const Address = address(sequelize, DataTypes)
-const Attachment = attachment(sequelize, DataTypes)
-const Comment = comment(sequelize, DataTypes)
-const Contract = contract(sequelize, DataTypes)
-const Expense = expense(sequelize, DataTypes)
-const Invite = invite(sequelize, DataTypes)
-const Invoice = invoice(sequelize, DataTypes)
-const Job = job(sequelize, DataTypes)
-const Organization = organization(sequelize, DataTypes)
-const User = user(sequelize, DataTypes)
-const Contract_Users = contract_users(sequelize, DataTypes)
-const Job_Users = job_users(sequelize, DataTypes)
-const Organization_Users = organization_users(sequelize, DataTypes)
+const Address = address.define(sequelize, DataTypes)
+const Attachment = attachment.define(sequelize, DataTypes)
+const Comment = comment.define(sequelize, DataTypes)
+const Contract = contract.define(sequelize, DataTypes)
+const Expense = expense.define(sequelize, DataTypes)
+const Invite = invite.define(sequelize, DataTypes)
+const Invoice = invoice.define(sequelize, DataTypes)
+const Job = job.define(sequelize, DataTypes)
+const Organization = organization.define(sequelize, DataTypes)
+const User = user.define(sequelize, DataTypes)
+const Contract_Users = contract_users.define(sequelize, DataTypes)
+const Job_Users = job_users.define(sequelize, DataTypes)
+const Organization_Users = organization_users.define(sequelize, DataTypes)
 
 /**
  * Comment can have many contracts
@@ -239,17 +239,19 @@ Organization_Users.belongsToMany(Contract, {
     allowNull: false,
 })
 
-module.exports.sequelize = sequelize
-module.exports.Address = Address
-module.exports.Attachment = Attachment
-module.exports.Contract = Contract
-module.exports.Comment = Comment
-module.exports.Expense = Expense
-module.exports.Invite = Invite
-module.exports.Invoice = Invoice
-module.exports.Job = Job
-module.exports.Organization = Organization
-module.exports.User = User
-module.exports.Contract_Users = Contract_Users
-module.exports.Job_Users = Job_Users
-module.exports.Organization_Users = Organization_Users
+module.exports = {
+    sequelize,
+    Address,
+    Attachment,
+    Comment,
+    Contract,
+    Expense,
+    Invite,
+    Invoice,
+    Job,
+    Organization,
+    User,
+    Contract_Users,
+    Job_Users,
+    Organization_Users,
+}

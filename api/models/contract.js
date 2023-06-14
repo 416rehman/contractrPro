@@ -1,4 +1,4 @@
-module.exports.contract = (sequelize, DataTypes) => {
+module.exports.define = (sequelize, DataTypes) => {
     return sequelize.define(
         'Contract',
         {

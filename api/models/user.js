@@ -1,5 +1,5 @@
-module.exports.user = (sequelize, DataTypes) => {
-    const User = sequelize.define(
+module.exports.define = (sequelize, DataTypes) => {
+    return sequelize.define(
         'User',
         {
             id: {
@@ -48,6 +48,8 @@ module.exports.user = (sequelize, DataTypes) => {
             paranoid: true,
         }
     )
+}
 
-    return User
+module.exports.associate = (user, models) => {
+    user.hasOne(models.Address, {allowNull: true})
 }

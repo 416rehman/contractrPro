@@ -1,4 +1,4 @@
-module.exports.invoice = (sequelize, DataTypes) => {
+module.exports.define = (sequelize, DataTypes) => {
     return sequelize.define(
         'Invoice',
         {

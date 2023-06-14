@@ -1,7 +1,14 @@
-module.exports.address = (sequelize, DataTypes) => {
+const { Sequelize } = require('sequelize')
+module.exports.define = (sequelize, DataTypes) => {
     return sequelize.define(
         'Address',
         {
+            id: {
+                type: Sequelize.UUID,
+                defaultValue: Sequelize.UUIDV4,
+                allowNull: false,
+                primaryKey: true
+            },
             country: {
                 type: DataTypes.STRING(100),
                 allowNull: false,

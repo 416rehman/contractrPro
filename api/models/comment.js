@@ -1,4 +1,4 @@
-module.exports.comment = (sequelize, DataTypes) => {
+module.exports.define = (sequelize, DataTypes) => {
     return sequelize.define(
         'Comment',
         {

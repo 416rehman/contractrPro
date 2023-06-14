@@ -1,4 +1,4 @@
-module.exports.invite = (sequelize, DataTypes) => {
+module.exports.define = (sequelize, DataTypes) => {
     return sequelize.define(
         'Invite',
         {
