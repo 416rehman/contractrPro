@@ -19,9 +19,10 @@ jobs:
                 working-directory: ./api
         steps:
             - name: Checkout code
-              uses: actions/checkout@v2
+              uses: actions/checkout@v3
               with:
                   ref: ${{ github.head_ref }}
+                  token: ${{ secrets.PAT }}
             - name: Setup Node for API
               uses: actions/setup-node@v2
               with:
