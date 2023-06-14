@@ -9,9 +9,14 @@ on:
         branches: [main, dev]
 
 jobs:
-    formatting:
+    format-api:
         # Uses a Ubuntu Docker VM to run the application on
         runs-on: ubuntu-latest
+        permissions:
+            contents: write
+        defaults:
+            run:
+                working-directory: ./api
         steps:
             - name: Checkout code
               uses: actions/checkout@v2
@@ -22,15 +27,11 @@ jobs:
               with:
                 node-version: "18.16.0"
                 cache: "npm"
-                cache-dependency-path: ./api/package-lock.json
             - name: Install Dependencies
-              working-directory: ./api
               run: npm ci
             - name: Check for bugs
-              working-directory: ./api
               run: npm run lint
             - name: Check for code formatting
-              working-directory: ./api
               run: npm run prettier
             - name: Commit changes
               uses: stefanzweifel/git-auto-commit-action@v4
