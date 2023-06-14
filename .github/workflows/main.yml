@@ -4,6 +4,9 @@ on:
     # Runs the inside pull requests to the main and dev branches
     pull_request:
         branches: [main, dev]
+    # Runs the inside pushes to the main and dev branches
+    push:
+        branches: [main, dev]
 
 jobs:
     formatting:
