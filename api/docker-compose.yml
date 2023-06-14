@@ -1,22 +1,22 @@
 version: "3.5"
 volumes:
-    node_modules:   # empty volume
+  node_modules: # empty volume
 
 services:
-    cp_api:
-        container_name: cp_api
-        build: .
-        volumes:
-            - ./:/home/node/app
-            - node_modules:/home/node/app/node_modules
-        ports:
-            - "4000:4000"
-        expose:
-            - "4000"
-        networks:
-            - cp_net
+  cp_api:
+    container_name: cp_api
+    build: .
+    volumes:
+      - ./:/home/node/app
+      - node_modules:/home/node/app/node_modules
+    ports:
+      - "4000:4000"
+    expose:
+      - "4000"
+    networks:
+      - cp_net
 
 networks:
-    cp_net:
-        name: cp_net
-        external: true
+  cp_net:
+    name: cp_net
+    external: true
