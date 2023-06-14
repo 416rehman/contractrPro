@@ -1,5 +1,5 @@
 module.exports = {
-  auth: require("./auth"),
-  user: require("./user"),
-  organization: require("./organization"),
-};
+    auth: require('./auth'),
+    user: require('./user'),
+    organization: require('./organization'),
+}
