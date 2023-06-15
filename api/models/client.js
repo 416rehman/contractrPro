@@ -1,58 +1,45 @@
 const { Sequelize } = require('sequelize')
 module.exports.define = (sequelize, DataTypes) => {
     return sequelize.define(
-        'Organization',
+        'Client',   // a client is an organization's customer
         {
             id: {
                 type: Sequelize.UUID,
                 defaultValue: Sequelize.UUIDV4,
                 allowNull: false,
-                primaryKey: true
+                primaryKey: true,
             },
             name: {
                 type: DataTypes.STRING(255),
                 allowNull: false,
             },
-            description: {
-                type: DataTypes.STRING(512),
-                allowNull: false,
+            phone: {
+                type: DataTypes.STRING(255),
             },
             email: {
                 type: DataTypes.STRING(255),
-                allowNull: false,
-            },
-            phone: {
-                type: DataTypes.STRING(25),
-                allowNull: false,
             },
             website: {
                 type: DataTypes.STRING(255),
-                allowNull: true,
             },
-            logo_url: {
-                type: DataTypes.STRING(255),
-                allowNull: false,
+            description: {
+                type: DataTypes.STRING(1024),
             },
         },
         {
             paranoid: true,
-        }
+        },
     )
 }
 
-module.exports.associate = (Organization, models) => {
-    Organization.belongsTo(models.User, {
-        foreignKey: {
-            name: 'owner_id',
-            allowNull: false,
-        }
-    })
+module.exports.associate = (Client, models) => {
+    Client.belongsTo(models.Organization)   // the organization that owns this client
 
-    Organization.belongsTo(models.User, {
+    Client.belongsTo(models.User, {
         foreignKey: {
                         name: 'updated_by',
         }
     })
 
-    return Organization
+    return Client
 }

@@ -1,15 +1,16 @@
+const { Sequelize } = require('sequelize')
+
 module.exports.define = (sequelize, DataTypes) => {
     return sequelize.define(
         'Job',
         {
-            //id field acts as job_number too
             id: {
-                type: DataTypes.BIGINT,
-                primaryKey: true,
-                autoIncrement: true,
+                type: Sequelize.UUID,
+                defaultValue: Sequelize.UUIDV4,
                 allowNull: false,
+                primaryKey: true
             },
-            purchase_order: {
+            identifier: {   // Custom identifier for the job
                 type: DataTypes.STRING(256),
                 allowNull: false,
             },
@@ -21,26 +22,25 @@ module.exports.define = (sequelize, DataTypes) => {
                 type: DataTypes.STRING(512),
                 allowNull: false,
             },
-            status: {
-                type: DataTypes.ENUM('open', 'closed', 'in progress'),
-                defaultValue: 'open',
-            },
-            comments: {
-                type: DataTypes.STRING(1024),
-                allowNull: true,
-            },
-            //Job can be associated with one contract
-            contract_id: {
-                type: DataTypes.BIGINT,
-                allowNull: false,
-            },
-            updated_by: {
-                type: DataTypes.BIGINT,
-                allowNull: false,
+            status: {   // 0 = open, 1 = in progress, 2 = completed, 3 = cancelled
+                type: DataTypes.SMALLINT,
+                defaultValue: 0,
             },
         },
         {
             paranoid: true,
         }
     )
+}
+
+module.exports.associate = (Job, models) => {
+    Job.belongsTo(models.Contract, { onDelete: 'CASCADE' })
+
+    Job.belongsTo(models.User, {
+        foreignKey: {
+                        name: 'updated_by',
+        }
+    })
+
+    return Job
 }

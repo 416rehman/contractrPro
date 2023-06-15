@@ -1,44 +1,51 @@
+const { Sequelize } = require('sequelize')
 module.exports.define = (sequelize, DataTypes) => {
     return sequelize.define(
         'Contract',
         {
             id: {
-                type: DataTypes.BIGINT,
-                primaryKey: true,
-                autoIncrement: true,
+                type: Sequelize.UUID,
+                defaultValue: Sequelize.UUIDV4,
                 allowNull: false,
+                primaryKey: true
             },
             name: {
                 type: DataTypes.STRING(255),
                 allowNull: false,
             },
             description: {
-                type: DataTypes.STRING(1024),
-                allowNull: false,
+                type: DataTypes.STRING(1024)
             },
-            bill_to: {
-                type: DataTypes.STRING(510),
-                allowNull: false,
+            start_date: {
+                type: DataTypes.DATE,
             },
-            email: {
-                type: DataTypes.STRING(255),
-                allowNull: false,
+            due_date: {
+                type: DataTypes.DATE,
             },
-            phone: {
-                type: DataTypes.STRING(24),
-                allowNull: false,
+            completion_date: {
+                type: DataTypes.DATE,
             },
-            organization_id: {
-                type: DataTypes.BIGINT,
+            status: {   // 0 = draft, 1 = active, 2 = completed, 3 = cancelled
+                type: DataTypes.SMALLINT,
                 allowNull: false,
-            },
-            updated_by: {
-                type: DataTypes.BIGINT,
-                allowNull: false,
+                defaultValue: 0,
             },
         },
         {
             paranoid: true,
         }
     )
+}
+
+module.exports.associate = (Contract, models) => {
+    Contract.belongsTo(models.Organization, { onDelete: 'CASCADE' })
+    Contract.belongsTo(models.Client)
+
+    Contract.belongsTo(models.User, {
+        foreignKey: {
+                        name: 'updated_by',
+        }
+    })
+
+    return Contract
 }

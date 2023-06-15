@@ -1,12 +1,13 @@
+const { Sequelize } = require('sequelize')
 module.exports.define = (sequelize, DataTypes) => {
     return sequelize.define(
         'Expense',
         {
             id: {
-                type: DataTypes.BIGINT,
-                primaryKey: true,
-                autoIncrement: true,
+                type: Sequelize.UUID,
+                defaultValue: Sequelize.UUIDV4,
                 allowNull: false,
+                primaryKey: true
             },
             per_cost: {
                 type: DataTypes.FLOAT(),
@@ -24,21 +25,33 @@ module.exports.define = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            contract_id: {
-                type: DataTypes.BIGINT,
-                allowNull: false,
-            },
-            job_id: {
-                type: DataTypes.BIGINT,
-                allowNull: false,
-            },
-            updated_by: {
-                type: DataTypes.BIGINT,
-                allowNull: false,
+            time: {
+                type: DataTypes.DATE,
             },
         },
         {
             paranoid: true,
         }
     )
+}
+
+module.exports.associate = (Expense, models) => {
+    // Expense can either belong to a job, a contract, or an organization
+    Expense.belongsTo(models.Organization, {
+        foreignKey: {
+            allowNull: false
+        }
+    })   // the organization that owns this expense
+    Expense.belongsTo(models.Contract)  // the contract that owns this expense
+    Expense.belongsTo(models.Job)   // the job that owns this expense
+
+    Expense.belongsTo(models.Vendor)   // the vendor who provided the service
+
+    Expense.belongsTo(models.User, {
+        foreignKey: {
+                        name: 'updated_by',
+        }
+    })
+
+    return Expense
 }

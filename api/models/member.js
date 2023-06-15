@@ -1,18 +1,13 @@
 const { Sequelize } = require('sequelize')
 module.exports.define = (sequelize, DataTypes) => {
     return sequelize.define(
-        'User',
+        'Member',   // a member is someone that is part of an organization
         {
             id: {
                 type: Sequelize.UUID,
                 defaultValue: Sequelize.UUIDV4,
                 allowNull: false,
                 primaryKey: true
-            },
-            username: {
-                type: DataTypes.STRING(32),
-                allowNull: false,
-                unique: true,
             },
             full_name: {
                 type: DataTypes.STRING(512),
@@ -28,16 +23,8 @@ module.exports.define = (sequelize, DataTypes) => {
                 allowNull: false,
                 unique: true,
             },
-            password: {
-                type: DataTypes.STRING(255),
-                allowNull: false,
-            },
-            avatar_url: {
-                type: DataTypes.STRING(1024),
-                allowNull: false,
-            },
-            refresh_token: {
-                type: DataTypes.STRING(255),
+            permissions: {
+                type: DataTypes.INTEGER,
                 allowNull: false,
             },
         },
@@ -47,12 +34,15 @@ module.exports.define = (sequelize, DataTypes) => {
     )
 }
 
-module.exports.associate = (User, models) => {
-    User.belongsTo(models.User, {
+module.exports.associate = (Member, models) => {
+    Member.belongsTo(models.User)
+    Member.belongsTo(models.Organization)
+
+    Member.belongsTo(models.User, {
         foreignKey: {
                         name: 'updated_by',
         }
     })
 
-    return User
+    return Member
 }

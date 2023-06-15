@@ -7,10 +7,10 @@ module.exports.define = (sequelize, DataTypes) => {
                 type: Sequelize.UUID,
                 defaultValue: Sequelize.UUIDV4,
                 allowNull: false,
-                primaryKey: true
+                primaryKey: true,
             },
             country: {
-                type: DataTypes.STRING(100),
+                type: DataTypes.STRING(128),
                 allowNull: false,
             },
             postal_code: {
@@ -18,28 +18,38 @@ module.exports.define = (sequelize, DataTypes) => {
                 allowNull: false,
             },
             province: {
-                type: DataTypes.STRING(100),
+                type: DataTypes.STRING(128),
                 allowNull: false,
             },
             city: {
-                type: DataTypes.STRING(100),
+                type: DataTypes.STRING(128),
                 allowNull: false,
             },
             address_line_1: {
-                type: DataTypes.STRING(100),
+                type: DataTypes.STRING(128),
                 allowNull: false,
             },
             address_line_2: {
-                type: DataTypes.STRING(100),
+                type: DataTypes.STRING(128),
                 allowNull: true,
-            },
-            updated_by: {
-                type: DataTypes.BIGINT,
-                allowNull: false,
             },
         },
         {
             paranoid: true,
-        }
+        },
     )
+}
+
+module.exports.associate = (Address, models) => {
+    Address.belongsTo(models.Organization)
+    Address.belongsTo(models.User)
+    Address.belongsTo(models.Client)
+
+    Address.belongsTo(models.User, {
+        foreignKey: {
+            name: 'updated_by',
+        }
+    })
+
+    return Address
 }

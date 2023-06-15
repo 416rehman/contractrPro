@@ -98,7 +98,7 @@ app.post('/comments', async (req, res) => {
             await s3Client.send(new PutObjectCommand(uploadParams))
             filesUploaded++
         } catch (err) {
-            console.log(err)
+            logger.error(err)
         }
     }
 
@@ -125,16 +125,16 @@ app.use((err, req, res) => {
 sequelize
     .authenticate()
     .then(() => {
-        console.log('Connection has been established successfully.')
+        logger.info('Connection has been established successfully.')
         return sequelize.sync({ force: true})
     })
     .then(() => {
-        console.log('Synced successfully.')
+        logger.info('Synced successfully.')
         return app.listen(port)
     })
     .then(() => {
-        console.log(`listening at http://localhost:${port}/`)
+        logger.info(`listening at http://localhost:${port}/`)
     })
     .catch((err) => {
-        console.error('Unable to connect to the database:', err)
+        logger.error('Unable to connect to the database:', err)
     })

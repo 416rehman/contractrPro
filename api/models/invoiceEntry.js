@@ -1,13 +1,13 @@
 const { Sequelize } = require('sequelize')
 module.exports.define = (sequelize, DataTypes) => {
     return sequelize.define(
-        'Organization',
+        'InvoiceEntry',
         {
             id: {
                 type: Sequelize.UUID,
                 defaultValue: Sequelize.UUIDV4,
                 allowNull: false,
-                primaryKey: true
+                primaryKey: true,
             },
             name: {
                 type: DataTypes.STRING(255),
@@ -17,42 +17,33 @@ module.exports.define = (sequelize, DataTypes) => {
                 type: DataTypes.STRING(512),
                 allowNull: false,
             },
-            email: {
-                type: DataTypes.STRING(255),
+            quantity: {
+                type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            phone: {
-                type: DataTypes.STRING(25),
+            per_cost: {
+                type: DataTypes.FLOAT(),
                 allowNull: false,
             },
-            website: {
-                type: DataTypes.STRING(255),
-                allowNull: true,
-            },
-            logo_url: {
-                type: DataTypes.STRING(255),
+            tax: {
+                type: DataTypes.FLOAT(),
                 allowNull: false,
             },
         },
         {
             paranoid: true,
-        }
+        },
     )
 }
 
-module.exports.associate = (Organization, models) => {
-    Organization.belongsTo(models.User, {
-        foreignKey: {
-            name: 'owner_id',
-            allowNull: false,
-        }
-    })
+module.exports.associate = (InvoiceEntry, models) => {
+    InvoiceEntry.belongsTo(models.Invoice)   // the invoice that owns this invoice entry
 
-    Organization.belongsTo(models.User, {
+    InvoiceEntry.belongsTo(models.User, {
         foreignKey: {
                         name: 'updated_by',
         }
     })
 
-    return Organization
+    return InvoiceEntry
 }

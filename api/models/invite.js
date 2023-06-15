@@ -1,20 +1,16 @@
+const { Sequelize } = require('sequelize')
 module.exports.define = (sequelize, DataTypes) => {
     return sequelize.define(
         'Invite',
         {
             id: {
-                type: DataTypes.BIGINT,
-                primaryKey: true,
-                autoIncrement: true,
+                type: Sequelize.UUID,
+                defaultValue: Sequelize.UUIDV4,
                 allowNull: false,
+                primaryKey: true,
             },
             code: {
-                type: DataTypes.STRING(12),
-                allowNull: false,
-            },
-            status: {
-                type: DataTypes.ENUM('active', 'inactive'),
-                defaultValue: 'active',
+                type: DataTypes.STRING(8),
                 allowNull: false,
             },
             uses: {
@@ -22,26 +18,36 @@ module.exports.define = (sequelize, DataTypes) => {
                 defaultValue: 0,
                 allowNull: false,
             },
-            use_limit: {
+            max_uses: {
                 type: DataTypes.INTEGER,
-                defaultValue: 0, // 0 = unlimited
-                allowNull: false,
-            },
-            created_by: {
-                type: DataTypes.BIGINT,
-                allowNull: false,
-            },
-            organization_id: {
-                type: DataTypes.BIGINT,
-                allowNull: false,
-            },
-            updated_by: {
-                type: DataTypes.BIGINT,
+                defaultValue: 0,
                 allowNull: false,
             },
         },
         {
             paranoid: true,
-        }
+        },
     )
+}
+
+module.exports.associate = (Invite, models) => {
+    // The organization that the invite is for
+    Invite.belongsTo(models.Organization, {
+        foreignKey: 'organization_id',
+        allowNull: false,
+        onDelete: 'CASCADE',
+    })
+
+    // The user that created the invite
+    Invite.belongsTo(models.User, {
+        foreignKey: 'created_by',
+    })
+
+    Invite.belongsTo(models.User, {
+        foreignKey: {
+            name: 'updated_by',
+        },
+    })
+
+    return Invite
 }

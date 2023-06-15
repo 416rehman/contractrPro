@@ -1,23 +1,20 @@
+const { Sequelize } = require('sequelize')
 module.exports.define = (sequelize, DataTypes) => {
     return sequelize.define(
         'Attachment',
         {
             id: {
-                type: DataTypes.BIGINT,
-                primaryKey: true,
-                autoIncrement: true,
+                type: Sequelize.UUID,
+                defaultValue: Sequelize.UUIDV4,
                 allowNull: false,
-            },
-            comments: {
-                type: DataTypes.STRING(1024),
-                allowNull: true,
+                primaryKey: true,
             },
             file_name: {
                 type: DataTypes.STRING(256),
                 allowNull: false,
             },
-            file_type: {
-                type: DataTypes.STRING(5),
+            mime_type: {
+                type: DataTypes.STRING(255),
                 allowNull: false,
             },
             file_size_kb: {
@@ -28,13 +25,26 @@ module.exports.define = (sequelize, DataTypes) => {
                 type: DataTypes.STRING(2048),
                 allowNull: false,
             },
-            updated_by: {
-                type: DataTypes.BIGINT,
-                allowNull: false,
-            },
         },
         {
             paranoid: true,
-        }
+        },
     )
+}
+
+module.exports.associate = (Attachment, models) => {
+    Attachment.belongsTo(models.Comment, {
+        foreignKey: {
+            allowNull: false,
+        },
+        onDelete: 'CASCADE',
+    })
+
+    Attachment.belongsTo(models.User, {
+        foreignKey: {
+            name: 'updated_by',
+        },
+    })
+
+    return Attachment
 }
