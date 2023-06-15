@@ -16,7 +16,7 @@ module.exports.define = (sequelize, DataTypes) => {
         },
         {
             paranoid: true,
-        },
+        }
     )
 
     JobMember.associate = (models) => {

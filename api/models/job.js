@@ -31,7 +31,7 @@ module.exports.define = (sequelize, DataTypes) => {
         },
         {
             paranoid: true,
-        },
+        }
     )
 
     Job.associate = (models) => {

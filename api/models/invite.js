@@ -26,7 +26,7 @@ module.exports.define = (sequelize, DataTypes) => {
         },
         {
             paranoid: true,
-        },
+        }
     )
 
     Invite.associate = (models) => {
@@ -48,7 +48,6 @@ module.exports.define = (sequelize, DataTypes) => {
             },
         })
     }
-
 
     return Invite
 }

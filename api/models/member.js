@@ -30,7 +30,7 @@ module.exports.define = (sequelize, DataTypes) => {
         },
         {
             paranoid: true,
-        },
+        }
     )
 
     Member.associate = (models) => {

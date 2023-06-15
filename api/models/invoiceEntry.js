@@ -32,7 +32,7 @@ module.exports.define = (sequelize, DataTypes) => {
         },
         {
             paranoid: true,
-        },
+        }
     )
 
     InvoiceEntry.associate = (models) => {
