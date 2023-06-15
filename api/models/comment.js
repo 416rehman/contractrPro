@@ -20,7 +20,7 @@ module.exports.define = (sequelize, DataTypes) => {
         },
         {
             paranoid: true,
-        },
+        }
     )
 }
 
@@ -30,7 +30,8 @@ module.exports.associate = (Comment, models) => {
     Comment.belongsTo(models.Expense, { onDelete: 'CASCADE' })
     Comment.belongsTo(models.Invoice, { onDelete: 'CASCADE' })
 
-    Comment.belongsTo(models.User, {    // If no author is specified, it is a system message
+    Comment.belongsTo(models.User, {
+        // If no author is specified, it is a system message
         foreignKey: {
             name: 'author_id',
         },

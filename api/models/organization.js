@@ -7,7 +7,7 @@ module.exports.define = (sequelize, DataTypes) => {
                 type: Sequelize.UUID,
                 defaultValue: Sequelize.UUIDV4,
                 allowNull: false,
-                primaryKey: true
+                primaryKey: true,
             },
             name: {
                 type: DataTypes.STRING(255),
@@ -45,13 +45,13 @@ module.exports.associate = (Organization, models) => {
         foreignKey: {
             name: 'owner_id',
             allowNull: false,
-        }
+        },
     })
 
     Organization.belongsTo(models.User, {
         foreignKey: {
-                        name: 'updated_by',
-        }
+            name: 'updated_by',
+        },
     })
 
     return Organization

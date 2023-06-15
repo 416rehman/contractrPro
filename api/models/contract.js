@@ -7,14 +7,14 @@ module.exports.define = (sequelize, DataTypes) => {
                 type: Sequelize.UUID,
                 defaultValue: Sequelize.UUIDV4,
                 allowNull: false,
-                primaryKey: true
+                primaryKey: true,
             },
             name: {
                 type: DataTypes.STRING(255),
                 allowNull: false,
             },
             description: {
-                type: DataTypes.STRING(1024)
+                type: DataTypes.STRING(1024),
             },
             start_date: {
                 type: DataTypes.DATE,
@@ -25,7 +25,8 @@ module.exports.define = (sequelize, DataTypes) => {
             completion_date: {
                 type: DataTypes.DATE,
             },
-            status: {   // 0 = draft, 1 = active, 2 = completed, 3 = cancelled
+            status: {
+                // 0 = draft, 1 = active, 2 = completed, 3 = cancelled
                 type: DataTypes.SMALLINT,
                 allowNull: false,
                 defaultValue: 0,
@@ -43,8 +44,8 @@ module.exports.associate = (Contract, models) => {
 
     Contract.belongsTo(models.User, {
         foreignKey: {
-                        name: 'updated_by',
-        }
+            name: 'updated_by',
+        },
     })
 
     return Contract

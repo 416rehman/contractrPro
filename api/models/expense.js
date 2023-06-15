@@ -7,7 +7,7 @@ module.exports.define = (sequelize, DataTypes) => {
                 type: Sequelize.UUID,
                 defaultValue: Sequelize.UUIDV4,
                 allowNull: false,
-                primaryKey: true
+                primaryKey: true,
             },
             per_cost: {
                 type: DataTypes.FLOAT(),
@@ -39,18 +39,18 @@ module.exports.associate = (Expense, models) => {
     // Expense can either belong to a job, a contract, or an organization
     Expense.belongsTo(models.Organization, {
         foreignKey: {
-            allowNull: false
-        }
-    })   // the organization that owns this expense
-    Expense.belongsTo(models.Contract)  // the contract that owns this expense
-    Expense.belongsTo(models.Job)   // the job that owns this expense
+            allowNull: false,
+        },
+    }) // the organization that owns this expense
+    Expense.belongsTo(models.Contract) // the contract that owns this expense
+    Expense.belongsTo(models.Job) // the job that owns this expense
 
-    Expense.belongsTo(models.Vendor)   // the vendor who provided the service
+    Expense.belongsTo(models.Vendor) // the vendor who provided the service
 
     Expense.belongsTo(models.User, {
         foreignKey: {
-                        name: 'updated_by',
-        }
+            name: 'updated_by',
+        },
     })
 
     return Expense

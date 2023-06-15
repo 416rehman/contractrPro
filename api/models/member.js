@@ -1,13 +1,13 @@
 const { Sequelize } = require('sequelize')
 module.exports.define = (sequelize, DataTypes) => {
     return sequelize.define(
-        'Member',   // a member is someone that is part of an organization
+        'Member', // a member is someone that is part of an organization
         {
             id: {
                 type: Sequelize.UUID,
                 defaultValue: Sequelize.UUIDV4,
                 allowNull: false,
-                primaryKey: true
+                primaryKey: true,
             },
             full_name: {
                 type: DataTypes.STRING(512),
@@ -40,8 +40,8 @@ module.exports.associate = (Member, models) => {
 
     Member.belongsTo(models.User, {
         foreignKey: {
-                        name: 'updated_by',
-        }
+            name: 'updated_by',
+        },
     })
 
     return Member

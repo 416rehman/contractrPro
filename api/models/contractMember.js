@@ -1,13 +1,13 @@
 const { Sequelize } = require('sequelize')
 module.exports.define = (sequelize, DataTypes) => {
     return sequelize.define(
-        'ContractMember',    // A contract member is a member that has access to a contract
+        'ContractMember', // A contract member is a member that has access to a contract
         {
             id: {
                 type: Sequelize.UUID,
                 defaultValue: Sequelize.UUIDV4,
                 allowNull: false,
-                primaryKey: true
+                primaryKey: true,
             },
             permission_overwrites: {
                 type: DataTypes.BIGINT,
@@ -25,8 +25,8 @@ module.exports.associate = (ContractMember, models) => {
 
     ContractMember.belongsTo(models.User, {
         foreignKey: {
-                        name: 'updated_by',
-        }
+            name: 'updated_by',
+        },
     })
 
     return ContractMember

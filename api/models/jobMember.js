@@ -7,7 +7,7 @@ module.exports.define = (sequelize, DataTypes) => {
                 type: Sequelize.UUID,
                 defaultValue: Sequelize.UUIDV4,
                 allowNull: false,
-                primaryKey: true
+                primaryKey: true,
             },
             permission_overwrites: {
                 type: DataTypes.INTEGER,
@@ -22,12 +22,12 @@ module.exports.define = (sequelize, DataTypes) => {
 
 module.exports.associate = (Job_Member, models) => {
     Job_Member.belongsTo(models.Member) // the member that is part of the job
-    Job_Member.belongsTo(models.Job)    // the job that the member is part of
+    Job_Member.belongsTo(models.Job) // the job that the member is part of
 
     Job_Member.belongsTo(models.User, {
         foreignKey: {
-                        name: 'updated_by',
-        }
+            name: 'updated_by',
+        },
     })
 
     return Job_Member

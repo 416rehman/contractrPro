@@ -1,7 +1,7 @@
 const { Sequelize } = require('sequelize')
 module.exports.define = (sequelize, DataTypes) => {
     return sequelize.define(
-        'Client',   // a client is an organization's customer
+        'Client', // a client is an organization's customer
         {
             id: {
                 type: Sequelize.UUID,
@@ -28,17 +28,17 @@ module.exports.define = (sequelize, DataTypes) => {
         },
         {
             paranoid: true,
-        },
+        }
     )
 }
 
 module.exports.associate = (Client, models) => {
-    Client.belongsTo(models.Organization)   // the organization that owns this client
+    Client.belongsTo(models.Organization) // the organization that owns this client
 
     Client.belongsTo(models.User, {
         foreignKey: {
-                        name: 'updated_by',
-        }
+            name: 'updated_by',
+        },
     })
 
     return Client

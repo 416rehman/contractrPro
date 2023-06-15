@@ -32,17 +32,17 @@ module.exports.define = (sequelize, DataTypes) => {
         },
         {
             paranoid: true,
-        },
+        }
     )
 }
 
 module.exports.associate = (ExpenseEntry, models) => {
-    ExpenseEntry.belongsTo(models.Expense)   // the expense that owns this expense entry
+    ExpenseEntry.belongsTo(models.Expense) // the expense that owns this expense entry
 
     ExpenseEntry.belongsTo(models.User, {
         foreignKey: {
-                        name: 'updated_by',
-        }
+            name: 'updated_by',
+        },
     })
 
     return ExpenseEntry

@@ -36,7 +36,7 @@ module.exports.define = (sequelize, DataTypes) => {
         },
         {
             paranoid: true,
-        },
+        }
     )
 }
 
@@ -48,7 +48,7 @@ module.exports.associate = (Address, models) => {
     Address.belongsTo(models.User, {
         foreignKey: {
             name: 'updated_by',
-        }
+        },
     })
 
     return Address
