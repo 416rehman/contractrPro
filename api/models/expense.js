@@ -1,6 +1,6 @@
 const { Sequelize } = require('sequelize')
 module.exports.define = (sequelize, DataTypes) => {
-    return sequelize.define(
+    const Expense = sequelize.define(
         'Expense',
         {
             id: {
@@ -31,27 +31,27 @@ module.exports.define = (sequelize, DataTypes) => {
         },
         {
             paranoid: true,
-        }
+        },
     )
-}
 
-module.exports.associate = (Expense, models) => {
-    // Expense can either belong to a job, a contract, or an organization
-    Expense.belongsTo(models.Organization, {
-        foreignKey: {
-            allowNull: false,
-        },
-    }) // the organization that owns this expense
-    Expense.belongsTo(models.Contract) // the contract that owns this expense
-    Expense.belongsTo(models.Job) // the job that owns this expense
+    Expense.associate = (models) => {
+        // Expense can either belong to a job, a contract, or an organization
+        Expense.belongsTo(models.Organization, {
+            foreignKey: {
+                allowNull: false,
+            },
+        }) // the organization that owns this expense
+        Expense.belongsTo(models.Contract) // the contract that owns this expense
+        Expense.belongsTo(models.Job) // the job that owns this expense
 
-    Expense.belongsTo(models.Vendor) // the vendor who provided the service
+        Expense.belongsTo(models.Vendor) // the vendor who provided the service
 
-    Expense.belongsTo(models.User, {
-        foreignKey: {
-            name: 'updated_by',
-        },
-    })
+        Expense.belongsTo(models.User, {
+            foreignKey: {
+                name: 'updated_by',
+            },
+        })
+    }
 
     return Expense
 }

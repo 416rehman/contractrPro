@@ -33,15 +33,15 @@ const sequelize = new Sequelize(
         host: process.env.DB_Host,
         port: process.env.DB_Port,
         dialect: 'postgres',
-    }
+    },
 )
 
 sequelize
     .authenticate()
-    .then(function () {
+    .then(function() {
         console.info('Connection has been established successfully.')
     })
-    .catch(function (err) {
+    .catch(function(err) {
         console.error('Unable to connect to the database:', err)
     })
 
@@ -65,25 +65,13 @@ const models = {
     Vendor: vendor.define(sequelize, DataTypes),
 }
 
+for (const model of Object.values(models)) {
+    if (typeof model.associate === 'function') {
+        model.associate(models)
+    }
+}
+
 module.exports = {
     sequelize,
-    ...{
-        Address: address.associate(models.Address, models),
-        Attachment: attachment.associate(models.Attachment, models),
-        Client: client.associate(models.Client, models),
-        Comment: comment.associate(models.Comment, models),
-        Contract: contract.associate(models.Contract, models),
-        ContractMember: contractMember.associate(models.ContractMember, models),
-        Expense: expense.associate(models.Expense, models),
-        ExpenseEntry: expenseEntry.associate(models.ExpenseEntry, models),
-        Invite: invite.associate(models.Invite, models),
-        Invoice: invoice.associate(models.Invoice, models),
-        InvoiceEntry: invoiceEntry.associate(models.InvoiceEntry, models),
-        Job: job.associate(models.Job, models),
-        JobMember: jobMember.associate(models.JobMember, models),
-        Member: member.associate(models.Member, models),
-        Organization: organization.associate(models.Organization, models),
-        User: user.associate(models.User, models),
-        Vendor: vendor.associate(models.Vendor, models),
-    },
+    ...models,
 }

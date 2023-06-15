@@ -1,6 +1,6 @@
 const { Sequelize } = require('sequelize')
 module.exports.define = (sequelize, DataTypes) => {
-    return sequelize.define(
+    const Attachment = sequelize.define(
         'Attachment',
         {
             id: {
@@ -30,21 +30,21 @@ module.exports.define = (sequelize, DataTypes) => {
             paranoid: true,
         }
     )
-}
 
-module.exports.associate = (Attachment, models) => {
-    Attachment.belongsTo(models.Comment, {
-        foreignKey: {
-            allowNull: false,
-        },
-        onDelete: 'CASCADE',
-    })
+    Attachment.associate = (models) => {
+        Attachment.belongsTo(models.Comment, {
+            foreignKey: {
+                allowNull: false,
+            },
+            onDelete: 'CASCADE',
+        })
 
-    Attachment.belongsTo(models.User, {
-        foreignKey: {
-            name: 'updated_by',
-        },
-    })
+        Attachment.belongsTo(models.User, {
+            foreignKey: {
+                name: 'updated_by',
+            },
+        })
+    }
 
     return Attachment
 }

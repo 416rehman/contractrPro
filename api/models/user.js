@@ -1,6 +1,6 @@
 const { Sequelize } = require('sequelize')
 module.exports.define = (sequelize, DataTypes) => {
-    return sequelize.define(
+    const User = sequelize.define(
         'User',
         {
             id: {
@@ -50,14 +50,14 @@ module.exports.define = (sequelize, DataTypes) => {
             paranoid: true,
         },
     )
-}
 
-module.exports.associate = (User, models) => {
-    User.belongsTo(models.User, {
-        foreignKey: {
-            name: 'updated_by',
-        },
-    })
+    User.associate = (models) => {
+        User.belongsTo(models.User, {
+            foreignKey: {
+                name: 'updated_by',
+            },
+        })
+    }
 
     return User
 }

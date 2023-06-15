@@ -1,6 +1,6 @@
 const { Sequelize } = require('sequelize')
 module.exports.define = (sequelize, DataTypes) => {
-    return sequelize.define(
+    const ContractMember = sequelize.define(
         'ContractMember', // A contract member is a member that has access to a contract
         {
             id: {
@@ -17,17 +17,17 @@ module.exports.define = (sequelize, DataTypes) => {
             paranoid: true,
         }
     )
-}
 
-module.exports.associate = (ContractMember, models) => {
-    ContractMember.belongsTo(models.Contract)
-    ContractMember.belongsTo(models.Member)
+    ContractMember.associate = (models) => {
+        ContractMember.belongsTo(models.Contract)
+        ContractMember.belongsTo(models.Member)
 
-    ContractMember.belongsTo(models.User, {
-        foreignKey: {
-            name: 'updated_by',
-        },
-    })
+        ContractMember.belongsTo(models.User, {
+            foreignKey: {
+                name: 'updated_by',
+            },
+        })
+    }
 
     return ContractMember
 }

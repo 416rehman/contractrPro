@@ -1,6 +1,6 @@
 const { Sequelize } = require('sequelize')
 module.exports.define = (sequelize, DataTypes) => {
-    return sequelize.define(
+    const Invoice = sequelize.define(
         'Invoice',
         {
             id: {
@@ -16,24 +16,24 @@ module.exports.define = (sequelize, DataTypes) => {
         },
         {
             paranoid: true,
-        }
+        },
     )
-}
 
-module.exports.associate = (Invoice, models) => {
-    // An invoice can either be for a contract or a job
-    Invoice.belongsTo(models.Contract, {
-        foreignKey: {
-            allowNull: false,
-        },
-    })
-    Invoice.belongsTo(models.Job)
+    Invoice.associate = (models) => {
+        // An invoice can either be for a contract or a job
+        Invoice.belongsTo(models.Contract, {
+            foreignKey: {
+                allowNull: false,
+            },
+        })
+        Invoice.belongsTo(models.Job)
 
-    Invoice.belongsTo(models.User, {
-        foreignKey: {
-            name: 'updated_by',
-        },
-    })
+        Invoice.belongsTo(models.User, {
+            foreignKey: {
+                name: 'updated_by',
+            },
+        })
+    }
 
     return Invoice
 }

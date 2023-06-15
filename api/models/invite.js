@@ -1,6 +1,6 @@
 const { Sequelize } = require('sequelize')
 module.exports.define = (sequelize, DataTypes) => {
-    return sequelize.define(
+    const Invite = sequelize.define(
         'Invite',
         {
             id: {
@@ -26,28 +26,29 @@ module.exports.define = (sequelize, DataTypes) => {
         },
         {
             paranoid: true,
-        }
-    )
-}
-
-module.exports.associate = (Invite, models) => {
-    // The organization that the invite is for
-    Invite.belongsTo(models.Organization, {
-        foreignKey: 'organization_id',
-        allowNull: false,
-        onDelete: 'CASCADE',
-    })
-
-    // The user that created the invite
-    Invite.belongsTo(models.User, {
-        foreignKey: 'created_by',
-    })
-
-    Invite.belongsTo(models.User, {
-        foreignKey: {
-            name: 'updated_by',
         },
-    })
+    )
+
+    Invite.associate = (models) => {
+        // The organization that the invite is for
+        Invite.belongsTo(models.Organization, {
+            foreignKey: 'organization_id',
+            allowNull: false,
+            onDelete: 'CASCADE',
+        })
+
+        // The user that created the invite
+        Invite.belongsTo(models.User, {
+            foreignKey: 'created_by',
+        })
+
+        Invite.belongsTo(models.User, {
+            foreignKey: {
+                name: 'updated_by',
+            },
+        })
+    }
+
 
     return Invite
 }

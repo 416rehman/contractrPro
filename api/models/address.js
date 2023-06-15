@@ -1,6 +1,6 @@
 const { Sequelize } = require('sequelize')
 module.exports.define = (sequelize, DataTypes) => {
-    return sequelize.define(
+    const Address = sequelize.define(
         'Address',
         {
             id: {
@@ -38,18 +38,18 @@ module.exports.define = (sequelize, DataTypes) => {
             paranoid: true,
         }
     )
-}
 
-module.exports.associate = (Address, models) => {
-    Address.belongsTo(models.Organization)
-    Address.belongsTo(models.User)
-    Address.belongsTo(models.Client)
+    Address.associate = (models) => {
+        Address.belongsTo(models.Organization)
+        Address.belongsTo(models.User)
+        Address.belongsTo(models.Client)
 
-    Address.belongsTo(models.User, {
-        foreignKey: {
-            name: 'updated_by',
-        },
-    })
+        Address.belongsTo(models.User, {
+            foreignKey: {
+                name: 'updated_by',
+            },
+        })
+    }
 
     return Address
 }

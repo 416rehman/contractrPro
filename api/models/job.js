@@ -1,7 +1,7 @@
 const { Sequelize } = require('sequelize')
 
 module.exports.define = (sequelize, DataTypes) => {
-    return sequelize.define(
+    const Job = sequelize.define(
         'Job',
         {
             id: {
@@ -31,18 +31,18 @@ module.exports.define = (sequelize, DataTypes) => {
         },
         {
             paranoid: true,
-        }
-    )
-}
-
-module.exports.associate = (Job, models) => {
-    Job.belongsTo(models.Contract, { onDelete: 'CASCADE' })
-
-    Job.belongsTo(models.User, {
-        foreignKey: {
-            name: 'updated_by',
         },
-    })
+    )
+
+    Job.associate = (models) => {
+        Job.belongsTo(models.Contract, { onDelete: 'CASCADE' })
+
+        Job.belongsTo(models.User, {
+            foreignKey: {
+                name: 'updated_by',
+            },
+        })
+    }
 
     return Job
 }

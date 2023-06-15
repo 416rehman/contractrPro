@@ -1,6 +1,6 @@
 const { Sequelize } = require('sequelize')
 module.exports.define = (sequelize, DataTypes) => {
-    return sequelize.define(
+    const ExpenseEntry = sequelize.define(
         'ExpenseEntry',
         {
             id: {
@@ -34,16 +34,15 @@ module.exports.define = (sequelize, DataTypes) => {
             paranoid: true,
         }
     )
-}
+    ExpenseEntry.associate = (models) => {
+        ExpenseEntry.belongsTo(models.Expense) // the expense that owns this expense entry
 
-module.exports.associate = (ExpenseEntry, models) => {
-    ExpenseEntry.belongsTo(models.Expense) // the expense that owns this expense entry
-
-    ExpenseEntry.belongsTo(models.User, {
-        foreignKey: {
-            name: 'updated_by',
-        },
-    })
+        ExpenseEntry.belongsTo(models.User, {
+            foreignKey: {
+                name: 'updated_by',
+            },
+        })
+    }
 
     return ExpenseEntry
 }

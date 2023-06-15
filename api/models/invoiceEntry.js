@@ -1,6 +1,6 @@
 const { Sequelize } = require('sequelize')
 module.exports.define = (sequelize, DataTypes) => {
-    return sequelize.define(
+    const InvoiceEntry = sequelize.define(
         'InvoiceEntry',
         {
             id: {
@@ -32,18 +32,18 @@ module.exports.define = (sequelize, DataTypes) => {
         },
         {
             paranoid: true,
-        }
-    )
-}
-
-module.exports.associate = (InvoiceEntry, models) => {
-    InvoiceEntry.belongsTo(models.Invoice) // the invoice that owns this invoice entry
-
-    InvoiceEntry.belongsTo(models.User, {
-        foreignKey: {
-            name: 'updated_by',
         },
-    })
+    )
+
+    InvoiceEntry.associate = (models) => {
+        InvoiceEntry.belongsTo(models.Invoice) // the invoice that owns this invoice entry
+
+        InvoiceEntry.belongsTo(models.User, {
+            foreignKey: {
+                name: 'updated_by',
+            },
+        })
+    }
 
     return InvoiceEntry
 }

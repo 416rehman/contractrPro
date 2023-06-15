@@ -1,6 +1,6 @@
 const { Sequelize } = require('sequelize')
 module.exports.define = (sequelize, DataTypes) => {
-    return sequelize.define(
+    const Comment = sequelize.define(
         'Comment',
         {
             id: {
@@ -22,26 +22,28 @@ module.exports.define = (sequelize, DataTypes) => {
             paranoid: true,
         }
     )
-}
 
-module.exports.associate = (Comment, models) => {
-    Comment.belongsTo(models.Contract, { onDelete: 'CASCADE' })
-    Comment.belongsTo(models.Job, { onDelete: 'CASCADE' })
-    Comment.belongsTo(models.Expense, { onDelete: 'CASCADE' })
-    Comment.belongsTo(models.Invoice, { onDelete: 'CASCADE' })
+    Comment.associate = (models) => {
+        Comment.belongsTo(models.Contract, { onDelete: 'CASCADE' })
+        Comment.belongsTo(models.Job, { onDelete: 'CASCADE' })
+        Comment.belongsTo(models.Expense, { onDelete: 'CASCADE' })
+        Comment.belongsTo(models.Invoice, { onDelete: 'CASCADE' })
 
-    Comment.belongsTo(models.User, {
-        // If no author is specified, it is a system message
-        foreignKey: {
-            name: 'author_id',
-        },
-    })
+        Comment.belongsTo(models.User, {
+            // If no author is specified, it is a system message
+            foreignKey: {
+                name: 'author_id',
+            },
+        })
 
-    Comment.belongsTo(models.User, {
-        foreignKey: {
-            name: 'updated_by',
-        },
-    })
+        Comment.belongsTo(models.User, {
+            foreignKey: {
+                name: 'updated_by',
+            },
+        })
+    }
 
     return Comment
 }
+
+module.exports
