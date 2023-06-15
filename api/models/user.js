@@ -13,6 +13,11 @@ module.exports.define = (sequelize, DataTypes) => {
                 type: DataTypes.STRING(32),
                 allowNull: false,
                 unique: true,
+                validate: {
+                    // We require usernames to have length of at least 3, and
+                    // only use letters, numbers and underscores.
+                    is: /^\w{3,}$/,
+                },
             },
             full_name: {
                 type: DataTypes.STRING(512),
@@ -43,7 +48,7 @@ module.exports.define = (sequelize, DataTypes) => {
         },
         {
             paranoid: true,
-        }
+        },
     )
 }
 
