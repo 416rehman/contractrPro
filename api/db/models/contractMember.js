@@ -9,7 +9,7 @@ module.exports.define = (sequelize, DataTypes) => {
                 allowNull: false,
                 primaryKey: true,
             },
-            permission_overwrites: {
+            permissionOverwrites: {
                 type: DataTypes.BIGINT,
             },
         },
@@ -19,13 +19,12 @@ module.exports.define = (sequelize, DataTypes) => {
     )
 
     ContractMember.associate = (models) => {
-        ContractMember.belongsTo(models.Contract)
-        ContractMember.belongsTo(models.Member)
+        ContractMember.belongsToMany(models.Job, {
+            through: 'JobMember',
+        })
 
         ContractMember.belongsTo(models.User, {
-            foreignKey: {
-                name: 'updated_by',
-            },
+            as: 'updatedByUser',
         })
     }
 

@@ -1,7 +1,7 @@
 const { Sequelize } = require('sequelize')
 module.exports.define = (sequelize, DataTypes) => {
-    const ExpenseEntry = sequelize.define(
-        'ExpenseEntry',
+    const InvoiceEntry = sequelize.define(
+        'InvoiceEntry',
         {
             id: {
                 type: Sequelize.UUID,
@@ -21,11 +21,7 @@ module.exports.define = (sequelize, DataTypes) => {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
-            per_cost: {
-                type: DataTypes.FLOAT(),
-                allowNull: false,
-            },
-            tax: {
+            unitCost: {
                 type: DataTypes.FLOAT(),
                 allowNull: false,
             },
@@ -34,15 +30,19 @@ module.exports.define = (sequelize, DataTypes) => {
             paranoid: true,
         }
     )
-    ExpenseEntry.associate = (models) => {
-        ExpenseEntry.belongsTo(models.Expense) // the expense that owns this expense entry
 
-        ExpenseEntry.belongsTo(models.User, {
+    InvoiceEntry.associate = (models) => {
+        InvoiceEntry.belongsTo(models.Invoice, {
             foreignKey: {
-                name: 'updated_by',
+                allowNull: false,
             },
+            onDelete: 'CASCADE',
+        }) // the invoice that owns this invoice entry
+
+        InvoiceEntry.belongsTo(models.User, {
+            as: 'updatedByUser',
         })
     }
 
-    return ExpenseEntry
+    return InvoiceEntry
 }

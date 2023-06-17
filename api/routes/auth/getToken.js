@@ -2,12 +2,12 @@ const auth_service = require('../../utils/authHelpers')
 const { signJWT } = require('../../utils')
 
 module.exports = (req, res) => {
-    if (!req.query.refresh_token && !req.body.refresh_token)
+    if (!req.query.refreshToken && !req.body.refreshToken)
         res.status(400).json({ error: 'Missing refresh token' })
     else {
         auth_service
             .verifyRefreshToken(
-                req.query.refresh_token || req.body.refresh_token
+                req.query.refreshToken || req.body.refreshToken
             )
             .then((user) => {
                 signJWT(

@@ -13,7 +13,7 @@ module.exports.define = (sequelize, DataTypes) => {
                 type: DataTypes.STRING(128),
                 allowNull: false,
             },
-            postal_code: {
+            postalCode: {
                 type: DataTypes.STRING(10),
                 allowNull: false,
             },
@@ -25,11 +25,11 @@ module.exports.define = (sequelize, DataTypes) => {
                 type: DataTypes.STRING(128),
                 allowNull: false,
             },
-            address_line_1: {
+            addressLine1: {
                 type: DataTypes.STRING(128),
                 allowNull: false,
             },
-            address_line_2: {
+            addressLine2: {
                 type: DataTypes.STRING(128),
                 allowNull: true,
             },
@@ -40,14 +40,8 @@ module.exports.define = (sequelize, DataTypes) => {
     )
 
     Address.associate = (models) => {
-        Address.belongsTo(models.Organization)
-        Address.belongsTo(models.User)
-        Address.belongsTo(models.Client)
-
         Address.belongsTo(models.User, {
-            foreignKey: {
-                name: 'updated_by',
-            },
+            as: 'updatedByUser',
         })
     }
 

@@ -15,11 +15,11 @@ module.exports.define = (sequelize, DataTypes) => {
                 unique: true,
                 validate: {
                     // We require usernames to have length of at least 3, and
-                    // only use letters, numbers and underscores.
-                    is: /^\w{3,}$/,
+                    // only use letters, numbers, underscores, dashes, and dots.
+                    is: /^[a-z0-9_.-]{3,}$/i,
                 },
             },
-            full_name: {
+            fullName: {
                 type: DataTypes.STRING(512),
                 allowNull: false,
             },
@@ -37,11 +37,11 @@ module.exports.define = (sequelize, DataTypes) => {
                 type: DataTypes.STRING(255),
                 allowNull: false,
             },
-            avatar_url: {
+            avatarUrl: {
                 type: DataTypes.STRING(1024),
                 allowNull: false,
             },
-            refresh_token: {
+            refreshToken: {
                 type: DataTypes.STRING(255),
                 allowNull: false,
             },
@@ -52,10 +52,16 @@ module.exports.define = (sequelize, DataTypes) => {
     )
 
     User.associate = (models) => {
+        User.belongsToMany(models.Organization, {
+            through: 'OrganizationMember',
+        })
+
+        User.hasOne(models.Address, {
+            foreignKey: { allowNull: true },
+        })
+
         User.belongsTo(models.User, {
-            foreignKey: {
-                name: 'updated_by',
-            },
+            as: 'updatedByUser',
         })
     }
 

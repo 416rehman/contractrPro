@@ -1,4 +1,4 @@
-const { User } = require('../models')
+const { User } = require('../db')
 const bcrypt = require('bcrypt')
 const { generateRefreshToken } = require('../utils')
 const { Op } = require('sequelize')
@@ -47,7 +47,7 @@ module.exports.authenticate = function (username, email, password) {
  */
 module.exports.verifyRefreshToken = function (refreshToken) {
     return new Promise((resolve, reject) => {
-        User.findOne({ where: { refresh_token: refreshToken } })
+        User.findOne({ where: { refreshToken: refreshToken } })
             .then((user) => {
                 if (!user) {
                     reject(new Error('User not found'))
@@ -74,13 +74,13 @@ module.exports.createUser = function (user_data) {
                         username: user_data.username,
                         password: hash,
                         email: user_data.email,
-                        full_name: user_data.full_name,
+                        fullName: user_data.fullName,
                         phone: user_data.phone,
                         avatar: user_data.avatar,
                     })
 
                     try {
-                        user.refresh_token = await generateRefreshToken()
+                        user.refreshToken = await generateRefreshToken()
                         resolve(await user.save())
                     } catch (err) {
                         reject(err)

@@ -7,10 +7,9 @@ const auth_service = require('../../utils/authHelpers')
 module.exports = async (req, res) => {
     try {
         const { username, email, password } = req.body
-        console.log(req.body)
         const user = await auth_service.authenticate(username, email, password)
         res.json({
-            refresh_token: user.refresh_token,
+            refreshToken: user.refreshToken,
         })
     } catch (error) {
         res.status(401).json({

@@ -13,10 +13,6 @@ module.exports.define = (sequelize, DataTypes) => {
                 type: DataTypes.STRING(1024),
                 allowNull: false,
             },
-            attachments: {
-                type: DataTypes.STRING(1024),
-                allowNull: false,
-            },
         },
         {
             paranoid: true,
@@ -30,20 +26,13 @@ module.exports.define = (sequelize, DataTypes) => {
         Comment.belongsTo(models.Invoice, { onDelete: 'CASCADE' })
 
         Comment.belongsTo(models.User, {
-            // If no author is specified, it is a system message
-            foreignKey: {
-                name: 'author_id',
-            },
+            as: 'author'
         })
 
         Comment.belongsTo(models.User, {
-            foreignKey: {
-                name: 'updated_by',
-            },
+            as: 'updatedByUser',
         })
     }
 
     return Comment
 }
-
-module.exports

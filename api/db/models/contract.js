@@ -16,13 +16,13 @@ module.exports.define = (sequelize, DataTypes) => {
             description: {
                 type: DataTypes.STRING(1024),
             },
-            start_date: {
+            startDate: {
                 type: DataTypes.DATE,
             },
-            due_date: {
+            dueDate: {
                 type: DataTypes.DATE,
             },
-            completion_date: {
+            completionDate: {
                 type: DataTypes.DATE,
             },
             status: {
@@ -38,13 +38,24 @@ module.exports.define = (sequelize, DataTypes) => {
     )
 
     Contract.associate = (models) => {
-        Contract.belongsTo(models.Organization, { onDelete: 'CASCADE' })
-        Contract.belongsTo(models.Client)
+        Contract.belongsTo(models.Organization, { onDelete: 'CASCADE', foreignKey: { allowNull: false } })
+        Contract.belongsTo(models.Client, { onDelete: 'RESTRICT', foreignKey: { allowNull: false } })
+
+        Contract.belongsToMany(models.OrganizationMember, {
+            through: 'ContractMember',
+        })
+
+        Contract.hasMany(models.Expense)
+        Contract.hasMany(models.Invoice)
+
+        Contract.hasMany(models.Job, {
+            foreignKey: { allowNull: false },
+        })
+
+        Contract.hasMany(models.Comment)
 
         Contract.belongsTo(models.User, {
-            foreignKey: {
-                name: 'updated_by',
-            },
+            as: 'updatedByUser',
         })
     }
 

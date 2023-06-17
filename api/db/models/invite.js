@@ -18,7 +18,7 @@ module.exports.define = (sequelize, DataTypes) => {
                 defaultValue: 0,
                 allowNull: false,
             },
-            max_uses: {
+            maxUses: {
                 type: DataTypes.INTEGER,
                 defaultValue: 0,
                 allowNull: false,
@@ -43,9 +43,7 @@ module.exports.define = (sequelize, DataTypes) => {
         })
 
         Invite.belongsTo(models.User, {
-            foreignKey: {
-                name: 'updated_by',
-            },
+            as: 'updatedByUser',
         })
     }
 

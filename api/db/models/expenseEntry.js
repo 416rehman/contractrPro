@@ -1,7 +1,7 @@
 const { Sequelize } = require('sequelize')
 module.exports.define = (sequelize, DataTypes) => {
-    const Attachment = sequelize.define(
-        'Attachment',
+    const ExpenseEntry = sequelize.define(
+        'ExpenseEntry',
         {
             id: {
                 type: Sequelize.UUID,
@@ -9,20 +9,20 @@ module.exports.define = (sequelize, DataTypes) => {
                 allowNull: false,
                 primaryKey: true,
             },
-            file_name: {
-                type: DataTypes.STRING(256),
-                allowNull: false,
-            },
-            mime_type: {
+            name: {
                 type: DataTypes.STRING(255),
                 allowNull: false,
             },
-            file_size_kb: {
-                type: DataTypes.BIGINT,
+            description: {
+                type: DataTypes.STRING(512),
                 allowNull: false,
             },
-            access_url: {
-                type: DataTypes.STRING(2048),
+            quantity: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+            },
+            unitCost: {
+                type: DataTypes.FLOAT(),
                 allowNull: false,
             },
         },
@@ -30,21 +30,18 @@ module.exports.define = (sequelize, DataTypes) => {
             paranoid: true,
         }
     )
-
-    Attachment.associate = (models) => {
-        Attachment.belongsTo(models.Comment, {
+    ExpenseEntry.associate = (models) => {
+        ExpenseEntry.belongsTo(models.Expense, {
             foreignKey: {
                 allowNull: false,
             },
             onDelete: 'CASCADE',
-        })
+        }) // the expense that owns this expense entry
 
-        Attachment.belongsTo(models.User, {
-            foreignKey: {
-                name: 'updated_by',
-            },
+        ExpenseEntry.belongsTo(models.User, {
+            as: 'updatedByUser',
         })
     }
 
-    return Attachment
+    return ExpenseEntry
 }

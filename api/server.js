@@ -9,19 +9,20 @@ const multer = require('multer')
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3')
 const helmet = require('helmet')
 const cookieSession = require('cookie-session')
-
+const { connect } = require('./db')
 const routes = require('./routes')
-const { sequelize } = require('./models')
 const checkAuth = require('./middleware/auth-middleware')
 
-const port = process.env.PORT || 3000
-const app = express()
 // Use logging middleware
 const logger = require('./logger')
+const { populate } = require('./utils/fake')
 const pino = require('pino-http')({
     // Use our default logger instance, which is already configured
     logger,
 })
+
+const port = process.env.PORT || 3000
+const app = express()
 app.use(pino)
 app.use(cors())
 app.use(express.json())
@@ -31,7 +32,7 @@ app.use(
         limits: {
             fileSize: 10 * 1024 * 1024, // limit filesize
         },
-    }).array('attachments', 10)
+    }).array('attachments', 10),
 ) // a comment can have up to 10 attachments
 app.use(helmet())
 app.disable('x-powered-by')
@@ -48,7 +49,7 @@ app.use(
             domain: 'contractr.pro',
             expires: new Date(Date.now() + 60 * 60 * 1000),
         },
-    })
+    }),
 )
 
 // S3 client
@@ -105,7 +106,7 @@ app.post('/comments', async (req, res) => {
     res.json({
         content: commentContent,
         attachments: commentAttachments.map(
-            (attachment) => attachment.originalname
+            (attachment) => attachment.originalname,
         ),
         userId: commentUserId,
         username: commentUsername,
@@ -118,23 +119,23 @@ app.use((req, res) => {
 })
 
 app.use((err, req, res) => {
-    console.error(err.stack)
+    logger.error(err.stack)
     res.status(500).send('An unexpected problem has occured.')
 })
 
-sequelize
-    .authenticate()
-    .then(() => {
-        logger.info('Connection has been established successfully.')
-        return sequelize.sync({ force: true })
+
+connect().then(() => {
+    app.listen(port, async () => {
+        logger.info(`Server is running on port ${port}`)
+        if (process.env.NODE_ENV === 'development') {
+            logger.info(`Populating database with mock data...`)
+            populate().then(() => {
+                logger.info(`Database populated!`)
+            }).catch((err) => {
+                logger.error(err)
+            })
+        }
     })
-    .then(() => {
-        logger.info('Synced successfully.')
-        return app.listen(port)
-    })
-    .then(() => {
-        logger.info(`listening at http://localhost:${port}/`)
-    })
-    .catch((err) => {
-        logger.error('Unable to connect to the database:', err)
-    })
+}).catch((err) => {
+    logger.error(err)
+})
