@@ -9,7 +9,7 @@ module.exports.define = (sequelize, DataTypes) => {
                 allowNull: false,
                 primaryKey: true,
             },
-            permission_overwrites: {
+            permissionOverwrites: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
             },
@@ -20,13 +20,8 @@ module.exports.define = (sequelize, DataTypes) => {
     )
 
     JobMember.associate = (models) => {
-        JobMember.belongsTo(models.Member) // the member that is part of the job
-        JobMember.belongsTo(models.Job) // the job that the member is part of
-
         JobMember.belongsTo(models.User, {
-            foreignKey: {
-                name: 'updated_by',
-            },
+            as: 'updatedByUser',
         })
     }
 

@@ -15,7 +15,7 @@ module.exports.define = (sequelize, DataTypes) => {
                 type: DataTypes.STRING(256),
                 allowNull: false,
             },
-            job_name: {
+            name: {
                 type: DataTypes.STRING(256),
                 allowNull: false,
             },
@@ -36,11 +36,17 @@ module.exports.define = (sequelize, DataTypes) => {
 
     Job.associate = (models) => {
         Job.belongsTo(models.Contract, { onDelete: 'CASCADE' })
+        Job.belongsToMany(models.ContractMember, {
+            through: 'JobMember',
+        })
+
+        Job.hasMany(models.Expense)
+        Job.hasMany(models.Invoice)
+
+        Job.hasMany(models.Comment)
 
         Job.belongsTo(models.User, {
-            foreignKey: {
-                name: 'updated_by',
-            },
+            as: 'updatedByUser',
         })
     }
 

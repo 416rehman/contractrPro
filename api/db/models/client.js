@@ -1,7 +1,7 @@
 const { Sequelize } = require('sequelize')
 module.exports.define = (sequelize, DataTypes) => {
-    const Vendor = sequelize.define(
-        'Vendor', // a vendor is a company that provides services to the organization
+    const Client = sequelize.define(
+        'Client', // a client is an organization's customer
         {
             id: {
                 type: Sequelize.UUID,
@@ -31,14 +31,18 @@ module.exports.define = (sequelize, DataTypes) => {
         }
     )
 
-    Vendor.associate = (models) => {
-        Vendor.belongsTo(models.Organization) // the organization that owns this client
-        Vendor.belongsTo(models.User, {
-            foreignKey: {
-                name: 'updated_by',
-            },
+    Client.associate = (models) => {
+        Client.hasMany(models.Contract, {
+            foreignKey: { allowNull: false },
+        })
+        Client.hasOne(models.Address, {
+            foreignKey: { allowNull: true },
+        })
+
+        Client.belongsTo(models.User, {
+            as: 'updatedByUser',
         })
     }
 
-    return Vendor
+    return Client
 }

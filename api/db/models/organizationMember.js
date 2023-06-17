@@ -1,7 +1,7 @@
 const { Sequelize } = require('sequelize')
 module.exports.define = (sequelize, DataTypes) => {
-    const Organization = sequelize.define(
-        'Organization',
+    const OrganizationMember = sequelize.define(
+        'OrganizationMember', // a member is someone that is part of an organization
         {
             id: {
                 type: Sequelize.UUID,
@@ -9,28 +9,22 @@ module.exports.define = (sequelize, DataTypes) => {
                 allowNull: false,
                 primaryKey: true,
             },
-            name: {
-                type: DataTypes.STRING(255),
-                allowNull: false,
-            },
-            description: {
+            fullName: {
                 type: DataTypes.STRING(512),
                 allowNull: false,
             },
             email: {
                 type: DataTypes.STRING(255),
                 allowNull: false,
+                unique: true,
             },
             phone: {
                 type: DataTypes.STRING(25),
                 allowNull: false,
+                unique: true,
             },
-            website: {
-                type: DataTypes.STRING(255),
-                allowNull: true,
-            },
-            logo_url: {
-                type: DataTypes.STRING(255),
+            permissions: {
+                type: DataTypes.INTEGER,
                 allowNull: false,
             },
         },
@@ -39,20 +33,15 @@ module.exports.define = (sequelize, DataTypes) => {
         }
     )
 
-    Organization.associate = (models) => {
-        Organization.belongsTo(models.User, {
-            foreignKey: {
-                name: 'owner_id',
-                allowNull: false,
-            },
+    OrganizationMember.associate = (models) => {
+        OrganizationMember.belongsToMany(models.Contract, {
+            through: 'ContractMember',
         })
 
-        Organization.belongsTo(models.User, {
-            foreignKey: {
-                name: 'updated_by',
-            },
+        OrganizationMember.belongsTo(models.User, {
+            as: 'updatedByUser',
         })
     }
 
-    return Organization
+    return OrganizationMember
 }

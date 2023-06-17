@@ -9,23 +9,11 @@ module.exports.define = (sequelize, DataTypes) => {
                 allowNull: false,
                 primaryKey: true,
             },
-            per_cost: {
-                type: DataTypes.FLOAT(),
-                allowNull: false,
-            },
-            name: {
-                type: DataTypes.STRING(255),
-                allowNull: false,
-            },
             description: {
                 type: DataTypes.STRING(512),
                 allowNull: false,
             },
-            quantity: {
-                type: DataTypes.INTEGER,
-                allowNull: false,
-            },
-            time: {
+            date: {
                 type: DataTypes.DATE,
             },
         },
@@ -35,21 +23,22 @@ module.exports.define = (sequelize, DataTypes) => {
     )
 
     Expense.associate = (models) => {
-        // Expense can either belong to a job, a contract, or an organization
+        // Expenses belong to an organization.
         Expense.belongsTo(models.Organization, {
             foreignKey: {
                 allowNull: false,
             },
-        }) // the organization that owns this expense
-        Expense.belongsTo(models.Contract) // the contract that owns this expense
-        Expense.belongsTo(models.Job) // the job that owns this expense
+        })
+
+        Expense.belongsTo(models.Contract) // the contract this expense was derived from
+        Expense.belongsTo(models.Job) // the job this expense was derived from
 
         Expense.belongsTo(models.Vendor) // the vendor who provided the service
 
+        Expense.hasMany(models.ExpenseEntry)
+
         Expense.belongsTo(models.User, {
-            foreignKey: {
-                name: 'updated_by',
-            },
+            as: 'updatedByUser',
         })
     }
 

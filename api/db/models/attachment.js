@@ -1,7 +1,7 @@
 const { Sequelize } = require('sequelize')
 module.exports.define = (sequelize, DataTypes) => {
-    const Member = sequelize.define(
-        'Member', // a member is someone that is part of an organization
+    const Attachment = sequelize.define(
+        'Attachment',
         {
             id: {
                 type: Sequelize.UUID,
@@ -9,22 +9,20 @@ module.exports.define = (sequelize, DataTypes) => {
                 allowNull: false,
                 primaryKey: true,
             },
-            full_name: {
-                type: DataTypes.STRING(512),
+            filename: {
+                type: DataTypes.STRING(256),
                 allowNull: false,
             },
-            email: {
+            mimetype: {
                 type: DataTypes.STRING(255),
                 allowNull: false,
-                unique: true,
             },
-            phone: {
-                type: DataTypes.STRING(25),
+            fileSizeKb: {
+                type: DataTypes.BIGINT,
                 allowNull: false,
-                unique: true,
             },
-            permissions: {
-                type: DataTypes.INTEGER,
+            accessUrl: {
+                type: DataTypes.STRING(2048),
                 allowNull: false,
             },
         },
@@ -33,16 +31,18 @@ module.exports.define = (sequelize, DataTypes) => {
         }
     )
 
-    Member.associate = (models) => {
-        Member.belongsTo(models.User)
-        Member.belongsTo(models.Organization)
-
-        Member.belongsTo(models.User, {
+    Attachment.associate = (models) => {
+        Attachment.belongsTo(models.Comment, {
             foreignKey: {
-                name: 'updated_by',
+                allowNull: false,
             },
+            onDelete: 'CASCADE',
+        })
+
+        Attachment.belongsTo(models.User, {
+            as: 'updatedByUser',
         })
     }
 
-    return Member
+    return Attachment
 }
