@@ -6,9 +6,7 @@ module.exports = (req, res) => {
         res.status(400).json({ error: 'Missing refresh token' })
     else {
         auth_service
-            .verifyRefreshToken(
-                req.query.refreshToken || req.body.refreshToken
-            )
+            .verifyRefreshToken(req.query.refreshToken || req.body.refreshToken)
             .then((user) => {
                 signJWT(
                     { id: user.id, username: user.username },

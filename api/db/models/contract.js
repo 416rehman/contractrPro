@@ -38,8 +38,14 @@ module.exports.define = (sequelize, DataTypes) => {
     )
 
     Contract.associate = (models) => {
-        Contract.belongsTo(models.Organization, { onDelete: 'CASCADE', foreignKey: { allowNull: false } })
-        Contract.belongsTo(models.Client, { onDelete: 'RESTRICT', foreignKey: { allowNull: false } })
+        Contract.belongsTo(models.Organization, {
+            onDelete: 'CASCADE',
+            foreignKey: { allowNull: false },
+        })
+        Contract.belongsTo(models.Client, {
+            onDelete: 'RESTRICT',
+            foreignKey: { allowNull: false },
+        })
 
         Contract.belongsToMany(models.OrganizationMember, {
             through: 'ContractMember',

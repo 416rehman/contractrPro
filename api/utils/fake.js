@@ -1,10 +1,15 @@
 const { faker } = require('@faker-js/faker')
-const { User, Organization, Address, OrganizationMember, Contract } = require('../db')
+const {
+    User,
+    Organization,
+    Address,
+    OrganizationMember,
+    Contract,
+} = require('../db')
 
 // Function to generate fake data for the "Users" table
 // A user is someone who is registered with the application (they have an account)
 const mockUserData = () => {
-
     return {
         username: faker.internet.userName(),
         fullName: faker.person.fullName(),
@@ -104,7 +109,6 @@ const generateExpensesData = () => {
     }
 }
 
-
 // Generate fake data for Invoices table
 const generateInvoicesData = () => {
     return {
@@ -117,7 +121,6 @@ const generateInvoicesData = () => {
     }
 }
 
-
 // Generate fake data for ExpenseEntries table
 const generateExpenseEntriesData = () => {
     return {
@@ -127,7 +130,6 @@ const generateExpenseEntriesData = () => {
         unitCost: faker.number.int({ min: 10, max: 100 }),
     }
 }
-
 
 // Generate fake data for InvoiceEntries table
 const generateInvoiceEntriesData = () => {
@@ -139,10 +141,8 @@ const generateInvoiceEntriesData = () => {
     }
 }
 
-
 const populate = async () => {
     // To see which special methods are available on a model, print its prototype property like console.log(Organization.prototype)
-
 
     for (let i = 0; i < 10; i++) {
         // USER ---------------------------------------------------------------
@@ -161,7 +161,8 @@ const populate = async () => {
         // Builds an organization object but does not persist it to the db
         // ownerId is required, which is why we build the object first with all the required fields, then save it
         let org = Organization.build(mockOrganizationData())
-        org.set({   // Alternative way to set multiple fields at once
+        org.set({
+            // Alternative way to set multiple fields at once
             updatedByUserId: user.id,
             ownerId: user.id,
         })
@@ -174,12 +175,13 @@ const populate = async () => {
         // ORGANIZATION MEMBER -----------------------------------------------
         // Builds an organization member object but does not persist it to the db
         const member = OrganizationMember.build(mockOrgMemberData())
-        member.set({    // Alternative way to set multiple fields at once
+        member.set({
+            // Alternative way to set multiple fields at once
             updatedByUserId: user.id,
             OrganizationId: org.id, // the OrganizationId field is required. This is the organization that the member belongs to
-            UserId: user.id,    // the UserId field is not required. If the member has an account, this is the user that the member belongs to
+            UserId: user.id, // the UserId field is not required. If the member has an account, this is the user that the member belongs to
         })
-        member.save()   // Persist the above changes to the db
+        member.save() // Persist the above changes to the db
 
         // ORGANIZATION CLIENT -----------------------------------------------
         // Creates and persists a client in the db
@@ -190,7 +192,7 @@ const populate = async () => {
         // Creates and persists a contract in the db
         let contract = Contract.build(mockContractData())
         contract.set({
-            ClientId: client.id,    // The ClientId field is required. This is the client that the contract belongs to
+            ClientId: client.id, // The ClientId field is required. This is the client that the contract belongs to
             OrganizationId: org.id, // The OrganizationId field is required. This is the organization that the contract belongs to
             updatedByUserId: user.id,
         })
@@ -201,10 +203,11 @@ const populate = async () => {
         // Creates and persists a job in the db
         const job = await contract.createJob(mockJobData())
         job.setUpdatedByUser(user) // Sets and persists the updatedByUser association to the user
-        job.addContractMember(contractMember, { // Add the contract member to the job (they can now view the job)
+        job.addContractMember(contractMember, {
+            // Add the contract member to the job (they can now view the job)
             through: {
-                permissionOverwrites: 1 // in the job.js model file, we set the association to go through the JobMember junction table. This field is part of that junction table
-            }
+                permissionOverwrites: 1, // in the job.js model file, we set the association to go through the JobMember junction table. This field is part of that junction table
+            },
         })
 
         // ORGANIZATION VENDOR ------------------------------------------------

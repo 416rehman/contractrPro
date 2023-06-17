@@ -34,11 +34,11 @@ module.exports.define = (sequelize, DataTypes) => {
                 type: DataTypes.FLOAT(),
                 allowNull: false,
                 defaultValue: 0,
-            }
+            },
         },
         {
             paranoid: true,
-        },
+        }
     )
 
     Invoice.associate = (models) => {
@@ -50,7 +50,7 @@ module.exports.define = (sequelize, DataTypes) => {
         })
 
         Invoice.belongsTo(models.Contract) // the contract this invoice was derived from
-        Invoice.belongsTo(models.Job)   // the job this invoice was derived from
+        Invoice.belongsTo(models.Job) // the job this invoice was derived from
 
         Invoice.hasMany(models.InvoiceEntry, {
             onDelete: 'CASCADE',

@@ -18,11 +18,13 @@ const address = require('./models/address'),
     user = require('./models/user'),
     vendor = require('./models/vendor')
 
-logger.info({host: process.env.DB_HOST,
+logger.info({
+    host: process.env.DB_HOST,
     port: process.env.DB_POR,
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
-    database: process.env.DB_DATABASE})
+    database: process.env.DB_DATABASE,
+})
 
 const sequelize = new Sequelize(
     process.env.DB_Database,
@@ -73,22 +75,27 @@ for (const model of Object.values(models)) {
 
 const connect = async () => {
     return new Promise((resolve, reject) => {
-        sequelize.authenticate().then(() => {
-            logger.info('Connected to database')
-            sequelize.sync({ force: true }).then(() => {
-                logger.info('Database synced')
-                resolve()
-            }).catch((err) => {
-                logger.error('Unable to sync database')
+        sequelize
+            .authenticate()
+            .then(() => {
+                logger.info('Connected to database')
+                sequelize
+                    .sync({ force: true })
+                    .then(() => {
+                        logger.info('Database synced')
+                        resolve()
+                    })
+                    .catch((err) => {
+                        logger.error('Unable to sync database')
+                        reject(err)
+                    })
+            })
+            .catch((err) => {
+                logger.error('Unable to connect to database')
                 reject(err)
             })
-        }).catch((err) => {
-            logger.error('Unable to connect to database')
-            reject(err)
-        })
     })
 }
-
 
 module.exports = {
     sequelize,
