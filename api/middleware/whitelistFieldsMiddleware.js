@@ -16,17 +16,17 @@
 
 module.exports = (fields) => {
     return (req, res, next) => {
-        const body = req.body;
-        const data = {};
+        const body = req.body
+        const data = {}
 
-        fields.forEach(field => {
+        fields.forEach((field) => {
             if (body[field]) {
-                data[field] = body[field];
+                data[field] = body[field]
             }
-        });
+        })
 
-        req.body = data;
+        req.body = data
 
-        next();
+        next()
     }
 }

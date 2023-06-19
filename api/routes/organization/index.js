@@ -18,9 +18,18 @@ routes.get('/:org_id', require('./getOrganization'))
 /**
  * @api {post} /organizations/ Create organization
  */
-routes.post('/',
-    whitelistFields(['name', 'description', 'email', 'phone', 'website', 'logoUrl']),
-    require('./postOrganization'))
+routes.post(
+    '/',
+    whitelistFields([
+        'name',
+        'description',
+        'email',
+        'phone',
+        'website',
+        'logoUrl',
+    ]),
+    require('./postOrganization')
+)
 
 /**
  * @api {delete} /organizations/:org_id Delete organization
@@ -30,7 +39,18 @@ routes.delete('/:org_id', require('./deleteOrganization'))
 /**
  * @api {put} /organizations/:org_id Update organization
  */
-routes.put('/:org_id', whitelistFields(['name', 'description', 'email', 'phone', 'website', 'logoUrl']), require('./putOrganization'))
+routes.put(
+    '/:org_id',
+    whitelistFields([
+        'name',
+        'description',
+        'email',
+        'phone',
+        'website',
+        'logoUrl',
+    ]),
+    require('./putOrganization')
+)
 
 /**
  * @api {get} /organizations/:org_id/members Uses the organization's member router

@@ -32,7 +32,7 @@ app.use(
         limits: {
             fileSize: 10 * 1024 * 1024, // limit filesize
         },
-    }).array('attachments', 10),
+    }).array('attachments', 10)
 ) // a comment can have up to 10 attachments
 app.use(helmet())
 app.disable('x-powered-by')
@@ -49,7 +49,7 @@ app.use(
             domain: 'contractr.pro',
             expires: new Date(Date.now() + 60 * 60 * 1000),
         },
-    }),
+    })
 )
 
 // S3 client
@@ -106,7 +106,7 @@ app.post('/comments', async (req, res) => {
     res.json({
         content: commentContent,
         attachments: commentAttachments.map(
-            (attachment) => attachment.originalname,
+            (attachment) => attachment.originalname
         ),
         userId: commentUserId,
         username: commentUsername,
@@ -123,16 +123,18 @@ app.use((err, req, res) => {
     res.status(500).send('An unexpected problem has occured.')
 })
 
-
-connect().then(() => {
-    app.listen(port, async () => {
-        logger.info(`Server is running on port ${port}`)
-        if (process.env.NODE_ENV === 'development') {
-            logger.info(`Populating database with mock data...`)
-            populate().then(() => logger.info(`Database populated!`))
-                .catch((err) => logger.error(err))
-        }
+connect()
+    .then(() => {
+        app.listen(port, async () => {
+            logger.info(`Server is running on port ${port}`)
+            if (process.env.NODE_ENV === 'development') {
+                logger.info(`Populating database with mock data...`)
+                populate()
+                    .then(() => logger.info(`Database populated!`))
+                    .catch((err) => logger.error(err))
+            }
+        })
     })
-}).catch((err) => {
-    logger.error(err)
-})
+    .catch((err) => {
+        logger.error(err)
+    })

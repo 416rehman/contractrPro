@@ -1,14 +1,14 @@
 module.exports.createSuccessResponse = (data) => {
     return {
-        status: "success",
-        data
+        status: 'success',
+        data,
     }
 }
 
 module.exports.createErrorResponse = (message, data) => {
     return {
-        status: "error",
+        status: 'error',
         error: message,
-        data
+        data,
     }
 }
