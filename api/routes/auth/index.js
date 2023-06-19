@@ -1,7 +1,7 @@
 const {
     ValidationErrorsHandler,
-} = require('../../middleware/validation-middleware')
-const checkAuth = require('../../middleware/auth-middleware')
+} = require('../../middleware/validationMiddleware')
+const checkAuth = require('../../middleware/authMiddleware')
 const {
     GetAccountTokenValidator,
     RegisterAccountValidator,

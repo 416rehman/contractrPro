@@ -252,6 +252,13 @@ const populate = async () => {
             })
         }
     }
+
+    // Add the dev user.
+    await User.create({
+        ...mockUserData(),
+        id: process.env.DEV_USER_UUID,
+        username: process.env.DEV_USER_USERNAME,
+    })
 }
 
 module.exports = {

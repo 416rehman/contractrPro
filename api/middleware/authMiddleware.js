@@ -12,8 +12,8 @@ if (process.env.NODE_ENV === 'development') {
     module.exports = function (req, res, next) {
         // add a fake auth object to the request to indicate that the user is authenticated in development mode
         req.auth = {
-            id: 0,
-            username: 'dev',
+            id: process.env.DEV_USER_UUID,
+            username: process.env.DEV_USER_USERNAME,
         }
 
         return next()
