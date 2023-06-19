@@ -1,6 +1,6 @@
 const { User } = require('../db')
 const bcrypt = require('bcrypt')
-const { generateRefreshToken } = require('../utils')
+const { generateRefreshToken } = require('./utils')
 const { Op } = require('sequelize')
 
 module.exports.ping = function (req, res) {

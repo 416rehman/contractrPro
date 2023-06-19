@@ -1,5 +1,5 @@
 const auth_service = require('../../utils/authHelpers')
-const { signJWT } = require('../../utils')
+const { signJWT } = require('../../utils/utils')
 
 module.exports = (req, res) => {
     if (!req.query.refreshToken && !req.body.refreshToken)
