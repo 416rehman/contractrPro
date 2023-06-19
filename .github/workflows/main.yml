@@ -12,6 +12,8 @@ jobs:
     format-api:
         # Uses a Ubuntu Docker VM to run the application on
         runs-on: ubuntu-latest
+        # Only runs if the triggering actor is not the GitHub Actions bot
+        if: github.triggering_actor != 'github-actions[bot]'
         permissions:
             contents: write
         defaults:
