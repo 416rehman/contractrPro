@@ -11,7 +11,7 @@ routes.get('/', require('./getUsers'))
 routes.get('/:user_id', require('./getUser'))
 
 /**
- * @api {post} /user/:user_id/organizations Get organizations of a user
+ * @api {get} /user/:user_id/organizations Get organizations of a user
  */
 routes.get('/:user_id/organizations', require('./getUserOrganizations'))
 
