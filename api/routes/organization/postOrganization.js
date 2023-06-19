@@ -1,10 +1,13 @@
 const { sequelize, Organization } = require('../../db')
-const { createSuccessResponse, createErrorResponse } = require('../../utils/response')
+const {
+    createSuccessResponse,
+    createErrorResponse,
+} = require('../../utils/response')
 // Creates an organization
 module.exports = async (req, res) => {
     try {
         const body = {
-            ...(req.body),
+            ...req.body,
             ownerId: req.auth.id,
             updatedByUserId: req.auth.id,
         }
