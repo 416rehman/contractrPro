@@ -1,38 +1,35 @@
 const { Sequelize } = require('sequelize')
 module.exports.define = (sequelize, DataTypes) => {
-    const Contract = sequelize.define(
-        'Contract',
-        {
-            id: {
-                type: Sequelize.UUID,
-                defaultValue: Sequelize.UUIDV4,
-                allowNull: false,
-                primaryKey: true,
-            },
-            name: {
-                type: DataTypes.STRING(255),
-                allowNull: false,
-            },
-            description: {
-                type: DataTypes.STRING(1024),
-            },
-            startDate: {
-                type: DataTypes.DATE,
-            },
-            dueDate: {
-                type: DataTypes.DATE,
-            },
-            completionDate: {
-                type: DataTypes.DATE,
-            },
-            status: {
-                // 0 = draft, 1 = active, 2 = completed, 3 = cancelled
-                type: DataTypes.SMALLINT,
-                allowNull: false,
-                defaultValue: 0,
-            },
+    const Contract = sequelize.define('Contract', {
+        id: {
+            type: Sequelize.UUID,
+            defaultValue: Sequelize.UUIDV4,
+            allowNull: false,
+            primaryKey: true,
         },
-    )
+        name: {
+            type: DataTypes.STRING(255),
+            allowNull: false,
+        },
+        description: {
+            type: DataTypes.STRING(1024),
+        },
+        startDate: {
+            type: DataTypes.DATE,
+        },
+        dueDate: {
+            type: DataTypes.DATE,
+        },
+        completionDate: {
+            type: DataTypes.DATE,
+        },
+        status: {
+            // 0 = draft, 1 = active, 2 = completed, 3 = cancelled
+            type: DataTypes.SMALLINT,
+            allowNull: false,
+            defaultValue: 0,
+        },
+    })
 
     Contract.associate = (models) => {
         Contract.belongsTo(models.Organization, {

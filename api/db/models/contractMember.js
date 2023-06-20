@@ -12,7 +12,7 @@ module.exports.define = (sequelize, DataTypes) => {
             permissionOverwrites: {
                 type: DataTypes.BIGINT,
             },
-        },
+        }
     )
 
     ContractMember.associate = (models) => {

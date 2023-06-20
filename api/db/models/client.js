@@ -25,7 +25,7 @@ module.exports.define = (sequelize, DataTypes) => {
             description: {
                 type: DataTypes.STRING(1024),
             },
-        },
+        }
     )
 
     Client.associate = (models) => {

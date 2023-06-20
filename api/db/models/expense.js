@@ -1,23 +1,20 @@
 const { Sequelize } = require('sequelize')
 module.exports.define = (sequelize, DataTypes) => {
-    const Expense = sequelize.define(
-        'Expense',
-        {
-            id: {
-                type: Sequelize.UUID,
-                defaultValue: Sequelize.UUIDV4,
-                allowNull: false,
-                primaryKey: true,
-            },
-            description: {
-                type: DataTypes.STRING(512),
-                allowNull: false,
-            },
-            date: {
-                type: DataTypes.DATE,
-            },
+    const Expense = sequelize.define('Expense', {
+        id: {
+            type: Sequelize.UUID,
+            defaultValue: Sequelize.UUIDV4,
+            allowNull: false,
+            primaryKey: true,
         },
-    )
+        description: {
+            type: DataTypes.STRING(512),
+            allowNull: false,
+        },
+        date: {
+            type: DataTypes.DATE,
+        },
+    })
 
     Expense.associate = (models) => {
         // Expenses belong to an organization.

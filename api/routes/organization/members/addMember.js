@@ -1,15 +1,20 @@
 // Add member to organization
 const { OrganizationMember, sequelize } = require('../../../db')
-const { createErrorResponse, createSuccessResponse } = require('../../../utils/response')
+const {
+    createErrorResponse,
+    createSuccessResponse,
+} = require('../../../utils/response')
 module.exports = async (req, res) => {
     try {
         const orgId = req.params.org_id
         if (!orgId) {
-            return res.status(400).json(createErrorResponse('Organization ID is required'))
+            return res
+                .status(400)
+                .json(createErrorResponse('Organization ID is required'))
         }
 
         const body = {
-            ...(req.body),
+            ...req.body,
             OrganizationId: orgId,
             updatedByUserId: req.auth.id,
         }

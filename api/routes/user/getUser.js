@@ -19,7 +19,16 @@ module.exports = async (req, res) => {
         //since user has unique id, it only return 1 user object
         const user = await User.findAll({
             where: { id },
-            attributes: ['id', 'username', 'email', 'name', 'createdAt', 'updatedAt', 'phone', 'avatarUrl'],
+            attributes: [
+                'id',
+                'username',
+                'email',
+                'name',
+                'createdAt',
+                'updatedAt',
+                'phone',
+                'avatarUrl',
+            ],
         })
 
         if (!user) {
