@@ -10,12 +10,12 @@ on:
 
 jobs:
     format-api:
-        # Uses a Ubuntu Docker VM to run the application on
-        runs-on: ubuntu-latest
         # Only runs if the triggering actor is not the GitHub Actions bot
         if: github.triggering_actor != 'github-actions[bot]'
         permissions:
             contents: write
+        # Uses a Ubuntu Docker VM to run the application on
+            runs-on: ubuntu-latest
         defaults:
             run:
                 working-directory: ./api
@@ -44,6 +44,11 @@ jobs:
                     branch: ${{ github.head_ref }}
 
     test-api:
+        # Uses a Ubuntu Docker VM to run the application on
+        runs-on: ubuntu-latest
+        defaults:
+            run:
+                working-directory: ./api
         steps:
             -   uses: actions/checkout@v2
             -   name: Use Node.js ${{ matrix.node-version }}
