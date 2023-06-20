@@ -1,6 +1,7 @@
 const {
     ValidationErrorsHandler,
 } = require('../../middleware/validationMiddleware')
+const whitelistFields = require('../../middleware/whitelistFieldsMiddleware')
 const checkAuth = require('../../middleware/authMiddleware')
 const {
     GetAccountTokenValidator,
@@ -32,11 +33,19 @@ routes.post(
 routes.get('/token', require('./getToken'))
 
 /**
- * @api {post} /auth/register Register new account
+ * @api {post} /auth/account Register new account
  * @apiName RegisterAccount
  */
 routes.post(
     '/account',
+    whitelistFields([
+        'username',
+        'password',
+        'email',
+        'name',
+        'phone',
+        'avatarUrl',
+    ]),
     RegisterAccountValidator,
     ValidationErrorsHandler,
     require('./postAccount')
