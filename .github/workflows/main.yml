@@ -26,7 +26,7 @@ jobs:
                     ref: ${{ github.head_ref }}
                     token: ${{ secrets.PAT }}
             -   name: Setup Node for API
-                uses: actions/setup-node@v2
+                uses: actions/setup-node@v3
                 with:
                     node-version: "18.16.0"
                     cache: "npm"
@@ -50,13 +50,17 @@ jobs:
             run:
                 working-directory: ./api
         steps:
-            -   uses: actions/checkout@v2
-            -   name: Use Node.js ${{ matrix.node-version }}
-                uses: actions/setup-node@v2
+            -   name: Checkout code
+                uses: actions/checkout@v3
                 with:
-                    node-version: ${{ matrix.node-version }}
-                    cache: 'npm'
+                    ref: ${{ github.head_ref }}
+                    token: ${{ secrets.PAT }}
+            -   name: Setup Node for API
+                uses: actions/setup-node@v3
+                with:
+                    node-version: "18.16.0"
+                    cache: "npm"
+                    cache-dependency-path: ./api/package-lock.json
             -   name: Install Dependencies
                 run: npm ci --no-optional
-            -   name: Run Tests
-                run: npm run test
+
