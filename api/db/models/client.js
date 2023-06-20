@@ -26,9 +26,6 @@ module.exports.define = (sequelize, DataTypes) => {
                 type: DataTypes.STRING(1024),
             },
         },
-        {
-            paranoid: true,
-        }
     )
 
     Client.associate = (models) => {

@@ -32,9 +32,6 @@ module.exports.define = (sequelize, DataTypes) => {
                 defaultValue: 0,
             },
         },
-        {
-            paranoid: true,
-        }
     )
 
     Contract.associate = (models) => {

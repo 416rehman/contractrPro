@@ -34,9 +34,6 @@ module.exports.define = (sequelize, DataTypes) => {
                 allowNull: true,
             },
         },
-        {
-            paranoid: true,
-        }
     )
 
     Address.associate = (models) => {

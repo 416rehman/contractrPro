@@ -21,7 +21,7 @@ module.exports = async (req, res) => {
                 attributes: {
                     exclude: [
                         'username',
-                        'fullName',
+                        'name',
                         'email',
                         'phone',
                         'password',

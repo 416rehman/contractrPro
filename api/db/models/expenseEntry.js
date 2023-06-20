@@ -26,9 +26,6 @@ module.exports.define = (sequelize, DataTypes) => {
                 allowNull: false,
             },
         },
-        {
-            paranoid: true,
-        }
     )
     ExpenseEntry.associate = (models) => {
         ExpenseEntry.belongsTo(models.Expense, {

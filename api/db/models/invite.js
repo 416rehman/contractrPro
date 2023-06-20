@@ -24,9 +24,6 @@ module.exports.define = (sequelize, DataTypes) => {
                 allowNull: false,
             },
         },
-        {
-            paranoid: true,
-        }
     )
 
     Invite.associate = (models) => {

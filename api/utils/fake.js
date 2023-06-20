@@ -12,7 +12,7 @@ const {
 const mockUserData = () => {
     return {
         username: faker.internet.userName(),
-        fullName: faker.person.fullName(),
+        name: faker.person.fullName(),
         email: faker.internet.email(),
         phone: faker.phone.number(),
         password: faker.internet.password(),
@@ -38,7 +38,7 @@ const mockOrganizationData = () => {
 // They may or may not have an account with the application.
 const mockOrgMemberData = () => {
     return {
-        fullName: faker.person.fullName(),
+        name: faker.person.fullName(),
         email: faker.internet.email(),
         phone: faker.phone.number(),
         permissions: 5,

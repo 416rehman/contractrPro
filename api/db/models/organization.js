@@ -34,9 +34,6 @@ module.exports.define = (sequelize, DataTypes) => {
                 allowNull: false,
             },
         },
-        {
-            paranoid: true,
-        }
     )
 
     Organization.associate = (models) => {

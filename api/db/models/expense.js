@@ -17,9 +17,6 @@ module.exports.define = (sequelize, DataTypes) => {
                 type: DataTypes.DATE,
             },
         },
-        {
-            paranoid: true,
-        }
     )
 
     Expense.associate = (models) => {

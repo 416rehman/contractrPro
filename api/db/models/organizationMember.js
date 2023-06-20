@@ -9,7 +9,7 @@ module.exports.define = (sequelize, DataTypes) => {
                 allowNull: false,
                 primaryKey: true,
             },
-            fullName: {
+            name: {
                 type: DataTypes.STRING(512),
                 allowNull: false,
             },
@@ -26,11 +26,9 @@ module.exports.define = (sequelize, DataTypes) => {
             permissions: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
+                defaultValue: 1,
             },
         },
-        {
-            paranoid: true,
-        }
     )
 
     OrganizationMember.associate = (models) => {

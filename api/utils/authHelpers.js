@@ -74,7 +74,7 @@ module.exports.createUser = function (user_data) {
                         username: user_data.username,
                         password: hash,
                         email: user_data.email,
-                        fullName: user_data.fullName,
+                        name: user_data.name,
                         phone: user_data.phone,
                         avatar: user_data.avatar,
                     })

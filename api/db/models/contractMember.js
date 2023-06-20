@@ -13,9 +13,6 @@ module.exports.define = (sequelize, DataTypes) => {
                 type: DataTypes.BIGINT,
             },
         },
-        {
-            paranoid: true,
-        }
     )
 
     ContractMember.associate = (models) => {

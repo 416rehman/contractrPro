@@ -19,7 +19,7 @@ module.exports.define = (sequelize, DataTypes) => {
                     is: /^[a-z0-9_.-]{3,}$/i,
                 },
             },
-            fullName: {
+            name: {
                 type: DataTypes.STRING(512),
                 allowNull: false,
             },
@@ -46,9 +46,6 @@ module.exports.define = (sequelize, DataTypes) => {
                 allowNull: false,
             },
         },
-        {
-            paranoid: true,
-        }
     )
 
     User.associate = (models) => {

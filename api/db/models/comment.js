@@ -14,9 +14,6 @@ module.exports.define = (sequelize, DataTypes) => {
                 allowNull: false,
             },
         },
-        {
-            paranoid: true,
-        }
     )
 
     Comment.associate = (models) => {

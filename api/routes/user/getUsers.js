@@ -7,7 +7,9 @@ const {
 // Retrieves all users
 module.exports = async (req, res) => {
     try {
-        const users = await User.findAll()
+        const users = await User.findAll({
+            attributes: ['id', 'username', 'email', 'name', 'createdAt', 'updatedAt', 'phone', 'avatarUrl'],
+        })
 
         //if no user in organization at all, return empty array
         if (!users) {

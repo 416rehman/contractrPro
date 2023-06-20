@@ -8,9 +8,9 @@ const {
 
 module.exports = async (req, res) => {
     try {
-        const userId = req.params.user_id
+        const id = req.params.user_id
 
-        if (!userId) {
+        if (!id) {
             return res
                 .status(400)
                 .json(createErrorResponse('user id is required'))
@@ -18,7 +18,8 @@ module.exports = async (req, res) => {
 
         //since user has unique id, it only return 1 user object
         const user = await User.findAll({
-            where: { id: userId },
+            where: { id },
+            attributes: ['id', 'username', 'email', 'name', 'createdAt', 'updatedAt', 'phone', 'avatarUrl'],
         })
 
         if (!user) {

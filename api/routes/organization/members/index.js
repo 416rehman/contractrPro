@@ -1,5 +1,5 @@
 const routes = require('express').Router({ mergeParams: true })
-
+const whitelistFields = require('../../../middleware/whitelistFieldsMiddleware')
 routes.use((req, res, next) => {
     const path = __filename.split('/').slice(-1)[0].split('\\').slice(-1)[0]
     res.set('Router', path)
@@ -19,7 +19,14 @@ routes.get('/:user_id', require('./getMember'))
 /**
  * @api {post} /organizations/:org_id/members Add to organization
  */
-routes.post('/', require('./addMember'))
+routes.post('/', whitelistFields([
+    'name',
+    'email',
+    'phone',
+    'permissions',
+    'UserId',
+    ]
+), require('./addMember'))
 
 /**
  * @api {put} /organizations/:org_id/members Update organization members
