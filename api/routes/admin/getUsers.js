@@ -33,8 +33,8 @@ module.exports = async (req, res) => {
             totalPages,
         }
 
-        res.status(200).json(createSuccessResponse(response))
+        return res.status(200).json(createSuccessResponse(response))
     } catch (err) {
-        res.status(500).json(createErrorResponse(err.message))
+        return res.status(500).json(createErrorResponse(err.message))
     }
 }

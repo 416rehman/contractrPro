@@ -1,46 +1,20 @@
 require('dotenv').config()
 const logger = require('./utils/logger')
 const app = require('./server')
-const db = require('./db')
-const { populate } = require('./utils/fake')
+const setupDb = require('./db/setup')
 
-// If we're going to crash because of an uncaught exception, log it first.
-// https://nodejs.org/api/process.html#event-uncaughtexception
-process.on('uncaughtException', (err, origin) => {
-    logger.fatal({ err, origin }, 'uncaughtException')
-    throw err
-})
+// parse int from env
+const port = parseInt(process.env.PORT, 10) || 4000
 
-// If we're going to crash because of an unhandled promise rejection, log it first.
-// https://nodejs.org/api/process.html#event-unhandledrejection
-process.on('unhandledRejection', (reason, promise) => {
-    logger.fatal({ reason, promise }, 'unhandledRejection')
-    throw reason
-})
-
-const port = process.env.PORT || 3000
-
-db.connect()
+setupDb()
     .then(() => {
-        logger.debug(`Connected to database`)
-        logger.debug(`Running in ${process.env.NODE_ENV} mode`)
-
-        if (process.env.NODE_ENV === 'development') {
-            logger.info(`Populating database with mock data...`)
-            populate()
-                .then(() => {
-                    logger.info(`Database populated!`)
-                })
-                .catch((err) => {
-                    logger.error('Unable to populate database')
-                    logger.error(err)
-                })
-        }
-
         app.listen(port, async () => {
             logger.info(`Server is running on port ${port}`)
+            logger.info(
+                `Database ${process.env.DB_USER}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_DATABASE} is connected`
+            )
         })
     })
     .catch((err) => {
-        logger.error(err)
+        logger.error(`Unable to connect to the database: ${err}`)
     })

@@ -45,3 +45,18 @@ module.exports.signJWT = function (payload, secret) {
         }
     })
 }
+
+/**
+ * Pick - returns an object with only the specified fields
+ * @param {object} obj - The object to pick from
+ * @param {string[]} fields - The fields to pick
+ */
+module.exports.pick = (obj, fields) => {
+    const picked = {}
+    for (const field of fields) {
+        if (Object.prototype.hasOwnProperty.call(obj, field)) {
+            picked[field] = obj[field]
+        }
+    }
+    return picked
+}

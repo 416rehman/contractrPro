@@ -3,12 +3,20 @@ const {
     createErrorResponse,
     createSuccessResponse,
 } = require('../../utils/response')
+const { pick } = require('../../utils')
 
 // Updates an organization
 module.exports = async (req, res) => {
     try {
         const body = {
-            ...req.body,
+            ...pick(req.body, [
+                'name',
+                'description',
+                'email',
+                'phone',
+                'website',
+                'logoUrl',
+            ]),
             updatedByUserId: req.auth.id,
         }
 
