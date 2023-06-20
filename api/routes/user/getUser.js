@@ -25,8 +25,8 @@ module.exports = async(req, res) => {
 
         res.status(200).json(createSuccessResponse(user));
 
-    }catch{
-        res.status(500).json(createErrorResponse(error.message, error));
+    }catch(err){
+        res.status(500).json(createErrorResponse(err.message, err));
     }
 }
 
