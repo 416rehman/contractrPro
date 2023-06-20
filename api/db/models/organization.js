@@ -1,40 +1,37 @@
 const { Sequelize } = require('sequelize')
 module.exports.define = (sequelize, DataTypes) => {
-    const Organization = sequelize.define(
-        'Organization',
-        {
-            id: {
-                type: Sequelize.UUID,
-                defaultValue: Sequelize.UUIDV4,
-                allowNull: false,
-                primaryKey: true,
-            },
-            name: {
-                type: DataTypes.STRING(255),
-                allowNull: false,
-            },
-            description: {
-                type: DataTypes.STRING(512),
-                allowNull: false,
-            },
-            email: {
-                type: DataTypes.STRING(255),
-                allowNull: false,
-            },
-            phone: {
-                type: DataTypes.STRING(25),
-                allowNull: false,
-            },
-            website: {
-                type: DataTypes.STRING(255),
-                allowNull: true,
-            },
-            logoUrl: {
-                type: DataTypes.STRING(255),
-                allowNull: false,
-            },
+    const Organization = sequelize.define('Organization', {
+        id: {
+            type: Sequelize.UUID,
+            defaultValue: Sequelize.UUIDV4,
+            allowNull: false,
+            primaryKey: true,
         },
-    )
+        name: {
+            type: DataTypes.STRING(255),
+            allowNull: false,
+        },
+        description: {
+            type: DataTypes.STRING(512),
+            allowNull: false,
+        },
+        email: {
+            type: DataTypes.STRING(255),
+            allowNull: false,
+        },
+        phone: {
+            type: DataTypes.STRING(25),
+            allowNull: false,
+        },
+        website: {
+            type: DataTypes.STRING(255),
+            allowNull: true,
+        },
+        logoUrl: {
+            type: DataTypes.STRING(255),
+            allowNull: false,
+        },
+    })
 
     Organization.associate = (models) => {
         Organization.belongsToMany(models.User, {

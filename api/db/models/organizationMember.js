@@ -28,7 +28,7 @@ module.exports.define = (sequelize, DataTypes) => {
                 allowNull: false,
                 defaultValue: 1,
             },
-        },
+        }
     )
 
     OrganizationMember.associate = (models) => {

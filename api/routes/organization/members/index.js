@@ -19,14 +19,11 @@ routes.get('/:user_id', require('./getMember'))
 /**
  * @api {post} /organizations/:org_id/members Add to organization
  */
-routes.post('/', whitelistFields([
-    'name',
-    'email',
-    'phone',
-    'permissions',
-    'UserId',
-    ]
-), require('./addMember'))
+routes.post(
+    '/',
+    whitelistFields(['name', 'email', 'phone', 'permissions', 'UserId']),
+    require('./addMember')
+)
 
 /**
  * @api {put} /organizations/:org_id/members Update organization members

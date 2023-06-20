@@ -1,30 +1,27 @@
 const { Sequelize } = require('sequelize')
 module.exports.define = (sequelize, DataTypes) => {
-    const Invite = sequelize.define(
-        'Invite',
-        {
-            id: {
-                type: Sequelize.UUID,
-                defaultValue: Sequelize.UUIDV4,
-                allowNull: false,
-                primaryKey: true,
-            },
-            code: {
-                type: DataTypes.STRING(8),
-                allowNull: false,
-            },
-            uses: {
-                type: DataTypes.INTEGER,
-                defaultValue: 0,
-                allowNull: false,
-            },
-            maxUses: {
-                type: DataTypes.INTEGER,
-                defaultValue: 0,
-                allowNull: false,
-            },
+    const Invite = sequelize.define('Invite', {
+        id: {
+            type: Sequelize.UUID,
+            defaultValue: Sequelize.UUIDV4,
+            allowNull: false,
+            primaryKey: true,
         },
-    )
+        code: {
+            type: DataTypes.STRING(8),
+            allowNull: false,
+        },
+        uses: {
+            type: DataTypes.INTEGER,
+            defaultValue: 0,
+            allowNull: false,
+        },
+        maxUses: {
+            type: DataTypes.INTEGER,
+            defaultValue: 0,
+            allowNull: false,
+        },
+    })
 
     Invite.associate = (models) => {
         // The organization that the invite is for
