@@ -5,7 +5,7 @@ const {
     createErrorResponse,
 } = require('../../utils/response');
 
-// Gets the selected user's organizations
+// Gets the a user's organizations
 module.exports = async (req, res) => {
 
     try {
