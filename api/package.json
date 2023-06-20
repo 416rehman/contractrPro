@@ -5,8 +5,7 @@
     "description": "Manage your contracts, jobs, expenses, invoices and much more",
     "main": "server.js",
     "scripts": {
-        "test:watch": "NODE_ENV=dev jest -c jest.config.js --runInBand --watch --",
-        "test": "NODE_ENV=dev jest -c jest.config.js --runInBand --",
+        "test": "NODE_ENV=test jest -c jest.config.js --runInBand --",
         "coverage": "jest -c jest.config.js --runInBand --coverage",
         "lint": "eslint .",
         "start": "node .",
