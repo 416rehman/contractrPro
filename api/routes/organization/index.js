@@ -17,10 +17,7 @@ routes.get('/:org_id', require('./getOrganization'))
 /**
  * @api {post} /organizations/ Create organization
  */
-routes.post(
-    '/',
-    require('./postOrganization')
-)
+routes.post('/', require('./postOrganization'))
 
 /**
  * @api {delete} /organizations/:org_id Delete organization
@@ -30,10 +27,7 @@ routes.delete('/:org_id', require('./deleteOrganization'))
 /**
  * @api {put} /organizations/:org_id Update organization
  */
-routes.put(
-    '/:org_id',
-    require('./putOrganization')
-)
+routes.put('/:org_id', require('./putOrganization'))
 
 /**
  * @api {get} /organizations/:org_id/members Uses the organization's member router

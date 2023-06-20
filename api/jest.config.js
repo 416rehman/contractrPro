@@ -3,7 +3,7 @@
 // Get the full path to our env.jest file
 const path = require('path')
 const envFile = path.join(__dirname, 'jest.env')
-require('dotenv').config({path: envFile})
+require('dotenv').config({ path: envFile })
 
 const logger = require('./utils/logger')
 
@@ -16,4 +16,3 @@ module.exports = {
     testTimeout: 15000,
     setupFiles: ['./db/setup'],
 }
-
