@@ -5,7 +5,7 @@ const {
     Address,
     OrganizationMember,
     Contract,
-} = require('../db')
+} = require('../db/index')
 
 // Function to generate fake data for the "Users" table
 // A user is someone who is registered with the application (they have an account)

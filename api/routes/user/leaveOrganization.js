@@ -56,6 +56,6 @@ module.exports = async (req, res) => {
                 .json(createSuccessResponse('Leave organization successfully'))
         })
     } catch (error) {
-        res.status(500).json(createErrorResponse(error.message, error))
+        res.status(500).json(createErrorResponse(error.message))
     }
 }

@@ -2,26 +2,22 @@
  * Model: https://www.figma.com/file/oXjOLhFELvDrGkTz8BIJUI/Untitled
  */
 
-require('dotenv').config()
 const cors = require('cors')
 const express = require('express')
 const multer = require('multer')
 const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3')
 const helmet = require('helmet')
 const cookieSession = require('cookie-session')
-const { connect } = require('./db')
 const routes = require('./routes')
 const checkAuth = require('./middleware/authMiddleware')
 
 // Use logging middleware
 const logger = require('./utils/logger')
-const { populate } = require('./utils/fake')
 const pino = require('pino-http')({
     // Use our default logger instance, which is already configured
     logger,
 })
 
-const port = process.env.PORT || 3000
 const app = express()
 app.use(pino)
 app.use(cors())
@@ -123,18 +119,4 @@ app.use((err, req, res) => {
     res.status(500).send('An unexpected problem has occured.')
 })
 
-connect()
-    .then(() => {
-        app.listen(port, async () => {
-            logger.info(`Server is running on port ${port}`)
-            if (process.env.NODE_ENV === 'development') {
-                logger.info(`Populating database with mock data...`)
-                populate()
-                    .then(() => logger.info(`Database populated!`))
-                    .catch((err) => logger.error(err))
-            }
-        })
-    })
-    .catch((err) => {
-        logger.error(err)
-    })
+module.exports = app

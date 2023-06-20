@@ -22,4 +22,3 @@ networks:
     cp_net:
         name: cp_net
         driver: bridge
-

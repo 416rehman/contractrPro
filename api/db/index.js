@@ -1,5 +1,6 @@
 const { DataTypes, Sequelize } = require('sequelize')
 const logger = require('../utils/logger')
+
 const address = require('./models/address'),
     attachment = require('./models/attachment'),
     client = require('./models/client'),
@@ -18,14 +19,6 @@ const address = require('./models/address'),
     user = require('./models/user'),
     vendor = require('./models/vendor')
 
-logger.info({
-    host: process.env.DB_HOST,
-    port: process.env.DB_POR,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_DATABASE,
-})
-
 const sequelize = new Sequelize(
     process.env.DB_Database,
     process.env.DB_User,
@@ -36,15 +29,6 @@ const sequelize = new Sequelize(
         dialect: 'postgres',
     }
 )
-
-sequelize
-    .authenticate()
-    .then(function () {
-        logger.info('Connection has been established successfully.')
-    })
-    .catch(function (err) {
-        logger.error('Unable to connect to the database:', err)
-    })
 
 const models = {
     Address: address.define(sequelize, DataTypes),
@@ -75,20 +59,23 @@ for (const model of Object.values(models)) {
 
 const connect = async () => {
     return new Promise((resolve, reject) => {
+        logger.info({
+            host: process.env.DB_HOST,
+            port: process.env.DB_POR,
+            user: process.env.DB_USER,
+            password: process.env.DB_PASSWORD,
+            database: process.env.DB_DATABASE,
+        })
+
         sequelize
             .authenticate()
-            .then(() => {
-                logger.info('Connected to database')
-                sequelize
-                    .sync({ force: true })
-                    .then(() => {
-                        logger.info('Database synced')
-                        resolve()
-                    })
-                    .catch((err) => {
-                        logger.error('Unable to sync database')
-                        reject(err)
-                    })
+            .then(async () => {
+                await sequelize.sync({
+                    force:
+                        process.env.NODE_ENV === 'test' ||
+                        process.env.NODE_ENV === 'development',
+                })
+                resolve()
             })
             .catch((err) => {
                 logger.error('Unable to connect to database')
