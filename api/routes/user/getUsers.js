@@ -1,20 +1,34 @@
-const { User } = require('../../db')
+const { sequelize, Organization, User } = require('../../db')
 const {
     createSuccessResponse,
     createErrorResponse,
 } = require('../../utils/response')
 
-//Retrieve user by id 
+//Retrieve users by organization display their id and user name
 module.exports = async(req, res) => {
     try{
-        const userId = req.params.user_id;
+        const orgId = req.params.org_id;
 
-        //since organization has unique ids, it only return 1 organization object
-        const user = await User.findAll({
-            where: { id:userId },
+        //check orgId input
+        if (!orgId) {
+            return res.status(400).json(createErrorResponse('Organization id is required'));
+        }
+
+        const users = await User.findByPk(orgId,{
+            include: [
+                {
+                    model: User,
+                    //user id ,username, email and phone has been retrieved and ready to be used by front-end
+                    attributes: ['id', 'username', 'email', 'phone'], 
+                },
+            ], 
         });
 
-        res.status(200).json(createSuccessResponse(organizations));
+        //if no user in organization at all, return empty array
+        if (!users) {
+            return [];
+        }
+        res.status(200).json(createSuccessResponse(users));
 
     }catch{
         res.status(500).json(createErrorResponse(error.message, error));
