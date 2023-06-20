@@ -5,11 +5,12 @@
     "description": "Manage your contracts, jobs, expenses, invoices and much more",
     "main": "server.js",
     "scripts": {
-        "build": "tsc",
-        "prestart": "npm run build",
-        "start": "node .",
-        "dev": "NODE_ENV=development node .",
+        "test:watch": "NODE_ENV=dev jest -c jest.config.js --runInBand --watch --",
+        "test": "NODE_ENV=dev jest -c jest.config.js --runInBand --",
+        "coverage": "jest -c jest.config.js --runInBand --coverage",
         "lint": "eslint .",
+        "start": "node .",
+        "dev": "NODE_ENV=development nodemon .",
         "prettier": "prettier --write ."
     },
     "author": "Bytech Labs",
@@ -38,7 +39,9 @@
         "@types/express": "^4.17.13",
         "@types/node": "^16.11.10",
         "eslint": "^8.41.0",
+        "jest": "^29.5.0",
         "nodemon": "^2.0.22",
-        "prettier": "2.8.8"
+        "prettier": "2.8.8",
+        "supertest": "^6.3.3"
     }
 }
