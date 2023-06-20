@@ -1,4 +1,4 @@
-const { OrganizationMember, Organization, sequelize } = require('../../../db')
+const { OrganizationMember, sequelize } = require('../../../db')
 const { createErrorResponse, createSuccessResponse } = require('../../../utils/response')
 module.exports = async (req, res) => {
     try {
