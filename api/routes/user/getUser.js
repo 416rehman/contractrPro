@@ -4,19 +4,69 @@ const {
     createErrorResponse,
 } = require('../../utils/response')
 
-//Retrieve user by id 
+//Retrieve user by id of user from the same organization
+
 module.exports = async(req, res) => {
     try{
-        const userId = req.params.user_id;
+        const user_Id = req.params.user_id;
+        const orgId = req.params.org_id;
 
-        //since organization has unique ids, it only return 1 organization object
+        //check orgId and userId input
+        if (!orgId) {
+            return res.status(400).json(createErrorResponse('Organization id is required'));
+        }
+        if (!userId) {
+            return res.status(400).json(createErrorResponse('user id is required'));
+        }
+
+        //since user has unique id, it only return 1 user object
         const user = await User.findAll({
-            where: { id:userId },
+            where: { id: user_id },
+            include: [
+                {
+                    model: Organization,
+                    where: { id: orgId },
+
+                    //if any attributes need to be used by front-end ,specify them here
+                    /*attributes: ['id', 'username', 'email', 'phone'],*/
+                },
+            ],
         });
 
-        res.status(200).json(createSuccessResponse(organizations));
+        //if no user in such organization, return empty array
+        if (!user) {
+            return [];
+        }
+
+        res.status(200).json(createSuccessResponse(user));
 
     }catch{
         res.status(500).json(createErrorResponse(error.message, error));
     }
 }
+
+//Retrieve user by id 
+
+/*module.exports = async(req, res) => {
+    try{
+        const userId = req.params.user_id;
+
+        if (!userId) {
+            return res.status(400).json(createErrorResponse('user id is required'));
+        }
+
+        //since user has unique id, it only return 1 user object
+        const user = await User.findAll({
+            where: { id:userId },
+        });
+
+        if (!user) {
+            return res.status(404).json(createErrorResponse('User not found'));
+        }
+
+        res.status(200).json(createSuccessResponse(user));
+
+    }catch{
+        res.status(500).json(createErrorResponse(error.message, error));
+    }
+}*/
