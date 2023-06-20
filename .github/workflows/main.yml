@@ -9,11 +9,11 @@ on:
         branches: [ main, dev ]
 env:
     PORT: $PORT
-    DB_Database: $DB_Database
-    DB_Host: $DB_Host
-    DB_Port: $DB_Port
-    DB_User: $DB_User
-    DB_Password: ${{ secrets.DB_Password }}
+    DB_DATABASE: $DB_DATABASE
+    DB_HOST: $DB_HOST
+    DB_PORT: $DB_PORT
+    DB_USER: $DB_USER
+    DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
     JWT_SECRET: ${{ secrets.JWT_SECRET }}
     AWS_S3_BUCKET_NAME: $AWS_S3_BUCKET_NAME
     AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}

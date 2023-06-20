@@ -20,12 +20,12 @@ const address = require('./models/address'),
     vendor = require('./models/vendor')
 
 const sequelize = new Sequelize(
-    process.env.DB_Database,
-    process.env.DB_User,
-    process.env.DB_Password,
+    process.env.DB_DATABASE,
+    process.env.DB_USER,
+    process.env.DB_PASSWORD,
     {
-        host: process.env.DB_Host,
-        port: process.env.DB_Port,
+        host: process.env.DB_HOST,
+        port: process.env.DB_PORT,
         dialect: 'postgres',
     }
 )
