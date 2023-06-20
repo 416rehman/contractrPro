@@ -76,12 +76,15 @@ module.exports.createUser = function (user_data) {
                         email: user_data.email,
                         name: user_data.name,
                         phone: user_data.phone,
-                        avatar: user_data.avatar,
+                        avatarUrl: user_data.avatar,
                     })
 
                     try {
                         user.refreshToken = await generateRefreshToken()
-                        resolve(await user.save())
+                        const savedUser = await user.save();
+                        // remove the password from the returned object
+                        delete savedUser.password
+                        resolve(savedUser)
                     } catch (err) {
                         reject(err)
                     }

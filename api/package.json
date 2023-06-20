@@ -3,13 +3,13 @@
     "version": "1.0.0",
     "type": "commonjs",
     "description": "Manage your contracts, jobs, expenses, invoices and much more",
-    "main": "server.js",
+    "main": "index.js",
     "scripts": {
         "test": "NODE_ENV=test jest -c jest.config.js --runInBand --",
         "coverage": "jest -c jest.config.js --runInBand --coverage",
         "lint": "eslint .",
         "start": "node .",
-        "dev": "NODE_ENV=development nodemon .",
+        "dev": "NODE_ENV=development LOG_LEVEL=debug nodemon .",
         "prettier": "prettier --write ."
     },
     "author": "Bytech Labs",

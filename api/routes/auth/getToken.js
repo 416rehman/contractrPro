@@ -1,9 +1,10 @@
 const auth_service = require('../../utils/authHelpers')
 const { signJWT } = require('../../utils/utils')
+const { createErrorResponse, createSuccessResponse } = require('../../utils/response')
 
 module.exports = (req, res) => {
     if (!req.query.refreshToken && !req.body.refreshToken)
-        res.status(400).json({ error: 'Missing refresh token' })
+        res.status(400).json(createErrorResponse('Missing refresh token'))
     else {
         auth_service
             .verifyRefreshToken(req.query.refreshToken || req.body.refreshToken)
@@ -12,11 +13,11 @@ module.exports = (req, res) => {
                     { id: user.id, username: user.username },
                     process.env.JWT_SECRET
                 )
-                    .then((token) => res.json(token))
-                    .catch((err) => res.status(500).json(err.message))
+                    .then((token) => res.json(createSuccessResponse({ token })))
+                    .catch((err) => res.status(500).json(createErrorResponse(err.message)))
             })
             .catch((err) => {
-                res.status(401).json(err.message)
+                res.status(400).json(createErrorResponse(err.message))
             })
     }
 }
