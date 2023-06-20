@@ -8,20 +8,20 @@ on:
     push:
         branches: [ main, dev ]
 env:
-    PORT: ${{ secrets.PORT }}
-    DB_Database: ${{ secrets.DB_Database }}
-    DB_Host: ${{ secrets.DB_Host }}
-    DB_Port: ${{ secrets.DB_Port }}
-    DB_User: ${{ secrets.DB_User }}
+    PORT: $PORT
+    DB_Database: $DB_Database
+    DB_Host: $DB_Host
+    DB_Port: $DB_Port
+    DB_User: $DB_User
     DB_Password: ${{ secrets.DB_Password }}
     JWT_SECRET: ${{ secrets.JWT_SECRET }}
-    AWS_S3_BUCKET_NAME: ${{ secrets.AWS_S3_BUCKET_NAME }}
+    AWS_S3_BUCKET_NAME: $AWS_S3_BUCKET_NAME
     AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
     AWS_ACCESS_SECRET: ${{ secrets.AWS_ACCESS_SECRET }}
     SECRET_SESSION_KEY_1: ${{ secrets.SECRET_SESSION_KEY_1 }}
     SECRET_SESSION_KEY_2: ${{ secrets.SECRET_SESSION_KEY_2 }}
-    DEV_USER_UUID: ${{ secrets.DEV_USER_UUID }}
-    DEV_USER_USERNAME: ${{ secrets.DEV_USER_USERNAME }}
+    DEV_USER_UUID: $DEV_USER_UUID
+    DEV_USER_USERNAME: $DEV_USER_USERNAME
 
 jobs:
     format-api:
@@ -31,6 +31,7 @@ jobs:
             contents: write
         # Uses a Ubuntu Docker VM to run the application on
         runs-on: ubuntu-latest
+        environment: "Dev Env"
         defaults:
             run:
                 working-directory: ./api
@@ -61,6 +62,7 @@ jobs:
     test-api:
         # Uses a Ubuntu Docker VM to run the application on
         runs-on: ubuntu-latest
+        environment: "Dev Env"
         defaults:
             run:
                 working-directory: ./api
