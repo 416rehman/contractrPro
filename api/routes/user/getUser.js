@@ -1,6 +1,22 @@
-module.exports = (req, res) => {
-    res.send({
-        file: __filename.split('/').slice(-1)[0].split('\\').slice(-1)[0],
-        message: 'TODO',
-    })
+const { Organization } = require('../../db')
+const {
+    createSuccessResponse,
+    createErrorResponse,
+} = require('../../utils/response')
+
+//Retrieve user by id 
+module.exports = async(req, res) => {
+    try{
+        const userId = req.params.user_id;
+
+        //since organization has unique ids, it only return 1 organization object
+        const user = await Organization.findAll({
+            where: { id:userId },
+        });
+
+        res.status(200).json(createSuccessResponse(organizations));
+
+    }catch{
+        res.status(500).json(createErrorResponse(error.message, error));
+    }
 }
