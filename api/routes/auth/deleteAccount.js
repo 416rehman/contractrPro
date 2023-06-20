@@ -1,5 +1,8 @@
 const { deleteUser } = require('../../utils/authHelpers')
-const { createSuccessResponse, createErrorResponse } = require('../../utils/response')
+const {
+    createSuccessResponse,
+    createErrorResponse,
+} = require('../../utils/response')
 module.exports = (req, res) => {
     deleteUser(req.auth.username)
         .then((user) => {

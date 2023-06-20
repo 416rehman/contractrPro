@@ -38,7 +38,7 @@ describe('POST /auth/account', () => {
                 ...accountData,
                 username: undefined,
             })
-            .expect(422)    // express-validator returns 422 for validation errors
+            .expect(422) // express-validator returns 422 for validation errors
             .then((res) => {
                 // should return array of errors like [{...}...]
                 expect(res.body.errors).toBeInstanceOf(Array)
@@ -46,7 +46,6 @@ describe('POST /auth/account', () => {
     })
 
     test('should return error if username is already taken', async () => {
-
         const accountData2 = {
             username: 'testuser',
             password: 'testpassword2',
@@ -65,7 +64,7 @@ describe('POST /auth/account', () => {
                 return request(app)
                     .post('/auth/account')
                     .send(accountData2)
-                    .expect(422)    // express-validator returns 422 for validation errors
+                    .expect(422) // express-validator returns 422 for validation errors
                     .then((res) => {
                         expect(res.body.errors).toBeInstanceOf(Array)
                     })
@@ -73,7 +72,6 @@ describe('POST /auth/account', () => {
     })
 
     test('should return error if email is already taken', async () => {
-
         const accountData2 = {
             username: 'testuser2',
             password: 'testpassword2',
@@ -92,7 +90,7 @@ describe('POST /auth/account', () => {
                 return request(app)
                     .post('/auth/account')
                     .send(accountData2)
-                    .expect(422)    // express-validator returns 422 for validation errors
+                    .expect(422) // express-validator returns 422 for validation errors
                     .then((res) => {
                         expect(res.body.errors).toBeInstanceOf(Array)
                     })
@@ -118,7 +116,7 @@ describe('POST /auth/account', () => {
                 return request(app)
                     .post('/auth/account')
                     .send(accountData2)
-                    .expect(422)    // express-validator returns 422 for validation errors
+                    .expect(422) // express-validator returns 422 for validation errors
                     .then((res) => {
                         expect(res.body.errors).toBeInstanceOf(Array)
                     })

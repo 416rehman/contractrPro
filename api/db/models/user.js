@@ -37,7 +37,7 @@ module.exports.define = (sequelize, DataTypes) => {
         },
         avatarUrl: {
             type: DataTypes.STRING(1024),
-            allowNull: true
+            allowNull: true,
         },
         refreshToken: {
             type: DataTypes.STRING(255),

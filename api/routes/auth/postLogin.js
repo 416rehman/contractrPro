@@ -1,5 +1,8 @@
 const auth_service = require('../../utils/authHelpers')
-const { createSuccessResponse, createErrorResponse } = require('../../utils/response')
+const {
+    createSuccessResponse,
+    createErrorResponse,
+} = require('../../utils/response')
 
 /**
  * @api {post} /auth/login Gets the user's opaque refresh token

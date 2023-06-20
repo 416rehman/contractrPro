@@ -81,7 +81,7 @@ module.exports.createUser = function (user_data) {
 
                     try {
                         user.refreshToken = await generateRefreshToken()
-                        const savedUser = await user.save();
+                        const savedUser = await user.save()
                         // remove the password from the returned object
                         delete savedUser.password
                         resolve(savedUser)

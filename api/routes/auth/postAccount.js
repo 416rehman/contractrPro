@@ -1,5 +1,8 @@
 const auth_service = require('../../utils/authHelpers')
-const { createSuccessResponse, createErrorResponse } = require('../../utils/response')
+const {
+    createSuccessResponse,
+    createErrorResponse,
+} = require('../../utils/response')
 module.exports = async (req, res) => {
     try {
         const user = await auth_service.createUser(req.body)

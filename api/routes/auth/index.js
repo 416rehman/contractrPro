@@ -38,7 +38,14 @@ routes.get('/token', require('./getToken'))
  */
 routes.post(
     '/account',
-    whitelistFields(['username', 'password', 'email', 'name', 'phone', 'avatarUrl']),
+    whitelistFields([
+        'username',
+        'password',
+        'email',
+        'name',
+        'phone',
+        'avatarUrl',
+    ]),
     RegisterAccountValidator,
     ValidationErrorsHandler,
     require('./postAccount')

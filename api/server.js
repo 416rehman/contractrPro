@@ -28,7 +28,7 @@ app.use(
         limits: {
             fileSize: 10 * 1024 * 1024, // limit filesize
         },
-    }).array('attachments', 10),
+    }).array('attachments', 10)
 ) // a comment can have up to 10 attachments
 app.use(helmet())
 app.disable('x-powered-by')
@@ -45,7 +45,7 @@ app.use(
             domain: 'contractr.pro',
             expires: new Date(Date.now() + 60 * 60 * 1000),
         },
-    }),
+    })
 )
 
 // S3 client
@@ -102,7 +102,7 @@ app.post('/comments', async (req, res) => {
     res.json({
         content: commentContent,
         attachments: commentAttachments.map(
-            (attachment) => attachment.originalname,
+            (attachment) => attachment.originalname
         ),
         userId: commentUserId,
         username: commentUsername,

@@ -27,7 +27,7 @@ const sequelize = new Sequelize(
         host: process.env.DB_Host,
         port: process.env.DB_Port,
         dialect: 'postgres',
-    },
+    }
 )
 
 const models = {
@@ -67,15 +67,20 @@ const connect = async () => {
             database: process.env.DB_DATABASE,
         })
 
-        sequelize.authenticate().then(async () => {
-            await sequelize.sync({
-                force: process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'development',
+        sequelize
+            .authenticate()
+            .then(async () => {
+                await sequelize.sync({
+                    force:
+                        process.env.NODE_ENV === 'test' ||
+                        process.env.NODE_ENV === 'development',
+                })
+                resolve()
             })
-            resolve()
-        }).catch((err) => {
-            logger.error('Unable to connect to database')
-            reject(err)
-        })
+            .catch((err) => {
+                logger.error('Unable to connect to database')
+                reject(err)
+            })
     })
 }
 
