@@ -1,4 +1,4 @@
-const { Organization } = require('../../db')
+const { User } = require('../../db')
 const {
     createSuccessResponse,
     createErrorResponse,
@@ -10,7 +10,7 @@ module.exports = async(req, res) => {
         const userId = req.params.user_id;
 
         //since organization has unique ids, it only return 1 organization object
-        const user = await Organization.findAll({
+        const user = await User.findAll({
             where: { id:userId },
         });
 
