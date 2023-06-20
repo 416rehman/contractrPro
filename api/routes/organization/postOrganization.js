@@ -3,13 +3,20 @@ const {
     createSuccessResponse,
     createErrorResponse,
 } = require('../../utils/response')
-const {pick} = require("../../utils");
+const { pick } = require('../../utils')
 
 // Creates an organization
 module.exports = async (req, res) => {
     try {
         const body = {
-            ...pick(req.body, ['name', 'description', 'email', 'phone', 'website', 'logoUrl']),
+            ...pick(req.body, [
+                'name',
+                'description',
+                'email',
+                'phone',
+                'website',
+                'logoUrl',
+            ]),
             ownerId: req.auth.id,
             updatedByUserId: req.auth.id,
         }

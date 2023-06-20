@@ -4,7 +4,7 @@ const {
     createErrorResponse,
     createSuccessResponse,
 } = require('../../../utils/response')
-const {pick} = require("../../../utils");
+const { pick } = require('../../../utils')
 module.exports = async (req, res) => {
     try {
         const orgId = req.params.org_id
@@ -15,7 +15,13 @@ module.exports = async (req, res) => {
         }
 
         const body = {
-            ...pick(req.body, ['name', 'email', 'phone', 'permissions', 'UserId']),
+            ...pick(req.body, [
+                'name',
+                'email',
+                'phone',
+                'permissions',
+                'UserId',
+            ]),
             OrganizationId: orgId,
             updatedByUserId: req.auth.id,
         }

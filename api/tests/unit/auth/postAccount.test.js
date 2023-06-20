@@ -38,7 +38,7 @@ describe('POST /auth/account', () => {
                 ...accountData,
                 username: undefined,
             })
-            .expect(res => res.status === 400 || res.status === 422) // express-validator returns 422 for validation errors
+            .expect((res) => res.status === 400 || res.status === 422) // express-validator returns 422 for validation errors
     })
     //
     test('should return error if username is already taken', async () => {
@@ -52,15 +52,13 @@ describe('POST /auth/account', () => {
         }
 
         // first create an account
-        await request(app)
-            .post('/auth/account')
-            .send(accountData)
+        await request(app).post('/auth/account').send(accountData)
 
         // then try to create another account with the same username
         await request(app)
             .post('/auth/account')
             .send(accountData2)
-            .expect(res=> res.status === 400 || res.status === 422) // express-validator returns 422 for validation errors
+            .expect((res) => res.status === 400 || res.status === 422) // express-validator returns 422 for validation errors
     })
     //
     test('should return error if email is already taken', async () => {
@@ -74,9 +72,7 @@ describe('POST /auth/account', () => {
         }
 
         // first create an account
-        await request(app)
-            .post('/auth/account')
-            .send(accountData)
+        await request(app).post('/auth/account').send(accountData)
 
         await request(app)
             .post('/auth/account')
@@ -96,13 +92,11 @@ describe('POST /auth/account', () => {
         }
 
         // first create an account
-        await request(app)
-            .post('/auth/account')
-            .send(accountData)
+        await request(app).post('/auth/account').send(accountData)
 
         await request(app)
             .post('/auth/account')
             .send(accountData2)
-            .expect(res => res.status === 400 || res.status === 422) // express-validator returns 422 for validation errors
+            .expect((res) => res.status === 400 || res.status === 422) // express-validator returns 422 for validation errors
     })
 })

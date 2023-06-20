@@ -52,11 +52,11 @@ module.exports.signJWT = function (payload, secret) {
  * @param {string[]} fields - The fields to pick
  */
 module.exports.pick = (obj, fields) => {
-    const picked = {};
+    const picked = {}
     for (const field of fields) {
         if (Object.prototype.hasOwnProperty.call(obj, field)) {
-            picked[field] = obj[field];
+            picked[field] = obj[field]
         }
     }
-    return picked;
+    return picked
 }
