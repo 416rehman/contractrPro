@@ -6,8 +6,6 @@ routes.use((req, res, next) => {
     next()
 })
 
-routes.get('/', require('./getUsers'))
-
 routes.get('/:user_id', require('./getUser'))
 
 /**

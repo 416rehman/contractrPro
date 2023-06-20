@@ -79,6 +79,8 @@ app.use('/auth', routes.auth)
 app.use(checkAuth) // authentication middleware
 app.use('/users/', routes.user)
 app.use('/organizations/', routes.organization)
+// TODO: Protect admin routes from non-admin users
+app.use('/admin/', routes.admin)
 
 // TODO: Move this so this is part of each resource, i.e /users/:id/comments, /users/:id/organizations, etc.
 app.post('/comments', async (req, res) => {
