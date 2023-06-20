@@ -63,4 +63,5 @@ jobs:
                     cache-dependency-path: ./api/package-lock.json
             -   name: Install Dependencies
                 run: npm ci --no-optional
-
+            -   name: Run tests
+                run: npm run test
