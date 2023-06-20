@@ -4,7 +4,7 @@ const {
     createErrorResponse,
 } = require('../../utils/response')
 
-//retrieve all organization
+//retrieve organization by id
 module.exports = async (req, res) => {
     try{
         const orgId = req.params.org_id;

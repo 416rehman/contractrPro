@@ -1,10 +1,10 @@
-const { sequelize, Organization, User } = require('../../db')
+const { Organization, User } = require('../../db')
 const {
     createSuccessResponse,
     createErrorResponse,
 } = require('../../utils/response')
 
-//Retrieve users by organization display their id and user name
+//Retrieve users by organization display their id, username,email,phone.
 module.exports = async(req, res) => {
     try{
         const orgId = req.params.org_id;
