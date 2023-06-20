@@ -11,7 +11,7 @@ module.exports = async (req, res) => {
 
         //since organization has unique ids, it only return 1 organization object
         const organizations = await Organization.findAll({
-            where: { ownerId },
+            where: { id: ownerId },
         });
 
         res.status(200).json(createSuccessResponse(organizations));
