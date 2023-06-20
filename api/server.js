@@ -14,7 +14,7 @@ const routes = require('./routes')
 const checkAuth = require('./middleware/authMiddleware')
 
 // Use logging middleware
-const logger = require('./logger')
+const logger = require('./utils/logger')
 const { populate } = require('./utils/fake')
 const pino = require('pino-http')({
     // Use our default logger instance, which is already configured

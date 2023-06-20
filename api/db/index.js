@@ -1,5 +1,5 @@
 const { DataTypes, Sequelize } = require('sequelize')
-const logger = require('../logger')
+const logger = require('../utils/logger')
 const address = require('./models/address'),
     attachment = require('./models/attachment'),
     client = require('./models/client'),
