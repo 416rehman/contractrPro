@@ -10,14 +10,13 @@ module.exports = async (req, res) => {
         const organization = await Organization.findByIdAndDelete(org_id)
 
         if (!organization) {
-            res.status(404).send({
+            return res.status(404).send({
                 message: `Organization with ID ${org_id} was not found`,
             })
-            return
         }
 
-        res.status(200).json(createSuccessResponse(organization))
+        return res.status(200).json(createSuccessResponse(organization))
     } catch (error) {
-        res.status(500).json(createErrorResponse(error.message))
+        return res.status(500).json(createErrorResponse(error.message))
     }
 }

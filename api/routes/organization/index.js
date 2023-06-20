@@ -2,7 +2,6 @@ const routes = require('express').Router({ mergeParams: true })
 const contract_router = require('./contracts')
 const member_router = require('./members')
 const invite_router = require('./invites')
-const whitelistFields = require('../../middleware/whitelistFieldsMiddleware')
 
 routes.use((req, res, next) => {
     const path = __filename.split('/').slice(-1)[0].split('\\').slice(-1)[0]
@@ -20,14 +19,6 @@ routes.get('/:org_id', require('./getOrganization'))
  */
 routes.post(
     '/',
-    whitelistFields([
-        'name',
-        'description',
-        'email',
-        'phone',
-        'website',
-        'logoUrl',
-    ]),
     require('./postOrganization')
 )
 
@@ -41,14 +32,6 @@ routes.delete('/:org_id', require('./deleteOrganization'))
  */
 routes.put(
     '/:org_id',
-    whitelistFields([
-        'name',
-        'description',
-        'email',
-        'phone',
-        'website',
-        'logoUrl',
-    ]),
     require('./putOrganization')
 )
 

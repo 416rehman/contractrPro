@@ -3,10 +3,10 @@ name: ContractrPro CI
 on:
     # Runs the inside pull requests to the main and dev branches
     pull_request:
-        branches: [main, dev]
+        branches: [ main, dev ]
     # Runs the inside pushes to the main and dev branches
     push:
-        branches: [main, dev]
+        branches: [ main, dev ]
 
 jobs:
     format-api:
@@ -20,25 +20,38 @@ jobs:
             run:
                 working-directory: ./api
         steps:
-            - name: Checkout code
-              uses: actions/checkout@v3
-              with:
-                  ref: ${{ github.head_ref }}
-                  token: ${{ secrets.PAT }}
-            - name: Setup Node for API
-              uses: actions/setup-node@v2
-              with:
-                node-version: "18.16.0"
-                cache: "npm"
-                cache-dependency-path: ./api/package-lock.json
-            - name: Install Dependencies
-              run: npm ci
-            - name: Check for bugs
-              run: npm run lint
-            - name: Check for code formatting
-              run: npm run prettier
-            - name: Commit changes
-              uses: stefanzweifel/git-auto-commit-action@v4
-              with:
-                  commit_message: Apply formatting changes
-                  branch: ${{ github.head_ref }}
+            -   name: Checkout code
+                uses: actions/checkout@v3
+                with:
+                    ref: ${{ github.head_ref }}
+                    token: ${{ secrets.PAT }}
+            -   name: Setup Node for API
+                uses: actions/setup-node@v2
+                with:
+                    node-version: "18.16.0"
+                    cache: "npm"
+                    cache-dependency-path: ./api/package-lock.json
+            -   name: Install Dependencies
+                run: npm ci
+            -   name: Check for bugs
+                run: npm run lint
+            -   name: Check for code formatting
+                run: npm run prettier
+            -   name: Commit changes
+                uses: stefanzweifel/git-auto-commit-action@v4
+                with:
+                    commit_message: Apply formatting changes
+                    branch: ${{ github.head_ref }}
+
+    test-api:
+        steps:
+            -   uses: actions/checkout@v2
+            -   name: Use Node.js ${{ matrix.node-version }}
+                uses: actions/setup-node@v2
+                with:
+                    node-version: ${{ matrix.node-version }}
+                    cache: 'npm'
+            -   name: Install Dependencies
+                run: npm ci
+            -   name: Run Tests
+                run: npm run test

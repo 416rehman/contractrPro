@@ -57,35 +57,7 @@ for (const model of Object.values(models)) {
     }
 }
 
-const connect = async () => {
-    return new Promise((resolve, reject) => {
-        logger.info({
-            host: process.env.DB_HOST,
-            port: process.env.DB_POR,
-            user: process.env.DB_USER,
-            password: process.env.DB_PASSWORD,
-            database: process.env.DB_DATABASE,
-        })
-
-        sequelize
-            .authenticate()
-            .then(async () => {
-                await sequelize.sync({
-                    force:
-                        process.env.NODE_ENV === 'test' ||
-                        process.env.NODE_ENV === 'development',
-                })
-                resolve()
-            })
-            .catch((err) => {
-                logger.error('Unable to connect to database')
-                reject(err)
-            })
-    })
-}
-
 module.exports = {
     sequelize,
-    connect,
     ...models,
 }

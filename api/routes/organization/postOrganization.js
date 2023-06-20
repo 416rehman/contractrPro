@@ -3,11 +3,13 @@ const {
     createSuccessResponse,
     createErrorResponse,
 } = require('../../utils/response')
+const {pick} = require("../../utils");
+
 // Creates an organization
 module.exports = async (req, res) => {
     try {
         const body = {
-            ...req.body,
+            ...pick(req.body, ['name', 'description', 'email', 'phone', 'website', 'logoUrl']),
             ownerId: req.auth.id,
             updatedByUserId: req.auth.id,
         }
@@ -17,9 +19,9 @@ module.exports = async (req, res) => {
                 transaction,
             })
 
-            res.status(201).json(createSuccessResponse(org))
+            return res.status(201).json(createSuccessResponse(org))
         })
     } catch (error) {
-        res.status(500).json(createErrorResponse(error.message))
+        return res.status(500).json(createErrorResponse(error.message))
     }
 }

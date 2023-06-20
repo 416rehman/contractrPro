@@ -101,7 +101,7 @@ app.post('/comments', async (req, res) => {
         }
     }
 
-    res.json({
+    return res.json({
         content: commentContent,
         attachments: commentAttachments.map(
             (attachment) => attachment.originalname
