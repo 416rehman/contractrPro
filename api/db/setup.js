@@ -14,7 +14,8 @@ module.exports = () => {
 
             logger.debug(`Running in ${process.env.NODE_ENV} mode`)
 
-            if (process.env.NODE_ENV === 'development') {
+            if (process.env.NODE_ENV === 'test' ||
+                process.env.NODE_ENV === 'development') {
                 await populate()
                 logger.debug(`Database populated!`)
             }

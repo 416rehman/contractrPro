@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken')
  * @param next
  * @returns {*}
  */
-if (process.env.NODE_ENV === 'development') {
+if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
     // default export
     module.exports = function (req, res, next) {
         // add a fake auth object to the request to indicate that the user is authenticated in development mode
