@@ -5,7 +5,7 @@ const {
     createErrorResponse,
 } = require('../../utils/response')
 
-// Gets a user's organizations
+// Gets a user's organization
 module.exports = async (req, res) => {
     try {
         const userID = req.params.user_id
