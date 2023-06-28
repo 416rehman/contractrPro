@@ -13,11 +13,11 @@ module.exports = async (req, res) => {
         if (!userID) {
             return res
                 .status(400)
-                .json(createErrorResponse('User ID is required'))
+                .json(createErrorResponse('User ID required'))
         }
 
         await sequelize.transaction(async (transaction) => {
-            const userOrganizations = await User.findAll({
+            const userOrganizations = await User.findOne({
                 attributes: {
                     exclude: [
                         'username',
@@ -42,10 +42,17 @@ module.exports = async (req, res) => {
                 transaction,
             })
 
+            if (!userOrganizations) {
+                return res
+                .status(400)
+                .json(createErrorResponse('User not found'))
+            }
+            
             return res
                 .status(200)
                 .json(createSuccessResponse(userOrganizations))
         })
+        
     } catch (error) {
         res.status(500).json(createErrorResponse(error.message))
     }
