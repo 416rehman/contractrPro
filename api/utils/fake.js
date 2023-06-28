@@ -246,14 +246,14 @@ const populate = async () => {
         }
     }
 
-// To see which special methods are available on a model, print its prototype property like console.log(Organization.prototype)
+    // To see which special methods are available on a model, print its prototype property like console.log(Organization.prototype)
     for (let i = 0; i < 10; i++) {
         // USER ---------------------------------------------------------------
         // Creates and persists a user in the db
         const user = await User.create(mockUserData())
         user.setUpdatedByUser(user) // Sets and persists the updatedByUser association to itself
 
-        await generateDataFor(user);
+        await generateDataFor(user)
     }
 
     // Add the dev user.
@@ -263,7 +263,7 @@ const populate = async () => {
         username: process.env.DEV_USER_USERNAME,
     })
 
-    await generateDataFor(devUser);
+    await generateDataFor(devUser)
 }
 
 module.exports = {
