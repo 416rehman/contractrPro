@@ -13,9 +13,7 @@ module.exports = async (req, res) => {
         const userID = req.params.user_id
 
         if (!userID || !isValidUUID(userID)) {
-            return res
-                .status(400)
-                .json(createErrorResponse('User ID required'))
+            return res.status(400).json(createErrorResponse('User ID required'))
         }
 
         await sequelize.transaction(async (transaction) => {
@@ -46,15 +44,14 @@ module.exports = async (req, res) => {
 
             if (!userOrganizations) {
                 return res
-                .status(400)
-                .json(createErrorResponse('User not found'))
+                    .status(400)
+                    .json(createErrorResponse('User not found'))
             }
-            
+
             return res
                 .status(200)
                 .json(createSuccessResponse(userOrganizations))
         })
-        
     } catch (error) {
         res.status(500).json(createErrorResponse(error.message))
     }
