@@ -5,12 +5,14 @@ const {
     createErrorResponse,
 } = require('../../utils/response')
 
+const { isValidUUID } = require('../../utils/isValidUUID')
+
 // Gets a user's organization
 module.exports = async (req, res) => {
     try {
         const userID = req.params.user_id
 
-        if (!userID) {
+        if (!userID || !isValidUUID(userID)) {
             return res
                 .status(400)
                 .json(createErrorResponse('User ID required'))
