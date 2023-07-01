@@ -18,20 +18,25 @@ module.exports.define = (sequelize, DataTypes) => {
                 allowNull: false,
                 validate: {
                     isUniquePerOrganization(value, next) {
-                        const OrganizationMember = sequelize.models.OrganizationMember;
-                        const orgId = this.getDataValue('OrganizationId');
+                        const OrganizationMember =
+                            sequelize.models.OrganizationMember
+                        const orgId = this.getDataValue('OrganizationId')
 
                         OrganizationMember.findOne({
                             where: {
                                 email: value,
                                 OrganizationId: orgId,
                             },
-                        }).then(member => {
-                            if (member) {
-                                return next(`Email is already in use within the organization.`);
-                            }
-                            next();
-                        }).catch(err => next(err));
+                        })
+                            .then((member) => {
+                                if (member) {
+                                    return next(
+                                        `Email is already in use within the organization.`
+                                    )
+                                }
+                                next()
+                            })
+                            .catch((err) => next(err))
                     },
                 },
             },
@@ -40,20 +45,25 @@ module.exports.define = (sequelize, DataTypes) => {
                 allowNull: false,
                 validate: {
                     isUniquePerOrganization(value, next) {
-                        const OrganizationMember = sequelize.models.OrganizationMember;
-                        const orgId = this.getDataValue('OrganizationId');
+                        const OrganizationMember =
+                            sequelize.models.OrganizationMember
+                        const orgId = this.getDataValue('OrganizationId')
 
                         OrganizationMember.findOne({
                             where: {
                                 phone: value,
                                 OrganizationId: orgId,
                             },
-                        }).then(member => {
-                            if (member) {
-                                return next(`Phone is already in use within the organization.`);
-                            }
-                            next();
-                        }).catch(err => next(err));
+                        })
+                            .then((member) => {
+                                if (member) {
+                                    return next(
+                                        `Phone is already in use within the organization.`
+                                    )
+                                }
+                                next()
+                            })
+                            .catch((err) => next(err))
                     },
                 },
             },
