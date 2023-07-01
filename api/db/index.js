@@ -49,7 +49,9 @@ sequelize.beforeConnect(async (config) => {
         }
         // lowercase the database name
         config.database = dbToCreate
-    } catch (err) {}
+    } catch (err) {
+        logger.error(err)
+    }
 })
 
 const models = {
