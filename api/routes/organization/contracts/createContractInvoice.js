@@ -1,6 +1,8 @@
-module.exports = (req, res) => {
-    res.send({
-        file: __filename.split('/').slice(-1)[0].split('\\').slice(-1)[0],
-        message: 'TODO',
-    })
-}
+//*******************************************TODO******************* */
+const { sequelize, Invoice } = require('../../db');
+const {
+    createSuccessResponse,
+    createErrorResponse,
+} = require('../../../utils');
+const { pick } = require('../../../utils');
+
