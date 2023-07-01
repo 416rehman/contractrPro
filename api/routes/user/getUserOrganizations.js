@@ -5,19 +5,19 @@ const {
     createErrorResponse,
 } = require('../../utils/response')
 
-// Gets a user's organizations
+const { isValidUUID } = require('../../utils/isValidUUID')
+
+// Gets a user's organization
 module.exports = async (req, res) => {
     try {
         const userID = req.params.user_id
 
-        if (!userID) {
-            return res
-                .status(400)
-                .json(createErrorResponse('User ID is required'))
+        if (!userID || !isValidUUID(userID)) {
+            return res.status(400).json(createErrorResponse('User ID required'))
         }
 
         await sequelize.transaction(async (transaction) => {
-            const userOrganizations = await User.findAll({
+            const userOrganizations = await User.findOne({
                 attributes: {
                     exclude: [
                         'username',
@@ -41,6 +41,12 @@ module.exports = async (req, res) => {
                 },
                 transaction,
             })
+
+            if (!userOrganizations) {
+                return res
+                    .status(400)
+                    .json(createErrorResponse('User not found'))
+            }
 
             return res
                 .status(200)
