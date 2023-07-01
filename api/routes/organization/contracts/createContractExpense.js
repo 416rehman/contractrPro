@@ -1,5 +1,5 @@
 //*******************************************TODO******************* */
-const { sequelize, Expense } = require('../../db');
+const { sequelize, Expense } = require('../../../db');
 const {
     createSuccessResponse,
     createErrorResponse,
