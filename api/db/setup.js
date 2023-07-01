@@ -6,10 +6,13 @@ module.exports = () => {
     return sequelize
         .authenticate()
         .then(async () => {
-            if (process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'development') {
+            if (
+                process.env.NODE_ENV === 'test' ||
+                process.env.NODE_ENV === 'development'
+            ) {
                 logger.debug(`Running in ${process.env.NODE_ENV} mode`)
 
-                await sequelize.sync({force: true})
+                await sequelize.sync({ force: true })
 
                 await populate()
                 logger.debug(`Database populated!`)
