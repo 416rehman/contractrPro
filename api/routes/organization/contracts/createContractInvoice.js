@@ -1,4 +1,5 @@
 //*******************************************TODO******************* */
+//POST route: /organizations/:org_id/contracts/:contract_id/invoices
 const { sequelize, Invoice } = require('../../../db');
 const {
     createSuccessResponse,
@@ -7,12 +8,18 @@ const {
 const { pick } = require('../../../utils');
 
 module.exports = async(req, res) => {
+    const orgId = req.params.org_id;
+    const contractId = req.params.contract_id;
     try{
-        const orgId = req.params.org_id;
         if (!orgId) {
             return res
                 .status(400)
-                .json(createErrorResponse('Organization ID is required'))
+                .json(createErrorResponse('Organization ID is required'));
+        }
+        if (!contractId) {
+            return res
+                .status(400)
+                .json(createErrorResponse('Contract ID is required'));
         }
         const body = {
             ...pick(req.body, [
@@ -22,11 +29,11 @@ module.exports = async(req, res) => {
                 'poNumber',
                 'note',
                 'taxRate',
+                'JobId',
+                'ClientId',
             ]),
             OrganizationId: orgId,
-            ContractId:req.params.org_id,
-            JobId:req.params.job_id,
-            ClientId:req.params.client_id,
+            ContractId:contractId,
             updatedByUserId: req.auth.id,
         };
         await sequelize.transaction(async (transaction) => {
