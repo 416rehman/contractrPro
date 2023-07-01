@@ -14,12 +14,12 @@ module.exports = async(req, res) => {
         if (!req.params.client_id) {
             return res
                 .status(400)
-                .json(createErrorResponse('Member ID is required'));
+                .json(createErrorResponse('Client ID is required'));
         }
         if (!req.params.contract_id) {
             return res
                 .status(400)
-                .json(createErrorResponse('Member ID is required'));
+                .json(createErrorResponse('Contract ID is required'));
         }
 
         await sequelize.transaction(async (transaction) => {
@@ -27,7 +27,7 @@ module.exports = async(req, res) => {
                 where: {
                     OrganizationId: req.params.org_id,
                     ClientId: req.params.client_id,
-                    id: req.params.member_id,
+                    id: req.params.contract_id,
                 },
                 transaction,
             });
