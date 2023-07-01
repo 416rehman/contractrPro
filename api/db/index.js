@@ -42,13 +42,12 @@ sequelize.beforeConnect(async (config) => {
     })
     await pgClient.connect()
     try {
-        const dbToCreate = process.env.DB_DATABASE.toLowerCase()
+        const dbToCreate = config.database.toLowerCase()
         const result = await pgClient.query(`SELECT 1 FROM pg_database WHERE lower(datname) = lower('${dbToCreate}')`)
         if (result.rows.length === 0) {
             await pgClient.query(`CREATE DATABASE ${dbToCreate}`)
+            config.database = dbToCreate
         }
-        // lowercase the database name
-        config.database = dbToCreate
     } catch (err) {
         logger.error(err)
     }
