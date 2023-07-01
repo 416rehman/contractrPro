@@ -1,6 +1,6 @@
-const {DataTypes, Sequelize} = require('sequelize')
+const { DataTypes, Sequelize } = require('sequelize')
 const logger = require('../utils/logger')
-const {Client} = require('pg')
+const { Client } = require('pg')
 
 const address = require('./models/address'),
     attachment = require('./models/attachment'),
@@ -43,7 +43,9 @@ sequelize.beforeConnect(async (config) => {
     await pgClient.connect()
     try {
         const dbToCreate = config.database.toLowerCase()
-        const result = await pgClient.query(`SELECT 1 FROM pg_database WHERE lower(datname) = lower('${dbToCreate}')`)
+        const result = await pgClient.query(
+            `SELECT 1 FROM pg_database WHERE lower(datname) = lower('${dbToCreate}')`
+        )
         if (result.rows.length === 0) {
             await pgClient.query(`CREATE DATABASE ${dbToCreate}`)
             config.database = dbToCreate
