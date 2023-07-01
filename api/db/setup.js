@@ -6,20 +6,15 @@ module.exports = () => {
     return sequelize
         .authenticate()
         .then(async () => {
-            await sequelize.sync({
-                force:
-                    process.env.NODE_ENV === 'test' ||
-                    process.env.NODE_ENV === 'development',
-            })
+            if (process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'development') {
+                logger.debug(`Running in ${process.env.NODE_ENV} mode`)
 
-            logger.debug(`Running in ${process.env.NODE_ENV} mode`)
+                await sequelize.sync({force: true})
 
-            if (
-                process.env.NODE_ENV === 'test' ||
-                process.env.NODE_ENV === 'development'
-            ) {
                 await populate()
                 logger.debug(`Database populated!`)
+            } else {
+                await sequelize.sync()
             }
         })
         .catch((err) => {

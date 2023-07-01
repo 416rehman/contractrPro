@@ -1,5 +1,6 @@
-const { DataTypes, Sequelize } = require('sequelize')
+const {DataTypes, Sequelize} = require('sequelize')
 const logger = require('../utils/logger')
+const {Client} = require('pg')
 
 const address = require('./models/address'),
     attachment = require('./models/attachment'),
@@ -29,6 +30,27 @@ const sequelize = new Sequelize(
         dialect: 'postgres',
     }
 )
+
+// Create DB if it doesn't exist
+sequelize.beforeConnect(async (config) => {
+    console.log('beforeConnect')
+    // check if database process.env.DB_DATABASE exists
+    const pgClient = new Client({
+        user: config.username,
+        password: config.password,
+        host: config.host,
+    })
+    await pgClient.connect()
+    try {
+        const dbToCreate = process.env.DB_DATABASE.toLowerCase()
+        const result = await pgClient.query(`SELECT 1 FROM pg_database WHERE lower(datname) = lower('${dbToCreate}')`)
+        if (result.rows.length === 0) {
+            await pgClient.query(`CREATE DATABASE ${dbToCreate}`)
+        }
+        // lowercase the database name
+        config.database = dbToCreate
+    } catch (err) {}
+})
 
 const models = {
     Address: address.define(sequelize, DataTypes),
