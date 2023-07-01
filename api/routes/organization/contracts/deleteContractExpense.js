@@ -1,32 +1,26 @@
 //*******************************************TODO******************* */
+// DELETE /organizations/:org_id/contracts/:contract_id/expenses/:expense_id 
 const { sequelize, Expense } = require('../../../db');
 const {
     createSuccessResponse,
     createErrorResponse,
 } = require('../../../utils/response');
 module.exports = async(req, res) => {
+    const orgId=req.params.org_id;
+    const contractId=req.params.contract_id;
+    const expenseId=req.params.expense_id;
     try{
-        if (!req.params.org_id) {
+        if (!orgId) {
             return res
                 .status(400)
                 .json(createErrorResponse('Organization ID is required'));
         }
-        if (!req.params.contract_id) {
+        if (!contractId) {
             return res
                 .status(400)
                 .json(createErrorResponse('Contract ID is required'));
         }
-        if (!req.params.job_id) {
-            return res
-                .status(400)
-                .json(createErrorResponse('Job ID is required'));
-        }
-        if (!req.params.vendor_id) {
-            return res
-                .status(400)
-                .json(createErrorResponse('Vendor ID is required'));
-        }
-        if (!req.params.expense_id) {
+        if (!expenseId) {
             return res
                 .status(400)
                 .json(createErrorResponse('Expense ID is required'));
@@ -35,24 +29,22 @@ module.exports = async(req, res) => {
         await sequelize.transaction(async (transaction) => {
             const expense = await Expense.findOne({
                 where: {
-                    OrganizationId: req.params.org_id,
-                    ContractId: req.params.contract_id,
-                    JobId: req.params.job_id,
-                    VendorId: req.params.vendor_id,
-                    id: req.params.expense_id,
+                    OrganizationId: orgId,
+                    ContractId: contractId,
+                    id: expenseId,
                 },
                 transaction,
             });
 
             if (!expense) {
-                throw new Error('contract not exist');
+                throw new Error(`expense ${expenseId} not exist`);
             }
 
             await expense.destroy({
                 transaction,
             });
 
-            return res.status(200).json(createSuccessResponse(expense));
+            return res.status(200).json(createSuccessResponse(`Expense ${expenseId} and related data has been deleted successfully`));
         });
 
     }catch(err){
