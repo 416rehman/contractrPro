@@ -16,7 +16,7 @@ const mockUserData = () => {
         email: faker.internet.email(),
         phone: faker.phone.number(),
         password: faker.internet.password(),
-        avatarUrl: faker.image.avatar(),
+        avatarUrl: faker.image.url(),
         refreshToken: faker.string.uuid(),
     }
 }
@@ -29,7 +29,7 @@ const mockOrganizationData = () => {
         email: faker.internet.email(),
         phone: faker.phone.number(),
         website: faker.internet.url(),
-        logoUrl: faker.image.business(),
+        logoUrl: faker.image.url(),
     }
 }
 
@@ -70,19 +70,19 @@ const mockVendorData = () => {
 // Function to generate fake data for the "Addresses" table
 const mockAddressData = () => {
     return {
-        country: faker.address.country(),
-        postalCode: faker.address.zipCode(),
-        province: faker.address.state(),
-        city: faker.address.city(),
-        addressLine1: faker.address.streetAddress(),
-        addressLine2: faker.address.secondaryAddress(),
+        country: faker.location.country(),
+        postalCode: faker.location.zipCode(),
+        province: faker.location.state(),
+        city: faker.location.city(),
+        addressLine1: faker.location.streetAddress(),
+        addressLine2: faker.location.secondaryAddress(),
     }
 }
 
 // Function to generate fake data for the "Contracts" table
 const mockContractData = () => {
     return {
-        name: faker.random.words(),
+        name: faker.lorem.words(),
         description: faker.lorem.paragraph(),
         startDate: faker.date.past(),
         dueDate: faker.date.future(),

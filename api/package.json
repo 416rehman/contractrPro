@@ -5,8 +5,8 @@
     "description": "Manage your contracts, jobs, expenses, invoices and much more",
     "main": "index.js",
     "scripts": {
-        "test": "NODE_ENV=test jest -c jest.config.js --runInBand --detectOpenHandles --",
-        "coverage": "NODE_ENV=test jest -c jest.config.js --runInBand --coverage",
+        "test": "NODE_ENV=test LOG_LEVEL=debug jest -c jest.config.js --runInBand --detectOpenHandles --",
+        "coverage": "NODE_ENV=test LOG_LEVEL=debug jest -c jest.config.js --runInBand --coverage",
         "lint": "eslint .",
         "start": "node .",
         "dev": "NODE_ENV=development LOG_LEVEL=debug nodemon .",

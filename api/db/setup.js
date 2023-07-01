@@ -12,8 +12,10 @@ module.exports = () => {
             ) {
                 logger.debug(`Running in ${process.env.NODE_ENV} mode`)
 
+                logger.debug(`Syncing database...`)
                 await sequelize.sync({ force: true })
 
+                logger.debug(`Populating database...`)
                 await populate()
                 logger.debug(`Database populated!`)
             } else {

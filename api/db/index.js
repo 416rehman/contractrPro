@@ -28,12 +28,12 @@ const sequelize = new Sequelize(
         host: process.env.DB_HOST,
         port: process.env.DB_PORT,
         dialect: 'postgres',
+        logging: false,
     }
 )
 
 // Create DB if it doesn't exist
 sequelize.beforeConnect(async (config) => {
-    console.log('beforeConnect')
     // check if database process.env.DB_DATABASE exists
     const pgClient = new Client({
         user: config.username,
@@ -45,6 +45,7 @@ sequelize.beforeConnect(async (config) => {
         const dbToCreate = config.database.toLowerCase()
         const result = await pgClient.query(`SELECT 1 FROM pg_database WHERE lower(datname) = lower('${dbToCreate}')`)
         if (result.rows.length === 0) {
+            logger.debug(`Creating database ${dbToCreate}`)
             await pgClient.query(`CREATE DATABASE ${dbToCreate}`)
             config.database = dbToCreate
         }
@@ -73,12 +74,13 @@ const models = {
     Vendor: vendor.define(sequelize, DataTypes),
 }
 
+logger.debug('Associating models...')
 for (const model of Object.values(models)) {
     if (typeof model.associate === 'function') {
-        logger.info(`Associating ${model.name}`)
         model.associate(models)
     }
 }
+logger.debug('Models associated')
 
 module.exports = {
     sequelize,
