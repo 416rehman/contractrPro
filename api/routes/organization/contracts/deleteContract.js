@@ -33,7 +33,7 @@ module.exports = async(req, res) => {
             });
 
             if (!contract) {
-                throw new Error('contract not exist')
+                throw new Error('contract not exist');
             }
 
             await contract.destroy({
