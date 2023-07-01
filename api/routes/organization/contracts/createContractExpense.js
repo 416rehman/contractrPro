@@ -9,20 +9,26 @@ const { pick } = require('../../../utils');
 module.exports = async(req, res) => {
     try{
         const orgId = req.params.org_id;
+        const contractId = req.params.contract_id;
         if (!orgId) {
             return res
                 .status(400)
                 .json(createErrorResponse('Organization ID is required'))
         }
+        if (!contractId) {
+            return res
+                .status(400)
+                .json(createErrorResponse('Contract ID is required'))
+        }
         const body = {
             ...pick(req.body, [
                 'description',
                 'date',
+                'jobId',
+                'vendorId',
             ]),
             OrganizationId: orgId,
-            ContractId:req.params.org_id,
-            JobId:req.params.job_id,
-            VendorId:req.params.vendor_id,
+            ContractId: contractId,
             updatedByUserId: req.auth.id,
         };
         await sequelize.transaction(async (transaction) => {
