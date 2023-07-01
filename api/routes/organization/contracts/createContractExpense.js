@@ -3,7 +3,7 @@ const { sequelize, Expense } = require('../../db');
 const {
     createSuccessResponse,
     createErrorResponse,
-} = require('../../../utils');
+} = require('../../../utils/response');
 const { pick } = require('../../../utils');
 
 module.exports = async(req, res) => {
