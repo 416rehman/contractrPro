@@ -1,4 +1,5 @@
 //*******************************************TODO******************* */
+//DELETE /organizations/:org_id/contracts/:contact_id 
 const { sequelize, Contract, Expense, Invoice, Job } = require('../../../db');
 const {
     createSuccessResponse,
@@ -6,14 +7,15 @@ const {
 } = require('../../../utils/response');
 module.exports = async(req, res) => {
     const contractId=req.params.contract_id;
+    const orgId=req.params.org_id;
     try{
-        if (!req.params.org_id) {
+        if (!orgId) {
             return res
                 .status(400)
                 .json(createErrorResponse('Organization ID required'));
         }
         
-        if (!req.params.contract_id) {
+        if (!contractId) {
             return res
                 .status(400)
                 .json(createErrorResponse('Contract ID required'));
@@ -22,7 +24,7 @@ module.exports = async(req, res) => {
         await sequelize.transaction(async (transaction) => {
             const contract = await Contract.findOne({
                 where: {
-                    OrganizationId: req.params.org_id,
+                    OrganizationId: orgId,
                     id: contractId,
                 },
                 transaction,

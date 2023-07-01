@@ -1,4 +1,6 @@
 //*******************************************TODO******************* */
+//POST /organizations/:org_id/contracts/:contract_id/expenses
+
 const { sequelize, Expense } = require('../../../db');
 const {
     createSuccessResponse,
@@ -13,19 +15,19 @@ module.exports = async(req, res) => {
         if (!orgId) {
             return res
                 .status(400)
-                .json(createErrorResponse('Organization ID is required'))
+                .json(createErrorResponse('Organization ID is required'));
         }
         if (!contractId) {
             return res
                 .status(400)
-                .json(createErrorResponse('Contract ID is required'))
+                .json(createErrorResponse('Contract ID is required'));
         }
         const body = {
             ...pick(req.body, [
                 'description',
                 'date',
-                'jobId',
-                'vendorId',
+                'JobId',
+                'VendorId',
             ]),
             OrganizationId: orgId,
             ContractId: contractId,
