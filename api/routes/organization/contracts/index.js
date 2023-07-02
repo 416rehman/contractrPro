@@ -100,6 +100,40 @@ routes.delete(
     require('./deleteContractInvoice')
 )
 
+/*####################################Entry Routes####################################################*/
+/**
+ * @api {post} /organizations/:org_id/contracts/:contract_id/invoices/:invoice_id
+ */
+routes.post(
+    '/:contract_id/invoices/:invoice_id/invoiceEntries',
+    require('./createInvoiceEntry')
+)
+
+/**
+ * @api {delete} /organizations/:org_id/contracts/:contract_id/invoices/:invoice_id/invoiceEntries/:invoiceEntry_id  Delete invoice invoiceEntry
+ */
+routes.delete(
+    '/:contract_id/invoices/:invoice_id/invoiceEntries/:invoiceEntry_id',
+    require('./deleteInvoiceEntry')
+)
+
+/**
+ * @api {post} /organizations/:org_id/contracts/:contract_id/expenses/:expense_id/expenseEntries Create contract expense
+ */
+routes.post(
+    '/:contract_id/expenses/:expense_id/expenseEntries',
+    require('./createExpenseEntry')
+)
+
+/**
+ * @api {delete} /organizations/:org_id/contracts/:contract_id/expenses/:expense_id/expenseEntries/:expenseEntry_id  Delete expense expenseEntry
+ */
+routes.delete(
+    '/:contract_id/expenses/:expense_id/:expense_id/expenseEntries/:expenseEntry_id',
+    require('./deleteExpenseEntry')
+)
+/*####################################Entry Routes END####################################################*/
+
 /**
  * @api {get} /organizations/:org_id/contracts/:contract_id/jobs Get all jobs by contract
  * @type {Router}
