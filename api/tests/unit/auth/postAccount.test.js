@@ -62,14 +62,14 @@ describe('POST /auth/account', () => {
             .post('/auth/account')
             .send(accountData)
             .then(async (res) => {
-                // wait a bit for the member to be created
-                await new Promise((resolve) => setTimeout(resolve, 1000))
-
                 // then try to create another account with the same username
                 const response = await request(app)
                     .post('/auth/account')
                     .send(accountData2)
-                    .expect((res) => res.status === 400 || res.status === 422) // express-validator returns 422 for validation errors
+                    .expect(
+                        (response) =>
+                            response.status === 400 || response.status === 422
+                    ) // express-validator returns 422 for validation errors
 
                 // cleanup - delete the account
                 if (res?.body?.data?.id) {

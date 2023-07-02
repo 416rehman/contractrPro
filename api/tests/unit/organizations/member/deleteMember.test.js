@@ -53,7 +53,7 @@ describe('Delete member from organization', () => {
     })
 
     it('should return 400 if member is not found', async () => {
-        const memberId = fake.faker.datatype.uuid()
+        const memberId = fake.faker.string.uuid()
 
         const response = await request(app)
             .delete(`/organizations/${orgId}/members/${memberId}`)
