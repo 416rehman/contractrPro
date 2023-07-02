@@ -62,6 +62,9 @@ describe('POST /auth/account', () => {
             .post('/auth/account')
             .send(accountData)
             .then(async (res) => {
+                // wait a bit for the member to be created
+                await new Promise((resolve) => setTimeout(resolve, 1000))
+
                 // then try to create another account with the same username
                 const response = await request(app)
                     .post('/auth/account')

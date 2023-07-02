@@ -103,6 +103,9 @@ describe('Create organization member', () => {
             .post(`/organizations/${orgId}/members`)
             .send(orgMemberInfo)
             .then(async (response0) => {
+                // wait a bit for the member to be created
+                await new Promise((resolve) => setTimeout(resolve, 1000))
+
                 const response = await request(app)
                     .post(`/organizations/${orgId}/members`)
                     .send(orgMemberInfo)
