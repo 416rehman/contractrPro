@@ -9,11 +9,29 @@ const {
 const { pick } = require('../../../utils')
 
 module.exports = async (req, res) => {
-    const orgId = req.params.org_id
-    const contractId = req.params.contract_id
-    const invoiceId = req.params.invoice_id
-
     try {
+        const orgId = req.params.org_id
+        const contractId = req.params.contract_id
+        const invoiceId = req.params.invoice_id
+
+        if (!orgId) {
+            return res
+                .status(400)
+                .json(createErrorResponse('Organization ID is required'))
+        }
+
+        if (!contractId) {
+            return res
+                .status(400)
+                .json(createErrorResponse('Contract ID is required'))
+        }
+
+        if (!invoiceId) {
+            return res
+                .status(400)
+                .json(createErrorResponse('Invoice ID is required'))
+        }
+
         const body = {
             ...pick(req.body, [
                 'invoiceNumber',
@@ -24,37 +42,27 @@ module.exports = async (req, res) => {
                 'taxRate',
             ]),
             updatedByUserId: req.auth.id,
+            OrganizationId: orgId,
+            ContractId: contractId,
         }
 
         await sequelize.transaction(async (transaction) => {
-            // Find the expense
-            const invoice = await Invoice.findOne({
+            const queryResult = await Invoice.update(body, {
                 where: {
-                    id: invoiceId,
-                    ContractId: contractId,
                     OrganizationId: orgId,
+                    ContractId: contractId,
+                    id: invoiceId,
                 },
                 transaction,
+                returning: true,
             })
 
-            if (!invoice) {
-                return res
-                    .status(404)
-                    .json(
-                        createErrorResponse(`Expense ${contractId} not exist`)
-                    )
+            if (!queryResult[0]) {
+                throw new Error('Invoice not found')
             }
 
-            // Update the expense
-            await invoice.update(body, { transaction })
-
-            return res
-                .status(200)
-                .json(
-                    createSuccessResponse(
-                        `Invoice ${invoiceId} and related entries updated successfully`
-                    )
-                )
+            const updatedInvoice = queryResult[1][0]
+            return res.status(200).json(createSuccessResponse(updatedInvoice))
         })
     } catch (error) {
         return res.status(500).json(createErrorResponse(error.message))

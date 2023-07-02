@@ -40,7 +40,7 @@ describe('Delete member from organization', () => {
             .expect(400)
 
         expect(response.body.status).toBe('error')
-        expect(response.body.error).toBe('Organization ID is required')
+        expect(response.body.message).toBe('Organization ID is required')
     })
 
     it('should return 400 if Member ID is invalid', async () => {
@@ -49,7 +49,7 @@ describe('Delete member from organization', () => {
             .expect(400)
 
         expect(response.body.status).toBe('error')
-        expect(response.body.error).toBe('Member ID is required')
+        expect(response.body.message).toBe('Member ID is required')
     })
 
     it('should return 400 if member is not found', async () => {
@@ -61,7 +61,7 @@ describe('Delete member from organization', () => {
 
         expect(response.body.status).toBe('error')
         // Check the specific error message returned by the server
-        expect(response.body.error).toBe('Member not found')
+        expect(response.body.message).toBe('Member not found')
     })
 
     it('should return 400 if an error occurs during member deletion', async () => {
@@ -76,6 +76,6 @@ describe('Delete member from organization', () => {
 
         expect(response.body.status).toBe('error')
         // Check the specific error message returned by the server
-        expect(response.body.error).toBe('Error message from the server')
+        expect(response.body.message).toBe('Error message from the server')
     })
 })

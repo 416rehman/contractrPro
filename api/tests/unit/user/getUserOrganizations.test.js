@@ -32,7 +32,7 @@ describe('GET /users/:user_id/organizations', () => {
 
         // Expect to have an error status with the error message and data
         expect(res.body).toHaveProperty('status', 'error')
-        expect(res.body).toHaveProperty('error', 'User ID required')
+        expect(res.body).toHaveProperty('message', 'User ID required')
     })
 
     test(`Should return with a 400 status code for not finding a user's organizations with an invalid ID`, async () => {
@@ -46,6 +46,6 @@ describe('GET /users/:user_id/organizations', () => {
 
         // Expect to have an error status with the error message
         expect(res.body).toHaveProperty('status', 'error')
-        expect(res.body).toHaveProperty('error', 'User not found')
+        expect(res.body).toHaveProperty('message', 'User not found')
     })
 })

@@ -28,13 +28,24 @@ module.exports = async (req, res) => {
         }
 
         await sequelize.transaction(async (transaction) => {
-            const updatedOrg = await Organization.update(body, {
+            const queryResult = await Organization.update(body, {
                 where: {
                     id: orgId,
                 },
                 transaction,
                 returning: true,
             })
+
+            if (!queryResult[0]) {
+                throw new Error('Organization not found')
+            }
+
+            //queryResult returns:
+            // [
+            //     <number of rows updated>,
+            //     [<array of updated rows>]
+            // ]
+            const updatedOrg = queryResult[1][0]
 
             return res.status(200).json(createSuccessResponse(updatedOrg))
         })

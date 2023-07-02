@@ -42,6 +42,6 @@ describe('GET /organizations/:org_id/members', () => {
             .expect(400)
 
         expect(res.body).toHaveProperty('status', 'error')
-        expect(res.body).toHaveProperty('error', 'Something went wrong')
+        expect(res.body).toHaveProperty('message', 'Something went wrong')
     })
 })

@@ -101,7 +101,7 @@ describe('Create organization member', () => {
         expect(response.status).toBe(400)
 
         expect(response.body.status).toBe('error')
-        expect(response.body).toHaveProperty('error')
+        expect(response.body).toHaveProperty('message')
 
         // cleanup - delete the member
         if (response?.body?.data?.id)
@@ -126,7 +126,7 @@ describe('Create organization member', () => {
 
         expect(response.status).toBe(400)
         expect(response.body.status).toBe('error')
-        expect(response.body).toHaveProperty('error')
+        expect(response.body).toHaveProperty('message')
 
         // cleanup - delete the member
         if (response?.body?.data?.id) {
@@ -155,9 +155,6 @@ describe('Create organization member', () => {
 
         expect(response.status).toBe(400)
         expect(response.body.status).toBe('error')
-        expect(response.body).toHaveProperty(
-            'error',
-            'Error message from the server'
-        )
+        expect(response.body.message).toBe('Error message from the server')
     })
 })

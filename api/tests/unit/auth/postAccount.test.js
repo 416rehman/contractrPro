@@ -8,7 +8,7 @@ describe('POST /auth/account', () => {
         const accountData = fake.mockUserData()
         const res = await request(app).post('/auth/account').send(accountData)
 
-        expect(res.status === 201 || res.status === 200).toBe(true)
+        expect(res.status).toBe(201)
         expect(res.body).toHaveProperty('status', 'success')
         expect(res.body).toHaveProperty('data')
 

@@ -68,7 +68,7 @@ describe('Update organization member', () => {
 
     it('should return 400 if an error occurs during update', async () => {
         // Mocking the implementation to simulate a server error
-        jest.spyOn(db.OrganizationMember, 'findOne').mockImplementationOnce(
+        jest.spyOn(db.OrganizationMember, 'update').mockImplementationOnce(
             () => {
                 throw new Error('Something went wrong')
             }
@@ -84,6 +84,6 @@ describe('Update organization member', () => {
             .expect(400)
 
         expect(response.body.status).toBe('error')
-        expect(response.body.error).toBe('Something went wrong')
+        expect(response.body.message).toBe('Something went wrong')
     })
 })

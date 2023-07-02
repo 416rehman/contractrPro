@@ -1,7 +1,7 @@
 const { Sequelize } = require('sequelize')
 module.exports.define = (sequelize, DataTypes) => {
     const OrganizationMember = sequelize.define(
-        'OrganizationMember', // a member is someone that is part of an organization
+        'OrganizationMember',
         {
             id: {
                 type: Sequelize.UUID,
@@ -16,62 +16,30 @@ module.exports.define = (sequelize, DataTypes) => {
             email: {
                 type: DataTypes.STRING(255),
                 allowNull: false,
-                validate: {
-                    isUniquePerOrganization(value, next) {
-                        const OrganizationMember =
-                            sequelize.models.OrganizationMember
-                        const orgId = this.getDataValue('OrganizationId')
-
-                        OrganizationMember.findOne({
-                            where: {
-                                email: value,
-                                OrganizationId: orgId,
-                            },
-                        })
-                            .then((member) => {
-                                if (member) {
-                                    return next(
-                                        `Email is already in use within the organization.`
-                                    )
-                                }
-                                next()
-                            })
-                            .catch((err) => next(err))
-                    },
-                },
+                unique: 'organizationConstraint', // Set unique constraint per organization
             },
             phone: {
                 type: DataTypes.STRING(25),
                 allowNull: false,
-                validate: {
-                    isUniquePerOrganization(value, next) {
-                        const OrganizationMember =
-                            sequelize.models.OrganizationMember
-                        const orgId = this.getDataValue('OrganizationId')
-
-                        OrganizationMember.findOne({
-                            where: {
-                                phone: value,
-                                OrganizationId: orgId,
-                            },
-                        })
-                            .then((member) => {
-                                if (member) {
-                                    return next(
-                                        `Phone is already in use within the organization.`
-                                    )
-                                }
-                                next()
-                            })
-                            .catch((err) => next(err))
-                    },
-                },
+                unique: 'organizationConstraint', // Set unique constraint per organization
             },
             permissions: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
                 defaultValue: 1,
             },
+        },
+        {
+            indexes: [
+                {
+                    unique: true,
+                    fields: ['OrganizationId', 'email'], // Create index for uniqueness per organization and email
+                },
+                {
+                    unique: true,
+                    fields: ['OrganizationId', 'phone'], // Create index for uniqueness per organization and phone
+                },
+            ],
         }
     )
 

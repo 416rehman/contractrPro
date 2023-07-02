@@ -9,7 +9,6 @@ module.exports = async (req, res) => {
     try {
         const orgId = req.params.org_id
         const memberId = req.params.member_id
-
         if (!orgId || !isValidUUID(orgId)) {
             return res
                 .status(400)
@@ -20,27 +19,31 @@ module.exports = async (req, res) => {
                 .status(400)
                 .json(createErrorResponse('Member ID is required'))
         }
-
         const body = {
-            ...pick(req.body, ['name', 'email', 'phone']),
+            ...pick(req.body, [
+                'name',
+                'email',
+                'phone',
+                'website',
+                'description',
+            ]),
+            OrganizationId: orgId,
+            updatedByUserId: req.auth.id,
         }
-
-        // update member
         await sequelize.transaction(async (transaction) => {
-            const member = await OrganizationMember.findOne({
+            const queryResult = await OrganizationMember.update(body, {
                 where: {
                     OrganizationId: orgId,
                     id: memberId,
                 },
                 transaction,
+                returning: true,
             })
-
-            if (!member) {
+            if (!queryResult[0]) {
                 throw new Error('Member not found')
             }
-
-            await member.update(body, { transaction })
-            return res.status(200).json(createSuccessResponse(member))
+            const updatedMember = queryResult[1][0]
+            return res.status(200).json(createSuccessResponse(updatedMember))
         })
     } catch (error) {
         return res.status(400).json(createErrorResponse(error.message))

@@ -44,4 +44,9 @@ routes.use('/:org_id/invites', invite_router)
  */
 routes.use('/:org_id/contracts', contract_router)
 
+/**
+ * @api {use} /organizations/:org_id/clients Uses the organization's clients router
+ */
+routes.use('/:org_id/clients', require('./clients'))
+
 module.exports = routes

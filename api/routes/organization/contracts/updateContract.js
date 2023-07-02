@@ -6,10 +6,24 @@ const {
     createErrorResponse,
 } = require('../../../utils/response')
 const { pick } = require('../../../utils')
+const { isValidUUID } = require('../../../utils/isValidUUID')
 module.exports = async (req, res) => {
-    const orgId = req.params.org_id
-    const contractId = req.params.contract_id
     try {
+        const orgId = req.params.org_id
+        const contractId = req.params.contract_id
+
+        if (!orgId || !isValidUUID(orgId)) {
+            return res
+                .status(400)
+                .json(createErrorResponse('Organization ID is required'))
+        }
+
+        if (!contractId || !isValidUUID(contractId)) {
+            return res
+                .status(400)
+                .json(createErrorResponse('Contract ID is required'))
+        }
+
         const body = {
             ...pick(req.body, [
                 'name',
@@ -20,36 +34,25 @@ module.exports = async (req, res) => {
                 'status',
             ]),
             updatedByUserId: req.auth.id,
+            OrganizationId: orgId,
         }
 
         await sequelize.transaction(async (transaction) => {
-            const contract = await Contract.findOne({
+            const queryResult = await Contract.update(body, {
                 where: {
-                    id: contractId,
                     OrganizationId: orgId,
+                    id: contractId,
                 },
                 transaction,
                 returning: true,
             })
 
-            if (!contract) {
-                return res
-                    .status(404)
-                    .json(
-                        createErrorResponse(`contract ${contractId} not exist`)
-                    )
+            if (!queryResult[0]) {
+                throw new Error('Contract not found')
             }
 
-            // Update the contract
-            await contract.update(body, { transaction })
-
-            return res
-                .status(200)
-                .json(
-                    createSuccessResponse(
-                        `Contract ${contractId} updated successfully`
-                    )
-                )
+            const updatedContract = queryResult[1][0]
+            return res.status(200).json(createSuccessResponse(updatedContract))
         })
     } catch (err) {
         return res.status(500).json(createErrorResponse(err.message))

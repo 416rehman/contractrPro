@@ -23,6 +23,9 @@ module.exports = () => {
             }
         })
         .catch((err) => {
-            logger.error(`Unable to connect to the database: ${err}`)
+            logger.error(
+                `Unable to connect to the database: ${err}.\n Make sure the database server is running.`
+            )
+            throw err
         })
 }

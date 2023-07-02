@@ -8,7 +8,7 @@ module.exports.createSuccessResponse = (data) => {
 module.exports.createErrorResponse = (message, data) => {
     return {
         status: 'error',
-        error: message,
+        message: message,
         data,
     }
 }
