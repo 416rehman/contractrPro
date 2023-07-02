@@ -273,5 +273,7 @@ module.exports = {
     mockAddressData,
     mockContractData,
     mockJobData,
+    mockOrgMemberData,
     populate,
+    faker,
 }

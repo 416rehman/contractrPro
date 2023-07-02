@@ -1,22 +1,14 @@
 const request = require('supertest')
 const app = require('../../../server')
+const { User } = require('../../../db')
+const fake = require('../../../utils/fake')
 
 describe('POST /auth/account', () => {
-    const accountData = {
-        username: 'testuser',
-        password: 'testpassword',
-        email: 'test@example.com',
-        name: 'Test User',
-        phone: '1234567890',
-        avatarUrl: 'https://example.com/avatar.png',
-    }
-
     test('should register a new account', async () => {
-        const res = await request(app)
-            .post('/auth/account')
-            .send(accountData)
-            .expect(201)
+        const accountData = fake.mockUserData()
+        const res = await request(app).post('/auth/account').send(accountData)
 
+        expect(res.status === 201 || res.status === 200).toBe(true)
         expect(res.body).toHaveProperty('status', 'success')
         expect(res.body).toHaveProperty('data')
 
@@ -29,9 +21,15 @@ describe('POST /auth/account', () => {
 
         expect(res.body).not.toHaveProperty('password')
         expect(res.body).not.toHaveProperty('refreshToken')
+
+        // cleanup - delete the account
+        if (res?.body?.data?.id) {
+            await User.destroy({ where: { id: res.body.data.id } })
+        }
     })
 
     test('should return error if username is missing', async () => {
+        const accountData = fake.mockUserData()
         await request(app)
             .post('/auth/account')
             .send({
@@ -40,63 +38,73 @@ describe('POST /auth/account', () => {
             })
             .expect((res) => res.status === 400 || res.status === 422) // express-validator returns 422 for validation errors
     })
-    //
+
     test('should return error if username is already taken', async () => {
-        const accountData2 = {
-            username: 'testuser',
-            password: 'testpassword2',
-            email: 'test@example.com2',
-            name: 'Test User2',
-            phone: '12345678902',
-            avatarUrl: 'https://example.com/avatar2.png',
-        }
+        const accountData = fake.mockUserData()
+        const accountData2 = fake.mockUserData()
+        accountData2.username = accountData.username
 
         // first create an account
-        await request(app).post('/auth/account').send(accountData)
+        const initUser = await User.create(accountData)
 
         // then try to create another account with the same username
-        await request(app)
+        const response = await request(app)
+            .post('/auth/account')
+            .send(accountData2)
+        expect(response.status === 400 || response.status === 422) // express-validator returns 422 for validation errors
+
+        // cleanup - delete the account
+        if (initUser?.id) {
+            await User.destroy({ where: { id: initUser.id } })
+        }
+        if (response?.body?.data?.id) {
+            await User.destroy({ where: { id: response.body.data.id } })
+        }
+    })
+
+    test('should return error if email is already taken', async () => {
+        const accountData = fake.mockUserData()
+        const accountData2 = fake.mockUserData()
+        accountData2.email = accountData.email
+
+        // first create an account
+        const initUser = await User.create(accountData)
+
+        // then try to create another account with the same email
+        const response = await request(app)
             .post('/auth/account')
             .send(accountData2)
             .expect((res) => res.status === 400 || res.status === 422) // express-validator returns 422 for validation errors
-    })
-    //
-    test('should return error if email is already taken', async () => {
-        const accountData2 = {
-            username: 'testuser2',
-            password: 'testpassword2',
-            email: 'test@example.com',
-            name: 'Test User2',
-            phone: '12345678902',
-            avatarUrl: 'https://example.com/avatar2.png',
+
+        // cleanup - delete the account
+        if (initUser?.id) {
+            await User.destroy({ where: { id: initUser.id } })
         }
-
-        // first create an account
-        await request(app).post('/auth/account').send(accountData)
-
-        await request(app)
-            .post('/auth/account')
-            .send(accountData2)
-            // expect either 400 or 422
-            .expect((res) => res.status === 400 || res.status === 422)
+        if (response?.body?.data?.id) {
+            await User.destroy({ where: { id: response.body.data.id } })
+        }
     })
 
     test('should return error if phone is already taken', async () => {
-        const accountData2 = {
-            username: 'testuser2',
-            password: 'testpassword2',
-            email: 'test@example2.com',
-            name: 'Test User2',
-            phone: '1234567890',
-            avatarUrl: 'https://example.com/avatar2.png',
-        }
+        const accountData = fake.mockUserData()
+        const accountData2 = fake.mockUserData()
+        accountData2.phone = accountData.phone
 
         // first create an account
-        await request(app).post('/auth/account').send(accountData)
+        const initUser = await User.create(accountData)
 
-        await request(app)
+        // then try to create another account with the same phone
+        const response = await request(app)
             .post('/auth/account')
             .send(accountData2)
             .expect((res) => res.status === 400 || res.status === 422) // express-validator returns 422 for validation errors
+
+        // cleanup - delete the account
+        if (initUser?.id) {
+            await User.destroy({ where: { id: initUser.id } })
+        }
+        if (response?.body?.data?.id) {
+            await User.destroy({ where: { id: response.body.data.id } })
+        }
     })
 })

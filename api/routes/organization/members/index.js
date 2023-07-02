@@ -13,17 +13,17 @@ routes.get('/', require('./getMembers'))
 /**
  * @api {get} /organizations/:org_id/members/:user_id Get organization member
  */
-routes.get('/:user_id', require('./getMember'))
+routes.get('/:member_id', require('./getMember'))
 
 /**
  * @api {post} /organizations/:org_id/members Add to organization
  */
-routes.post('/', require('./addMember'))
+routes.post('/', require('./createMember'))
 
 /**
- * @api {put} /organizations/:org_id/members Update organization members
+ * @api {put} /organizations/:org_id/members/:member_id Update organization member
  */
-routes.put('/', require('./updateMembers'))
+routes.put('/:member_id', require('./updateMember'))
 
 /**
  * @api {delete} /organizations/:org_id/members/:member_id Remove from organization
