@@ -8,7 +8,7 @@ const {
 
 module.exports = async (req, res) => {
     const expenseId = req.params.expense_id
-    const expenseEntryId=req.params.expenseEntry_id
+    const expenseEntryId = req.params.expenseEntry_id
     try {
         if (!expenseId) {
             return res

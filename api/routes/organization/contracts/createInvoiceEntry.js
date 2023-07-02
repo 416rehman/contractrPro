@@ -11,12 +11,7 @@ module.exports = async (req, res) => {
     const invoiceId = req.params.invoice_id
     try {
         const body = {
-            ...pick(req.body, [
-                'name',
-                'description',
-                'quantity',
-                'unitCost',
-            ]),
+            ...pick(req.body, ['name', 'description', 'quantity', 'unitCost']),
             InvoiceId: invoiceId,
             updatedByUserId: req.auth.id,
         }
