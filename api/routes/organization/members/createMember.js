@@ -30,7 +30,7 @@ module.exports = async (req, res) => {
             const member = OrganizationMember.build(body)
             await member.save({ transaction })
 
-            res.status(200).json(createSuccessResponse(member))
+            res.status(201).json(createSuccessResponse(member))
         })
     } catch (error) {
         res.status(400).json(createErrorResponse(error.message))

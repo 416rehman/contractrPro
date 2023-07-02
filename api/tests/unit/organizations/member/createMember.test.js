@@ -1,14 +1,9 @@
 const request = require('supertest')
 const app = require('../../../../server')
 const { OrganizationMember } = require('../../../../db')
+const fake = require('../../../../utils/fake')
 
 let orgId, userId
-let orgMemberInfo = {
-    name: 'I am a member :(',
-    email: 'member@org.ca',
-    phone: '1234567890',
-    permissions: 1,
-}
 beforeAll(async () => {
     // Get organization ID from /admin/organizations
     const orgsResult = await request(app)
@@ -22,11 +17,13 @@ beforeAll(async () => {
 
 describe('Create organization member', () => {
     it('should create a member in an organization with no user', async () => {
+        const orgMemberInfo = fake.mockOrgMemberData()
+
         const response = await request(app)
             .post(`/organizations/${orgId}/members`)
             .send(orgMemberInfo)
-            .expect(200)
 
+        expect(response.status).toBe(201)
         expect(response.body.status).toBe('success')
         expect(response.body.data).toHaveProperty('id')
         expect(response.body.data).toHaveProperty('name', orgMemberInfo.name)
@@ -40,42 +37,52 @@ describe('Create organization member', () => {
         expect(response.body.data).toHaveProperty('UserId', null)
 
         // cleanup - delete the member
-        if (response?.body?.data?.id)
+        if (response?.body?.data?.id) {
             await OrganizationMember.destroy({
                 where: { id: response.body.data.id },
             })
+        }
     })
 
     it('should fail if a member with same email or phone already exists', async () => {
+        const orgMemberInfo = fake.mockOrgMemberData()
+
         // Create first member
-        request(app)
+        const initMember = await OrganizationMember.create({
+            ...orgMemberInfo,
+            OrganizationId: orgId,
+        })
+
+        // Create second member with same email and phone
+        const response = await request(app)
             .post(`/organizations/${orgId}/members`)
             .send(orgMemberInfo)
-            .then(async (response0) => {
-                // Create second member with same email and phone
-                const response = await request(app)
-                    .post(`/organizations/${orgId}/members`)
-                    .send(orgMemberInfo)
-                    .expect(400)
 
-                expect(response.body.status).toBe('error')
-                // cleanup - delete the member
-                if (response?.body?.data?.id)
-                    await OrganizationMember.destroy({
-                        where: { id: response.body.data.id },
-                    })
-                if (response0?.body?.data?.id)
-                    await OrganizationMember.destroy({
-                        where: { id: response0.body.data.id },
-                    })
+        expect(response.status).toBe(400)
+        expect(response.body.status).toBe('error')
+
+        // cleanup - delete the member
+        if (response?.body?.data?.id) {
+            await OrganizationMember.destroy({
+                where: { id: response.body.data.id },
             })
+        }
+        if (initMember?.id) {
+            await OrganizationMember.destroy({
+                where: { id: initMember.id },
+            })
+        }
     })
 
     it('should return 404 if Organization ID is missing', async () => {
+        const orgMemberInfo = fake.mockOrgMemberData()
+
         const response = await request(app)
             .post('/organizations//members')
             .send(orgMemberInfo)
-            .expect(404)
+
+        expect(response.status).toBe(404)
+
         // cleanup - delete the member
         if (response?.body?.data?.id)
             await OrganizationMember.destroy({
@@ -84,46 +91,59 @@ describe('Create organization member', () => {
     })
 
     it('should return 400 if UserId is provided and user does not exist', async () => {
+        const orgMemberInfo = fake.mockOrgMemberData()
         orgMemberInfo.UserId = 'non-existent-user-id'
 
         const response = await request(app)
             .post(`/organizations/${orgId}/members`)
             .send(orgMemberInfo)
-            .expect(400)
+
+        expect(response.status).toBe(400)
 
         expect(response.body.status).toBe('error')
         expect(response.body).toHaveProperty('error')
-    })
 
-    it('should return 400 if UserId is provided and user is already a member of the organization', async () => {
-        orgMemberInfo.UserId = userId
-
-        // Create a member with the same user ID
-        request(app)
-            .post(`/organizations/${orgId}/members`)
-            .send(orgMemberInfo)
-            .end(async (response0) => {
-                const response = await request(app)
-                    .post(`/organizations/${orgId}/members`)
-                    .send(orgMemberInfo)
-                    .expect(400)
-
-                expect(response.body.status).toBe('error')
-                expect(response.body).toHaveProperty('error')
-
-                // cleanup - delete the member
-                if (response?.body?.data?.id)
-                    await OrganizationMember.destroy({
-                        where: { id: response.body.data.id },
-                    })
-                if (response0?.body?.data?.id)
-                    await OrganizationMember.destroy({
-                        where: { id: response0.body.data.id },
-                    })
+        // cleanup - delete the member
+        if (response?.body?.data?.id)
+            await OrganizationMember.destroy({
+                where: { id: response.body.data.id },
             })
     })
 
+    it('should return 400 if UserId is provided and user is already a member of the organization', async () => {
+        const orgMemberInfo = fake.mockOrgMemberData()
+        orgMemberInfo.UserId = userId
+
+        // Create a member with the same user ID
+        const initMember = await OrganizationMember.create({
+            ...orgMemberInfo,
+            OrganizationId: orgId,
+        })
+
+        const response = await request(app)
+            .post(`/organizations/${orgId}/members`)
+            .send(orgMemberInfo)
+
+        expect(response.status).toBe(400)
+        expect(response.body.status).toBe('error')
+        expect(response.body).toHaveProperty('error')
+
+        // cleanup - delete the member
+        if (response?.body?.data?.id) {
+            await OrganizationMember.destroy({
+                where: { id: response.body.data.id },
+            })
+        }
+        if (initMember?.id) {
+            await OrganizationMember.destroy({
+                where: { id: initMember.id },
+            })
+        }
+    })
+
     it('should return 400 if an error occurs during member creation', async () => {
+        const orgMemberInfo = fake.mockOrgMemberData()
+
         // Mocking the implementation to simulate a server error
         jest.spyOn(OrganizationMember, 'build').mockImplementation(() => {
             throw new Error('Error message from the server')
@@ -132,8 +152,8 @@ describe('Create organization member', () => {
         const response = await request(app)
             .post(`/organizations/${orgId}/members`)
             .send(orgMemberInfo)
-            .expect(400)
 
+        expect(response.status).toBe(400)
         expect(response.body.status).toBe('error')
         expect(response.body).toHaveProperty(
             'error',
