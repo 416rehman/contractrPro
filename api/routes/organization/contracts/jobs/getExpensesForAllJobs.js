@@ -2,34 +2,36 @@ const { sequelize, JobExpense, Job } = require('../../../db')
 const { createSuccessResponse, createErrorResponse } = require('../../../utils/response')
 const { validator } = require('../../../utils/validator')
 
-// Gets all the organization's contract job expenses
+// Gets all the organization's contract expenses for ALL the jobs
 module.exports = async (req, res) => {
-                try {
-    
-                    const contractID = req.params.contract_id;
-    
-                    if (!contractID || !validator(contractID)) {
-                        return res
-                            .status(400)
-                            .json(createErrorResponse('Contract ID required'))
-                    }
-    
-                    const jobs = await Job.findAll({
-                        where: {
-                            contract_id: contractID,
-                        },
-                        include: [
-                            {
-                                model: JobExpense,
-                                as: 'expenses',
-                            },
-                        ],
-                    })
-    
-                    return res.status(201).json(createSuccessResponse(jobs))
-    
-                } catch (error) {
-                    return res.status(500).json(createErrorResponse(error.message))
-                }
-    
+    try {
+        const orgID = req.params.org_id;
+        const contractID = req.params.contract_id;
+
+        if (!orgID || !validator(orgID) || !contractID || !validator(contractID)) {
+            return res
+                .status(400)
+                .json(createErrorResponse('Invalid organization or contract ID'));
         }
+
+        const expenses = await JobExpense.findAll({
+            where: {
+                organizationId: orgID,
+                contractId: contractID
+            },
+            include: [
+                {
+                    model: Job,
+                    where: {
+                        organizationId: orgID,
+                        contractId: contractID
+                    }
+                }
+            ]
+        });
+
+        return res.status(200).json(createSuccessResponse(expenses));
+    } catch (error) {
+        return res.status(500).json(createErrorResponse(error.message));
+    }
+};
