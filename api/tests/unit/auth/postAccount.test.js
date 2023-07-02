@@ -1,5 +1,6 @@
 const request = require('supertest')
 const app = require('../../../server')
+const { User } = require('../../../db')
 
 describe('POST /auth/account', () => {
     const accountData = {
@@ -29,6 +30,11 @@ describe('POST /auth/account', () => {
 
         expect(res.body).not.toHaveProperty('password')
         expect(res.body).not.toHaveProperty('refreshToken')
+
+        // cleanup - delete the account
+        if (res?.body?.data?.id) {
+            await User.destroy({ where: { id: res.body.data.id } })
+        }
     })
 
     test('should return error if username is missing', async () => {
@@ -40,7 +46,7 @@ describe('POST /auth/account', () => {
             })
             .expect((res) => res.status === 400 || res.status === 422) // express-validator returns 422 for validation errors
     })
-    //
+
     test('should return error if username is already taken', async () => {
         const accountData2 = {
             username: 'testuser',
@@ -52,15 +58,26 @@ describe('POST /auth/account', () => {
         }
 
         // first create an account
-        await request(app).post('/auth/account').send(accountData)
-
-        // then try to create another account with the same username
-        await request(app)
+        request(app)
             .post('/auth/account')
-            .send(accountData2)
-            .expect((res) => res.status === 400 || res.status === 422) // express-validator returns 422 for validation errors
+            .send(accountData)
+            .then(async (res) => {
+                // then try to create another account with the same username
+                const response = await request(app)
+                    .post('/auth/account')
+                    .send(accountData2)
+                    .expect((res) => res.status === 400 || res.status === 422) // express-validator returns 422 for validation errors
+
+                // cleanup - delete the account
+                if (res?.body?.data?.id) {
+                    await User.destroy({ where: { id: res.body.data.id } })
+                }
+                if (response?.body?.data?.id) {
+                    await User.destroy({ where: { id: response.body.data.id } })
+                }
+            })
     })
-    //
+
     test('should return error if email is already taken', async () => {
         const accountData2 = {
             username: 'testuser2',
@@ -72,13 +89,24 @@ describe('POST /auth/account', () => {
         }
 
         // first create an account
-        await request(app).post('/auth/account').send(accountData)
-
-        await request(app)
+        request(app)
             .post('/auth/account')
-            .send(accountData2)
-            // expect either 400 or 422
-            .expect((res) => res.status === 400 || res.status === 422)
+            .send(accountData)
+            .then(async (res) => {
+                // then try to create another account with the same email
+                const response = await request(app)
+                    .post('/auth/account')
+                    .send(accountData2)
+                    .expect((res) => res.status === 400 || res.status === 422) // express-validator returns 422 for validation errors
+
+                // cleanup - delete the account
+                if (res?.body?.data?.id) {
+                    await User.destroy({ where: { id: res.body.data.id } })
+                }
+                if (response?.body?.data?.id) {
+                    await User.destroy({ where: { id: response.body.data.id } })
+                }
+            })
     })
 
     test('should return error if phone is already taken', async () => {
@@ -92,11 +120,23 @@ describe('POST /auth/account', () => {
         }
 
         // first create an account
-        await request(app).post('/auth/account').send(accountData)
-
-        await request(app)
+        request(app)
             .post('/auth/account')
-            .send(accountData2)
-            .expect((res) => res.status === 400 || res.status === 422) // express-validator returns 422 for validation errors
+            .send(accountData)
+            .then(async (res) => {
+                // then try to create another account with the same phone
+                const response = await request(app)
+                    .post('/auth/account')
+                    .send(accountData2)
+                    .expect((res) => res.status === 400 || res.status === 422) // express-validator returns 422 for validation errors
+
+                // cleanup - delete the account
+                if (res?.body?.data?.id) {
+                    await User.destroy({ where: { id: res.body.data.id } })
+                }
+                if (response?.body?.data?.id) {
+                    await User.destroy({ where: { id: response.body.data.id } })
+                }
+            })
     })
 })

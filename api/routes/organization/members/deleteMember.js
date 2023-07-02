@@ -3,14 +3,15 @@ const {
     createErrorResponse,
     createSuccessResponse,
 } = require('../../../utils/response')
+const { isValidUUID } = require('../../../utils/isValidUUID')
 module.exports = async (req, res) => {
     try {
-        if (!req.params.org_id) {
+        if (!req.params.org_id || !isValidUUID(req.params.org_id)) {
             return res
                 .status(400)
                 .json(createErrorResponse('Organization ID is required'))
         }
-        if (!req.params.member_id) {
+        if (!req.params.member_id || !isValidUUID(req.params.member_id)) {
             return res
                 .status(400)
                 .json(createErrorResponse('Member ID is required'))
@@ -36,6 +37,6 @@ module.exports = async (req, res) => {
             return res.status(200).json(createSuccessResponse(member))
         })
     } catch (error) {
-        return res.status(500).json(createErrorResponse(error.message))
+        return res.status(400).json(createErrorResponse(error.message))
     }
 }
