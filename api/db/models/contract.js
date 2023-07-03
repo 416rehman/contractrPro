@@ -55,7 +55,7 @@ module.exports.define = (sequelize, DataTypes) => {
         Contract.hasMany(models.Comment)
 
         Contract.belongsTo(models.User, {
-            as: 'updatedByUser',
+            as: 'UpdatedByUser',
         })
     }
 

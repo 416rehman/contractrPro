@@ -49,4 +49,14 @@ routes.use('/:org_id/contracts', contract_router)
  */
 routes.use('/:org_id/clients', require('./clients'))
 
+/**
+ * @api {use} /organizations/:org_id/expenses Uses the organization's expenses router
+ */
+routes.use('/:org_id/expenses', require('./expenses'))
+
+/**
+ * @api {use} /organizations/:org_id/jobs Uses the organization's jobs router
+ */
+routes.use('/:org_id/invoices', require('./invoices'))
+
 module.exports = routes

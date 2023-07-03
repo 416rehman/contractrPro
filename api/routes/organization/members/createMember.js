@@ -5,10 +5,11 @@ const {
     createSuccessResponse,
 } = require('../../../utils/response')
 const { pick } = require('../../../utils')
+const { isValidUUID } = require('../../../utils/isValidUUID')
 module.exports = async (req, res) => {
     try {
         const orgId = req.params.org_id
-        if (!orgId) {
+        if (!orgId || !isValidUUID(orgId)) {
             return res
                 .status(400)
                 .json(createErrorResponse('Organization ID is required'))
@@ -23,12 +24,13 @@ module.exports = async (req, res) => {
                 'UserId',
             ]),
             OrganizationId: orgId,
-            updatedByUserId: req.auth.id,
+            UpdatedByUserId: req.auth.id,
         }
 
         await sequelize.transaction(async (transaction) => {
-            const member = OrganizationMember.build(body)
-            await member.save({ transaction })
+            const member = await OrganizationMember.create(body, {
+                transaction,
+            })
 
             res.status(201).json(createSuccessResponse(member))
         })

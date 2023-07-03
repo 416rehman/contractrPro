@@ -40,7 +40,7 @@ module.exports.define = (sequelize, DataTypes) => {
         Job.hasMany(models.Comment)
 
         Job.belongsTo(models.User, {
-            as: 'updatedByUser',
+            as: 'UpdatedByUser',
         })
     }
 

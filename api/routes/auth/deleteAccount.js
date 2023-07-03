@@ -8,7 +8,7 @@ module.exports = async (req, res) => {
     try {
         await sequelize.transaction(async (transaction) => {
             const rowsDeleted = await User.destroy({
-                where: { username: req.auth.username },
+                where: { id: req.auth.id },
                 transaction,
             })
             if (rowsDeleted === 0) {

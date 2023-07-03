@@ -19,20 +19,21 @@ module.exports.define = (sequelize, DataTypes) => {
     Expense.associate = (models) => {
         // Expenses belong to an organization.
         Expense.belongsTo(models.Organization, {
+            onDelete: 'CASCADE',
             foreignKey: {
                 allowNull: false,
             },
         })
 
-        Expense.belongsTo(models.Contract) // the contract this expense was derived from
-        Expense.belongsTo(models.Job) // the job this expense was derived from
+        Expense.belongsTo(models.Contract) // the contract this expense is linked to
+        Expense.belongsTo(models.Job) // the job this expense is linked to
 
         Expense.belongsTo(models.Vendor) // the vendor who provided the service
 
         Expense.hasMany(models.ExpenseEntry)
 
         Expense.belongsTo(models.User, {
-            as: 'updatedByUser',
+            as: 'UpdatedByUser',
         })
     }
 

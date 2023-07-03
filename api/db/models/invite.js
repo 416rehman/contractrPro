@@ -37,7 +37,7 @@ module.exports.define = (sequelize, DataTypes) => {
         })
 
         Invite.belongsTo(models.User, {
-            as: 'updatedByUser',
+            as: 'UpdatedByUser',
         })
     }
 

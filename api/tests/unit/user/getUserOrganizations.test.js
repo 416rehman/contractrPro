@@ -1,5 +1,11 @@
 const request = require('supertest')
 const app = require('../../../server')
+const { sequelize } = require('../../../db')
+
+afterAll(async () => {
+    jest.restoreAllMocks()
+    await sequelize.close()
+})
 
 describe('GET /users/:user_id/organizations', () => {
     test(`Should return success if the user's organizations are found`, async () => {

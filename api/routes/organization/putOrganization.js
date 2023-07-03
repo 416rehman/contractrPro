@@ -17,7 +17,7 @@ module.exports = async (req, res) => {
                 'website',
                 'logoUrl',
             ]),
-            updatedByUserId: req.auth.id,
+            UpdatedByUserId: req.auth.id,
         }
 
         const orgId = req.params.org_id

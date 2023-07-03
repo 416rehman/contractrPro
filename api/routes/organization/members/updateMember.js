@@ -28,7 +28,7 @@ module.exports = async (req, res) => {
                 'description',
             ]),
             OrganizationId: orgId,
-            updatedByUserId: req.auth.id,
+            UpdatedByUserId: req.auth.id,
         }
         await sequelize.transaction(async (transaction) => {
             const queryResult = await OrganizationMember.update(body, {

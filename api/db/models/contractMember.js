@@ -21,7 +21,7 @@ module.exports.define = (sequelize, DataTypes) => {
         })
 
         ContractMember.belongsTo(models.User, {
-            as: 'updatedByUser',
+            as: 'UpdatedByUser',
         })
     }
 

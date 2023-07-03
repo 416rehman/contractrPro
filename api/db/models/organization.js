@@ -63,14 +63,14 @@ module.exports.define = (sequelize, DataTypes) => {
         })
 
         Organization.belongsTo(models.User, {
-            as: 'owner',
+            as: 'Owner',
             foreignKey: {
                 allowNull: false,
             },
         })
 
         Organization.belongsTo(models.User, {
-            as: 'updatedByUser',
+            as: 'UpdatedByUser',
         })
     }
 

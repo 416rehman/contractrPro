@@ -46,35 +46,4 @@ routes.post('/:job_id/members', require('./postJobMember'))
  */
 routes.delete('/:job_id/members/:member_id', require('./deleteJobMember'))
 
-/**
- * @api {get} /organizations/:org_id/contracts/:contract_id/jobs/expenses Get all job expenses for all jobs in this contract
- */
-routes.get('/expenses', require('./getExpensesForAllJobs'))
-
-/**
- * @api {get} /organizations/:org_id/contracts/:contract_id/jobs/expenses/:job_id Get all job expenses for this job
- */
-
-routes.get('/expenses/:job_id', require('./getExpensesForJob'))
-
-/**
- * @api {get} /organizations/:org_id/contracts/:contract_id/jobs/expenses/:job_id/:expense_id Get job expense
- */
-routes.get('/expenses/:job_id/:expense_id', require('./getJobExpense'))
-
-/**
- * @api {post} /organizations/:org_id/contracts/:contract_id/jobs/expenses Create job expense
- */
-routes.post('/expenses', require('./postJobExpense'))
-
-/**
- * @api {put} /organizations/:org_id/contracts/:contract_id/jobs/expenses/:job_id Update job expense
- */
-routes.put('/expenses/:job_id', require('./putJobExpense'))
-
-/**
- * @api {delete} /organizations/:org_id/contracts/:contract_id/jobs/expenses/:job_id Delete job expense
- */
-routes.delete('/expenses/:job_id', require('./deleteJobExpense'))
-
 module.exports = routes

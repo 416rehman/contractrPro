@@ -1,6 +1,11 @@
 const request = require('supertest')
 const app = require('../../../server')
-const { Organization } = require('../../../db')
+const { Organization, sequelize } = require('../../../db')
+
+afterAll(async () => {
+    jest.restoreAllMocks()
+    await sequelize.close()
+})
 
 describe('GET /admin/organizations', () => {
     test('Should return success and organizations data', async () => {
@@ -22,8 +27,8 @@ describe('GET /admin/organizations', () => {
             expect(org).toHaveProperty('logoUrl')
             expect(org).toHaveProperty('createdAt')
             expect(org).toHaveProperty('updatedAt')
-            expect(org).toHaveProperty('ownerId')
-            expect(org).toHaveProperty('updatedByUserId')
+            expect(org).toHaveProperty('OwnerId')
+            expect(org).toHaveProperty('UpdatedByUserId')
         })
 
         expect(res.body.data).toHaveProperty('currentPage')

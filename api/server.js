@@ -13,6 +13,10 @@ const checkAuth = require('./middleware/authMiddleware')
 
 // Use logging middleware
 const logger = require('./utils/logger')
+const {
+    createSuccessResponse,
+    createErrorResponse,
+} = require('./utils/response')
 const pino = require('pino-http')({
     // Use our default logger instance, which is already configured
     logger,
@@ -68,7 +72,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 app.get('/', (req, res) => {
-    res.send('Connected!')
+    res.json(createSuccessResponse('Connected'))
 })
 
 app.use('/auth', routes.auth)
@@ -113,12 +117,14 @@ app.post('/comments', async (req, res) => {
 })
 
 app.use((req, res) => {
-    res.status(404).send('Cannot find this route.')
+    res.status(404).json(createErrorResponse('Cannot find this route'))
 })
 
 app.use((err, req, res) => {
     logger.error(err.stack)
-    res.status(500).send('An unexpected problem has occured.')
+    res.status(500).json(
+        createErrorResponse('An unexpected problem has occured.')
+    )
 })
 
 module.exports = app

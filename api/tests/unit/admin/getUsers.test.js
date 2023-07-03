@@ -1,6 +1,10 @@
 const request = require('supertest')
 const app = require('../../../server')
-
+const { sequelize } = require('../../../db')
+afterAll(async () => {
+    jest.restoreAllMocks()
+    await sequelize.close()
+})
 describe('GET /admin/users', () => {
     test('should get all users', async () => {
         const res = await request(app).get('/admin/users').expect(200)

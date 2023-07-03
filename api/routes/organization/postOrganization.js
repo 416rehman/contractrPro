@@ -17,8 +17,8 @@ module.exports = async (req, res) => {
                 'website',
                 'logoUrl',
             ]),
-            ownerId: req.auth.id,
-            updatedByUserId: req.auth.id,
+            OwnerId: req.auth.id,
+            UpdatedByUserId: req.auth.id,
         }
 
         await sequelize.transaction(async (transaction) => {

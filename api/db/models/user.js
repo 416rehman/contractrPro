@@ -55,7 +55,7 @@ module.exports.define = (sequelize, DataTypes) => {
         })
 
         User.belongsTo(models.User, {
-            as: 'updatedByUser',
+            as: 'UpdatedByUser',
         })
     }
 

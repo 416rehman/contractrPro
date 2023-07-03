@@ -11,7 +11,7 @@ module.exports.define = (sequelize, DataTypes) => {
             type: DataTypes.STRING(255),
             allowNull: false,
         },
-        invoiceDate: {
+        date: {
             type: DataTypes.DATE,
             allowNull: false,
             defaultValue: DataTypes.NOW,
@@ -38,6 +38,7 @@ module.exports.define = (sequelize, DataTypes) => {
     Invoice.associate = (models) => {
         // An invoice belongs to an organization
         Invoice.belongsTo(models.Organization, {
+            onDelete: 'CASCADE',
             foreignKey: {
                 allowNull: false,
             },
@@ -51,11 +52,11 @@ module.exports.define = (sequelize, DataTypes) => {
         })
 
         Invoice.belongsTo(models.Client, {
-            as: 'billToClient',
+            as: 'BillToClient',
         })
 
         Invoice.belongsTo(models.User, {
-            as: 'updatedByUser',
+            as: 'UpdatedByUser',
         })
     }
 

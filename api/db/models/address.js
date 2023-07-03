@@ -35,7 +35,7 @@ module.exports.define = (sequelize, DataTypes) => {
 
     Address.associate = (models) => {
         Address.belongsTo(models.User, {
-            as: 'updatedByUser',
+            as: 'UpdatedByUser',
         })
     }
 

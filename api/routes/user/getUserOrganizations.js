@@ -30,7 +30,7 @@ module.exports = async (req, res) => {
                         'createdAt',
                         'updatedAt',
                         'deletedAt',
-                        'updatedByUserId',
+                        'UpdatedByUserId',
                     ],
                 },
                 where: {

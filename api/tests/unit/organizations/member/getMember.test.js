@@ -1,22 +1,26 @@
 const request = require('supertest')
 const app = require('../../../../server')
-const { OrganizationMember } = require('../../../../db')
+const {
+    OrganizationMember,
+    Organization,
+    sequelize,
+} = require('../../../../db')
 
 let orgId, memberId
 beforeAll(async () => {
-    // Get organization ID from /admin/organizations
-    const orgsResult = await request(app)
-        .get('/admin/organizations')
-        .expect(200)
-    orgId = orgsResult.body.data.organizations[0].id
+    const orgs = await Organization.findAll()
+    orgId = orgs[0].id
 
-    // Get member ID from /organizations/:org_id/members
-    const membersResult = await request(app)
-        .get(`/organizations/${orgId}/members`)
-        .expect(200)
-    memberId = membersResult.body.data[0].id
+    const membersResult = await OrganizationMember.findAll({
+        where: { OrganizationId: orgId },
+    })
+
+    memberId = membersResult[0].id
 })
-
+afterAll(async () => {
+    jest.restoreAllMocks()
+    await sequelize.close()
+})
 describe('GET /organizations/:org_id/members/:member_id', () => {
     test('Should return success and member data if the organization ID and member ID are valid', async () => {
         const res = await request(app)
@@ -32,7 +36,7 @@ describe('GET /organizations/:org_id/members/:member_id', () => {
         expect(res.body.data).toHaveProperty('permissions')
         expect(res.body.data).toHaveProperty('createdAt')
         expect(res.body.data).toHaveProperty('updatedAt')
-        expect(res.body.data).toHaveProperty('updatedByUserId')
+        expect(res.body.data).toHaveProperty('UpdatedByUserId')
         expect(res.body.data).toHaveProperty('OrganizationId', orgId)
         expect(res.body.data).toHaveProperty('UserId')
     })

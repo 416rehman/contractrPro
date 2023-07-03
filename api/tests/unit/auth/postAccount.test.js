@@ -1,8 +1,11 @@
 const request = require('supertest')
 const app = require('../../../server')
-const { User } = require('../../../db')
+const { User, sequelize } = require('../../../db')
 const fake = require('../../../utils/fake')
-
+afterAll(async () => {
+    jest.restoreAllMocks()
+    await sequelize.close()
+})
 describe('POST /auth/account', () => {
     test('should register a new account', async () => {
         const accountData = fake.mockUserData()

@@ -32,10 +32,6 @@ module.exports.define = (sequelize, DataTypes) => {
             },
             onDelete: 'CASCADE',
         }) // the invoice that owns this invoice entry
-
-        InvoiceEntry.belongsTo(models.User, {
-            as: 'updatedByUser',
-        })
     }
 
     return InvoiceEntry

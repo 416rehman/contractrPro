@@ -25,7 +25,7 @@ module.exports = async (req, res) => {
                 password: hash,
                 refreshToken: refreshToken,
             })
-            user.updatedByUserId = user.id
+            user.UpdatedByUserId = user.id
 
             const savedUser = await user.save({
                 transaction,

@@ -102,15 +102,15 @@ const mockJobData = () => {
 }
 
 // Generate fake data for Expenses table
-const generateExpensesData = () => {
+const mockExpenseData = () => {
     return {
         description: faker.lorem.sentence(),
-        date: faker.date.past(),
+        date: '' + faker.date.past(),
     }
 }
 
 // Generate fake data for Invoices table
-const generateInvoicesData = () => {
+const mockInvoiceData = () => {
     return {
         invoiceNumber: faker.string.alphanumeric(8),
         invoiceDate: faker.date.past(),
@@ -122,7 +122,7 @@ const generateInvoicesData = () => {
 }
 
 // Generate fake data for ExpenseEntries table
-const generateExpenseEntriesData = () => {
+const mockExpenseEntryData = () => {
     return {
         name: faker.lorem.word(),
         description: faker.lorem.sentence(),
@@ -132,7 +132,7 @@ const generateExpenseEntriesData = () => {
 }
 
 // Generate fake data for InvoiceEntries table
-const generateInvoiceEntriesData = () => {
+const mockInvoiceEntryData = () => {
     return {
         name: faker.lorem.word(),
         description: faker.lorem.sentence(),
@@ -146,18 +146,18 @@ const populate = async () => {
         // USER ADDRESS -------------------------------------------------------
         // Creates and persists an address in the db
         const address = await Address.create(mockAddressData())
-        address.updatedByUserId = user.id // Set the updatedByUserId field to the user's id
+        address.UpdatedByUserId = user.id // Set the UpdatedByUserId field to the user's id
         await address.save() // Persist the above change to the db
         user.setAddress(address) // Set and persist the address association to the user
 
         // ORGANIZATION -------------------------------------------------------
         // Builds an organization object but does not persist it to the db
-        // ownerId is required, which is why we build the object first with all the required fields, then save it
+        // OwnerId is required, which is why we build the object first with all the required fields, then save it
         let org = Organization.build(mockOrganizationData())
         org.set({
             // Alternative way to set multiple fields at once
-            updatedByUserId: user.id,
-            ownerId: user.id,
+            UpdatedByUserId: user.id,
+            OwnerId: user.id,
         })
         org = await org.save() // Persist the above changes to the db
 
@@ -170,7 +170,7 @@ const populate = async () => {
         const member = OrganizationMember.build(mockOrgMemberData())
         member.set({
             // Alternative way to set multiple fields at once
-            updatedByUserId: user.id,
+            UpdatedByUserId: user.id,
             OrganizationId: org.id, // the OrganizationId field is required. This is the organization that the member belongs to
             UserId: user.id, // the UserId field is not required. If the member has an account, this is the user that the member belongs to
         })
@@ -179,7 +179,7 @@ const populate = async () => {
         // ORGANIZATION CLIENT -----------------------------------------------
         // Creates and persists a client in the db
         const client = await org.createClient(mockClientData())
-        client.setUpdatedByUser(user) // Sets and persists the updatedByUser association to the user
+        client.setUpdatedByUser(user) // Sets and persists the UpdatedByUser association to the user
 
         // ORGANIZATION CONTRACT ---------------------------------------------
         // Creates and persists a contract in the db
@@ -187,7 +187,7 @@ const populate = async () => {
         contract.set({
             ClientId: client.id, // The ClientId field is required. This is the client that the contract belongs to
             OrganizationId: org.id, // The OrganizationId field is required. This is the organization that the contract belongs to
-            updatedByUserId: user.id,
+            UpdatedByUserId: user.id,
         })
         contract = await contract.save() // Persist the above changes to the db
         const contractMember = await contract.addOrganizationMember(member) // Add the member to the contract (they can now view the contract)
@@ -195,7 +195,7 @@ const populate = async () => {
         // CONTRACT JOB -------------------------------------------------------
         // Creates and persists a job in the db
         const job = await contract.createJob(mockJobData())
-        job.setUpdatedByUser(user) // Sets and persists the updatedByUser association to the user
+        job.setUpdatedByUser(user) // Sets and persists the UpdatedByUser association to the user
         job.addContractMember(contractMember, {
             // Add the contract member to the job (they can now view the job)
             through: {
@@ -204,10 +204,10 @@ const populate = async () => {
         })
 
         // ORGANIZATION VENDOR ------------------------------------------------
-        // Instead of using setUpdatedByUser, we directly set the updatedByUserId field to the user's id to avoid the extra db call
+        // Instead of using setUpdatedByUser, we directly set the UpdatedByUserId field to the user's id to avoid the extra db call
         const vendor = await org.createVendor({
             ...mockVendorData(),
-            updatedByUserId: user.id,
+            UpdatedByUserId: user.id,
         })
 
         // VENDOR ADDRESS -----------------------------------------------------
@@ -217,31 +217,31 @@ const populate = async () => {
         // EXPENSE -----------------------------------------------------
         // Creates and persists an expense in the db
         const expense = await org.createExpense({
-            ...generateExpensesData(),
-            updatedByUserId: user.id,
+            ...mockExpenseData(),
+            UpdatedByUserId: user.id,
         })
         expense.setVendor(vendor) // Sets and persists the vendor association to the expense
 
         for (let i = 0; i < 5; i++) {
             await expense.createExpenseEntry({
-                ...generateExpenseEntriesData(),
-                updatedByUserId: user.id,
+                ...mockExpenseEntryData(),
+                UpdatedByUserId: user.id,
             })
         }
 
         // INVOICE -----------------------------------------------------
         // Creates and persists an invoice in the db
         const invoice = await org.createInvoice({
-            ...generateInvoicesData(),
-            updatedByUserId: user.id,
+            ...mockInvoiceData(),
+            UpdatedByUserId: user.id,
         })
         invoice.setBillToClient(client) // Sets and persists the client association to the invoice
 
         // INVOICE ENTRIES ---------------------------------------------
         for (let i = 0; i < 5; i++) {
             await invoice.createInvoiceEntry({
-                ...generateInvoiceEntriesData(),
-                updatedByUserId: user.id,
+                ...mockInvoiceEntryData(),
+                UpdatedByUserId: user.id,
             })
         }
     }
@@ -251,7 +251,7 @@ const populate = async () => {
         // USER ---------------------------------------------------------------
         // Creates and persists a user in the db
         const user = await User.create(mockUserData())
-        user.setUpdatedByUser(user) // Sets and persists the updatedByUser association to itself
+        user.setUpdatedByUser(user) // Sets and persists the UpdatedByUser association to itself
 
         await generateDataFor(user)
     }
@@ -274,6 +274,11 @@ module.exports = {
     mockContractData,
     mockJobData,
     mockOrgMemberData,
+    mockExpenseEntryData,
+    mockInvoiceEntryData,
+    mockExpenseData,
+    mockInvoiceData,
+    mockVendorData,
     populate,
     faker,
 }

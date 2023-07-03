@@ -15,7 +15,7 @@ module.exports.define = (sequelize, DataTypes) => {
 
     JobMember.associate = (models) => {
         JobMember.belongsTo(models.User, {
-            as: 'updatedByUser',
+            as: 'UpdatedByUser',
         })
     }
 

@@ -34,7 +34,7 @@ module.exports.define = (sequelize, DataTypes) => {
         })
 
         Attachment.belongsTo(models.User, {
-            as: 'updatedByUser',
+            as: 'UpdatedByUser',
         })
     }
 

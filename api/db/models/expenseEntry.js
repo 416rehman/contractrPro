@@ -26,15 +26,11 @@ module.exports.define = (sequelize, DataTypes) => {
     })
     ExpenseEntry.associate = (models) => {
         ExpenseEntry.belongsTo(models.Expense, {
+            onDelete: 'CASCADE',
             foreignKey: {
                 allowNull: false,
             },
-            onDelete: 'CASCADE',
         }) // the expense that owns this expense entry
-
-        ExpenseEntry.belongsTo(models.User, {
-            as: 'updatedByUser',
-        })
     }
 
     return ExpenseEntry

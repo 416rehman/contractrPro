@@ -42,7 +42,7 @@ module.exports.define = (sequelize, DataTypes) => {
         })
 
         Vendor.belongsTo(models.User, {
-            as: 'updatedByUser',
+            as: 'UpdatedByUser',
         })
     }
 

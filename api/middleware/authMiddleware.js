@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken')
+const { createErrorResponse } = require('../utils/response')
 
 /**
  * Checks the token and if it is valid, sets the auth field on the request object.
@@ -30,7 +31,9 @@ if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
             return res
                 .status(403)
                 .send(
-                    'Access token is missing - Use Authorization header or token in body or query'
+                    createErrorResponse(
+                        'Access token is missing - Use Authorization header or token in body or query'
+                    )
                 )
         }
         try {
@@ -41,14 +44,20 @@ if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
                 {},
                 function (err, decoded) {
                     if (err) {
-                        return res.status(401).send('Access token is invalid')
+                        return res
+                            .status(401)
+                            .send(
+                                createErrorResponse('Access token is invalid')
+                            )
                     }
                     req.auth = decoded
                     return next()
                 }
             )
         } catch (err) {
-            return res.status(401).send('Access token is invalid')
+            return res
+                .status(401)
+                .send(createErrorResponse('Access token is invalid'))
         }
     }
 }

@@ -49,7 +49,7 @@ module.exports.define = (sequelize, DataTypes) => {
         })
 
         OrganizationMember.belongsTo(models.User, {
-            as: 'updatedByUser',
+            as: 'UpdatedByUser',
         })
     }
 

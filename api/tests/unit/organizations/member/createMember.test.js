@@ -1,20 +1,25 @@
 const request = require('supertest')
 const app = require('../../../../server')
-const { OrganizationMember } = require('../../../../db')
+const {
+    OrganizationMember,
+    Organization,
+    sequelize,
+} = require('../../../../db')
 const fake = require('../../../../utils/fake')
 
 let orgId, userId
 beforeAll(async () => {
-    // Get organization ID from /admin/organizations
-    const orgsResult = await request(app)
-        .get('/admin/organizations')
-        .expect(200)
-    orgId = orgsResult.body.data.organizations[0].id
+    const orgs = await Organization.findAll()
+    orgId = orgs[0].id
+
     // Get existing user ID from /organizations/:org_id/members
     const membersResult = await request(app).get(`/admin/users`).expect(200)
     userId = membersResult.body.data.users[1].id
 })
-
+afterAll(async () => {
+    jest.restoreAllMocks()
+    await sequelize.close()
+})
 describe('Create organization member', () => {
     it('should create a member in an organization with no user', async () => {
         const orgMemberInfo = fake.mockOrgMemberData()

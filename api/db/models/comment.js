@@ -20,11 +20,11 @@ module.exports.define = (sequelize, DataTypes) => {
         Comment.belongsTo(models.Invoice, { onDelete: 'CASCADE' })
 
         Comment.belongsTo(models.User, {
-            as: 'author',
+            as: 'Author',
         })
 
         Comment.belongsTo(models.User, {
-            as: 'updatedByUser',
+            as: 'UpdatedByUser',
         })
     }
 

@@ -18,23 +18,20 @@ module.exports = async (req, res) => {
         }
 
         await sequelize.transaction(async (transaction) => {
-            const member = await OrganizationMember.findOne({
+            const rowsDeleted = await OrganizationMember.destroy({
                 where: {
                     OrganizationId: req.params.org_id,
                     id: req.params.member_id,
                 },
                 transaction,
             })
-
-            if (!member) {
-                throw new Error('Member not found')
+            if (!rowsDeleted) {
+                return res
+                    .status(400)
+                    .json(createErrorResponse('Member not found'))
             }
 
-            await member.destroy({
-                transaction,
-            })
-
-            return res.status(200).json(createSuccessResponse(member))
+            return res.status(200).json(createSuccessResponse(rowsDeleted))
         })
     } catch (error) {
         return res.status(400).json(createErrorResponse(error.message))

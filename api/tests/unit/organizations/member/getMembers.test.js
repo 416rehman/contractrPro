@@ -1,14 +1,20 @@
 const request = require('supertest')
 const app = require('../../../../server')
-const { OrganizationMember } = require('../../../../db')
+const {
+    OrganizationMember,
+    Organization,
+    sequelize,
+} = require('../../../../db')
 
-let orgsResult, orgId
+let orgId
 beforeAll(async () => {
-    // get first org Id from /admin/organizations
-    orgsResult = await request(app).get('/admin/organizations').expect(200)
-    orgId = orgsResult.body.data.organizations[0].id
+    const orgs = await Organization.findAll()
+    orgId = orgs[0].id
 })
-
+afterAll(async () => {
+    jest.restoreAllMocks()
+    await sequelize.close()
+})
 describe('GET /organizations/:org_id/members', () => {
     test('Should return success and member data if the organization ID is valid', async () => {
         const res = await request(app)
