@@ -62,6 +62,10 @@ module.exports.define = (sequelize, DataTypes) => {
             foreignKey: { allowNull: false },
         })
 
+        Organization.hasMany(models.Invite, {
+            foreignKey: { allowNull: false },
+        })
+
         Organization.belongsTo(models.User, {
             as: 'Owner',
             foreignKey: {
