@@ -5,7 +5,7 @@ const {
     createErrorResponse,
 } = require('../../../utils/response')
 
-const { isValidUUID } = require('../../../utils/isvalidUUID')
+const { isValidUUID } = require('../../../utils/isValidUUID')
 
 // Gets the organization's invites
 module.exports = async (req, res) => {
