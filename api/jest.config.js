@@ -19,4 +19,5 @@ module.exports = {
     testTimeout: 15000,
     globalSetup: './db/setup',
     // setupFiles: ['./db/setup'],
+    openHandlesTimeout: 15000,
 }

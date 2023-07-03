@@ -31,10 +31,6 @@ const sequelize = new Sequelize(
         logging: false,
         pool: {
             max: 5000,
-            min: 0,
-            idle: 3000,
-            acquire: 60000,
-            evict: 500,
         },
     }
 )

@@ -9,9 +9,11 @@ afterAll(async () => {
 describe('POST /auth/account', () => {
     test('should register a new account', async () => {
         const accountData = fake.mockUserData()
-        const res = await request(app).post('/auth/account').send(accountData)
+        const res = await request(app)
+            .post('/auth/account')
+            .send(accountData)
+            .expect(201)
 
-        expect(res.status).toBe(201)
         expect(res.body).toHaveProperty('status', 'success')
         expect(res.body).toHaveProperty('data')
 
