@@ -4,7 +4,7 @@ const { createSuccessResponse, createErrorResponse } = require('../../../utils/r
 const { pick } = require('../../../utils');
 const { isValidUUID } = require('../../../utils/isValidUUID');
 
-// Creates the organization's contract
+// Creates an organization's contract
 module.exports = async (req, res) => {
 
         try {
