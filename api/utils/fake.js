@@ -121,6 +121,14 @@ const mockInvoiceData = () => {
     }
 }
 
+const mockInviteData = () => {
+    return {
+        code: faker.string.alphanumeric(8),
+        uses: faker.number.int({ min: 0, max: 10 }),
+        maxUses: faker.number.int({ min: 0, max: 100 }),
+    }
+}
+
 // Generate fake data for ExpenseEntries table
 const mockExpenseEntryData = () => {
     return {
@@ -237,13 +245,21 @@ const populate = async () => {
         })
         invoice.setBillToClient(client) // Sets and persists the client association to the invoice
 
-        // INVOICE ENTRIES ---------------------------------------------
+        // INVOICE ENTRIES ----------------------------------------------
         for (let i = 0; i < 5; i++) {
             await invoice.createInvoiceEntry({
                 ...mockInvoiceEntryData(),
                 UpdatedByUserId: user.id,
             })
         }
+
+        // INVITE --------------------------------------------------------
+        // Creates and persists an invite in the db
+        const invite = await org.createInvite({
+            ...mockInviteData(),
+            UpdatedByUserId: user.id,
+        })
+        invite.setOrganization(org) // Sets and persists the organization association to the organization
     }
 
     // To see which special methods are available on a model, print its prototype property like console.log(Organization.prototype)
@@ -278,6 +294,7 @@ module.exports = {
     mockInvoiceEntryData,
     mockExpenseData,
     mockInvoiceData,
+    mockInviteData,
     mockVendorData,
     populate,
     faker,
