@@ -1,5 +1,5 @@
 const { sequelize, Contract } = require('../../../db')
-const { isValidUUID } = require('../../../utils/isvalidUUID')
+const { isValidUUID } = require('../../../utils/isValidUUID')
 
 const {
     createSuccessResponse,
