@@ -245,7 +245,7 @@ const populate = async () => {
         })
         invoice.setBillToClient(client) // Sets and persists the client association to the invoice
 
-        // INVOICE ENTRIES ---------------------------------------------
+        // INVOICE ENTRIES ----------------------------------------------
         for (let i = 0; i < 5; i++) {
             await invoice.createInvoiceEntry({
                 ...mockInvoiceEntryData(),
@@ -253,7 +253,7 @@ const populate = async () => {
             })
         }
 
-        // INVITE -------------------------------------------------------
+        // INVITE --------------------------------------------------------
         // Creates and persists an invite in the db
         const invite = await org.createInvite({
             ...mockInviteData(),
