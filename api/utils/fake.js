@@ -124,8 +124,8 @@ const mockInvoiceData = () => {
 const mockInviteData = () => {
     return {
         code: faker.string.alphanumeric(8),
-        uses: faker.number.int({ min: 0, max: 10}),
-        maxUses: faker.number.int({ min: 0, max: 100}),
+        uses: faker.number.int({ min: 0, max: 10 }),
+        maxUses: faker.number.int({ min: 0, max: 100 }),
     }
 }
 

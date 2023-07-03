@@ -16,7 +16,6 @@ beforeAll(async () => {
     strangerInvite = await Invite.findOne({
         where: { OrganizationId: { [Op.ne]: orgID } },
     })
-
 })
 
 afterAll(async () => {
@@ -25,10 +24,10 @@ afterAll(async () => {
 })
 
 describe(`GET /organizations/:org_id/invites/:invite_id`, () => {
-
     test(`Should return success if the organization's invite is found`, async () => {
-
-        const response = await request(app).get(`/organizations/${orgID}/invites/${invite.id}`).expect(200)
+        const response = await request(app)
+            .get(`/organizations/${orgID}/invites/${invite.id}`)
+            .expect(200)
 
         expect(response.body.status).toBe('success')
         expect(response.body.data).not.toBeInstanceOf(Array)
@@ -45,45 +44,44 @@ describe(`GET /organizations/:org_id/invites/:invite_id`, () => {
     })
 
     test(`Should return error for not requiring an organization ID`, async () => {
+        emptyOrgID = null
 
-       emptyOrgID = null
+        const res = await request(app)
+            .get(`/organizations/${emptyOrgID}/invites/${invite.id}`)
+            .expect((res) => res.status === 400 || res.status === 422) // Express-validator returns 422 for validation errors
 
-       const res = await request(app).get(`/organizations/${emptyOrgID}/invites/${invite.id}`)
-       .expect((res) => res.status === 400 || res.status === 422) // Express-validator returns 422 for validation errors
-
-       expect(res.body.status).toBe('error')
-       expect(res.body.message).toBe('Organization ID required')
+        expect(res.body.status).toBe('error')
+        expect(res.body.message).toBe('Organization ID required')
     })
 
     test(`Should return error for not requiring an organization's invite's ID`, async () => {
-
         emptyInviteID = null
 
-        const res = await request(app).get(`/organizations/${orgID}/invites/${emptyInviteID}`)
-        .expect((res) => res.status === 400 || res.status === 422) // Express-validator returns 422 for validation errors
+        const res = await request(app)
+            .get(`/organizations/${orgID}/invites/${emptyInviteID}`)
+            .expect((res) => res.status === 400 || res.status === 422) // Express-validator returns 422 for validation errors
 
         expect(res.body.status).toBe('error')
         expect(res.body.message).toBe('Invite ID required')
     })
 
     test(`Should return error for trying to find an invite from an organization that doesn't exist`, async () => {
-
         orgID = '550e8400-e29b-41d4-a716-446655430000'
 
-        const res = await request(app).get(`/organizations/${orgID}/invites/${invite.id}`)
-        .expect((res) => res.status === 400 || res.status === 422) // Express-validator returns 422 for validation errors
+        const res = await request(app)
+            .get(`/organizations/${orgID}/invites/${invite.id}`)
+            .expect((res) => res.status === 400 || res.status === 422) // Express-validator returns 422 for validation errors
 
         expect(res.body.status).toBe('error')
         expect(res.body.message).toBe('Not found')
     })
 
     test(`Should return error for finding an organization's invite that doesn't exist`, async () => {
-
-        const res = await request(app).get(`/organizations/${orgID}/invites/${strangerInvite.id}`)
-        .expect((res) => res.status === 400 || res.status === 422) // Express-validator returns 422 for validation errors
+        const res = await request(app)
+            .get(`/organizations/${orgID}/invites/${strangerInvite.id}`)
+            .expect((res) => res.status === 400 || res.status === 422) // Express-validator returns 422 for validation errors
 
         expect(res.body.status).toBe('error')
         expect(res.body.message).toBe('Not found')
     })
-
 })
