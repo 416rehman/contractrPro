@@ -5,7 +5,7 @@
     "description": "Manage your contracts, jobs, expenses, invoices and much more",
     "main": "index.js",
     "scripts": {
-        "test": "NODE_ENV=test LOG_LEVEL=error jest -c jest.config.js --runInBand --forceExit --",
+        "test": "NODE_ENV=test LOG_LEVEL=error jest -c jest.config.js --maxWorkers=5 --forceExit --",
         "test:verbose": "NODE_ENV=test LOG_LEVEL=debug jest -c jest.config.js --runInBand --forceExit --verbose=true --",
         "coverage": "NODE_ENV=test LOG_LEVEL=debug jest -c jest.config.js --runInBand --coverage",
         "lint": "eslint .",
