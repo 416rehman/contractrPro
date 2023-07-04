@@ -31,4 +31,8 @@ routes.put('/:client_id', require('./updateClient'))
  */
 routes.delete('/:client_id', require('./deleteClient'))
 
+/**
+ * @api {use} /organizations/:org_id/clients/:client_id/comments Client comments
+ */
+routes.use('/:client_id/comments', require('./comments'))
 module.exports = routes

@@ -1,4 +1,3 @@
-// Add member to organization
 const { OrganizationMember, sequelize } = require('../../../db')
 const {
     createErrorResponse,

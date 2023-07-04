@@ -4,8 +4,6 @@
 
 const cors = require('cors')
 const express = require('express')
-const multer = require('multer')
-const { S3Client, PutObjectCommand } = require('@aws-sdk/client-s3')
 const helmet = require('helmet')
 const cookieSession = require('cookie-session')
 const routes = require('./routes')
@@ -27,13 +25,6 @@ app.use(pino)
 app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.use(
-    multer({
-        limits: {
-            fileSize: 10 * 1024 * 1024, // limit filesize
-        },
-    }).array('attachments', 10)
-) // a comment can have up to 10 attachments
 app.use(helmet())
 app.disable('x-powered-by')
 app.use(
@@ -51,15 +42,6 @@ app.use(
         },
     })
 )
-
-// S3 client
-const s3Client = new S3Client({
-    region: 'ca-central-1',
-    credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY,
-        secretAccessKey: process.env.AWS_ACCESS_SECRET,
-    },
-})
 
 // if development.
 if (process.env.NODE_ENV === 'development') {
@@ -83,38 +65,38 @@ app.use('/organizations/', routes.organization)
 app.use('/admin/', routes.admin)
 
 // TODO: Move this so this is part of each resource, i.e /users/:id/comments, /users/:id/organizations, etc.
-app.post('/comments', async (req, res) => {
-    const commentContent = req.body.content
-    const commentAttachments = req.files || []
-    const commentUsername = req.auth.username
-    const commentUserId = req.auth.id
-
-    let filesUploaded = 0
-    for (const attachment of commentAttachments) {
-        const uploadParams = {
-            Bucket: process.env.AWS_BUCKET_NAME,
-            Key: attachment.originalname,
-            Body: attachment.buffer,
-        }
-
-        try {
-            await s3Client.send(new PutObjectCommand(uploadParams))
-            filesUploaded++
-        } catch (err) {
-            logger.error(err)
-        }
-    }
-
-    return res.json({
-        content: commentContent,
-        attachments: commentAttachments.map(
-            (attachment) => attachment.originalname
-        ),
-        userId: commentUserId,
-        username: commentUsername,
-        filesUploaded: filesUploaded,
-    })
-})
+// app.post('/comments', async (req, res) => {
+//     const commentContent = req.body.content
+//     const commentAttachments = req.files || []
+//     const commentUsername = req.auth.username
+//     const commentUserId = req.auth.id
+//
+//     let filesUploaded = 0
+//     for (const attachment of commentAttachments) {
+//         const uploadParams = {
+//             Bucket: process.env.AWS_BUCKET_NAME,
+//             Key: attachment.originalname,
+//             Body: attachment.buffer,
+//         }
+//
+//         try {
+//             await s3Client.send(new PutObjectCommand(uploadParams))
+//             filesUploaded++
+//         } catch (err) {
+//             logger.error(err)
+//         }
+//     }
+//
+//     return res.json({
+//         content: commentContent,
+//         attachments: commentAttachments.map(
+//             (attachment) => attachment.originalname
+//         ),
+//         userId: commentUserId,
+//         username: commentUsername,
+//         filesUploaded: filesUploaded,
+//     })
+// })
 
 app.use((req, res) => {
     res.status(404).json(createErrorResponse('Cannot find this route'))

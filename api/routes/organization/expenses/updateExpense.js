@@ -83,19 +83,19 @@ module.exports = async (req, res) => {
                         transaction,
                     }
                 )
-
-                // re-fetch expense with entries
-                expense = await Expense.findOne({
-                    where: {
-                        OrganizationId: org_id,
-                        id: expense_id,
-                    },
-                    transaction,
-                    include: {
-                        model: ExpenseEntry,
-                    },
-                })
             }
+
+            // re-fetch expense with entries
+            expense = await Expense.findOne({
+                where: {
+                    OrganizationId: org_id,
+                    id: expense_id,
+                },
+                include: {
+                    model: ExpenseEntry,
+                },
+                transaction,
+            })
 
             res.status(200).json(createSuccessResponse(expense))
         })

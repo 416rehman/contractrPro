@@ -6,17 +6,26 @@ const {
     ExpenseEntry,
     sequelize,
 } = require('../../../../../db')
+const fake = require('../../../../../utils/fake')
 
 let orgId, expenseId
 beforeAll(async () => {
     const organization = await Organization.findAll({ limit: 1 })
     orgId = organization[0].id
 
-    const expense = await Expense.findAll({
-        where: { OrganizationId: orgId },
-        limit: 1,
-    })
-    expenseId = expense[0].id
+    const expense = await Expense.create(
+        {
+            OrganizationId: orgId,
+            ...fake.mockExpenseData(),
+            ExpenseEntries: [fake.mockExpenseEntryData()],
+        },
+        {
+            include: {
+                model: ExpenseEntry,
+            },
+        }
+    )
+    expenseId = expense.id
 })
 afterAll(async () => {
     jest.restoreAllMocks()

@@ -37,7 +37,9 @@ module.exports.define = (sequelize, DataTypes) => {
         Job.hasMany(models.Expense)
         Job.hasMany(models.Invoice)
 
-        Job.hasMany(models.Comment)
+        Job.hasMany(models.Comment, {
+            onDelete: 'CASCADE',
+        })
 
         Job.belongsTo(models.User, {
             as: 'UpdatedByUser',

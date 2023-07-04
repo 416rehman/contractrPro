@@ -55,6 +55,10 @@ module.exports.define = (sequelize, DataTypes) => {
             as: 'BillToClient',
         })
 
+        Invoice.hasMany(models.Comment, {
+            onDelete: 'CASCADE',
+        })
+
         Invoice.belongsTo(models.User, {
             as: 'UpdatedByUser',
         })

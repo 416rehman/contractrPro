@@ -35,4 +35,9 @@ routes.delete('/:expense_id', require('./deleteExpense'))
  */
 routes.use('/:expense_id/entries', require('./expenseEntries'))
 
+/**
+ * @api {use} /organizations/:org_id/expenses/:expense_id/comments Expense comments
+ */
+routes.use('/:expense_id/comments', require('./comments'))
+
 module.exports = routes

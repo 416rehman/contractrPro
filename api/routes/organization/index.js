@@ -30,6 +30,11 @@ routes.delete('/:org_id', require('./deleteOrganization'))
 routes.put('/:org_id', require('./putOrganization'))
 
 /**
+ * @api {use} /organizations/:org_id/blob Get Blob
+ */
+routes.use('/:org_id/blob', require('./blob'))
+
+/**
  * @api {get} /organizations/:org_id/members Uses the organization's member router
  */
 routes.use('/:org_id/members', member_router)
