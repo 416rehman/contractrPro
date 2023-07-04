@@ -16,6 +16,7 @@ env:
     DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
     JWT_SECRET: ${{ secrets.JWT_SECRET }}
     AWS_S3_BUCKET_NAME: $AWS_S3_BUCKET_NAME
+    AWS_S3_REGION: ${{ vars.AWS_S3_REGION }}
     AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
     AWS_ACCESS_SECRET: ${{ secrets.AWS_ACCESS_SECRET }}
     SECRET_SESSION_KEY_1: ${{ secrets.SECRET_SESSION_KEY_1 }}
