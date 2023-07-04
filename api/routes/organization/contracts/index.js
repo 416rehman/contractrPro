@@ -39,4 +39,11 @@ routes.delete('/:contract_id', require('./deleteContract'))
  * @type {Router}
  */
 routes.use('/:contract_id/jobs', job_routes)
+
+/**
+ * @api {get} /organizations/:org_id/contracts/:contract_id/comments Get all comments by contract
+ * @type {Router}
+ */
+routes.use('/:contract_id/comments', require('./comments'))
+
 module.exports = routes

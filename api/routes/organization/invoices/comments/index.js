@@ -8,22 +8,22 @@ routes.use((req, res, next) => {
 })
 
 /**
- * @api {get} /organizations/:org_id/clients/:client_id/comments Get organization client comments
+ * @api {get} /organizations/:org_id/invoices/:invoice_id/comments Get organization invoice comments
  */
 routes.get('/', require('./getComments'))
 
 /**
- * @api {post} /organizations/:org_id/clients/:client_id/comments Add to organization client
+ * @api {post} /organizations/:org_id/invoices/:invoice_id/comments Add to organization invoice
  */
 routes.post('/', attachmentsMiddleware, require('./createComment'))
 
 /**
- * @api {put} /organizations/:org_id/clients/:client_id/comments/:comment_id Update organization client comment
+ * @api {put} /organizations/:org_id/invoices/:invoice_id/comments/:comment_id Update organization invoice comment
  */
 routes.put('/:comment_id', attachmentsMiddleware, require('./updateComment'))
 
 /**
- * @api {delete} /organizations/:org_id/clients/:client_id/comments/:comment_id Remove from organization client
+ * @api {delete} /organizations/:org_id/invoices/:invoice_id/comments/:comment_id Remove from organization invoice
  */
 routes.delete('/:comment_id', require('./deleteComment'))
 

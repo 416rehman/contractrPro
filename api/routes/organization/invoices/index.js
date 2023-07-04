@@ -35,4 +35,9 @@ routes.delete('/:invoice_id', require('./deleteInvoice'))
  */
 routes.use('/:invoice_id/entries', require('./invoiceEntries'))
 
+/**
+ * @api {use} /organizations/:org_id/invoices/:invoice_id/comments Invoice comments
+ */
+routes.use('/:invoice_id/comments', require('./comments'))
+
 module.exports = routes

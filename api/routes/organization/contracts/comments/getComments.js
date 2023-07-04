@@ -1,6 +1,6 @@
 const {
     Organization,
-    Client,
+    Contract,
     Comment,
     Attachment,
     sequelize,
@@ -13,7 +13,7 @@ const {
 module.exports = async (req, res) => {
     try {
         const orgId = req.params.org_id
-        const clientId = req.params.client_id
+        const contractId = req.params.contract_id
 
         const { page = 1, limit = 10 } = req.query
 
@@ -23,21 +23,21 @@ module.exports = async (req, res) => {
         }
 
         await sequelize.transaction(async (transaction) => {
-            // make sure the client belongs to the org
-            const client = await Client.findOne({
-                where: { id: clientId, OrganizationId: orgId },
+            // make sure the contract belongs to the org
+            const contract = await Contract.findOne({
+                where: { id: contractId, OrganizationId: orgId },
                 transaction,
             })
-            if (!client) {
+            if (!contract) {
                 return res
                     .status(400)
-                    .json(createErrorResponse('Client not found.'))
+                    .json(createErrorResponse('Contract not found.'))
             }
 
             // Get the comments
             const comments = await Comment.findAndCountAll({
                 where: {
-                    ClientId: clientId,
+                    ContractId: contractId,
                 },
                 include: [
                     {

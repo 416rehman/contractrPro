@@ -3,18 +3,26 @@ const {
     createErrorResponse,
 } = require('../../../../utils/response')
 const { pick } = require('../../../../utils')
-const { Client, Comment, Attachment, sequelize } = require('../../../../db')
+const { Expense, Comment, Attachment, sequelize } = require('../../../../db')
 const { isValidUUID } = require('../../../../utils/isValidUUID')
 
+// Updates a comment
 module.exports = async (req, res) => {
     try {
-        const clientId = req.params.client_id
+        const commentId = req.params.comment_id
+        const expenseId = req.params.expense_id
         const orgId = req.params.org_id
 
-        if (!clientId || !isValidUUID(clientId)) {
+        if (!commentId || !isValidUUID(commentId)) {
             return res
                 .status(400)
-                .json(createErrorResponse('Invalid client id.'))
+                .json(createErrorResponse('Invalid comment id.'))
+        }
+
+        if (!expenseId || !isValidUUID(expenseId)) {
+            return res
+                .status(400)
+                .json(createErrorResponse('Invalid expense id.'))
         }
 
         if (!orgId || !isValidUUID(orgId)) {
@@ -23,31 +31,23 @@ module.exports = async (req, res) => {
 
         const body = {
             ...pick(req.body, ['content']),
-            ClientId: clientId,
-            AuthorId: req.auth.id,
+            ExpenseId: expenseId,
             UpdatedByUserId: req.auth.id,
             OrganizationId: orgId,
         }
 
         await sequelize.transaction(async (transaction) => {
-            // make sure the client belongs to the org
-            const client = await Client.findOne({
-                where: { id: clientId, OrganizationId: orgId },
+            // make sure the expense belongs to the org
+            const expense = await Expense.findOne({
+                where: { id: expenseId, OrganizationId: orgId },
                 transaction,
             })
-            if (!client) {
+            if (!expense) {
                 return res
                     .status(400)
-                    .json(createErrorResponse('Client not found.'))
+                    .json(createErrorResponse('Expense not found.'))
             }
 
-            // Create the comment
-            const comment = await Comment.create(body, { transaction })
-            if (!comment) {
-                return res
-                    .status(400)
-                    .json(createErrorResponse('Failed to create comment.'))
-            }
             let attachments = null
             // Check if there are any attachments
             if (req.files && req.files.length > 0) {
@@ -59,7 +59,7 @@ module.exports = async (req, res) => {
                         mimetype: file.mimetype,
                         fileSizeBytes: file.size,
                         accessUrl: file.location,
-                        CommentId: comment.id,
+                        CommentId: commentId,
                     }
                 })
 
@@ -76,13 +76,27 @@ module.exports = async (req, res) => {
                 }
             }
 
-            comment.dataValues.Attachments = attachments
+            // Update the comment
+            const comment = await Comment.update(body, {
+                where: {
+                    id: commentId,
+                    ExpenseId: expenseId,
+                    OrganizationId: orgId,
+                },
+                transaction,
+            })
+            if (!comment || comment[0] === 0) {
+                console.log(orgId, expenseId, commentId)
+                return res
+                    .status(400)
+                    .json(createErrorResponse('Failed to update comment.'))
+            }
 
-            return res.json(createSuccessResponse(comment))
+            return res.status(200).json(createSuccessResponse(comment))
         })
-    } catch (error) {
+    } catch (err) {
         return res
             .status(400)
-            .json(createErrorResponse('An error occurred.', error))
+            .json(createErrorResponse('An error occurred.', err))
     }
 }

@@ -3,18 +3,18 @@ const {
     createErrorResponse,
 } = require('../../../../utils/response')
 const { pick } = require('../../../../utils')
-const { Client, Comment, Attachment, sequelize } = require('../../../../db')
+const { Contract, Comment, Attachment, sequelize } = require('../../../../db')
 const { isValidUUID } = require('../../../../utils/isValidUUID')
 
 module.exports = async (req, res) => {
     try {
-        const clientId = req.params.client_id
+        const contractId = req.params.contract_id
         const orgId = req.params.org_id
 
-        if (!clientId || !isValidUUID(clientId)) {
+        if (!contractId || !isValidUUID(contractId)) {
             return res
                 .status(400)
-                .json(createErrorResponse('Invalid client id.'))
+                .json(createErrorResponse('Invalid contract id.'))
         }
 
         if (!orgId || !isValidUUID(orgId)) {
@@ -23,22 +23,22 @@ module.exports = async (req, res) => {
 
         const body = {
             ...pick(req.body, ['content']),
-            ClientId: clientId,
+            ContractId: contractId,
             AuthorId: req.auth.id,
             UpdatedByUserId: req.auth.id,
             OrganizationId: orgId,
         }
 
         await sequelize.transaction(async (transaction) => {
-            // make sure the client belongs to the org
-            const client = await Client.findOne({
-                where: { id: clientId, OrganizationId: orgId },
+            // make sure the contract belongs to the org
+            const contract = await Contract.findOne({
+                where: { id: contractId, OrganizationId: orgId },
                 transaction,
             })
-            if (!client) {
+            if (!contract) {
                 return res
                     .status(400)
-                    .json(createErrorResponse('Client not found.'))
+                    .json(createErrorResponse('Contract not found.'))
             }
 
             // Create the comment

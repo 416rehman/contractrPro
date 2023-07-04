@@ -50,6 +50,10 @@ module.exports.define = (sequelize, DataTypes) => {
             foreignKey: { allowNull: true },
         })
 
+        Client.hasMany(models.Comment, {
+            onDelete: 'CASCADE',
+        })
+
         Client.belongsTo(models.User, {
             as: 'UpdatedByUser',
         })

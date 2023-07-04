@@ -46,4 +46,9 @@ routes.post('/:job_id/members', require('./postJobMember'))
  */
 routes.delete('/:job_id/members/:member_id', require('./deleteJobMember'))
 
+/**
+ * @api {use} /organizations/:org_id/contracts/:contract_id/jobs/:job_id/comments Job comments
+ */
+routes.use('/:job_id/comments', require('./comments'))
+
 module.exports = routes

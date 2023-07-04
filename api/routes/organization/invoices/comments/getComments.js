@@ -1,6 +1,6 @@
 const {
     Organization,
-    Client,
+    Invoice,
     Comment,
     Attachment,
     sequelize,
@@ -13,7 +13,7 @@ const {
 module.exports = async (req, res) => {
     try {
         const orgId = req.params.org_id
-        const clientId = req.params.client_id
+        const invoiceId = req.params.invoice_id
 
         const { page = 1, limit = 10 } = req.query
 
@@ -23,21 +23,21 @@ module.exports = async (req, res) => {
         }
 
         await sequelize.transaction(async (transaction) => {
-            // make sure the client belongs to the org
-            const client = await Client.findOne({
-                where: { id: clientId, OrganizationId: orgId },
+            // make sure the invoice belongs to the org
+            const invoice = await Invoice.findOne({
+                where: { id: invoiceId, OrganizationId: orgId },
                 transaction,
             })
-            if (!client) {
+            if (!invoice) {
                 return res
                     .status(400)
-                    .json(createErrorResponse('Client not found.'))
+                    .json(createErrorResponse('Invoice not found.'))
             }
 
             // Get the comments
             const comments = await Comment.findAndCountAll({
                 where: {
-                    ClientId: clientId,
+                    InvoiceId: invoiceId,
                 },
                 include: [
                     {

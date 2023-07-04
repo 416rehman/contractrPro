@@ -3,18 +3,18 @@ const {
     createErrorResponse,
 } = require('../../../../utils/response')
 const { pick } = require('../../../../utils')
-const { Client, Comment, Attachment, sequelize } = require('../../../../db')
+const { Invoice, Comment, Attachment, sequelize } = require('../../../../db')
 const { isValidUUID } = require('../../../../utils/isValidUUID')
 
 module.exports = async (req, res) => {
     try {
-        const clientId = req.params.client_id
+        const invoiceId = req.params.invoice_id
         const orgId = req.params.org_id
 
-        if (!clientId || !isValidUUID(clientId)) {
+        if (!invoiceId || !isValidUUID(invoiceId)) {
             return res
                 .status(400)
-                .json(createErrorResponse('Invalid client id.'))
+                .json(createErrorResponse('Invalid invoice id.'))
         }
 
         if (!orgId || !isValidUUID(orgId)) {
@@ -23,22 +23,22 @@ module.exports = async (req, res) => {
 
         const body = {
             ...pick(req.body, ['content']),
-            ClientId: clientId,
+            InvoiceId: invoiceId,
             AuthorId: req.auth.id,
             UpdatedByUserId: req.auth.id,
             OrganizationId: orgId,
         }
 
         await sequelize.transaction(async (transaction) => {
-            // make sure the client belongs to the org
-            const client = await Client.findOne({
-                where: { id: clientId, OrganizationId: orgId },
+            // make sure the invoice belongs to the org
+            const invoice = await Invoice.findOne({
+                where: { id: invoiceId, OrganizationId: orgId },
                 transaction,
             })
-            if (!client) {
+            if (!invoice) {
                 return res
                     .status(400)
-                    .json(createErrorResponse('Client not found.'))
+                    .json(createErrorResponse('Invoice not found.'))
             }
 
             // Create the comment

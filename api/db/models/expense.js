@@ -32,6 +32,10 @@ module.exports.define = (sequelize, DataTypes) => {
 
         Expense.hasMany(models.ExpenseEntry)
 
+        Expense.hasMany(models.Comment, {
+            onDelete: 'CASCADE',
+        })
+
         Expense.belongsTo(models.User, {
             as: 'UpdatedByUser',
         })

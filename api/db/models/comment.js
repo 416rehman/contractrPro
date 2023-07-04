@@ -14,10 +14,22 @@ module.exports.define = (sequelize, DataTypes) => {
     })
 
     Comment.associate = (models) => {
-        Comment.belongsTo(models.Contract, { onDelete: 'CASCADE' })
-        Comment.belongsTo(models.Job, { onDelete: 'CASCADE' })
-        Comment.belongsTo(models.Expense, { onDelete: 'CASCADE' })
-        Comment.belongsTo(models.Invoice, { onDelete: 'CASCADE' })
+        Comment.belongsTo(models.Organization, {
+            //OrganizationId - Organization is ALWAYS set
+            onDelete: 'CASCADE',
+            foreignKey: { allowNull: false },
+        })
+        Comment.belongsTo(models.Contract, { onDelete: 'CASCADE' }) //ContractId
+        Comment.belongsTo(models.Job, { onDelete: 'CASCADE' }) //JobId
+        Comment.belongsTo(models.Expense, { onDelete: 'CASCADE' }) //ExpenseId
+        Comment.belongsTo(models.Invoice, { onDelete: 'CASCADE' }) //InvoiceId
+        Comment.belongsTo(models.Client, { onDelete: 'CASCADE' }) //ClientId
+
+        Comment.hasMany(models.Attachment, {
+            // CommentId - the metadata for the attachments of this comment
+            foreignKey: { allowNull: false },
+            onDelete: 'CASCADE',
+        })
 
         Comment.belongsTo(models.User, {
             as: 'Author',

@@ -2,14 +2,14 @@ const {
     createSuccessResponse,
     createErrorResponse,
 } = require('../../../../utils/response')
-const { Client, Comment, Attachment, sequelize } = require('../../../../db')
+const { Contract, Comment, Attachment, sequelize } = require('../../../../db')
 const { isValidUUID } = require('../../../../utils/isValidUUID')
 
 // Deletes a comment
 module.exports = async (req, res) => {
     try {
         const commentId = req.params.comment_id
-        const clientId = req.params.client_id
+        const contractId = req.params.contract_id
         const orgId = req.params.org_id
 
         if (!commentId || !isValidUUID(commentId)) {
@@ -18,10 +18,10 @@ module.exports = async (req, res) => {
                 .json(createErrorResponse('Invalid comment id.'))
         }
 
-        if (!clientId || !isValidUUID(clientId)) {
+        if (!contractId || !isValidUUID(contractId)) {
             return res
                 .status(400)
-                .json(createErrorResponse('Invalid client id.'))
+                .json(createErrorResponse('Invalid contract id.'))
         }
 
         if (!orgId || !isValidUUID(orgId)) {
@@ -29,22 +29,22 @@ module.exports = async (req, res) => {
         }
 
         await sequelize.transaction(async (transaction) => {
-            // make sure the client belongs to the org
-            const client = await Client.findOne({
-                where: { id: clientId, OrganizationId: orgId },
+            // make sure the contract belongs to the org
+            const contract = await Contract.findOne({
+                where: { id: contractId, OrganizationId: orgId },
                 transaction,
             })
-            if (!client) {
+            if (!contract) {
                 return res
                     .status(400)
-                    .json(createErrorResponse('Client not found.'))
+                    .json(createErrorResponse('Contract not found.'))
             }
 
             // Delete the comment
             const comment = await Comment.destroy({
                 where: {
                     id: commentId,
-                    ClientId: clientId,
+                    ContractId: contractId,
                     OrganizationId: orgId,
                 },
                 transaction,
