@@ -1,10 +1,4 @@
-const {
-    Organization,
-    Contract,
-    Comment,
-    Attachment,
-    sequelize,
-} = require('../../../../db')
+const { Contract, Comment, Attachment, sequelize } = require('../../../../db')
 const {
     createErrorResponse,
     createSuccessResponse,

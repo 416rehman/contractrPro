@@ -27,4 +27,9 @@ routes.put('/:comment_id', attachmentsMiddleware, require('./updateComment'))
  */
 routes.delete('/:comment_id', require('./deleteComment'))
 
+/**
+ * @api {use} /organizations/:org_id/jobs/:job_id/comments/:comment_id/attachments Comment attachments
+ */
+routes.use('/:comment_id/attachments', require('./attachments'))
+
 module.exports = routes

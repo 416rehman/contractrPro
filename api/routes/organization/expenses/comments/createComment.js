@@ -2,9 +2,11 @@ const {
     createSuccessResponse,
     createErrorResponse,
 } = require('../../../../utils/response')
+const UUID = require('uuid')
 const { pick } = require('../../../../utils')
 const { Expense, Comment, Attachment, sequelize } = require('../../../../db')
 const { isValidUUID } = require('../../../../utils/isValidUUID')
+const s3 = require('../../../../utils/s3')
 
 module.exports = async (req, res) => {
     try {
@@ -41,6 +43,19 @@ module.exports = async (req, res) => {
                     .json(createErrorResponse('Expense not found.'))
             }
 
+            if (
+                (!req.files || req.files.length <= 0) &&
+                (!body.content || body.content.length === 0)
+            ) {
+                return res
+                    .status(400)
+                    .json(
+                        createErrorResponse(
+                            'Content cannot be empty if there are no attachments.'
+                        )
+                    )
+            }
+
             // Create the comment
             const comment = await Comment.create(body, { transaction })
             if (!comment) {
@@ -48,22 +63,30 @@ module.exports = async (req, res) => {
                     .status(400)
                     .json(createErrorResponse('Failed to create comment.'))
             }
+
             let attachments = null
             // Check if there are any attachments
             if (req.files && req.files.length > 0) {
                 // Process attachments
                 const attachmentsData = req.files.map((file) => {
+                    file.key = UUID.v4(
+                        Date.now().toString() + file.originalname
+                    )
+
+                    // https://[bucket-name].s3.[region-code].amazonaws.com/[key-name]
+                    const accessUrl = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_S3_REGION}.amazonaws.com/${file.key}`
+
                     return {
                         id: file.key,
                         filename: file.originalname,
                         mimetype: file.mimetype,
                         fileSizeBytes: file.size,
-                        accessUrl: file.location,
+                        accessUrl,
                         CommentId: comment.id,
                     }
                 })
 
-                // Create the attachments
+                // Store the attachments metadata in the database
                 attachments = await Attachment.bulkCreate(attachmentsData, {
                     transaction,
                 })
@@ -73,6 +96,11 @@ module.exports = async (req, res) => {
                         .json(
                             createErrorResponse('Failed to create attachments.')
                         )
+                }
+
+                // upload the attachments to s3Expense
+                for (const file of req.files) {
+                    await s3.upload(file, file.key)
                 }
             }
 

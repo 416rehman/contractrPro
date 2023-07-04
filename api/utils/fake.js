@@ -1,3 +1,7 @@
+const mockCommentData = () => ({
+    content: faker.lorem.words({ max: 100 }),
+})
+
 const { faker } = require('@faker-js/faker')
 const {
     User,
@@ -296,6 +300,7 @@ module.exports = {
     mockInvoiceData,
     mockInviteData,
     mockVendorData,
+    mockCommentData,
     populate,
     faker,
 }

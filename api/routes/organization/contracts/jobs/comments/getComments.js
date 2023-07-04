@@ -1,27 +1,28 @@
 const {
     Job,
     Comment,
-    Attachment,
     Contract,
+    Attachment,
     sequelize,
 } = require('../../../../../db')
 const {
     createErrorResponse,
     createSuccessResponse,
 } = require('../../../../../utils/response')
+const { isValidUUID } = require('../../../../../utils/isValidUUID')
 
 module.exports = async (req, res) => {
     try {
-        const jobId = req.params.job_id
         const orgId = req.params.org_id
+        const jobId = req.params.job_id
         const contractId = req.params.contract_id
-
-        if (!jobId || !isValidUUID(jobId)) {
-            return res.status(400).json(createErrorResponse('Invalid job id.'))
-        }
 
         if (!orgId || !isValidUUID(orgId)) {
             return res.status(400).json(createErrorResponse('Invalid org id.'))
+        }
+
+        if (!jobId || !isValidUUID(jobId)) {
+            return res.status(400).json(createErrorResponse('Invalid job id.'))
         }
 
         if (!contractId || !isValidUUID(contractId)) {
@@ -38,21 +39,26 @@ module.exports = async (req, res) => {
         }
 
         await sequelize.transaction(async (transaction) => {
-            const job = await Job.findOne({
-                where: { id: jobId, ContractId: contractId },
-                include: [
-                    {
-                        model: Contract,
-                        where: { OrganizationId: orgId },
-                    },
-                ],
+            // make sure the contract belongs to the organization
+            const contract = await Contract.findOne({
+                where: {
+                    id: contractId,
+                    OrganizationId: orgId,
+                },
                 transaction,
             })
-            if (!job) {
+            if (!contract) {
                 return res
                     .status(400)
-                    .json(createErrorResponse('Job not found.'))
+                    .json(createErrorResponse('Contract not found.'))
             }
+            const job = await Job.findOne({
+                where: {
+                    id: jobId,
+                    ContractId: contractId,
+                },
+                transaction,
+            })
             if (!job) {
                 return res
                     .status(400)

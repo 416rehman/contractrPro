@@ -1,6 +1,6 @@
 const { createErrorResponse } = require('../../../utils/response')
 const { Attachment, Comment } = require('../../../db')
-const s3 = require('../../../s3.config')
+const s3 = require('../../../utils/s3')
 const { GetObjectCommand } = require('@aws-sdk/client-s3')
 const { isValidUUID } = require('../../../utils/isValidUUID')
 

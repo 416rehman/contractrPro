@@ -14,11 +14,11 @@ module.exports = () => {
 
                 logger.debug(`Syncing database...`)
                 await sequelize.sync({
-                    // force: true
+                    force: true,
                 })
 
                 logger.debug(`Populating database...`)
-                // await populate()
+                await populate()
                 logger.debug(`Database populated!`)
             } else {
                 await sequelize.sync()

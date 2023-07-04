@@ -1,5 +1,4 @@
 const { Sequelize } = require('sequelize')
-const { DeleteObjectCommand } = require('@aws-sdk/client-s3')
 
 module.exports.define = (sequelize, DataTypes) => {
     const Attachment = sequelize.define('Attachment', {
@@ -44,30 +43,14 @@ module.exports.define = (sequelize, DataTypes) => {
     }
 
     // after delete remove the file from S3
-    Attachment.afterDestroy(async (attachment, options) => {
-        const s3 = require('../../s3.config')
-        await s3.send(
-            {
-                Bucket: process.env.AWS_S3_BUCKET_NAME,
-                Key: attachment.id,
-            },
-            DeleteObjectCommand
-        )
+    Attachment.afterDestroy(async (attachment) => {
+        const s3 = require('../../utils/s3')
+        await s3.delete(attachment.id)
     })
 
-    // after bulk delete remove the files from S3
-    Attachment.afterBulkDestroy(async (options) => {
-        const s3 = require('../../s3.config')
-        const attachmentIds = options.where.id[Sequelize.Op.in]
-        for (const attachmentId of attachmentIds) {
-            await s3.send(
-                {
-                    Bucket: process.env.AWS_S3_BUCKET_NAME,
-                    Key: attachmentId,
-                },
-                DeleteObjectCommand
-            )
-        }
+    // Before bulk destroy, set individual hooks to true to run the afterDestroy hook even on bulk destroy
+    Attachment.beforeBulkDestroy((options) => {
+        options.individualHooks = true
     })
 
     return Attachment

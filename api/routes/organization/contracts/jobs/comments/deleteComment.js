@@ -34,23 +34,26 @@ module.exports = async (req, res) => {
         }
 
         await sequelize.transaction(async (transaction) => {
-            // make sure the job belongs to the org
-            const job = await Job.findOne({
-                where: { id: jobId, ContractId: contractId },
-                include: [
-                    {
-                        model: Contract,
-                        where: { OrganizationId: orgId },
-                    },
-                ],
+            // make sure the contract belongs to the organization
+            const contract = await Contract.findOne({
+                where: {
+                    id: contractId,
+                    OrganizationId: orgId,
+                },
                 transaction,
             })
-            if (!job) {
+            if (!contract) {
                 return res
                     .status(400)
-                    .json(createErrorResponse('Job not found.'))
+                    .json(createErrorResponse('Contract not found.'))
             }
-
+            const job = await Job.findOne({
+                where: {
+                    id: jobId,
+                    ContractId: contractId,
+                },
+                transaction,
+            })
             if (!job) {
                 return res
                     .status(400)

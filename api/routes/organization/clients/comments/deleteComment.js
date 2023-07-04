@@ -2,7 +2,7 @@ const {
     createSuccessResponse,
     createErrorResponse,
 } = require('../../../../utils/response')
-const { Client, Comment, Attachment, sequelize } = require('../../../../db')
+const { Client, Comment, sequelize } = require('../../../../db')
 const { isValidUUID } = require('../../../../utils/isValidUUID')
 
 // Deletes a comment
