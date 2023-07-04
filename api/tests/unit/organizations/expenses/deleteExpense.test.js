@@ -1,6 +1,11 @@
 const request = require('supertest')
 const app = require('../../../../server')
-const { Expense, Organization, sequelize } = require('../../../../db')
+const {
+    Expense,
+    Organization,
+    ExpenseEntry,
+    sequelize,
+} = require('../../../../db')
 const fake = require('../../../../utils/fake')
 
 let orgId, expenseId
@@ -8,10 +13,16 @@ let orgId, expenseId
 beforeAll(async () => {
     const orgResults = await Organization.findAll()
     orgId = orgResults[0].id
-    const expenseToDelete = await Expense.create({
-        ...fake.mockExpenseData(),
-        OrganizationId: orgId,
-    })
+    const expenseToDelete = await Expense.create(
+        {
+            ...fake.mockExpenseData(),
+            OrganizationId: orgId,
+            ExpenseEntries: [fake.mockExpenseEntryData()],
+        },
+        {
+            include: [ExpenseEntry],
+        }
+    )
     expenseId = expenseToDelete.id
 })
 afterAll(async () => {

@@ -1,21 +1,42 @@
 const request = require('supertest')
 const app = require('../../../../server')
-const { Organization, Expense, sequelize } = require('../../../../db')
-const { Op } = require('sequelize')
+const {
+    Organization,
+    Expense,
+    ExpenseEntry,
+    sequelize,
+} = require('../../../../db')
+const fake = require('../../../../utils/fake')
 
 let orgId, expense, strangerExpense
 
 beforeAll(async () => {
     const orgResuts = await Organization.findAll()
     orgId = orgResuts[0].id
-    expense = await Expense.findOne({ where: { OrganizationId: orgId } })
-    strangerExpense = await Expense.findOne({
-        where: {
-            OrganizationId: {
-                [Op.not]: orgId,
-            },
+    expense = await Expense.create(
+        {
+            ...fake.mockExpenseData(),
+            OrganizationId: orgId,
+            ExpenseEntries: [fake.mockExpenseEntryData()],
         },
-    })
+        {
+            include: {
+                model: ExpenseEntry,
+            },
+        }
+    )
+    strangerExpense = await Expense.create(
+        {
+            ...fake.mockExpenseData(),
+            OrganizationId: orgResuts[1].id,
+            ExpenseEntries: [fake.mockExpenseEntryData()],
+        },
+        {
+            include: {
+                model: ExpenseEntry,
+            },
+        }
+    )
 })
 afterAll(async () => {
     jest.restoreAllMocks()

@@ -6,28 +6,40 @@ const {
     Invoice,
     sequelize,
 } = require('../../../../../db')
-const { Op } = require('sequelize')
 const fake = require('../../../../../utils/fake')
 
 let orgId, invoiceId, strangerInvoiceId, invoiceEntryId
 
 beforeAll(async () => {
-    const organization = await Organization.findAll({ limit: 1 })
-    orgId = organization[0].id
+    const orgResuts = await Organization.findAll()
+    orgId = orgResuts[0].id
 
-    const invoice = await Invoice.findAll({
-        where: { OrganizationId: orgId },
-        limit: 1,
-    })
-    invoiceId = invoice[0].id
-    const strangerInvoice = await Invoice.findAll({
-        where: {
-            OrganizationId: {
-                [Op.ne]: orgId,
-            },
+    const invoice = await Invoice.create(
+        {
+            OrganizationId: orgId,
+            ...fake.mockInvoiceData(),
+            InvoiceEntries: [fake.mockInvoiceEntryData()],
         },
-    })
-    strangerInvoiceId = strangerInvoice[0].id
+        {
+            include: {
+                model: InvoiceEntry,
+            },
+        }
+    )
+    invoiceId = invoice.id
+    const strangerInvoice = await Invoice.create(
+        {
+            OrganizationId: orgResuts[1].id,
+            ...fake.mockInvoiceData(),
+            InvoiceEntries: [fake.mockInvoiceEntryData()],
+        },
+        {
+            include: {
+                model: InvoiceEntry,
+            },
+        }
+    )
+    strangerInvoiceId = strangerInvoice.id
 
     const invoiceEntryToDelete = await InvoiceEntry.create({
         ...fake.mockInvoiceEntryData(),

@@ -1,6 +1,11 @@
 const request = require('supertest')
 const app = require('../../../../server')
-const { Expense, Organization, sequelize } = require('../../../../db')
+const {
+    Expense,
+    Organization,
+    sequelize,
+    ExpenseEntry,
+} = require('../../../../db')
 const fake = require('../../../../utils/fake')
 
 let orgId, orgExpense
@@ -8,7 +13,16 @@ let orgId, orgExpense
 beforeAll(async () => {
     const orgResults = await Organization.findAll()
     orgId = orgResults[0].id
-    orgExpense = await Expense.findOne({ where: { OrganizationId: orgId } })
+    orgExpense = await Expense.create(
+        {
+            ...fake.mockExpenseData(),
+            OrganizationId: orgId,
+            ExpenseEntries: [fake.mockExpenseEntryData()],
+        },
+        {
+            include: [ExpenseEntry],
+        }
+    )
 })
 afterAll(async () => {
     jest.restoreAllMocks()
@@ -38,7 +52,7 @@ describe('Update expense', () => {
         expect(data.ExpenseEntries).not.toBe(orgExpense.ExpenseEntries)
     })
 
-    it('should update the expense and return the updated expense without ExpenseEntries', async () => {
+    it('should update without replacing the current expense entries if no new entries are provided', async () => {
         const expenseId = orgExpense.id
 
         const requestBody = fake.mockExpenseData()
@@ -56,7 +70,8 @@ describe('Update expense', () => {
         expect(data).toHaveProperty('OrganizationId', orgId)
         expect(data).toHaveProperty('UpdatedByUserId')
 
-        expect(data.ExpenseEntries).toBe(orgExpense.ExpenseEntries)
+        expect(data.ExpenseEntries[0]).toBeDefined()
+        expect(data.ExpenseEntries[0]).toHaveProperty('id')
     })
 
     it('should return 400 if organization ID is invalid', async () => {

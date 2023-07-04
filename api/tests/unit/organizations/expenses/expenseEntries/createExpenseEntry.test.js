@@ -7,26 +7,34 @@ const {
     sequelize,
 } = require('../../../../../db')
 const fake = require('../../../../../utils/fake')
-const { Op } = require('sequelize')
 
 let orgId, expenseId, strangerExpenseId
 beforeAll(async () => {
-    const organization = await Organization.findAll({ limit: 1 })
-    orgId = organization[0].id
+    const orgResults = await Organization.findAll()
+    orgId = orgResults[0].id
 
-    const expense = await Expense.findAll({
-        where: { OrganizationId: orgId },
-        limit: 1,
-    })
-    expenseId = expense[0].id
-    const strangerExpense = await Expense.findAll({
-        where: {
-            OrganizationId: {
-                [Op.ne]: orgId,
-            },
+    const expense = await Expense.create(
+        {
+            ...fake.mockExpenseData(),
+            OrganizationId: orgId,
+            ExpenseEntries: [fake.mockExpenseEntryData()],
         },
-    })
-    strangerExpenseId = strangerExpense[0].id
+        {
+            include: [ExpenseEntry],
+        }
+    )
+    expenseId = expense.id
+    const strangerExpense = await Expense.create(
+        {
+            ...fake.mockExpenseData(),
+            OrganizationId: orgResults[1].id,
+            ExpenseEntries: [fake.mockExpenseEntryData()],
+        },
+        {
+            include: [ExpenseEntry],
+        }
+    )
+    strangerExpenseId = strangerExpense.id
 })
 afterAll(async () => {
     jest.restoreAllMocks()
