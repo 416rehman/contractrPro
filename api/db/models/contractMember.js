@@ -16,10 +16,6 @@ module.exports.define = (sequelize, DataTypes) => {
     )
 
     ContractMember.associate = (models) => {
-        ContractMember.belongsToMany(models.Job, {
-            through: 'JobMember',
-        })
-
         ContractMember.belongsTo(models.User, {
             as: 'UpdatedByUser',
         })

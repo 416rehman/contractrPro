@@ -1,6 +1,8 @@
 const { DataTypes, Sequelize } = require('sequelize')
 const logger = require('../utils/logger')
 const { Client } = require('pg')
+const fs = require('fs')
+const path = require('path')
 
 const address = require('./models/address'),
     attachment = require('./models/attachment'),
@@ -87,7 +89,36 @@ for (const model of Object.values(models)) {
 }
 logger.debug('Models associated')
 
+const dumpMethods = () => {
+    try {
+        // loops through all models and dumps their "prototype" methods to the current directory
+        const dumpDir = path.join(__dirname, 'dump')
+        if (!fs.existsSync(dumpDir)) {
+            fs.mkdirSync(dumpDir)
+        }
+
+        for (const model of Object.values(models)) {
+            const dumpFile = path.join(dumpDir, `.${model.name}.methods.txt`)
+            const dumpStream = fs.createWriteStream(dumpFile)
+            dumpStream.write(
+                `====================\n${model.name}\n====================\n`
+            )
+            const methods = Object.keys(model.prototype).filter(
+                (key) => typeof model.prototype[key] === 'function'
+            )
+            dumpStream.write(methods.join('\n'))
+            dumpStream.write('\n\n')
+            dumpStream.end()
+        }
+
+        logger.debug(`Dumped special model methods to ${dumpDir}.`)
+    } catch (err) {
+        logger.error(err)
+    }
+}
+
 module.exports = {
     sequelize,
+    dumpMethods,
     ...models,
 }

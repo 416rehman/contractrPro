@@ -45,7 +45,11 @@ module.exports.define = (sequelize, DataTypes) => {
 
     OrganizationMember.associate = (models) => {
         OrganizationMember.belongsToMany(models.Contract, {
-            through: 'ContractMember',
+            through: models.ContractMember,
+        })
+
+        OrganizationMember.belongsToMany(models.Job, {
+            through: models.JobMember,
         })
 
         OrganizationMember.belongsTo(models.User, {

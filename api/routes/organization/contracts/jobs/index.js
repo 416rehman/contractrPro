@@ -24,7 +24,7 @@ routes.post('/', require('./postJob'))
 /**
  * @api {put} /organizations/:org_id/contracts/:contract_id/jobs/:job_id Update organization contract job
  */
-routes.put('/:job_id', require('./putJob'))
+routes.put('/:job_id', require('./updateJob'))
 
 /**
  * @api {delete} /organizations/:org_id/contracts/:contract_id/jobs/:job_id Delete organization contract job
@@ -32,19 +32,9 @@ routes.put('/:job_id', require('./putJob'))
 routes.delete('/:job_id', require('./deleteJob'))
 
 /**
- * @api {get} /organizations/:org_id/contracts/:contract_id/jobs/:job_id/members Get organization contract job members
+ * @api {use} /organizations/:org_id/contracts/:contract_id/jobs/:job_id/members Job members
  **/
-routes.get('/:job_id/members', require('./getJobMembers'))
-
-/**
- * @api {post} /organizations/:org_id/contracts/:contract_id/jobs/:job_id/members Add member to organization contract job
- **/
-routes.post('/:job_id/members', require('./postJobMember'))
-
-/**
- * @api {delete} /organizations/:org_id/contracts/:contract_id/jobs/:job_id/members Remove member from organization contract job
- */
-routes.delete('/:job_id/members/:member_id', require('./deleteJobMember'))
+routes.use('/:job_id/members', require('./jobMembers'))
 
 /**
  * @api {use} /organizations/:org_id/contracts/:contract_id/jobs/:job_id/comments Job comments

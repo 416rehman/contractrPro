@@ -202,14 +202,14 @@ const populate = async () => {
             UpdatedByUserId: user.id,
         })
         contract = await contract.save() // Persist the above changes to the db
-        const contractMember = await contract.addOrganizationMember(member) // Add the member to the contract (they can now view the contract)
+        await contract.addOrganizationMember(member) // Add the organization member to the contract (they can now view the contract)
 
         // CONTRACT JOB -------------------------------------------------------
         // Creates and persists a job in the db
         const job = await contract.createJob(mockJobData())
         job.setUpdatedByUser(user) // Sets and persists the UpdatedByUser association to the user
-        job.addContractMember(contractMember, {
-            // Add the contract member to the job (they can now view the job)
+        job.addOrganizationMember(member, {
+            // Add the organization member to the job (they can now view the job)
             through: {
                 permissionOverwrites: 1, // in the job.js model file, we set the association to go through the JobMember junction table. This field is part of that junction table
             },

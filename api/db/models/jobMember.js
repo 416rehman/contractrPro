@@ -10,6 +10,7 @@ module.exports.define = (sequelize, DataTypes) => {
         permissionOverwrites: {
             type: DataTypes.INTEGER,
             allowNull: false,
+            defaultValue: 1,
         },
     })
 

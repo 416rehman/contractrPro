@@ -1,8 +1,9 @@
-const { sequelize } = require('./index')
+const { sequelize, dumpMethods } = require('./index')
 const logger = require('../utils/logger')
 const { populate } = require('../utils/fake')
 
 module.exports = () => {
+    dumpMethods('.methods')
     return sequelize
         .authenticate()
         .then(async () => {

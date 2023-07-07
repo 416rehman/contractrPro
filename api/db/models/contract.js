@@ -42,7 +42,7 @@ module.exports.define = (sequelize, DataTypes) => {
         })
 
         Contract.belongsToMany(models.OrganizationMember, {
-            through: 'ContractMember',
+            through: models.ContractMember,
         })
 
         Contract.hasMany(models.Expense)

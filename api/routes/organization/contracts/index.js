@@ -35,6 +35,11 @@ routes.delete('/:contract_id', require('./deleteContract'))
 /*####################################Entry Routes END####################################################*/
 
 /**
+ * @api {use} /organizations/:org_id/contracts/:contract_id/members Get all members by contract
+ */
+routes.use('/:contract_id/members', require('./contractMembers'))
+
+/**
  * @api {get} /organizations/:org_id/contracts/:contract_id/jobs Get all jobs by contract
  * @type {Router}
  */

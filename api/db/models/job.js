@@ -30,8 +30,8 @@ module.exports.define = (sequelize, DataTypes) => {
 
     Job.associate = (models) => {
         Job.belongsTo(models.Contract, { onDelete: 'CASCADE' })
-        Job.belongsToMany(models.ContractMember, {
-            through: 'JobMember',
+        Job.belongsToMany(models.OrganizationMember, {
+            through: models.JobMember,
         })
 
         Job.hasMany(models.Expense)
