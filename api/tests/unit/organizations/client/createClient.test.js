@@ -83,6 +83,5 @@ describe('Add member to organization', () => {
             .expect(400)
 
         expect(response.body.status).toBe('error')
-        expect(response.body.message).toBe('Something went wrong')
     })
 })

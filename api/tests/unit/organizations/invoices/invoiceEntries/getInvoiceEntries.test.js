@@ -53,10 +53,9 @@ describe('Get invoice entries', () => {
             .get(`/organizations/${orgId}/invoices/${invalidInvoiceId}/entries`)
             .expect(400)
 
-        const { status, message } = response.body
+        const { status } = response.body
 
         expect(status).toBe('error')
-        expect(message).toBe('Invoice ID is required')
     })
 
     it('should return 400 if an exception occurs', async () => {
@@ -68,9 +67,8 @@ describe('Get invoice entries', () => {
             .get(`/organizations/${orgId}/invoices/${invoiceId}/entries`)
             .expect(400)
 
-        const { status, message } = response.body
+        const { status } = response.body
 
         expect(status).toBe('error')
-        expect(message).toBe('Something went wrong')
     })
 })

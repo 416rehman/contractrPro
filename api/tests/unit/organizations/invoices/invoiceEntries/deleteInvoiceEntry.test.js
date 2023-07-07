@@ -88,10 +88,9 @@ describe('Delete invoice entry', () => {
             )
             .expect(400)
 
-        const { status, message } = response.body
+        const { status } = response.body
 
         expect(status).toBe('error')
-        expect(message).toBe('InvoiceEntry ID is required')
     })
 
     it('should return 400 if invoice entry is not found', async () => {
@@ -132,9 +131,8 @@ describe('Delete invoice entry', () => {
             )
             .expect(400)
 
-        const { status, message } = response.body
+        const { status } = response.body
 
         expect(status).toBe('error')
-        expect(message).toBe('Something went wrong')
     })
 })

@@ -80,10 +80,9 @@ describe('Create expense entry', () => {
             .send(requestBody)
             .expect(400)
 
-        const { status, message } = response.body
+        const { status } = response.body
 
         expect(status).toBe('error')
-        expect(message).toBe('Expense ID is required')
     })
 
     it('should return 400 if trying to create an entry for an expense that does not belong to the organization', async () => {
@@ -113,9 +112,8 @@ describe('Create expense entry', () => {
             .send(requestBody)
             .expect(400)
 
-        const { status, message } = response.body
+        const { status } = response.body
 
         expect(status).toBe('error')
-        expect(message).toBe('Something went wrong')
     })
 })

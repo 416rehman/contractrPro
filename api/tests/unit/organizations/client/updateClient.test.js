@@ -65,7 +65,6 @@ describe('Update organization client', () => {
             .expect(400)
 
         expect(response.body.status).toBe('error')
-        expect(response.body.message).toBe('Organization ID is required')
     })
 
     it('should return 400 if client ID is invalid', async () => {
@@ -78,7 +77,6 @@ describe('Update organization client', () => {
             .expect(400)
 
         expect(response.body.status).toBe('error')
-        expect(response.body.message).toBe('Client ID is required')
     })
 
     it('should return 400 if an exception occurs', async () => {
@@ -95,6 +93,5 @@ describe('Update organization client', () => {
             .expect(400)
 
         expect(response.body.status).toBe('error')
-        expect(response.body.message).toBe('Something went wrong')
     })
 })

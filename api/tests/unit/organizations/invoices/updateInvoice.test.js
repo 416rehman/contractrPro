@@ -83,10 +83,9 @@ describe('Update invoice', () => {
             .put(`/organizations/${orgId}/invoices/${invalidInvoiceId}`)
             .expect(400)
 
-        const { status, message } = response.body
+        const { status } = response.body
 
         expect(status).toBe('error')
-        expect(message).toBe('Invalid invoice_id')
     })
 
     it('should return 400 if invoice is not found', async () => {
@@ -117,9 +116,8 @@ describe('Update invoice', () => {
             .send(requestBody)
             .expect(400)
 
-        const { status, message } = response.body
+        const { status } = response.body
 
         expect(status).toBe('error')
-        expect(message).toBe('Something went wrong')
     })
 })

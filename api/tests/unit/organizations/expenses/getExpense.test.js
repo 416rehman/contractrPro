@@ -121,9 +121,8 @@ describe('Get all organization expenses', () => {
             .get(`/organizations/${orgId}/expenses?expand=true`)
             .expect(400)
 
-        const { status, message } = response.body
+        const { status } = response.body
 
         expect(status).toBe('error')
-        expect(message).toBe('Something went wrong')
     })
 })

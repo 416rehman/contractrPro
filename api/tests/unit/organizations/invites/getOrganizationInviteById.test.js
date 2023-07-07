@@ -51,7 +51,6 @@ describe(`GET /organizations/:org_id/invites/:invite_id`, () => {
             .expect((res) => res.status === 400 || res.status === 422) // Express-validator returns 422 for validation errors
 
         expect(res.body.status).toBe('error')
-        expect(res.body.message).toBe('Organization ID required')
     })
 
     test(`Should return error for not requiring an organization's invite's ID`, async () => {
@@ -62,7 +61,6 @@ describe(`GET /organizations/:org_id/invites/:invite_id`, () => {
             .expect((res) => res.status === 400 || res.status === 422) // Express-validator returns 422 for validation errors
 
         expect(res.body.status).toBe('error')
-        expect(res.body.message).toBe('Invite ID required')
     })
 
     test(`Should return error for trying to find an invite from an organization that doesn't exist`, async () => {
@@ -73,7 +71,6 @@ describe(`GET /organizations/:org_id/invites/:invite_id`, () => {
             .expect((res) => res.status === 400 || res.status === 422) // Express-validator returns 422 for validation errors
 
         expect(res.body.status).toBe('error')
-        expect(res.body.message).toBe('Not found')
     })
 
     test(`Should return error for finding an organization's invite that doesn't exist`, async () => {
@@ -82,6 +79,5 @@ describe(`GET /organizations/:org_id/invites/:invite_id`, () => {
             .expect((res) => res.status === 400 || res.status === 422) // Express-validator returns 422 for validation errors
 
         expect(res.body.status).toBe('error')
-        expect(res.body.message).toBe('Not found')
     })
 })

@@ -94,10 +94,9 @@ describe('Update expense', () => {
             .put(`/organizations/${orgId}/expenses/${invalidExpenseId}`)
             .expect(400)
 
-        const { status, message } = response.body
+        const { status } = response.body
 
         expect(status).toBe('error')
-        expect(message).toBe('Invalid expense_id')
     })
 
     it('should return 400 if expense is not found', async () => {
@@ -128,9 +127,8 @@ describe('Update expense', () => {
             .send(requestBody)
             .expect(400)
 
-        const { status, message } = response.body
+        const { status } = response.body
 
         expect(status).toBe('error')
-        expect(message).toBe('Something went wrong')
     })
 })

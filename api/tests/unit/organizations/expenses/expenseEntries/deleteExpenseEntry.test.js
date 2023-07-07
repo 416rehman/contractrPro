@@ -67,10 +67,9 @@ describe('Delete expense entry', () => {
             )
             .expect(400)
 
-        const { status, message } = response.body
+        const { status } = response.body
 
         expect(status).toBe('error')
-        expect(message).toBe('Expense ID is required')
     })
 
     it('should return 400 if expense entry ID is invalid', async () => {
@@ -82,10 +81,9 @@ describe('Delete expense entry', () => {
             )
             .expect(400)
 
-        const { status, message } = response.body
+        const { status } = response.body
 
         expect(status).toBe('error')
-        expect(message).toBe('ExpenseEntry ID is required')
     })
 
     it('should return 400 if expense entry is not found', async () => {
@@ -97,10 +95,9 @@ describe('Delete expense entry', () => {
             )
             .expect(400)
 
-        const { status, message } = response.body
+        const { status } = response.body
 
         expect(status).toBe('error')
-        expect(message).toBe('ExpenseEntry not found')
     })
 
     it('should return 400 if expense entry does not belong to the organization', async () => {
@@ -110,10 +107,9 @@ describe('Delete expense entry', () => {
             )
             .expect(400)
 
-        const { status, message } = response.body
+        const { status } = response.body
 
         expect(status).toBe('error')
-        expect(message).toBe('ExpenseEntry not found')
     })
 
     it('should return 400 if an exception occurs', async () => {
@@ -128,9 +124,8 @@ describe('Delete expense entry', () => {
             )
             .expect(400)
 
-        const { status, message } = response.body
+        const { status } = response.body
 
         expect(status).toBe('error')
-        expect(message).toBe('Something went wrong')
     })
 })

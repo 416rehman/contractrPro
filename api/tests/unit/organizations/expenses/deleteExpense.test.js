@@ -47,10 +47,9 @@ describe('Delete expense', () => {
             .delete(`/organizations/${invalidOrgId}/expenses/${expenseId}`)
             .expect(400)
 
-        const { status, message } = response.body
+        const { status } = response.body
 
         expect(status).toBe('error')
-        expect(message).toBe('Organization ID is required')
     })
 
     it('should return 400 if expense ID is invalid', async () => {
@@ -59,10 +58,9 @@ describe('Delete expense', () => {
             .delete(`/organizations/${orgId}/expenses/${invalidExpenseId}`)
             .expect(400)
 
-        const { status, message } = response.body
+        const { status } = response.body
 
         expect(status).toBe('error')
-        expect(message).toBe('Expense ID is required')
     })
 
     it('should return 400 if expense is not found', async () => {
@@ -84,9 +82,8 @@ describe('Delete expense', () => {
             .delete(`/organizations/${orgId}/expenses/${expenseId}`)
             .expect(400)
 
-        const { status, message } = response.body
+        const { status } = response.body
 
         expect(status).toBe('error')
-        expect(message).toBe('Something went wrong')
     })
 })

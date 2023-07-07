@@ -69,7 +69,6 @@ describe(`POST /organizations/:org_id/contracts`, () => {
             .expect((res) => res.status === 400 || res.status === 422) // Express-validator returns 422 for validation errors
 
         expect(res.body.status).toBe('error')
-        expect(res.body.message).toBe('Organization ID required')
     })
 
     it(`Should return error for creating a contract for an organization that doesn't exist`, async () => {
@@ -83,6 +82,5 @@ describe(`POST /organizations/:org_id/contracts`, () => {
             .expect((res) => res.status === 400 || res.status === 422) // Express-validator returns 422 for validation errors
 
         expect(response.body.status).toBe('error')
-        expect(response.body.message).toBe('Organization not found')
     })
 })

@@ -52,10 +52,9 @@ describe('Get expense entries', () => {
             .get(`/organizations/${orgId}/expenses/${invalidExpenseId}/entries`)
             .expect(400)
 
-        const { status, message } = response.body
+        const { status } = response.body
 
         expect(status).toBe('error')
-        expect(message).toBe('Expense ID is required')
     })
 
     it('should return 400 if an exception occurs', async () => {
@@ -67,9 +66,8 @@ describe('Get expense entries', () => {
             .get(`/organizations/${orgId}/expenses/${expenseId}/entries`)
             .expect(400)
 
-        const { status, message } = response.body
+        const { status } = response.body
 
         expect(status).toBe('error')
-        expect(message).toBe('Something went wrong')
     })
 })

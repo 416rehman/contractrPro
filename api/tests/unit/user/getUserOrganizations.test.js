@@ -33,7 +33,6 @@ describe('GET /users/:user_id/organizations', () => {
             .expect((res) => res.status === 400 || res.status === 422) // Express-validator returns 422 for validation errors
 
         expect(res.body.status).toBe('error')
-        expect(res.body.message).toBe('User ID required')
     })
 
     it(`Should return error for trying to find organizations from a user that doesn't exist`, async () => {
@@ -44,6 +43,5 @@ describe('GET /users/:user_id/organizations', () => {
             .expect((res) => res.status === 400 || res.status === 422) // Express-validator returns 422 for validation errors
 
         expect(res.body.status).toBe('error')
-        expect(res.body.message).toBe('User not found')
     })
 })

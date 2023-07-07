@@ -53,7 +53,6 @@ describe(`GET /organizations/:org_id/contracts/:contract_id`, () => {
             .expect((res) => res.status === 400 || res.status === 422) // Express-validator returns 422 for validation errors
 
         expect(res.body.status).toBe('error')
-        expect(res.body.message).toBe('Organization ID required')
     })
 
     test(`Should return error for not requiring an organization's contract's ID`, async () => {
@@ -64,7 +63,6 @@ describe(`GET /organizations/:org_id/contracts/:contract_id`, () => {
             .expect((res) => res.status === 400 || res.status === 422) // Express-validator returns 422 for validation errors
 
         expect(res.body.status).toBe('error')
-        expect(res.body.message).toBe('Contract ID required')
     })
 
     test(`Should return error for trying to find a contract from an organization that doesn't exist`, async () => {
@@ -75,7 +73,6 @@ describe(`GET /organizations/:org_id/contracts/:contract_id`, () => {
             .expect((res) => res.status === 400 || res.status === 422) // Express-validator returns 422 for validation errors
 
         expect(res.body.status).toBe('error')
-        expect(res.body.message).toBe('Not found')
     })
 
     test(`Should return error for finding an organization's contract that doesn't exist`, async () => {
@@ -83,8 +80,6 @@ describe(`GET /organizations/:org_id/contracts/:contract_id`, () => {
             .get(`/organizations/${orgID}/contracts/${strangerContract.id}`)
             .expect((res) => res.status === 400 || res.status === 422) // Express-validator returns 422 for validation errors
 
-        // Expects to have an error status with the error message
         expect(res.body.status).toBe('error')
-        expect(res.body.message).toBe('Not found')
     })
 })

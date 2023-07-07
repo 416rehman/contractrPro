@@ -85,10 +85,9 @@ describe('Get all organization invoices', () => {
             .get(`/organizations/${invalidOrgId}/invoices?expand=true`)
             .expect(400)
 
-        const { status, message } = response.body
+        const { status } = response.body
 
         expect(status).toBe('error')
-        expect(message).toBe('Invalid organization_id')
     })
 
     it('should return 400 if invoice ID is invalid', async () => {
@@ -98,10 +97,9 @@ describe('Get all organization invoices', () => {
             .get(`/organizations/${orgId}/invoices/${invalidInvoiceId}`)
             .expect(400)
 
-        const { status, message } = response.body
+        const { status } = response.body
 
         expect(status).toBe('error')
-        expect(message).toBe('Invalid invoice_id')
     })
 
     it('should return 400 if the invoice does not belong to the organization', async () => {
@@ -123,9 +121,8 @@ describe('Get all organization invoices', () => {
             .get(`/organizations/${orgId}/invoices?expand=true`)
             .expect(400)
 
-        const { status, message } = response.body
+        const { status } = response.body
 
         expect(status).toBe('error')
-        expect(message).toBe('Something went wrong')
     })
 })

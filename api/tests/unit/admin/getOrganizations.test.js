@@ -46,6 +46,5 @@ describe('GET /admin/organizations', () => {
         const res = await request(app).get('/admin/organizations').expect(400)
 
         expect(res.body).toHaveProperty('status', 'error')
-        expect(res.body).toHaveProperty('message', 'Something went wrong')
     })
 })

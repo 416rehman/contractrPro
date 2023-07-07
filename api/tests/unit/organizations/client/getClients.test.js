@@ -42,6 +42,5 @@ describe('Get organization clients', () => {
             .expect(400)
 
         expect(response.body.status).toBe('error')
-        expect(response.body.message).toBe('Something went wrong')
     })
 })

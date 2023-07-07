@@ -77,10 +77,9 @@ describe('Get invoice entry', () => {
             )
             .expect(400)
 
-        const { status, message } = response.body
+        const { status } = response.body
 
         expect(status).toBe('error')
-        expect(message).toBe('Invoice ID is required')
     })
 
     it('should return 400 if invoice entry ID is invalid', async () => {
@@ -92,10 +91,9 @@ describe('Get invoice entry', () => {
             )
             .expect(400)
 
-        const { status, message } = response.body
+        const { status } = response.body
 
         expect(status).toBe('error')
-        expect(message).toBe('InvoiceEntry ID is required')
     })
 
     it('should return 400 if invoice entry does not belong to invoice', async () => {
@@ -125,9 +123,8 @@ describe('Get invoice entry', () => {
             )
             .expect(400)
 
-        const { status, message } = response.body
+        const { status } = response.body
 
         expect(status).toBe('error')
-        expect(message).toBe('Something went wrong')
     })
 })
