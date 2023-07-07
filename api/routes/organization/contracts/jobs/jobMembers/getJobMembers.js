@@ -52,8 +52,6 @@ module.exports = async (req, res) => {
 
         return res.status(200).json(createSuccessResponse(jobMembers))
     } catch (err) {
-        return res
-            .status(500)
-            .json(createErrorResponse('Server error.', err.message))
+        return res.status(500).json(createErrorResponse('Server error.', err))
     }
 }

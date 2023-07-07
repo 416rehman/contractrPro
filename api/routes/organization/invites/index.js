@@ -14,17 +14,12 @@ routes.get('/', require('./getOrganizationInvites'))
 /**
  * @api {get} /organizations/:org_id/invites/:invite_id Get organization invite
  */
-routes.get('/:invite_id', require('./getOrganizationInviteById'))
+routes.get('/:invite_id', require('./getOrganizationInvite'))
 
 /**
  * @api {post} /organizations/:org_id/invites Create organization invite
  */
 routes.post('/', require('./createOrganizationInvite'))
-
-/**
- * @api {put} /organizations/:org_id/invites/:invite_id Update organization invite
- */
-routes.put('/:invite_id', require('./updateOrganizationInvite'))
 
 /**
  * @api {delete} /organizations/:org_id/invites/:invite_id Delete organization invite

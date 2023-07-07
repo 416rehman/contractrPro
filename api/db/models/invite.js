@@ -1,15 +1,13 @@
-const { Sequelize } = require('sequelize')
+const { generateInviteCode } = require('../../utils')
 module.exports.define = (sequelize, DataTypes) => {
     const Invite = sequelize.define('Invite', {
         id: {
-            type: Sequelize.UUID,
-            defaultValue: Sequelize.UUIDV4,
-            allowNull: false,
-            primaryKey: true,
-        },
-        code: {
+            // an 8 character random alphanumeric string
             type: DataTypes.STRING(8),
-            allowNull: false,
+            primaryKey: true,
+            defaultValue: () => {
+                return generateInviteCode()
+            },
         },
         uses: {
             type: DataTypes.INTEGER,
@@ -24,16 +22,21 @@ module.exports.define = (sequelize, DataTypes) => {
     })
 
     Invite.associate = (models) => {
-        // The organization that the invite is for
+        // The organization that the invite is for. Cannot be null.
         Invite.belongsTo(models.Organization, {
-            foreignKey: 'organization_id',
-            allowNull: false,
-            onDelete: 'CASCADE',
+            foreignKey: {
+                allowNull: false,
+            },
         })
 
-        // The user that created the invite
-        Invite.belongsTo(models.User, {
-            foreignKey: 'created_by',
+        // The organizationMember the invite is for.
+        // For example, if the organization has a member without a user associated with it,
+        // then an invite can be created for that member, so whoever uses the invite will be
+        // associated with that member, and the invite will be deleted after it is used.
+        //
+        // If this is null, then a new OrganizationMember will be created for the user with info from their user account.
+        Invite.belongsTo(models.OrganizationMember, {
+            as: 'ForOrganizationMember',
         })
 
         Invite.belongsTo(models.User, {

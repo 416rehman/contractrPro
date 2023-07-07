@@ -1,18 +1,6 @@
 const crypto = require('crypto')
 const jwt = require('jsonwebtoken')
 
-module.exports.generateJoinCode = function (organization_name = '') {
-    return new Promise((resolve, reject) => {
-        try {
-            const prefix = organization_name.slice(0, 4)
-            const joinCode = prefix + crypto.randomBytes(20).toString('hex')
-            resolve(joinCode.slice(0, 12).replace(/ /g, '').toUpperCase()) //Return 12 character join code with no whitespace
-        } catch (e) {
-            reject(e)
-        }
-    })
-}
-
 /**
  * @returns {object} - Returns a random refresh token
  */
@@ -25,6 +13,16 @@ module.exports.generateRefreshToken = function () {
             reject(e)
         }
     })
+}
+
+// generates a random 8 character alphanumeric string
+module.exports.generateInviteCode = function () {
+    return crypto.randomBytes(4).toString('hex')
+}
+
+// Checks if a string is an 8 character alphanumeric string
+module.exports.isValidInviteCode = function (inviteCode) {
+    return /^[a-z0-9]{8}$/i.test(inviteCode)
 }
 
 /**

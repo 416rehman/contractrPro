@@ -79,6 +79,6 @@ module.exports = (req, res) => {
     } catch (err) {
         return res
             .status(400)
-            .json(createErrorResponse('Failed to delete attachment.'))
+            .json(createErrorResponse('Failed to delete attachment.', err))
     }
 }

@@ -39,6 +39,6 @@ module.exports = async (req, res) => {
             createSuccessResponse({ refreshToken: user.refreshToken })
         )
     } catch (error) {
-        return res.status(400).json(createErrorResponse(error.message))
+        return res.status(400).json(createErrorResponse('', error))
     }
 }

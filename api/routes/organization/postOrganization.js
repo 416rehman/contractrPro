@@ -29,6 +29,6 @@ module.exports = async (req, res) => {
             return res.status(201).json(createSuccessResponse(org))
         })
     } catch (error) {
-        return res.status(400).json(createErrorResponse(error.message))
+        return res.status(400).json(createErrorResponse('', error))
     }
 }

@@ -34,6 +34,6 @@ module.exports = async (req, res) => {
             return res.status(200).json(createSuccessResponse(rowsDeleted))
         })
     } catch (error) {
-        return res.status(400).json(createErrorResponse(error.message))
+        return res.status(400).json(createErrorResponse('', error))
     }
 }

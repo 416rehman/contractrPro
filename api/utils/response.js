@@ -5,10 +5,10 @@ module.exports.createSuccessResponse = (data) => {
     }
 }
 
-module.exports.createErrorResponse = (message, data) => {
+module.exports.createErrorResponse = (message, err) => {
     return {
         status: 'error',
         message: message,
-        data,
+        data: err?.code ? err.code + ': ' + err?.message : err?.message,
     }
 }

@@ -35,6 +35,6 @@ module.exports = async (req, res) => {
             return res.status(201).json(createSuccessResponse(user))
         })
     } catch (err) {
-        return res.status(400).json(createErrorResponse(err.message))
+        return res.status(400).json(createErrorResponse('', err))
     }
 }

@@ -61,6 +61,7 @@ app.use('/auth', routes.auth)
 app.use(checkAuth) // authentication middleware
 app.use('/users/', routes.user)
 app.use('/organizations/', routes.organization)
+app.use('/join/', routes.join)
 // TODO: Protect admin routes from non-admin users
 app.use('/admin/', routes.admin)
 
@@ -105,7 +106,7 @@ app.use((req, res) => {
 app.use((err, req, res) => {
     logger.error(err.stack)
     res.status(500).json(
-        createErrorResponse('An unexpected problem has occured.')
+        createErrorResponse('An unexpected problem has occured.', err)
     )
 })
 

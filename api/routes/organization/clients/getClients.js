@@ -23,6 +23,6 @@ module.exports = async (req, res) => {
 
         res.status(200).json(createSuccessResponse(clients))
     } catch (error) {
-        res.status(400).json(createErrorResponse(error.message))
+        res.status(400).json(createErrorResponse('', error))
     }
 }

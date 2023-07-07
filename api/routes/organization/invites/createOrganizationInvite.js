@@ -10,6 +10,7 @@ const { isValidUUID } = require('../../../utils/isValidUUID')
 module.exports = async (req, res) => {
     try {
         const orgID = req.params.org_id
+        const forOrganizationMemberID = req.body.ForOrganizationMemberId
 
         if (!orgID || !isValidUUID(orgID)) {
             return res
@@ -17,44 +18,36 @@ module.exports = async (req, res) => {
                 .json(createErrorResponse('Organization ID required'))
         }
 
-        await sequelize.transaction(async (transaction) => {
-            const org = await Organization.findOne({
-                where: {
-                    id: orgID,
-                },
-                transaction,
-            })
-
-            if (!org) {
-                return res
-                    .status(400)
-                    .json(createErrorResponse('Organization not found'))
-            }
-
-            const body = {
-                ...pick(req.body, ['code', 'uses', 'maxUses']),
-                created_by: req.auth.id,
-                OrganizationId: orgID,
-                organization_id: orgID,
-                ownerId: req.auth.id,
-                updatedByUserId: req.auth.id,
-            }
-
-            const createOrganizationInvite = await Invite.create(body, {
-                include: {
-                    model: Organization,
-                    where: {
-                        id: orgID,
-                    },
-                },
-                transaction,
-            })
-
+        if (forOrganizationMemberID && !isValidUUID(forOrganizationMemberID)) {
             return res
-                .status(201)
-                .json(createSuccessResponse(createOrganizationInvite))
+                .status(400)
+                .json(
+                    createErrorResponse(
+                        'ForOrganizationMemberId must be a valid UUID'
+                    )
+                )
+        }
+
+        const body = {
+            ...pick(req.body, ['maxUses']),
+            ForOrganizationMemberId: forOrganizationMemberID || null,
+            OrganizationId: orgID,
+            UpdatedByUserId: req.auth.id,
+        }
+
+        await sequelize.transaction(async (transaction) => {
+            const invite = await Invite.create(body, { transaction })
+            const organization = await Organization.findOne({
+                where: { id: orgID },
+                transaction,
+            })
+            await organization.addInvite(invite, { transaction })
+
+            return res.status(201).json(createSuccessResponse(invite))
         })
-    } catch (error) {
-        return res.status(500).json(createErrorResponse(error.message))
+    } catch (err) {
+        return res
+            .status(500)
+            .json(createErrorResponse('Error creating invite', err))
     }
 }

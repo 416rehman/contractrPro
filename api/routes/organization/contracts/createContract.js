@@ -51,7 +51,7 @@ module.exports = async (req, res) => {
                 OrganizationId: orgID,
                 organization_id: orgID,
                 ownerId: req.auth.id,
-                updatedByUserId: req.auth.id,
+                UpdatedByUserId: req.auth.id,
             }
 
             const createOrganizationContract = await Contract.create(body, {
@@ -69,6 +69,6 @@ module.exports = async (req, res) => {
                 .json(createSuccessResponse(createOrganizationContract))
         })
     } catch (error) {
-        return res.status(500).json(createErrorResponse(error.message))
+        return res.status(500).json(createErrorResponse('', error))
     }
 }
