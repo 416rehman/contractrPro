@@ -1,5 +1,5 @@
-import {Service} from "./service";
+import {API} from "./api";
 
 export const pingAPI = async (): Promise<boolean> => {
-    return Service.get<boolean>('/').then(response => response).catch(() => false);
+    return API.get<boolean>('/').then(response => response).catch(() => false);
 }

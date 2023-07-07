@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export class Service {
+export class API {
     static API_URL: string = process.env.REACT_APP_API_BASE_URL || '';
 
     // Returns a promise that resolves to the response data if the response is successful.
