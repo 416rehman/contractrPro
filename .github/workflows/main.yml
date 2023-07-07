@@ -129,8 +129,7 @@ jobs:
         if: github.ref == 'refs/heads/dev'
         environment: "Dev Env"
         steps:
-            -   name: Send webhook to Portainer
-                uses: distributhor/workflow-webhook@v1.0.0
+            -   name: Invote Portainer deploy webhook
+                uses: distributhor/workflow-webhook@v3
                 with:
-                    url: ${{ secrets.PORTAINER_WEBHOOK_URL }}
-                    method: POST
+                    webhook_url: ${{ secrets.PORTAINER_WEBHOOK_URL }}
