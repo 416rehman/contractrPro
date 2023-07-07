@@ -1,7 +1,6 @@
 const { createErrorResponse } = require('../../../utils/response')
 const { Attachment, Comment } = require('../../../db')
 const s3 = require('../../../utils/s3')
-const { GetObjectCommand } = require('@aws-sdk/client-s3')
 const { isValidUUID } = require('../../../utils/isValidUUID')
 
 // Gets a blob - can provide a ?download=true query param to download the blob
@@ -35,11 +34,7 @@ module.exports = async (req, res) => {
 
         const actualFileName = attachment.filename
 
-        const command = new GetObjectCommand({
-            Bucket: process.env.AWS_S3_BUCKET_NAME,
-            Key: attachment.id,
-        })
-        const data = await s3.send(command)
+        const data = await s3.get(blobId)
         if (!data) {
             return res
                 .status(400)
