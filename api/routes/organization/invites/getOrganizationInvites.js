@@ -26,7 +26,7 @@ module.exports = async (req, res) => {
                 transaction,
             })
 
-            if (!invites) {
+            if (!invites || invites.length === 0) {
                 return res
                     .status(400)
                     .json(createErrorResponse('Organization not found'))

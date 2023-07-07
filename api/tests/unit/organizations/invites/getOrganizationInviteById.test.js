@@ -32,15 +32,13 @@ describe(`GET /organizations/:org_id/invites/:invite_id`, () => {
         expect(response.body.status).toBe('success')
         expect(response.body.data).not.toBeInstanceOf(Array)
         expect(response.body.data).toHaveProperty('id')
-        expect(response.body.data).toHaveProperty('code')
         expect(response.body.data).toHaveProperty('uses')
         expect(response.body.data).toHaveProperty('maxUses')
         expect(response.body.data).toHaveProperty('OrganizationId')
+        expect(response.body.data).toHaveProperty('ForOrganizationMemberId')
         expect(response.body.data).toHaveProperty('updatedAt')
         expect(response.body.data).toHaveProperty('createdAt')
-        expect(response.body.data).toHaveProperty('created_by')
         expect(response.body.data).toHaveProperty('UpdatedByUserId')
-        expect(response.body.data).toHaveProperty('OrganizationId')
     })
 
     test(`Should return error for not requiring an organization ID`, async () => {

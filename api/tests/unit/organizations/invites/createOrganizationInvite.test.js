@@ -26,13 +26,15 @@ describe(`POST /organizations/:org_id/invites`, () => {
 
         expect(response.body.status).toBe('success')
         expect(response.body.data).toHaveProperty('id')
-        expect(response.body.data).toHaveProperty('code', inviteData.code)
-        expect(response.body.data).toHaveProperty('uses', inviteData.uses)
+        expect(response.body.data).toHaveProperty('uses')
         expect(response.body.data).toHaveProperty('maxUses', inviteData.maxUses)
         expect(response.body.data).toHaveProperty('OrganizationId', orgID)
+        expect(response.body.data).toHaveProperty(
+            'ForOrganizationMemberId',
+            null
+        )
         expect(response.body.data).toHaveProperty('updatedAt')
         expect(response.body.data).toHaveProperty('createdAt')
-        expect(response.body.data).toHaveProperty('created_by')
 
         // Cleanup - Deletes the Invite
         if (response?.body?.data?.id) {
