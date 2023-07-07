@@ -4,6 +4,7 @@ services:
     contractrPro_db:
         container_name: contractrPro_db
         image: postgres:alpine
+        command: postgres -c 'max_connections=500'
         volumes:
             - ./data:/var/lib/postgresql/data
             - ./scripts:/docker-entrypoint-initdb.d
@@ -14,7 +15,7 @@ services:
         environment:
             - POSTGRES_USER=postgres
             - POSTGRES_PASSWORD=postgres
-            - POSTGRES_DB=contractrPro
+            - POSTGRES_DB=contractrpro
         networks:
             - cp_net
 
@@ -22,4 +23,3 @@ networks:
     cp_net:
         name: cp_net
         driver: bridge
-

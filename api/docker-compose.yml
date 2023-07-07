@@ -1,6 +1,6 @@
-version: "3.5"
+version: '3.5'
 volumes:
-    node_modules:   # empty volume
+    node_modules: # empty volume
 
 services:
     cp_api:
@@ -10,9 +10,9 @@ services:
             - ./:/home/node/app
             - node_modules:/home/node/app/node_modules
         ports:
-            - "4000:4000"
+            - '4000:4000'
         expose:
-            - "4000"
+            - '4000'
         networks:
             - cp_net
 

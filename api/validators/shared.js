@@ -1,4 +1,4 @@
-const {check} = require("express-validator");
+const { check } = require('express-validator')
 module.exports.username_validator = check('username')
     .exists()
     .withMessage('Username is required')
@@ -22,4 +22,3 @@ module.exports.phone_validator = check('phone')
     .withMessage('Phone is required')
     .isLength({ min: 10, max: 20 })
     .withMessage('Phone must be 20 digits long at max')
- 

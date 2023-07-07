@@ -1,0 +1,85 @@
+name: ContractrPro CI
+
+on:
+    # Runs the inside pull requests to the main and dev branches
+    pull_request:
+        branches: [ main, dev ]
+    # Runs the inside pushes to the main and dev branches
+    push:
+        branches: [ main, dev ]
+env:
+    PORT: ${{ vars.PORT }}
+    DB_DATABASE: ${{ vars.DB_DATABASE }}
+    DB_HOST: ${{ vars.DB_HOST }}
+    DB_PORT: ${{ vars.DB_PORT }}
+    DB_USER: ${{ vars.DB_USER }}
+    DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+    JWT_SECRET: ${{ secrets.JWT_SECRET }}
+    AWS_S3_BUCKET_NAME: ${{ vars.AWS_S3_BUCKET_NAME }}
+    AWS_S3_REGION: ${{ vars.AWS_S3_REGION }}
+    AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
+    AWS_ACCESS_SECRET: ${{ secrets.AWS_ACCESS_SECRET }}
+    SECRET_SESSION_KEY_1: ${{ secrets.SECRET_SESSION_KEY_1 }}
+    SECRET_SESSION_KEY_2: ${{ secrets.SECRET_SESSION_KEY_2 }}
+    DEV_USER_UUID: ${{ vars.DEV_USER_UUID }}
+    DEV_USER_USERNAME: ${{ vars.DEV_USER_USERNAME }}
+
+jobs:
+    format-api:
+        # Only runs if the triggering actor is not the GitHub Actions bot
+        if: github.triggering_actor != 'github-actions[bot]'
+        permissions:
+            contents: write
+        # Uses a Ubuntu Docker VM to run the application on
+        runs-on: ubuntu-latest
+        environment: "Dev Env"
+        defaults:
+            run:
+                working-directory: ./api
+        steps:
+            -   name: Checkout code
+                uses: actions/checkout@v3
+                with:
+                    ref: ${{ github.head_ref }}
+                    token: ${{ secrets.PAT }}
+            -   name: Setup Node for API
+                uses: actions/setup-node@v3
+                with:
+                    node-version: "18.16.0"
+                    cache: "npm"
+                    cache-dependency-path: ./api/package-lock.json
+            -   name: Install Dependencies
+                run: npm ci --no-optional
+            -   name: Check for bugs
+                run: npm run lint
+            -   name: Check for code formatting
+                run: npm run prettier
+            -   name: Commit changes
+                uses: stefanzweifel/git-auto-commit-action@v4
+                with:
+                    commit_message: Apply formatting changes
+                    branch: ${{ github.head_ref }}
+
+    test-api:
+        # Uses a Ubuntu Docker VM to run the application on
+        runs-on: ubuntu-latest
+        environment: "Dev Env"
+        defaults:
+            run:
+                working-directory: ./api
+        steps:
+            -   name: Checkout code
+                uses: actions/checkout@v3
+                with:
+                    ref: ${{ github.head_ref }}
+                    token: ${{ secrets.PAT }}
+            -   name: Setup Node for API
+                uses: actions/setup-node@v3
+                with:
+                    node-version: "18.16.0"
+                    cache: "npm"
+                    cache-dependency-path: ./api/package-lock.json
+            -   name: Install Dependencies
+                run: npm ci --no-optional
+            -   name: Run tests
+                run: npm run test
