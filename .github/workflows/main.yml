@@ -4,9 +4,15 @@ on:
     # Runs the inside pull requests to the main and dev branches
     pull_request:
         branches: [ main, dev ]
+        paths:
+            - "api/**"
+            - ".github/workflows/**"
     # Runs the inside pushes to the main and dev branches
     push:
         branches: [ main, dev ]
+        paths:
+            - "api/**"
+            - ".github/workflows/**"
 env:
     PORT: ${{ vars.PORT }}
     DB_DATABASE: ${{ vars.DB_DATABASE }}
@@ -83,3 +89,50 @@ jobs:
                 run: npm ci --no-optional
             -   name: Run tests
                 run: npm run test
+
+    build-dev-api:
+        # Builds the API and pushes it to the Docker Hub
+        runs-on: ubuntu-latest
+        environment: "Dev Env"
+        if: github.ref == 'refs/heads/dev'
+        defaults:
+            run:
+                working-directory: ./api
+        steps:
+            -   name: Checkout code
+                uses: actions/checkout@v3
+                with:
+                    ref: ${{ github.head_ref }}
+                    token: ${{ secrets.PAT }}
+            -   name: Setup Node for API
+                uses: actions/setup-node@v3
+                with:
+                    node-version: "18.16.0"
+                    cache: "npm"
+                    cache-dependency-path: ./api/package-lock.json
+            -   name: Install Dependencies
+                run: npm ci --no-optional
+            -   name: Build API
+                run: npm run build
+            -   name: Login to Docker Hub
+                uses: docker/login-action@v1
+                with:
+                    username: ${{ secrets.DOCKER_USERNAME }}
+                    password: ${{ secrets.DOCKER_PASSWORD }}
+            -   name: Push API to Docker Hub
+                #                Push to ${username}/contractrpro-api:latest
+                run: |
+                    docker build -t ${{ secrets.DOCKER_USERNAME }}/contractrpro-api:dev .
+                    docker push ${{ secrets.DOCKER_USERNAME }}/contractrpro-api:dev
+
+    deploy-dev-api:
+        # Sends a webhook to Portainer to deploy the API stack. URL is stored in the secret PORTAINER_WEBHOOK_URL
+        runs-on: ubuntu-latest
+        if: github.ref == 'refs/heads/dev'
+        environment: "Dev Env"
+        steps:
+            -   name: Send webhook to Portainer
+                uses: distributhor/workflow-webhook@v1.0.0
+                with:
+                    url: ${{ secrets.PORTAINER_WEBHOOK_URL }}
+                    method: POST
