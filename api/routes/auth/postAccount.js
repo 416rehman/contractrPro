@@ -15,6 +15,18 @@ module.exports = async (req, res) => {
         'avatarUrl',
     ])
 
+    if (!body.username) {
+        return res.status(400).json(createErrorResponse('Username is required'))
+    }
+    if (!body.password || body.password.length < 6) {
+        return res
+            .status(400)
+            .json(createErrorResponse('Password must be at least 6 characters'))
+    }
+    if (!body.email) {
+        return res.status(400).json(createErrorResponse('Email is required'))
+    }
+
     try {
         const hash = bcrypt.hashSync(body.password, 10)
         const refreshToken = await generateRefreshToken()
