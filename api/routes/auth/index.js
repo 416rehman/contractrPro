@@ -15,7 +15,7 @@ routes.use((req, res, next) => {
 })
 
 /**
- * @api {post} /auth/login Gets the user's opaque refresh token
+ * @api {post} /auth/login Gets the user's refresh token
  * @apiName Login
  */
 routes.post(
@@ -26,10 +26,10 @@ routes.post(
 )
 
 /**
- * @api {get} /auth/ Get account token via refresh token
+ * @api {post} /auth/ Use refresh token to get new access token
  * @apiName GetAccountToken
  */
-routes.get('/token', require('./getToken'))
+routes.post('/token', require('./getToken'))
 
 /**
  * @api {post} /auth/account Register new account

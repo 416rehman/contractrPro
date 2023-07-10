@@ -20,9 +20,16 @@ const pino = require('pino-http')({
     logger,
 })
 
+const corsOptions = {
+    origin: ['http://localhost:3000'],
+    methods: ['POST', 'GET', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+}
+
 const app = express()
 app.use(pino)
-app.use(cors())
+app.use(cors(corsOptions))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(helmet())
@@ -42,8 +49,8 @@ app.use(
         },
     })
 )
-
 // if development.
+
 if (process.env.NODE_ENV === 'development') {
     // middleware to see the router path in the "Router" header for debugging
     app.use((req, res, next) => {
@@ -52,6 +59,7 @@ if (process.env.NODE_ENV === 'development') {
         next()
     })
 }
+app.options('*', cors())
 
 app.get('/', (req, res) => {
     res.json(createSuccessResponse('Connected'))

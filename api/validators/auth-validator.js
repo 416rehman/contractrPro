@@ -3,7 +3,6 @@ const {
     password_validator,
     email_validator,
     username_validator,
-    phone_validator,
 } = require('./shared')
 
 module.exports.GetAccountTokenValidator = [
@@ -15,5 +14,4 @@ module.exports.RegisterAccountValidator = [
     username_validator,
     email_validator,
     password_validator,
-    phone_validator,
 ]

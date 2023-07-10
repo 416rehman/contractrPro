@@ -19,7 +19,10 @@ module.exports.define = (sequelize, DataTypes) => {
         },
         name: {
             type: DataTypes.STRING(512),
-            allowNull: false,
+            get() {
+                const name = this.getDataValue('name')
+                return name ? name : this.getDataValue('username')
+            },
         },
         email: {
             type: DataTypes.STRING(255),
@@ -28,7 +31,6 @@ module.exports.define = (sequelize, DataTypes) => {
         },
         phone: {
             type: DataTypes.STRING(25),
-            allowNull: false,
             unique: true,
         },
         password: {

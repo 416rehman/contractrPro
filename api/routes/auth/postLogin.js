@@ -8,7 +8,7 @@ const bcrypt = require('bcrypt')
 const { pick } = require('../../utils')
 
 /**
- * @api {post} /auth/login Gets the user's opaque refresh token
+ * @api {post} /auth/login Gets the user's refresh token
  * @apiName Login
  */
 module.exports = async (req, res) => {

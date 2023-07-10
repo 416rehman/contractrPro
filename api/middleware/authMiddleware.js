@@ -55,9 +55,7 @@ if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
                 }
             )
         } catch (err) {
-            return res
-                .status(401)
-                .send(createErrorResponse('Access token is invalid'))
+            return res.status(401).send(createErrorResponse(err.message, err))
         }
     }
 }
