@@ -1,22 +1,40 @@
-# Bytech Labs React Client
+# Next.js & NextUI Template
+
+This is a template for creating applications using Next.js 13 (app directory) and NextUI (v2).
+
+## Technologies Used
+
+- [Next.js 13](https://nextjs.org/docs/getting-started)
+- [NextUI v2](https://nextui-docs-v2.vercel.app/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [Tailwind Variants](https://tailwind-variants.org)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Framer Motion](https://www.framer.com/motion/)
+- [next-themes](https://github.com/pacocoursey/next-themes)
+
+## How to Use
 
 
-## Available Scripts
+### Use the template with create-next-app
 
-In the project directory, run:
+To create a new project based on this template using `create-next-app`, run the following command:
 
-### `npm install`
+```bash
+npx create-next-app -e https://github.com/nextui-org/next-app-template
+```
 
-Installs all the dependencies from the `package.json` file
+### Install dependencies
 
-### `npm start`
+```bash
+npm install
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Run the development server
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+```bash
+npm run dev
+```
 
-## Screenshots
-![Screenshot 1](https://i.imgur.com/6Q8hpZG.png)
-![Screenshot 2](https://i.imgur.com/OyjaJZw.png)
+## License
+
+Licensed under the [MIT license](https://github.com/nextui-org/next-app-template/blob/main/LICENSE).
