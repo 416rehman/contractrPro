@@ -91,7 +91,7 @@ export const login = async (username: string, password: string) => {
 
     const decodedToken: any = jwtDecode(accessToken);
     if (!decodedToken) {
-      return null;
+      return Promise.reject("Invalid token");
     }
 
     const setUser = useUserStore.getState().setUser;
@@ -113,13 +113,13 @@ export const signup = async (email: string, password: string, username: string) 
       credentials: "include"
     });
     if (!signupResponse.ok) {
-      return false;
+      return Promise.reject("Invalid username or password");
     }
 
     const body = await signupResponse.json();
     console.log(body);
     if (!body.data.refreshToken) {
-      return false;
+      return Promise.reject("No refresh token provided");
     }
 
     const refreshToken = body.data.refreshToken;
@@ -132,7 +132,7 @@ export const signup = async (email: string, password: string, username: string) 
 
     const decodedToken: any = jwtDecode(accessToken);
     if (!decodedToken) {
-      return null;
+      return Promise.reject("Invalid token");
     }
 
     const setUser = useUserStore.getState().setUser;
@@ -140,8 +140,7 @@ export const signup = async (email: string, password: string, username: string) 
 
     return true;
   } catch (err) {
-    console.log(err);
-    return false;
+    return Promise.reject(err.message);
   }
 };
 
@@ -156,9 +155,9 @@ export const logout = async () => {
     const setUser = useUserStore.getState().setUser;
     setUser(null);
 
-    return Promise.resolve(true);
+    return Promise.resolve("Logged out");
   } catch (err) {
     console.log(err);
-    return Promise.reject(err);
+    return Promise.reject("Error logging out");
   }
 };
