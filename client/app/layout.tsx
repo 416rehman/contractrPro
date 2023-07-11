@@ -16,6 +16,7 @@ export default function RootLayout({
                                    }: {
   children: ReactNode;
 }) {
+  const toastStore = useToastsStore(state => state);
   return (
     <html lang="en" suppressHydrationWarning>
     <body

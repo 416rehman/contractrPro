@@ -41,6 +41,7 @@ export default function SignupComponent(props: any) {
       });
     }).finally(() => {
       setIsLoading(false);
+
     });
   };
 

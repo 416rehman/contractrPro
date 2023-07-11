@@ -9,6 +9,7 @@ type AuthSwitchProps = {
 }
 
 // Uses the user store to determine if the user is logged in or not and renders the appropriate content
+
 export default function AuthSwitch({ contentIfLoggedIn, contentIfLoggedOut }: AuthSwitchProps) {
   const user = useUserStore(state => state.user);
   useEffect(() => {
