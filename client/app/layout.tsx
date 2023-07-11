@@ -14,7 +14,6 @@ export default function RootLayout({
                                    }: {
   children: ReactNode;
 }) {
-  // @ts-ignore
   const toastStore = useToastsStore(state => state);
 
   return (
