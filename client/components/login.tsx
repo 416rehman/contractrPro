@@ -5,13 +5,13 @@ import { login } from "@/services/auth";
 import { useState } from "react";
 import { Divider } from "@nextui-org/divider";
 import clsx from "clsx";
+
 import { IconAt, IconEye, IconEyeClosed, IconLogin, IconMailFilled } from "@tabler/icons-react";
 import { Button } from "@nextui-org/button";
 import { useToastsStore } from "@/state/toasts";
 
 export default function LoginComponent(props: any) {
   const addToast = useToastsStore((state) => state.addToast);
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 

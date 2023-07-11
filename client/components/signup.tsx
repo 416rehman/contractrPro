@@ -10,6 +10,7 @@ import { Button } from "@nextui-org/button";
 import { Link } from "@nextui-org/link";
 import { useToastsStore } from "@/state/toasts";
 
+
 export default function SignupComponent(props: any) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

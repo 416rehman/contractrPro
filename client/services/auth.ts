@@ -92,6 +92,7 @@ export const login = async (username: string, password: string) => {
     const decodedToken: any = jwtDecode(accessToken);
     if (!decodedToken) {
       return Promise.reject("Invalid token");
+
     }
 
     const setUser = useUserStore.getState().setUser;
@@ -113,13 +114,16 @@ export const signup = async (email: string, password: string, username: string) 
       credentials: "include"
     });
     if (!signupResponse.ok) {
+
       return Promise.reject("Invalid username or password");
+
     }
 
     const body = await signupResponse.json();
     console.log(body);
     if (!body.data.refreshToken) {
       return Promise.reject("No refresh token provided");
+
     }
 
     const refreshToken = body.data.refreshToken;

@@ -42,6 +42,7 @@ export const Topbar = () => {
           as={Link}
           className="text-sm font-normal text-default-600 bg-default-100"
           size={"sm"}
+
           href={"login"}
           startContent={<IconLogin className={"pointer-events-none"} />}
           variant="flat"
@@ -122,6 +123,5 @@ export const Topbar = () => {
       </NavbarMenu>}
 
     </Navbar>
-
   );
 };

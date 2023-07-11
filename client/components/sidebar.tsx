@@ -41,6 +41,7 @@ export const Sidebar = (props: HTMLAttributes<HTMLDivElement>) => {
               size={"lg"}>
               {<item.icon stroke={1.5} />}
               {isExtended ? item.label : null}
+
             </Button>
           </Tooltip>
         ))}

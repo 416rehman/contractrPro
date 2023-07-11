@@ -68,7 +68,6 @@ jobs:
 
   test-api:
     # Uses a Ubuntu Docker VM to run the application on
-    needs: [ format-api ]
     runs-on: ubuntu-latest
     environment: "Dev Env"
     defaults:
@@ -134,5 +133,5 @@ jobs:
     steps:
       - name: Invote Portainer deploy webhook
         uses: distributhor/workflow-webhook@v3
-        with:
+        env:
           webhook_url: ${{ secrets.PORTAINER_WEBHOOK_URL }}
