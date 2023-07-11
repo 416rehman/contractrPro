@@ -27,7 +27,7 @@ export default function LoginComponent(props: any) {
         id: "login",
         title: "Logged in",
         message: "You have been logged in successfully",
-        type: "success"
+        type: "info"
       });
     }).catch((err) => {
       addToast({

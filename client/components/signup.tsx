@@ -19,12 +19,12 @@ export default function SignupComponent(props: any) {
   const [isVisible, setIsVisible] = useState(false);
   const toggleVisibility = () => setIsVisible(!isVisible);
 
-  const [isInProcess, setIsInProcess] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const addToast = useToastsStore(state => state.addToast);
 
   const onSubmit = async (e: any) => {
     e.preventDefault();
-    setIsInProcess(true);
+    setIsLoading(true);
     signup(email, password, username).then(() => {
       addToast({
         id: "signup",
@@ -40,7 +40,7 @@ export default function SignupComponent(props: any) {
         type: "error"
       });
     }).finally(() => {
-      setIsInProcess(false);
+      setIsLoading(false);
     });
   };
 
@@ -73,7 +73,7 @@ export default function SignupComponent(props: any) {
         <p className={"text-sm text-default-600"}>
           Already have an account? <Link href={"/login"} className={"text-sm"}>Login</Link>
         </p>
-        <Button type="submit" isLoading={isInProcess} className={"font-medium"}
+        <Button type="submit" isLoading={isLoading} className={"font-medium"}
                 startContent={<IconLogin className={"text-foreground-500"} />}>
           Sign up
         </Button>

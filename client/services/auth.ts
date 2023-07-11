@@ -29,11 +29,12 @@ export const getRefreshToken = async (username: string, password: string) => {
       credentials: "include"
     });
 
-    if (!response.ok) {
-      return Promise.reject("Invalid username or password");
+    const body = await response.json();
+    if (!response.ok) { // if the response is not 200 OK (On error, our server uses response 400, and provides a message in the body)
+      const message = body.message || "Invalid username or password";
+      return Promise.reject(message);
     }
 
-    const body = await response.json();
     if (!body.data.refreshToken) {
       return Promise.reject("No refresh token provided");
     }
@@ -63,11 +64,12 @@ export const getAccessToken = async (refreshToken: string) => {
       credentials: "include"
     });
 
+    const body = await response.json();
     if (!response.ok) {
-      return Promise.reject("Invalid refresh token");
+      const message = body.message || "Invalid refresh token";  // if the response is not 200 OK (On error, our server uses response 400, and provides a message in the body)
+      return Promise.reject(message);
     }
 
-    const body = await response.json();
     if (!body.data.token) {
       return Promise.reject("No access token provided");
     }
@@ -92,7 +94,6 @@ export const login = async (username: string, password: string) => {
     const decodedToken: any = jwtDecode(accessToken);
     if (!decodedToken) {
       return Promise.reject("Invalid token");
-
     }
 
     const setUser = useUserStore.getState().setUser;
@@ -113,17 +114,15 @@ export const signup = async (email: string, password: string, username: string) 
       body: JSON.stringify({ email, password, username }),
       credentials: "include"
     });
-    if (!signupResponse.ok) {
-
-      return Promise.reject("Invalid username or password");
-
-    }
 
     const body = await signupResponse.json();
-    console.log(body);
+    if (!signupResponse.ok) {
+      const message = body.message || "Invalid username or password";  // if the response is not 200 OK (On error, our server uses response 400, and provides a message in the body)
+      return Promise.reject(message);
+    }
+
     if (!body.data.refreshToken) {
       return Promise.reject("No refresh token provided");
-
     }
 
     const refreshToken = body.data.refreshToken;
@@ -163,5 +162,38 @@ export const logout = async () => {
   } catch (err) {
     console.log(err);
     return Promise.reject("Error logging out");
+  }
+};
+
+// This function is the same as fetch, except if the error message is "Access token is invalid" and status code is 401, it will try to get a new access token and retry the request
+export const liveFetch = (url, options) => {
+  try {
+    return fetch(url, options).then(async response => {
+      if (response.ok) {
+        return response;
+      }
+
+      const body = await response.json();
+      const message = body.message || "Invalid token";
+      if (message === "Access token is invalid" && response.status === 401) {
+        const refreshToken = localStorage.getItem("refreshToken");
+        const accessToken = await getAccessToken(refreshToken);
+
+        const newOptions = {
+          ...options,
+          headers: {
+            ...options.headers,
+            Authorization: `Bearer ${accessToken}`
+          }
+        };
+
+        return fetch(url, newOptions);
+      }
+
+      return response;
+    });
+  } catch (err) {
+    console.log(err);
+    return Promise.reject(err);
   }
 };
