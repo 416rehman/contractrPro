@@ -7,6 +7,7 @@ import { useTheme } from "next-themes";
 import { useIsSSR } from "@react-aria/ssr";
 import clsx from "clsx";
 import { IconMoonFilled, IconSunFilled } from "@tabler/icons-react";
+import { Tooltip } from "@nextui-org/tooltip";
 
 export interface ThemeSwitchProps {
   className?: string;
@@ -40,34 +41,36 @@ export const ThemeSwitch: FC<ThemeSwitchProps> = ({
   });
 
   return (
-    <Component
-      {...getBaseProps({
-        className: clsx(
-          "px-px transition-opacity hover:opacity-80 cursor-pointer",
-          className,
-          classNames?.base
-        )
-      })}
-    >
-      <VisuallyHidden>
-        <input {...getInputProps()} />
-      </VisuallyHidden>
-      <div
-        {...getWrapperProps()}
-        className={slots.wrapper({
-          class: clsx(
-            [
-              size === "sm" ? "w-6 h-6" : size === "md" ? "w-8 h-8" : "w-10 h-10",
-              "flex items-center justify-center",
-              "rounded-lg bg-default-100 hover:bg-default-200",
-              "m-0"
-            ],
-            classNames?.wrapper
+    <Tooltip content={theme === "light" ? "Dark mode" : "Light mode"}>
+      <Component
+        {...getBaseProps({
+          className: clsx(
+            "px-px transition-opacity hover:opacity-80 cursor-pointer",
+            className,
+            classNames?.base
           )
         })}
       >
-        {!isSelected || isSSR ? <IconSunFilled size={22} /> : <IconMoonFilled size={22} />}
-      </div>
-    </Component>
+        <VisuallyHidden>
+          <input {...getInputProps()} />
+        </VisuallyHidden>
+        <div
+          {...getWrapperProps()}
+          className={slots.wrapper({
+            class: clsx(
+              [
+                size === "sm" ? "w-6 h-6" : size === "md" ? "w-8 h-8" : "w-10 h-10",
+                "flex items-center justify-center",
+                "rounded-lg bg-default-100 hover:bg-default-200",
+                "m-0"
+              ],
+              classNames?.wrapper
+            )
+          })}
+        >
+          {!isSelected || isSSR ? <IconSunFilled size={22} /> : <IconMoonFilled size={22} />}
+        </div>
+      </Component>
+    </Tooltip>
   );
 };
