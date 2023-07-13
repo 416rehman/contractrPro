@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { Job } from "@/types/types";
 
 export const useJobsStore = create((set: any) => ({
   jobs: [{

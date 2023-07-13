@@ -7,6 +7,8 @@ import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { ThemeProviderProps } from "next-themes/dist/types";
 import { useUserStore } from "@/state/user";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
+import { refreshUser } from "@/services/auth";
+import { getUserOrganizations } from "@/services/user";
 
 export interface ProvidersProps {
   children: React.ReactNode;
@@ -14,23 +16,47 @@ export interface ProvidersProps {
 }
 
 export function Providers({ children, themeProps }: ProvidersProps) {
-  const userStore = useUserStore((state) => state);
   const [isLoaded, setIsLoaded] = React.useState(false);
+  const user = useUserStore(state => state.user);
 
+  // Initial render only so if the app loads for the first time, it will refresh the user data.
+  // DO NOT ADD user TO THE DEPENDENCIES ARRAY OR IT WILL CAUSE AN INFINITE LOOP
   useEffect(() => {
-    const refreshToken = localStorage.getItem("refreshToken");
+    setIsLoaded(false);
+    const fetchData = async () => {
+      try {
+        if (user?.id) {
+          const newUser = await refreshUser();
+          console.log("Got new user", newUser);
+        }
+      } catch (err) {
+        console.log("Error refreshing user", err);
+      }
+    };
 
-    if (!userStore.user && refreshToken) {
-      userStore.refresh().then(() => {
-        console.log("refreshed token");
-      }).finally(() => {
-        setIsLoaded(true);
-      });
-    } else {
-      setIsLoaded(true);
-    }
+    fetchData().catch(err => console.log(err)).finally(() => setIsLoaded(true));
+  }, []);
 
-  }, [userStore]);
+  // If the logged in user changes, get the organizations
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoaded(false);
+
+      try {
+        if (user?.id) {
+          console.log("User Id found, getting organizations");
+          setIsLoaded(false);
+          const orgs = await getUserOrganizations();
+          console.log("Got organizations", orgs);
+          setIsLoaded(true);
+        }
+      } catch (err) {
+        console.log("Error getting organizations", err);
+      }
+    };
+
+    fetchData().catch(err => console.log(err)).finally(() => setIsLoaded(true));
+  }, [user?.id]);
 
   return (
     <NextUIProvider>

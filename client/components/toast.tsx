@@ -81,10 +81,11 @@ export default function Toast({
           onMouseLeave={() => setPaused(false)}
           shadow={"sm"}
           className={"px-5 py-3 rounded-md w-fit min-w-1/4 max-w-1/2 backdrop-blur-md " +
-            (type === "success" ? " bg-success-tr-50 text-green-700 " :
-              type === "info" ? " bg-info-tr-50 text-info-500 " :
-                type === "error" ? " bg-error-tr-50 text-error-500" :
-                  type === "warning" ? " bg-warning-tr-50 text-warning-500" : "")}
+            (type === "success" ? " bg-mygreen-50 text-mygreen-500 " :
+              type === "info" ? " bg-myblue-50 text-myblue-500" :
+                type === "error" ? " bg-myred-50 text-myred-500" :
+                  type === "warning" ? " bg-myorange-50 text-myorange-500" :
+                    " bg-foreground-200 text-foreground-900")}
     >
       <CardBody className={"flex flex-row p-0 gap-4 w-full"}>
         {icon()}
@@ -94,7 +95,7 @@ export default function Toast({
           )}
 
           {message && (
-            <p className={"text-sm font-normal text-foreground-500"}>{message}</p>
+            <p className={"text-sm font-normal text-foreground-900"}>{message}</p>
           )}
 
           {body}

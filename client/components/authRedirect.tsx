@@ -14,12 +14,12 @@ type AuthSwitchProps = {
 }
 
 /**
- * Redirects the user to a page if they are logged in or logged out
+ * Redirects the signedInUser to a page if they are logged in or logged out
  * @param to
  * @param children
  * @param redirectIf
- * @example <AuthRedirect to={"/"} if={"logged-in"}>...</AuthRedirect> // Redirects to "/" if logged in, otherwise renders children
- * @example <AuthRedirect to={"/"} if={"logged-out"}>...</AuthRedirect> // Redirects to "/" if logged out, otherwise renders children
+ * @example <AuthRedirectServer to={"/"} if={"logged-in"}>...</AuthRedirectServer> // Redirects to "/" if logged in, otherwise renders children
+ * @example <AuthRedirectServer to={"/"} if={"logged-out"}>...</AuthRedirectServer> // Redirects to "/" if logged out, otherwise renders children
  */
 export default function AuthRedirect({ to, children, redirectIf }: AuthSwitchProps) {
   const user = useUserStore(state => state.user);
