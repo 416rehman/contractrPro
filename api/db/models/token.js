@@ -12,7 +12,7 @@ const { generateRandomCode } = require('../../utils')
 
 module.exports.tokenFlags = {
     // The types of tokens that can be created. These are stored as a bitmask in the Token.flags field and can store 16 different types of tokens
-    // All these tokens can be used in the POST /verify endpoint
+    // All these tokens can be used in the POST /confirm endpoint
     USER_PASSWORD_RESET_TOKEN: 1, // This code is for password reset. No associated data, new password must be sent in the body.data field of the request
     USER_EMAIL_VERIFY_TOKEN: 2, // This code is for email verification. Associated data is the new email address
     USER_PHONE_VERIFY_TOKEN: 4, // This code is for phone verification. Associated data is the new phone number

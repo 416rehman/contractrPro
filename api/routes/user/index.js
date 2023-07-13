@@ -31,10 +31,4 @@ routes.get('/:user_id/organizations', require('./getUserOrganizations'))
  */
 routes.delete('/:user_id/organizations/:org_id', require('./leaveOrganization'))
 
-/**
- * @api {post} /user/:user_id/email Change the user's email address - sends a verification token to the new email
- * Once the user verifies the new email in the /auth/verify route, the email will be changed
- */
-routes.post('/:user_id/email', require('./me/changeEmail'))
-
 module.exports = routes

@@ -13,12 +13,13 @@ routes.post('/', require('./getUser'))
 
 /**
  * @api {post} /me/email Change the user's email address - sends a verification token to the new email
- * Once the user verifies the new email in the /auth/verify route, the email will be changed
+ * Once the user verifies the new email in the /confirm route, the email will be changed
  */
 routes.post('/email', require('./changeEmail'))
 
 /**
  * @api {post} /me/phone Change the user's phone number - sends a verification token to the new phone number
+ * Once the user verifies the new phone number in the /confirm route, the phone number will be changed
  */
 routes.post('/phone', require('./changePhone'))
 

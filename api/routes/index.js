@@ -14,7 +14,7 @@ routes.get('/', (req, res) => {
 })
 
 routes.use('/auth', require('./auth'))
-routes.post('/verify', require('./verify'))
+routes.post('/confirm', require('./confirm'))
 
 routes.use(checkAuth) // WARNING: All routes below this line require authentication
 routes.use('/users', require('./user'))
