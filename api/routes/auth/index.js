@@ -29,7 +29,7 @@ routes.post(
  * @api {post} /auth/ Use refresh token to get new access token
  * @apiName GetAccountToken
  */
-routes.post('/token', require('./getToken'))
+routes.post('/token', require('./getAccessToken'))
 
 /**
  * @api {post} /auth/account Register new account
@@ -47,5 +47,16 @@ routes.post(
  * @apiName DeleteAccount
  */
 routes.delete('/account', checkAuth, require('./deleteAccount'))
+
+/**
+ * @api {post} /auth/logout Logout - Clears the cookie if it exists
+ * @apiName Logout
+ */
+routes.post('/logout', require('./logout'))
+
+/**
+ * @api {post} /auth/forgot Sends a password reset token to the user's email
+ */
+routes.post('/forgot', require('./forgot'))
 
 module.exports = routes

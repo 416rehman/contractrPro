@@ -2,35 +2,26 @@ const { User } = require('../../../db')
 const {
     createSuccessResponse,
     createErrorResponse,
-} = require('../../utils/response')
+} = require('../../../utils/response')
 
 //Retrieve user by id
 
 module.exports = async (req, res) => {
     try {
-        const id = req.params.user_id
-
-        if (!id) {
-            return res
-                .status(400)
-                .json(createErrorResponse('user id is required'))
-        }
-
         //since user has unique id, it only return 1 user object
         const user = await User.findAll({
             where: {
-                id:
-                    id === 'me' || id === '@me' || id === '@'
-                        ? req.auth.id
-                        : id,
+                id: req.auth.id,
             },
             attributes: [
                 'id',
                 'username',
+                'email',
                 'name',
                 'flags',
                 'createdAt',
                 'updatedAt',
+                'phone',
                 'avatarUrl',
             ],
         })

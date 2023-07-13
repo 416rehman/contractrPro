@@ -36,7 +36,11 @@ module.exports = async (req, res) => {
         }
 
         return res.json(
-            createSuccessResponse({ refreshToken: user.refreshToken })
+            createSuccessResponse({
+                refreshToken: user.refreshToken,
+                message:
+                    'Use this refresh token at the /auth/token endpoint to get an access token and set the cookie.',
+            })
         )
     } catch (error) {
         return res.status(400).json(createErrorResponse('', error))

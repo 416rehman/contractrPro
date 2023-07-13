@@ -1,0 +1,25 @@
+const routes = require('express').Router()
+
+routes.use((req, res, next) => {
+    const path = __filename.split('/').slice(-1)[0].split('\\').slice(-1)[0]
+    res.set('Router', path)
+    next()
+})
+
+/**
+ * @api {get} /me Get the current user
+ */
+routes.post('/', require('./getUser'))
+
+/**
+ * @api {post} /me/email Change the user's email address - sends a verification token to the new email
+ * Once the user verifies the new email in the /auth/verify route, the email will be changed
+ */
+routes.post('/email', require('./changeEmail'))
+
+/**
+ * @api {post} /me/phone Change the user's phone number - sends a verification token to the new phone number
+ */
+routes.post('/phone', require('./changePhone'))
+
+module.exports = routes
