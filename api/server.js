@@ -5,26 +5,27 @@
 const cors = require('cors')
 const express = require('express')
 const helmet = require('helmet')
-const routes = require('./routes')
-
-// Use logging middleware
+const cookieParser = require('cookie-parser')
 const logger = require('./utils/logger')
 const { createErrorResponse } = require('./utils/response')
-const pino = require('pino-http')({
-    // Use our default logger instance, which is already configured
-    logger,
-})
-
-const corsOptions = {
-    origin: ['http://localhost:3000', '*'],
-    methods: ['POST', 'GET', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true,
-}
+const routes = require('./routes')
 
 const app = express()
-app.use(pino)
-app.use(cors(corsOptions))
+app.use(
+    require('pino-http')({
+        // Use our default logger instance, which is already configured
+        logger,
+    })
+)
+app.use(
+    cors({
+        origin: ['http://localhost:3000', '*'],
+        methods: ['POST', 'GET', 'PATCH', 'DELETE', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization'],
+        credentials: true,
+    })
+)
+app.use(cookieParser(process.env.COOKIE_SECRET))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(helmet())

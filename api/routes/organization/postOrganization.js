@@ -1,4 +1,4 @@
-const { sequelize, Organization } = require('../../db')
+const { sequelize, Organization, Address } = require('../../db')
 const {
     createSuccessResponse,
     createErrorResponse,
@@ -16,6 +16,7 @@ module.exports = async (req, res) => {
                 'phone',
                 'website',
                 'logoUrl',
+                'Address',
             ]),
             OwnerId: req.auth.id,
             UpdatedByUserId: req.auth.id,
@@ -23,6 +24,7 @@ module.exports = async (req, res) => {
 
         await sequelize.transaction(async (transaction) => {
             const org = await Organization.create(body, {
+                include: req.body.Address && [Address],
                 transaction,
             })
 

@@ -46,7 +46,11 @@ module.exports = async (req, res) => {
             process.env.JWT_SECRET
         )
 
-        return res.json(createSuccessResponse({ token }))
+        return res
+            .status(200)
+            .cookie('accessToken', token)
+            .cookie('refreshToken', refreshToken)
+            .json(createSuccessResponse({ token }))
     } catch (error) {
         return res.status(400).json(createErrorResponse('', error))
     }

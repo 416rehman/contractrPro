@@ -16,12 +16,10 @@ module.exports.define = (sequelize, DataTypes) => {
             email: {
                 type: DataTypes.STRING(255),
                 allowNull: true,
-                unique: 'organizationConstraint', // Set unique constraint per organization
             },
             phone: {
                 type: DataTypes.STRING(25),
                 allowNull: true,
-                unique: 'organizationConstraint', // Set unique constraint per organization
             },
             permissions: {
                 type: DataTypes.INTEGER,
