@@ -6,7 +6,7 @@ const { Comment, Attachment, sequelize } = require('../../../../../db')
 const { isValidUUID } = require('../../../../../utils/isValidUUID')
 
 // delete attachment
-module.exports = (req, res) => {
+module.exports = async (req, res) => {
     try {
         const commentId = req.params.comment_id
         const contractId = req.params.contract_id
@@ -35,7 +35,7 @@ module.exports = (req, res) => {
                 .json(createErrorResponse('Invalid attachment id.'))
         }
 
-        sequelize.transaction(async (transaction) => {
+        await sequelize.transaction(async (transaction) => {
             // Make sure the Comment belongs to the Contract
             const comment = await Comment.findOne({
                 where: {

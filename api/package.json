@@ -5,7 +5,7 @@
     "description": "Manage your contracts, jobs, expenses, invoices and much more",
     "main": "index.js",
     "scripts": {
-        "test": "NODE_ENV=test LOG_LEVEL=error jest -c jest.config.js --maxWorkers=5 --forceExit --",
+        "test": "NODE_ENV=test LOG_LEVEL=error jest -c jest.config.js --maxWorkers=25 --forceExit --",
         "test:verbose": "NODE_ENV=test LOG_LEVEL=debug jest -c jest.config.js --runInBand --forceExit --verbose=true --",
         "coverage": "NODE_ENV=test LOG_LEVEL=debug jest -c jest.config.js --runInBand --coverage",
         "lint": "eslint .",
@@ -20,7 +20,6 @@
         "aws-sdk": "^2.1410.0",
         "bcrypt": "^5.0.1",
         "compression": "^1.7.4",
-        "cookie-session": "^2.0.0",
         "cors": "^2.8.5",
         "dotenv": "^10.0.0",
         "express": "^4.18.2",

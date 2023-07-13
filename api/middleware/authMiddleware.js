@@ -51,6 +51,17 @@ if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
                             )
                     }
                     req.auth = decoded
+
+                    if (req.auth.flags['NA_BANNED'] === true) {
+                        return res
+                            .status(403)
+                            .send(
+                                createErrorResponse(
+                                    'You are banned from this service.'
+                                )
+                            )
+                    }
+
                     return next()
                 }
             )

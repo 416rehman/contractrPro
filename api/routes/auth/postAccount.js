@@ -3,8 +3,7 @@ const {
     createErrorResponse,
 } = require('../../utils/response')
 const { User, sequelize } = require('../../db')
-const bcrypt = require('bcrypt')
-const { generateRefreshToken, pick } = require('../../utils')
+const { pick } = require('../../utils')
 module.exports = async (req, res) => {
     const body = pick(req.body, [
         'username',
@@ -28,14 +27,9 @@ module.exports = async (req, res) => {
     }
 
     try {
-        const hash = bcrypt.hashSync(body.password, 10)
-        const refreshToken = await generateRefreshToken()
-
         await sequelize.transaction(async (transaction) => {
             const user = User.build({
                 ...body,
-                password: hash,
-                refreshToken: refreshToken,
             })
             user.UpdatedByUserId = user.id
 
