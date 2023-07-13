@@ -1,6 +1,5 @@
 import SignupComponent from "@/components/signup";
-
-import AuthRedirect from "@/components/authRedirect";
+import AuthRedirectServer from "@/components/server/authRedirectServer";
 
 export const metadata = {
   title: "Sign Up",
@@ -9,17 +8,13 @@ export const metadata = {
 
 
 export default function LoginPage() {
-  const router = useRouter();
-  const user = useUserStore(state => state.user);
-
-  useEffect(() => {
-    if (user?.id) {
-      router.push("/");
-    }
-  }, [router, user]);
   return (
-    <AuthRedirect to={"/"} redirectIf={"logged-in"}>  {/* Redirects to "/" if logged in, otherwise renders children */}
-      <SignupComponent className={"flex flex-col items-center justify-center w-full max-w-md mx-auto"} />
-    </AuthRedirect>
+    <>
+      <AuthRedirectServer redirectIf={"logged-in"} to={"/"}>
+        <div className={"flex flex-col items-center justify-center w-full h-full"}>
+          <SignupComponent className={"flex flex-col items-center justify-center w-full max-w-md"} />
+        </div>
+      </AuthRedirectServer>
+    </>
   );
 }

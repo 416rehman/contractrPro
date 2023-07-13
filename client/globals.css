@@ -1,3 +1,35 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+    /*    A links whose role="link" should have a tiny narrow underline, on hover the underline should be wider and darker    */
+    a[role="link"] {
+        @apply border-b-2 border-transparent hover:border-default-400;
+    }
+
+    input {
+        @apply rounded-sm;
+    }
+
+    div[data-overlay-container="true"]:first-of-type {
+        @apply h-full w-full flex-grow flex flex-col;
+    }
+
+    /*    style the scrollbar so that its not touching the edge of the screen    */
+    ::-webkit-scrollbar {
+        @apply w-3;
+    }
+
+    ::-webkit-scrollbar-track {
+        @apply bg-content1;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        @apply shadow-[inset_0_0_10px_10px_theme("colors.content3")] border-solid border-3 border-transparent rounded-2xl;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        @apply shadow-[inset_0_0_10px_10px_theme("colors.content4")] border-solid border-3 border-transparent rounded-2xl;
+    }
+}

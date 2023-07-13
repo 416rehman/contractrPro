@@ -39,7 +39,7 @@ export const getRefreshToken = async (username: string, password: string) => {
       return Promise.reject("No refresh token provided");
     }
 
-    localStorage.setItem("refreshToken", body.data.refreshToken);
+    localStorage?.setItem("refreshToken", body.data.refreshToken);
     return Promise.resolve(body.data.refreshToken);
   } catch (err) {
     console.log(err);
@@ -74,7 +74,7 @@ export const getAccessToken = async (refreshToken: string) => {
       return Promise.reject("No access token provided");
     }
 
-    localStorage.setItem("accessToken", body.data.token);
+    typeof window !== "undefined" ? window.localStorage.setItem("accessToken", body.data.token) : null;
     return Promise.resolve(body.data.token);
   } catch (err) {
     console.log(err);
@@ -128,7 +128,7 @@ export const signup = async (email: string, password: string, username: string) 
     const refreshToken = body.data.refreshToken;
     localStorage.setItem("refreshToken", refreshToken);
 
-    // wait a second to let the server create the user
+    // wait a second to let the server create the signedInUser
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     const accessToken = await getAccessToken(refreshToken);
@@ -148,14 +148,19 @@ export const signup = async (email: string, password: string, username: string) 
 };
 
 /**
- * Logs the user out by removing the refresh and access tokens from local storage, and setting the user to null
+ * Logs the signedInUser out by removing the refresh and access tokens from local storage, and setting the signedInUser to null
  */
 export const logout = async () => {
   try {
-    localStorage.removeItem("refreshToken");
-    localStorage.removeItem("accessToken");
+    await fetch(`${apiUrl}/auth/logout`, {
+      credentials: "include"
+    });
+
+    localStorage?.removeItem("refreshToken");
+    localStorage?.removeItem("accessToken");
 
     const setUser = useUserStore.getState().setUser;
+
     setUser(null);
 
     return Promise.resolve("Logged out");
@@ -165,35 +170,41 @@ export const logout = async () => {
   }
 };
 
-// This function is the same as fetch, except if the error message is "Access token is invalid" and status code is 401, it will try to get a new access token and retry the request
-export const liveFetch = (url, options) => {
-  try {
-    return fetch(url, options).then(async response => {
-      if (response.ok) {
-        return response;
-      }
+/**
+ * refresh from local storage and set the signedInUser in the store
+ */
+export const refreshUser = async () => {
+  const setUser = useUserStore.getState().setUser;
+  const refreshToken = localStorage.getItem("refreshToken");
+  const accessToken = localStorage.getItem("accessToken");
+  if (!refreshToken || !accessToken) {
+    return Promise.reject("No refresh token or access token");
+  }
 
-      const body = await response.json();
-      const message = body.message || "Invalid token";
-      if (message === "Access token is invalid" && response.status === 401) {
-        const refreshToken = localStorage.getItem("refreshToken");
-        const accessToken = await getAccessToken(refreshToken);
+  const decodedToken: any = jwtDecode(accessToken);
 
-        const newOptions = {
-          ...options,
-          headers: {
-            ...options.headers,
-            Authorization: `Bearer ${accessToken}`
-          }
-        };
+  // if its expired use the refresh token to get a new access token
+  if (!decodedToken || !decodedToken.exp || decodedToken.exp * 1000 < Date.now()) {
+    const newAccessToken = await getAccessToken(refreshToken);
+    if (!newAccessToken) {
+      return Promise.reject("No access token provided");
+    }
 
-        return fetch(url, newOptions);
-      }
+    const newDecodedToken: any = jwtDecode(newAccessToken);
+    if (!newDecodedToken) {
+      return Promise.reject("Invalid token");
+    }
 
-      return response;
-    });
-  } catch (err) {
-    console.log(err);
-    return Promise.reject("Error logging out");
+    setUser(newDecodedToken);
+    localStorage.setItem("accessToken", newAccessToken);
+
+    return Promise.resolve(newDecodedToken);
+  } else {
+    setUser(decodedToken);
+    if (decodedToken?.id) {
+      return Promise.resolve(decodedToken);
+    }
+
+    return Promise.reject("Invalid token");
   }
 };

@@ -3,7 +3,7 @@ import { subtitle, title } from "@/components/primitives";
 
 export default function HomeCTA() {
   return (
-    <div className="flex flex-row gap-x-8 gap-y-8 flex-wrap justify-center items-center">
+    <div className="flex flex-row gap-x-8 gap-y-8 flex-wrap justify-center items-center flex-grow">
       <div className="flex flex-col w-fit gap-y-4">
         <div className="flex flex-col">
           <h1 className={title({ color: "turquoise" })}>ContractrPro</h1>

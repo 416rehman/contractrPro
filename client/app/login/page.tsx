@@ -1,6 +1,6 @@
 import LoginComponent from "@/components/login";
-
-import AuthRedirect from "@/components/authRedirect";
+import AuthRedirectServer from "@/components/server/authRedirectServer";
+// import { useEffect } from "react";
 
 export const metadata = {
   title: "Log In"
@@ -8,18 +8,24 @@ export const metadata = {
 
 
 export default function LoginPage() {
-  const router = useRouter();
-  const user = useUserStore(state => state.user);
-
-  useEffect(() => {
-    if (user?.id) {
-      router.push("/");
-    }
-  }, [router, user]);
+  // const router = useRouter();
+  // const signedInUser = useUserStore(state => state.signedInUser);
+  //
+  // useEffect(() => {
+  //   if (signedInUser?.id) {
+  //     router.push("/");
+  //   }
+  // }, [router, signedInUser]);
+  // make sure we are not logged in by checking the cookie "token"
+  // if we are logged in, redirect to the home page
 
   return (
-    <AuthRedirect redirectIf={"logged-in"} to={"/"}>
-      <LoginComponent className={"flex flex-col items-center justify-center w-full max-w-md mx-auto"} />
-    </AuthRedirect>
+    <>
+      <AuthRedirectServer redirectIf={"logged-in"} to={"/"}>
+        <div className={"flex flex-col items-center justify-center w-full h-full"}>
+          <LoginComponent className={"flex flex-col items-center justify-center"} />
+        </div>
+      </AuthRedirectServer>
+    </>
   );
 }

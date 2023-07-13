@@ -29,7 +29,7 @@ export default function JobsNavbar({ jobs, onSelectJob }: JobProps) {
                 </Button>
               </DropdownTrigger>
               <DropdownMenu
-                aria-label="Merge options"
+                aria-label="Job options"
                 selectionMode="single"
                 className="max-w-[300px]"
               >

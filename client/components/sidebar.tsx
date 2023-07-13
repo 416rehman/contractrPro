@@ -7,10 +7,8 @@ import { Tooltip } from "@nextui-org/tooltip";
 import { usePathname } from "next/navigation";
 import React, { HTMLAttributes, useState } from "react";
 import { IconLayoutSidebarLeftCollapse, IconLayoutSidebarLeftExpand } from "@tabler/icons-react";
-import { useUserStore } from "@/state/user";
 
 export const Sidebar = (props: HTMLAttributes<HTMLDivElement>) => {
-  const user = useUserStore(state => state.user);
   const [isExtended, setIsExtended] = useState(false);
   const pathname = usePathname();
 
@@ -24,7 +22,7 @@ export const Sidebar = (props: HTMLAttributes<HTMLDivElement>) => {
     </Tooltip>
   );
 
-  return user && (
+  return (
     <div className={" sm:flex sm:flex-col gap-8 p-2 items-center" + " " + props.className} {...props}>
       <ExtendSidebarButton />
       <div className={"flex flex-col justify-between gap-4"}>

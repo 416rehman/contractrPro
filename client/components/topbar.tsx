@@ -10,21 +10,23 @@ import {
   NavbarMenuToggle
 } from "@nextui-org/navbar";
 import { Kbd } from "@nextui-org/kbd";
-import Link from "next/link";
 import NextLink from "next/link";
 import { Input } from "@nextui-org/input";
-import { ThemeSwitch } from "@/components/theme-switch";
-import { useUserStore } from "@/state/user";
 import { Button } from "@nextui-org/button";
-import { IconLogin, IconSearch } from "@tabler/icons-react";
+import { IconSearch } from "@tabler/icons-react";
 import { UserMenu } from "@/components/userMenu";
 import { useEffect, useState } from "react";
 import { siteConfig } from "@/config/site";
 import { usePathname } from "next/navigation";
-import AuthSwitch from "@/components/authSwitch";
+import AuthFallback from "@/components/authFallback";
+import { VisitorMenu } from "@/components/visitorMenu";
+import { useUserStore } from "@/state/user";
+import { OrganizationSelector } from "@/components/organizationSelector";
+import { Divider } from "@nextui-org/divider";
 
 export const Topbar = () => {
-  const user = useUserStore((state) => state.user);
+  const user = useUserStore(state => state.user);
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
 
@@ -34,29 +36,6 @@ export const Topbar = () => {
       setIsMenuOpen(false);
     }
   }, [isMenuOpen, pathname]);
-
-  const authButtons = (
-    <NavbarContent>
-      <NavbarItem>
-        <Button
-          as={Link}
-          className="text-sm font-normal text-default-600 bg-default-100"
-          size={"sm"}
-
-          href={"login"}
-          startContent={<IconLogin className={"pointer-events-none"} />}
-          variant="flat"
-        >
-          <p className={"hidden sm:flex"}>Login</p>
-        </Button>
-      </NavbarItem>
-      <NavbarItem>
-        <Button as={Link} color="primary" href="signup" variant="flat" size={"sm"}>
-          Sign Up
-        </Button>
-      </NavbarItem>
-    </NavbarContent>
-  );
 
   const searchInput = (
     <Input
@@ -81,45 +60,55 @@ export const Topbar = () => {
   );
 
   return (
-    <Navbar position="sticky" className={"justify-between flex flex-row gap-2"} maxWidth={"full"}
+    <Navbar position="sticky" className={"justify-between flex flex-row gap-2 w-full"} maxWidth={"full"}
             onMenuOpenChange={setIsMenuOpen}>
       <NavbarContent>
-        {user?.id && <NavbarMenuToggle className={"flex sm:hidden"} />}
-        <NavbarBrand className={"hidden sm:flex"}>
-          <p className="font-bold text-inherit">ACME</p>
-        </NavbarBrand>
+        {user?.id && (
+          <>
+            <NavbarMenuToggle className={"flex sm:hidden"} />
+            <NavbarBrand className={"hidden sm:flex"}>
+              <OrganizationSelector user={user} className={"hidden sm:flex"} />
+            </NavbarBrand>
+          </>
+        )}
+
       </NavbarContent>
       <NavbarContent justify="center" className="gap-4 flex-grow">
-        <AuthSwitch contentIfLoggedIn={<NavbarItem className={"flex-grow max-w-lg"}>
-          {searchInput}
-        </NavbarItem>} />
+        <AuthFallback fallbackIf={"logged-in"} to={
+          <NavbarItem className={"flex-grow max-w-lg"}>
+            {searchInput}
+          </NavbarItem>
+        } />
       </NavbarContent>
       <NavbarContent justify="end">
-        <ThemeSwitch size={"md"} className={"hidden sm:flex"} />
         {user ?
           <NavbarItem>
             <UserMenu {...user} />
           </NavbarItem>
           :
-          authButtons
+          <VisitorMenu />
         }
       </NavbarContent>
-      {user?.id && <NavbarMenu>
-        {siteConfig.sidebarItems.map((item) => (
-          <NavbarMenuItem key={item.href}>
-            <Button
-              className={"justify-start"}
-              key={item.href}
-              as={NextLink}
-              href={item.href}
-              variant={pathname === item.href ? "flat" : "light"}
-              color={pathname === item.href ? "primary" : "default"}
-              size={"lg"}>
-              {<item.icon stroke={1.5} />}
-              {item.label}
-            </Button>
-          </NavbarMenuItem>
-        ))}
+      {user?.id && <NavbarMenu className={"flex flex-col gap-5 w-full p-0"}>
+        <OrganizationSelector user={user} className={"w-full justify-start align-middle"} />
+        <Divider />
+        <div className={"w-full"}>
+          {siteConfig.sidebarItems.map((item) => (
+            <NavbarMenuItem key={item.href} className={"w-full"}>
+              <Button
+                className={"justify-start w-full"}
+                key={item.href}
+                as={NextLink}
+                href={item.href}
+                variant={pathname === item.href ? "flat" : "light"}
+                color={pathname === item.href ? "primary" : "default"}
+                size={"lg"}>
+                {<item.icon stroke={1.5} />}
+                {item.label}
+              </Button>
+            </NavbarMenuItem>
+          ))}
+        </div>
       </NavbarMenu>}
 
     </Navbar>

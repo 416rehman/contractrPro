@@ -1,8 +1,8 @@
 import { Metadata } from "next";
 import { siteConfig } from "@/config/site";
 import HomeCTA from "@/components/homeCTA";
-import AuthSwitch from "@/components/authSwitch";
 import React from "react";
+import AuthSwitchServer from "@/components/server/authSwitchServer";
 import { subtitle, title } from "@/components/primitives";
 import { Snippet } from "@nextui-org/snippet";
 import { Code } from "@nextui-org/code";
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
 };
 
 export default function Home() {
-  return <AuthSwitch contentIfLoggedIn={
+  return <AuthSwitchServer contentIfLoggedIn={
     <section className="flex flex-col items-center justify-center gap-4 py-8">
       <div className="inline-block max-w-lg text-center justify-center">
         <h1 className={title()}>Make&nbsp;</h1>
@@ -47,5 +47,7 @@ export default function Home() {
         </Snippet>
       </div>
     </section>
-  } contentIfLoggedOut={<HomeCTA />} />;
+  } contentIfLoggedOut={
+    <HomeCTA />
+  } />;
 }
