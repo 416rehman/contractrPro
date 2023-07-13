@@ -15,7 +15,7 @@ routes.use((req, res, next) => {
 })
 
 /**
- * @api {post} /auth/login Gets the user's refresh token
+ * @api {post} /auth/login Gets the signedInUser's refresh token
  * @apiName Login
  */
 routes.post(
@@ -29,7 +29,7 @@ routes.post(
  * @api {post} /auth/ Use refresh token to get new access token
  * @apiName GetAccountToken
  */
-routes.post('/token', require('./getAccessToken'))
+routes.post('/token', require('./token'))
 
 /**
  * @api {post} /auth/account Register new account
@@ -49,13 +49,13 @@ routes.post(
 routes.delete('/account', checkAuth, require('./deleteAccount'))
 
 /**
- * @api {post} /auth/logout Logout - Clears the cookie if it exists
+ * @api {get} /auth/logout Logout - Clears the cookie if it exists
  * @apiName Logout
  */
-routes.post('/logout', require('./logout'))
+routes.get('/logout', require('./logout'))
 
 /**
- * @api {post} /auth/forgot Sends a password reset token to the user's email
+ * @api {post} /auth/forgot Sends a password reset token to the signedInUser's email
  */
 routes.post('/forgot', require('./forgot'))
 

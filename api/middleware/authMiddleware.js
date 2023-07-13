@@ -25,7 +25,8 @@ if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
             req.headers['authorization'] ||
             req.body.token ||
             req.query.token ||
-            req.headers['x-access-token']
+            req.headers['x-access-token'] ||
+            req.cookies.accessToken // If no token is provided, check for a cookie
 
         if (!token) {
             return res

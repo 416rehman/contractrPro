@@ -16,12 +16,10 @@ routes.get('/', (req, res) => {
 routes.use('/auth', require('./auth'))
 routes.post('/confirm', require('./confirm'))
 
-routes.use(checkAuth) // WARNING: All routes below this line require authentication
-routes.use('/users', require('./user'))
-routes.use('/organizations', require('./organization'))
-routes.use('/join', require('./join'))
+routes.use('/users', checkAuth, require('./user'))
+routes.use('/organizations', checkAuth, require('./organization'))
+routes.use('/join', checkAuth, require('./join'))
 
-routes.use(adminMiddleware) // WARNING: All routes below this line require ADMIN flag to be set
 routes.use('/admin', adminMiddleware, require('./admin'))
 
 module.exports = routes
