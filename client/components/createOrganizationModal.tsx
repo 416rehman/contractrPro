@@ -60,7 +60,14 @@ export default function CreateOrganizationModal({ isOpen, onOpenChange, onOpen }
   return (
     <>
       <Modal
-        className={"select-none"}
+        classNames={{
+          body: "modal-body overflow-auto",
+          backdrop: "modal-backdrop",
+          base: "modal-base max-h-full",
+          header: "modal-header",
+          footer: "modal-footer",
+          closeButton: "modal-close-button"
+        }}
         isOpen={isOpen}
         onOpenChange={onOpenChange}
         backdrop={"opaque"}

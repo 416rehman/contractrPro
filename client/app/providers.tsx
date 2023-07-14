@@ -24,8 +24,9 @@ export function Providers({ children, themeProps }: ProvidersProps) {
   useEffect(() => {
     setIsLoaded(false);
     const fetchData = async () => {
+      console.log("Fetching data");
       try {
-        if (user?.id) {
+        if (!user?.id) {
           const newUser = await refreshUser();
           console.log("Got new user", newUser);
         }

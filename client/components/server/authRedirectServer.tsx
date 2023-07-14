@@ -33,8 +33,11 @@ export default async function AuthRedirectServer({ to, children, redirectIf }: A
       redirect(to);
     }
   } catch (err) {
-    console.log("Error getting user", err);
+    console.log("To redirect", to);
+    console.log("Redirect if", redirectIf);
+    console.log("Children", children);
+    console.log(err.message || "Error getting user", err);
   }
-  
+
   return <AuthRedirect redirectIf={redirectIf} to={to}>{children}</AuthRedirect>;
 }

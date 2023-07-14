@@ -62,6 +62,7 @@ export function OrganizationSelector({ user, className }: Props) {
               onClose={() => Date.now() - dropdownOpenTime < 50 ? null : setDropdownOpenTime(0)}
               onOpenChange={(open) => open && setDropdownOpenTime(Date.now())}
               className={clsx("select-none", className)}
+              showArrow={true}
               aria-label="User Organizations">
       <DropdownTrigger>
         <User
