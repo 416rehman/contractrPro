@@ -3,7 +3,7 @@ import { IconHash } from "@tabler/icons-react";
 import { Divider } from "@nextui-org/divider";
 import { Spacer } from "@nextui-org/spacer";
 import { useState } from "react";
-import { useToastsStore } from "@/state/toasts";
+import { useToastsStore } from "@/services/toast";
 
 type Props = {
   isOpen: boolean;

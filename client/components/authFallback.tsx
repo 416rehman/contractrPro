@@ -1,6 +1,6 @@
 "use client";
 
-import { useUserStore } from "@/state/user";
+import { useUserStore } from "@/services/user/";
 import { ReactNode } from "react";
 
 type AuthSwitchProps = {

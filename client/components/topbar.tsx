@@ -16,13 +16,13 @@ import { Button } from "@nextui-org/button";
 import { IconSearch } from "@tabler/icons-react";
 import { UserMenu } from "@/components/userMenu";
 import { useEffect, useState } from "react";
-import { siteConfig } from "@/config/site";
 import { usePathname } from "next/navigation";
 import AuthFallback from "@/components/authFallback";
 import { VisitorMenu } from "@/components/visitorMenu";
-import { useUserStore } from "@/state/user";
+import { useUserStore } from "@/services/user/";
 import { OrganizationSelector } from "@/components/organizationSelector";
 import { Divider } from "@nextui-org/divider";
+import { sidebarItems } from "@/components/sidebar";
 
 export const Topbar = () => {
   const user = useUserStore(state => state.user);
@@ -67,7 +67,7 @@ export const Topbar = () => {
           <>
             <NavbarMenuToggle className={"flex sm:hidden"} />
             <NavbarBrand className={"hidden sm:flex"}>
-              <OrganizationSelector user={user} className={"hidden sm:flex"} />
+              <OrganizationSelector className={"hidden sm:flex"} />
             </NavbarBrand>
           </>
         )}
@@ -90,10 +90,10 @@ export const Topbar = () => {
         }
       </NavbarContent>
       {user?.id && <NavbarMenu className={"flex flex-col gap-5 w-full p-0"}>
-        <OrganizationSelector user={user} className={"w-full justify-start align-middle"} />
+        <OrganizationSelector className={"w-full justify-start align-middle"} />
         <Divider />
         <div className={"w-full"}>
-          {siteConfig.sidebarItems.map((item) => (
+          {sidebarItems.map((item) => (
             <NavbarMenuItem key={item.href} className={"w-full"}>
               <Button
                 className={"justify-start w-full"}

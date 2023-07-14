@@ -1,7 +1,7 @@
 "use client";
 
 import JobsNavbar from "@/components/jobsNavbar";
-import { useJobsStore } from "@/state/jobs";
+import { useJobsStore } from "@/services/jobs";
 import { useState } from "react";
 import JobForm from "@/components/jobForm";
 

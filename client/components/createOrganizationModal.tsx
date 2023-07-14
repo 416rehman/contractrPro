@@ -17,9 +17,9 @@ import { IconChevronLeft, IconHash, IconInfoHexagon } from "@tabler/icons-react"
 import { Divider } from "@nextui-org/divider";
 import { Spacer } from "@nextui-org/spacer";
 import { useState } from "react";
-import { useToastsStore } from "@/state/toasts";
-import { useUserStore } from "@/state/user";
-import { Organization } from "@/types/types";
+import { useToastsStore } from "@/services/toast";
+import { useUserStore } from "@/services/user/";
+import { Organization } from "@/types";
 
 type Props = {
   isOpen: boolean;
@@ -31,21 +31,7 @@ export default function CreateOrganizationModal({ isOpen, onOpenChange, onOpen }
   const user = useUserStore(state => state.user);
   const toastsStore = useToastsStore(state => state);
 
-  const [organization, setOrganization] = useState<Organization>({
-    Address: {
-      addressLine1: "",
-      addressLine2: "",
-      city: "",
-      postalCode: "",
-      country: "",
-      province: ""
-    },
-    description: "",
-    email: "",
-    logoUrl: "",
-    name: "",
-    phone: ""
-  });
+  const [organization, setOrganization] = useState<Organization>();
 
   const onSubmit = () => {
     console.log("TODO: Create organization");

@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { siteConfig } from "@/config/site";
+import { siteConfig } from "@/site";
 import HomeCTA from "@/components/homeCTA";
 import React from "react";
 import AuthSwitchServer from "@/components/server/authSwitchServer";
@@ -25,6 +25,7 @@ export const metadata: Metadata = {
 };
 
 export default function Home() {
+
   return <AuthSwitchServer contentIfLoggedIn={
     <section className="flex flex-col items-center justify-center gap-4 py-8">
       <div className="inline-block max-w-lg text-center justify-center">

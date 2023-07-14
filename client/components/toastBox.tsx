@@ -1,7 +1,7 @@
 "use client";
 
 import Toast from "@/components/toast";
-import { useToastsStore } from "@/state/toasts";
+import { useToastsStore } from "@/services/toast";
 import { Button } from "@nextui-org/button";
 
 export default function ToastBox(props: any) {

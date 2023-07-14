@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Job } from "@/types/types";
+import { Job } from "@/types";
 
 export const useJobsStore = create((set: any) => ({
   jobs: [{

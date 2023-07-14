@@ -8,7 +8,7 @@ import clsx from "clsx";
 import { IconAt, IconEye, IconEyeClosed, IconLogin, IconMailFilled } from "@tabler/icons-react";
 import { Button } from "@nextui-org/button";
 import { Link } from "@nextui-org/link";
-import { useToastsStore } from "@/state/toasts";
+import { useToastsStore } from "@/services/toast";
 import { Card, CardBody } from "@nextui-org/card";
 
 

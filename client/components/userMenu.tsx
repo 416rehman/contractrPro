@@ -6,7 +6,7 @@ import clsx from "clsx";
 import { Avatar } from "@nextui-org/avatar";
 import { logout } from "@/services/auth";
 import { useTheme } from "next-themes";
-import { tUser } from "@/types/types";
+import { tUser } from "@/types";
 import { CollectionChildren } from "@react-types/shared";
 import { IconLogout, IconMoonFilled, IconSettings, IconSunFilled } from "@tabler/icons-react";
 

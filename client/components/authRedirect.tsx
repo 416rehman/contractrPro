@@ -1,6 +1,6 @@
 "use client";
 
-import { useUserStore } from "@/state/user";
+import { useUserStore } from "@/services/user/";
 import { ReactNode, useEffect } from "react";
 import { useRouter } from "next/navigation";
 

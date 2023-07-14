@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { getUserViaCookies } from "@/services/server/getUserViaCookies";
+import { user } from "@/app/layout";
 import AuthFallback from "@/components/authFallback";
 
 type AuthSwitchProps = {
@@ -10,13 +10,6 @@ type AuthSwitchProps = {
 // Uses the signedInUser store to determine if the signedInUser is logged in or not and renders the appropriate content
 
 export default async function AuthSwitchServer({ contentIfLoggedIn, contentIfLoggedOut }: AuthSwitchProps) {
-  let user;
-  try {
-    user = await getUserViaCookies();
-  } catch (err) {
-    console.log("Error getting user", err);
-  }
-
   return (
     <>
       {user?.id ?

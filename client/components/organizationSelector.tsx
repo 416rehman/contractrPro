@@ -1,38 +1,53 @@
 import { Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger } from "@nextui-org/dropdown";
 import { User } from "@nextui-org/user";
-import { useLocalsStore } from "@/state/locals";
-import { tUser } from "@/types/types";
 import { useEffect, useState } from "react";
 import { IconBuildingSkyscraper, IconCirclePlus } from "@tabler/icons-react";
 import JoinOrganizationModal from "@/components/joinOrganizationModal";
 import { useDisclosure } from "@nextui-org/react";
 import clsx from "clsx";
 import CreateOrganizationModal from "@/components/createOrganizationModal";
+import { loadUserOrganizations, useUserStore } from "@/services/user";
+import { getLocalStorageItem } from "@/utils/safeLocalStorage";
 
 type Props = {
-  user: tUser & { [p: string]: any };
   className?: string;
 }
 
-export function OrganizationSelector({ user, className }: Props) {
+const OrgItem = ({ selectedOrganization }) => {
+  return <User
+    as="button"
+    avatarProps={{
+      isBordered: true,
+      src: selectedOrganization?.logoUrl || "https://icons-for-free.com/iconfiles/png/512/create+new+plus+icon-1320183284524393487.png"
+    }}
+    className="transition-transform justify-start hover:bg-default-100 flex flex-row items-center p-1 pr-2 rounded-full max-w-10"
+    description={selectedOrganization?.website || selectedOrganization?.phone || selectedOrganization?.description || "Organizations"}
+    isFocusable={true}
+    name={selectedOrganization?.name || "Join or create an organization"}
+  />;
+};
+
+export function OrganizationSelector({ className }: Props) {
   // disclosure for the join organization modal
   const { isOpen: isJoinOpen, onOpen: onJoinOpen, onOpenChange: onJoinOpenChange } = useDisclosure();
   // another disclosure for the create organization modal
   const { isOpen: isCreateOpen, onOpen: onCreateOpen, onOpenChange: onCreateOpenChange } = useDisclosure();
 
-  const localsStore = useLocalsStore(state => state);
+  const [userOrgs, currentOrg, setCurrentOrg] = useUserStore(state => [state.organizations, state.currentOrganization, state.setCurrentOrganization]);
 
   const [selectedOrganization, setSelectedOrganization] = useState(null);
 
   useEffect(() => {
-    if (localsStore.currentOrganization) {
-      setSelectedOrganization(localsStore.currentOrganization);
-    } else if (user?.Organizations?.[0]) {
-      setSelectedOrganization(user?.Organizations?.[0]);
+    loadUserOrganizations();  // On the first render, load the loggedInUser's organizations into the store
+  }, []);
+
+  useEffect(() => {
+    if (currentOrg?.id) {
+      setSelectedOrganization(currentOrg);
     } else {
-      setSelectedOrganization(null);
+      setSelectedOrganization(JSON.parse(getLocalStorageItem("currentOrganization") || "null"));
     }
-  }, [localsStore, user?.Organizations]);
+  }, [userOrgs, currentOrg]);
 
   const onActionHandler = (id) => {
     if (id.startsWith("action_")) {
@@ -47,7 +62,8 @@ export function OrganizationSelector({ user, className }: Props) {
           console.log("Unknown action");
       }
     } else {
-      localsStore.setCurrentOrganization(user?.Organizations?.find(org => org.id === id));
+      // setCurrentOrg(userOrgs?.find(org => org.id === id));
+      setCurrentOrg(userOrgs?.find(org => org.id === id));
     }
   };
 
@@ -65,34 +81,17 @@ export function OrganizationSelector({ user, className }: Props) {
               showArrow={true}
               aria-label="User Organizations">
       <DropdownTrigger>
-        <User
-          as="button"
-          avatarProps={{
-            isBordered: true,
-            src: selectedOrganization?.logoUrl || "https://designshack.net/wp-content/uploads/placeholder-image.png"
-          }}
-          className="transition-transform justify-start hover:bg-default-100 flex flex-row items-center p-1 pr-2 rounded-full"
-          description={selectedOrganization?.website || selectedOrganization?.phone || selectedOrganization?.description}
-          isFocusable={true}
-          name={selectedOrganization?.name}
-        />
+        <div>
+          <OrgItem selectedOrganization={selectedOrganization} />
+        </div>
       </DropdownTrigger>
       <DropdownMenu aria-label="User Organizations" variant="faded" onAction={onActionHandler}>
         <DropdownSection title={"Your Organizations"}>
-          {user?.Organizations?.map((org) => (
+          {userOrgs?.map((org) => (
             <DropdownItem key={org.id} textValue={org.name} className={clsx("flex flex-row items-center", {
-              "bg-default-100 text-primary": localsStore.currentOrganization?.id === org.id
+              "bg-default-100 text-primary": currentOrg?.id === org.id
             })}>
-              <User
-                as="button"
-                avatarProps={{
-                  isBordered: true,
-                  src: org.logoUrl || "https://designshack.net/wp-content/uploads/placeholder-image.png"
-                }}
-                className={"transition-transform flex flex-row items-center p-1"}
-                description={org?.website || org?.phone || org?.description}
-                name={org?.name}
-              />
+              <OrgItem selectedOrganization={org} />
             </DropdownItem>
           )) || <DropdownItem textValue={"No organizations found"} />}
         </DropdownSection>
