@@ -20,7 +20,7 @@ app.use(
 app.use(
     cors({
         origin: ['http://localhost:3000', '*'],
-        methods: ['POST', 'GET', 'PATCH', 'DELETE', 'OPTIONS'],
+        methods: ['POST', 'GET', 'PATCH', 'DELETE', 'OPTIONS', 'PUT'],
         allowedHeaders: ['Content-Type', 'Authorization'],
         credentials: true,
     })
