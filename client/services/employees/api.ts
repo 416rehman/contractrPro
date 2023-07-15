@@ -19,7 +19,7 @@ export async function requestOrganizationEmployees (OrganizationId : string) {
     }
 }
 
-// Updates an employee
+// Updates an organization's employee
 export async function requestUpdateEmployee(employee: Employee, OrganizationId: string) {
     try {
       const data = await request(`${apiUrl}/organizations/${OrganizationId}/members/${employee.id}`, {
@@ -35,7 +35,7 @@ export async function requestUpdateEmployee(employee: Employee, OrganizationId: 
     }
   }
   
-  // Deletes an employee
+  // Deletes an organization's employee
   export async function requestDeleteEmployee(employee: Employee, OrganizationId: string) {
     try {
       const data = await request(`${apiUrl}/organizations/${OrganizationId}/members/${employee.id}`, {
@@ -50,7 +50,7 @@ export async function requestUpdateEmployee(employee: Employee, OrganizationId: 
     }
   }
   
-  // Creates an employee
+  // Creates an employee for an organization
   export async function requestCreateEmployee(employee: Employee, OrganizationId: string) {
     try {
       const data = await request(`${apiUrl}/organizations/${OrganizationId}/members`, {
