@@ -20,6 +20,7 @@ export default function EmployeeForm({ id, className }: Props) {
     const [isEditing, setIsEditing] = useState(false);
     const [editedEmployee, setEditedEmployee] = useState<any>(); // Save the edited employee here
     const currentOrg = useUserStore(state => state.currentOrganization);
+    const currentUser = useUserStore(state => state.user);
     const [isSaving, setIsSaving] = useState(false);
 
     // For delete modal dialog
@@ -140,9 +141,12 @@ export default function EmployeeForm({ id, className }: Props) {
                   <Input label={"Permissions"} placeholder={"Permissions"} value={editedEmployee?.permissions}
                             isReadOnly={!isEditing} type={"text"} name={"permissions"} onChange={onChangeHandler}
                             variant={isEditing ? "flat" : "underlined"} labelPlacement={"outside"} />
-                  <Input label={"User ID"} placeholder={"User ID"} value={editedEmployee?.userId} isReadOnly={!isEditing}
-                         type={"text"} name={"userID"} onChange={onChangeHandler}
-                         variant={isEditing ? "flat" : "underlined"} labelPlacement={"outside"} />
+                  {!isEditing && employee?.id && (
+                    <Input label={"User ID"} placeholder={"User ID"} value={currentUser?.id} 
+                            isReadOnly={!isEditing} type={"text"} name={"user ID"} onChange={onChangeHandler} 
+                            variant={isEditing ? "flat" : "underlined"} labelPlacement={"outside"} />
+                  )}
+                  
                 </form>
                 <div className={"flex flex-col gap-1"}>
                   <span className={"text-xs text-default-500"}>Last updated: {employee?.updatedAt}</span>
