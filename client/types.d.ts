@@ -68,5 +68,9 @@ type Employee = {
   email: string,
   phone: string,
   permissions: string,
-  userId: string,
+  UserId: string,
+  createdAt?: string, 
+  updatedAt?: string,
+  UpdatedByUserId?: string,
+  OrganizationId?: string,
 } & any;
