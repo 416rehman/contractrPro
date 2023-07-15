@@ -26,7 +26,7 @@ export type tUser = {
 
 export type UserAccount = tUser & {
   refreshToken: string;
-}
+} & any;
 
 type Organization = {
   id?: string;
@@ -37,7 +37,7 @@ type Organization = {
   phone: string;
   logoUrl: string;
   Address: Address | null;
-}
+} & any;
 
 export type Address = {
   id?: string;
@@ -47,4 +47,17 @@ export type Address = {
   addressLine2: string;
   country: string;
   city: string;
-} & { [key: string]: any }
+} & any;
+
+type Client = {
+  id?: string,
+  name: string,
+  phone: string,
+  email: string,
+  website: string,
+  description: string,
+  createdAt?: string,
+  updatedAt?: string,
+  UpdatedByUserId?: string,
+  OrganizationId?: string,
+} & any;

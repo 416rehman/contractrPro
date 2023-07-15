@@ -64,6 +64,7 @@ export const logout = async () => {
 export const signup = async (username: string, email: string, password: string) => {
   try {
     const accountInfo = await requestCreateAccount(username, email, password);
+    await new Promise((resolve) => setTimeout(resolve, 1000));  // wait 1 second to make sure the account is created
     const accessToken = await getNewAccessToken(accountInfo.refreshToken);
 
     const decodedToken: any = jwtDecode(accessToken);

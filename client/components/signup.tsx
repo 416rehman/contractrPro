@@ -91,7 +91,7 @@ export default function SignupComponent(props: any) {
       <Divider />
       <CardFooter>
         <p className={"text-sm text-default-600"}>
-          Already have an account? <Link href={"login"} className={"text-sm"}>Login</Link>
+          Already have an account? <Link href={"/login"} className={"text-sm"}>Login</Link>
         </p>
       </CardFooter>
     </Card>

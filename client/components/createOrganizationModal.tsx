@@ -13,7 +13,7 @@ import {
   ModalFooter,
   ModalHeader
 } from "@nextui-org/react";
-import { IconChevronLeft, IconHash, IconInfoHexagon } from "@tabler/icons-react";
+import { IconChevronLeft, IconHash } from "@tabler/icons-react";
 import { Divider } from "@nextui-org/divider";
 import { Spacer } from "@nextui-org/spacer";
 import { useState } from "react";
@@ -24,14 +24,29 @@ import { Organization } from "@/types";
 type Props = {
   isOpen: boolean;
   onOpenChange: () => void;
-  onOpen: () => void;
 }
 
-export default function CreateOrganizationModal({ isOpen, onOpenChange, onOpen }: Props) {
+export default function CreateOrganizationModal({ isOpen, onOpenChange }: Props) {
   const user = useUserStore(state => state.user);
   const toastsStore = useToastsStore(state => state);
 
-  const [organization, setOrganization] = useState<Organization>();
+  const [organization, setOrganization] = useState<Organization>({
+    id: "",
+    name: "",
+    description: "",
+    email: "",
+    website: "",
+    phone: "",
+    logoUrl: "",
+    Address: {
+      city: "",
+      province: "",
+      postalCode: "",
+      country: "",
+      addressLine1: "",
+      addressLine2: ""
+    }
+  });
 
   const onSubmit = () => {
     console.log("TODO: Create organization");
@@ -71,7 +86,7 @@ export default function CreateOrganizationModal({ isOpen, onOpenChange, onOpen }
                   label="Name"
                   placeholder={(user?.name || "John Doe") + "'s Awesome Organization"}
                   variant="bordered"
-                  value={organization.name}
+                  value={organization?.name}
                   onChange={(e) => setOrganization({ ...organization, name: e.target.value })}
                   description={"This will be displayed on your invoices and estimates, and cannot be changed later."}
                 />
@@ -81,9 +96,9 @@ export default function CreateOrganizationModal({ isOpen, onOpenChange, onOpen }
                   className={"px-0 py-2"}
                   itemClasses={{ base: "bg-default-700" }}
                 >
-                  <AccordionItem key="about" aria-label="about" indicator={<IconChevronLeft />} title="About"
+                  <AccordionItem key="about" aria-label="about" title="About"
+                                 indicator={<IconChevronLeft />}
                                  className={"py-2 px-2"}
-                                 startContent={<IconInfoHexagon />}
                                  subtitle={"Tell us about your organization. This information will be displayed on your invoices and estimates."}>
                     <div className={"border-none flex flex-col gap-4"}>
                       <Input label="Description" placeholder="This is my awesome organization" variant="bordered"
@@ -97,7 +112,7 @@ export default function CreateOrganizationModal({ isOpen, onOpenChange, onOpen }
                              description={"A phone number for your organization (optional)"} />
                     </div>
                   </AccordionItem>
-                  <AccordionItem key="address" aria-label="address" indicator={<IconChevronLeft />} title="Address"
+                  <AccordionItem key="address" aria-label="address" title="Address" indicator={<IconChevronLeft />}
                                  subtitle={"Your company's public physical address."}>
                     <div className={"border-none flex flex-col gap-2"}>
                       <Input label="Address Line 1" placeholder="123 Main St" variant="bordered"

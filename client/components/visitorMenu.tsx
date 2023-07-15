@@ -6,7 +6,7 @@ import { IconAsterisk, IconLogin, IconMenu2, IconMoonFilled, IconSunFilled } fro
 import { NavbarContent, NavbarItem } from "@nextui-org/navbar";
 import { Tooltip } from "@nextui-org/tooltip";
 import { Button } from "@nextui-org/button";
-import Link from "next/link";
+import NextLink from "next/link";
 import { useRouter } from "next/navigation";
 import { ThemeSwitch } from "@/components/theme-switch";
 import React from "react";
@@ -20,7 +20,7 @@ export const VisitorMenu = () => {
   const visitorItems: { display: display, [key: string]: any }[] = [
     {
       content: "Sign Up",
-      href: "signup",
+      href: "/signup",
       onAction: () => router.push("signup"),
       icon: <IconAsterisk />,
       color: "primary",
@@ -30,7 +30,7 @@ export const VisitorMenu = () => {
     },
     {
       content: "Login",
-      href: "login",
+      href: "/login",
       onAction: () => router.push("login"),
       icon: <IconLogin />,
       color: "default",
@@ -68,7 +68,7 @@ export const VisitorMenu = () => {
           <NavbarItem key={index}>
             {(item.display == "both" || item.display == "navbar") && (item.isolated ? item.content : (
               <Tooltip content={item.description} placement={"bottom"}>
-                <Button key={index} as={Link} color={item.color} href={item.href} variant="flat" size={"sm"}>
+                <Button key={index} as={NextLink} color={item.color} href={item.href} variant="flat" size={"sm"}>
                   {item.icon}
                   {item.content}
                 </Button>
@@ -81,7 +81,7 @@ export const VisitorMenu = () => {
       <NavbarContent className={"flex sm:hidden"}>
         <NavbarItem className={"gap-2 flex flex-row"}>
           {
-            <Button as={Link} color="primary" href={visitorItems[0].href} variant="flat" size={"md"}>
+            <Button as={NextLink} color="primary" href={visitorItems[0].href} variant="flat" size={"md"}>
               {visitorItems[0].icon}
               {visitorItems[0].content}
             </Button>

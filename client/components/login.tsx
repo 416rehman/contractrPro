@@ -74,7 +74,7 @@ export default function LoginComponent(props: any) {
       <Divider />
       <CardFooter>
         <p className={"text-sm "}>
-          Don{"'"}t have an account? <Link href={"signup"} className={"text-sm"}>Register</Link> now!
+          Don{"'"}t have an account? <Link href={"/signup"} className={"text-sm"}>Register</Link> now!
         </p>
       </CardFooter>
     </Card>

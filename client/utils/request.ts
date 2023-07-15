@@ -32,6 +32,12 @@ export async function request(url: string, options: AuthOptions = { credentials:
   }
 
   try {
+    if (!options?.headers?.["Content-Type"]) {
+      options.headers = {
+        ...options.headers,
+        "Content-Type": "application/json"
+      };
+    }
     const result = await fetch(url, options);
     const body = await result.json();
     if (!result.ok) {

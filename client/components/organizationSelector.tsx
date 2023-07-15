@@ -11,23 +11,31 @@ import { getLocalStorageItem } from "@/utils/safeLocalStorage";
 
 type Props = {
   className?: string;
+  hideActions?: boolean;
+  defaultTitle?: string;
+  defaultSubtitle?: string;
 }
 
-const OrgItem = ({ selectedOrganization }) => {
+const OrgItem = ({ logoUrl, description, name }) => {
   return <User
     as="button"
     avatarProps={{
       isBordered: true,
-      src: selectedOrganization?.logoUrl || "https://icons-for-free.com/iconfiles/png/512/create+new+plus+icon-1320183284524393487.png"
+      src: logoUrl || "https://cdn-icons-png.flaticon.com/512/7025/7025285.png"
     }}
     className="transition-transform justify-start hover:bg-default-100 flex flex-row items-center p-1 pr-2 rounded-full max-w-10"
-    description={selectedOrganization?.website || selectedOrganization?.phone || selectedOrganization?.description || "Organizations"}
+    description={description}
     isFocusable={true}
-    name={selectedOrganization?.name || "Join or create an organization"}
+    name={name}
   />;
 };
 
-export function OrganizationSelector({ className }: Props) {
+export function OrganizationSelector({
+                                       className,
+                                       hideActions,
+                                       defaultTitle = "Select an Organization",
+                                       defaultSubtitle
+                                     }: Props) {
   // disclosure for the join organization modal
   const { isOpen: isJoinOpen, onOpen: onJoinOpen, onOpenChange: onJoinOpenChange } = useDisclosure();
   // another disclosure for the create organization modal
@@ -38,10 +46,10 @@ export function OrganizationSelector({ className }: Props) {
   const [selectedOrganization, setSelectedOrganization] = useState(null);
 
   useEffect(() => {
-    loadUserOrganizations();  // On the first render, load the loggedInUser's organizations into the store
-  }, []);
+    if (!userOrgs || userOrgs.length === 0) {
+      loadUserOrganizations();
+    }
 
-  useEffect(() => {
     if (currentOrg?.id) {
       setSelectedOrganization(currentOrg);
     } else {
@@ -82,7 +90,9 @@ export function OrganizationSelector({ className }: Props) {
               aria-label="User Organizations">
       <DropdownTrigger>
         <div>
-          <OrgItem selectedOrganization={selectedOrganization} />
+          <OrgItem name={selectedOrganization?.name || defaultTitle}
+                   description={selectedOrganization?.website || selectedOrganization?.phone || defaultSubtitle}
+                   logoUrl={selectedOrganization?.logoUrl} />
         </div>
       </DropdownTrigger>
       <DropdownMenu aria-label="User Organizations" variant="faded" onAction={onActionHandler}>
@@ -91,20 +101,22 @@ export function OrganizationSelector({ className }: Props) {
             <DropdownItem key={org.id} textValue={org.name} className={clsx("flex flex-row items-center", {
               "bg-default-100 text-primary": currentOrg?.id === org.id
             })}>
-              <OrgItem selectedOrganization={org} />
+              <OrgItem name={org.name} description={org.description} logoUrl={org.logoUrl} />
             </DropdownItem>
           )) || <DropdownItem textValue={"No organizations found"} />}
         </DropdownSection>
-        <DropdownSection title={"Actions"}>
-          <DropdownItem key="action_create" shortcut="⌘C" description="Create a new organization"
-                        startContent={<IconBuildingSkyscraper />}>
-            Create
-          </DropdownItem>
-          <DropdownItem key="action_join" shortcut="⌘J" description="Join an existing organization"
-                        startContent={<IconCirclePlus />}>
-            Join
-          </DropdownItem>
-        </DropdownSection>
+        {!hideActions &&
+          <DropdownSection title={"Actions"}>
+            <DropdownItem key="action_create" shortcut="⌘C" description="Create a new organization"
+                          startContent={<IconBuildingSkyscraper />}>
+              Create
+            </DropdownItem>
+            <DropdownItem key="action_join" shortcut="⌘J" description="Join an existing organization"
+                          startContent={<IconCirclePlus />}>
+              Join
+            </DropdownItem>
+          </DropdownSection>
+        }
       </DropdownMenu>
     </Dropdown>
   </>;

@@ -27,8 +27,8 @@ export const metadata: Metadata = {
 export default function Home() {
 
   return <AuthSwitchServer contentIfLoggedIn={
-    <section className="flex flex-col items-center justify-center gap-4 py-8">
-      <div className="inline-block max-w-lg text-center justify-center">
+    <section className="flex flex-col justify-center gap-4 flex-grow items-start w-full">
+      <div className="flex flex-col flex-grow text-center justify-center w-full">
         <h1 className={title()}>Make&nbsp;</h1>
         <h1 className={title({ color: "violet" })}>beautiful&nbsp;</h1>
         <br />
