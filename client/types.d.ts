@@ -61,3 +61,12 @@ type Client = {
   UpdatedByUserId?: string,
   OrganizationId?: string,
 } & any;
+
+type Employee = {
+  id?: string,
+  name: string,
+  email: string,
+  phone: string,
+  permissions: string,
+  userId: string,
+} & any;
