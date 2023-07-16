@@ -101,7 +101,7 @@ export default async function RootLayout({ children }: { children: ReactNode; })
           <main id={"main"}
                 className="flex flex-grow border-foreground-100 sm:border-t-2 sm:border-l-2 rounded-tl-md bg-foreground-50 w-full h-auto">
             {children}
-            <DropdownSelect name={"Test"} items={testItems} className={"absolute top-0 left-0"} />
+            <DropdownSelect name={"Test"} items={testItems} className={"absolute top-0 right-0"} />
             <ToastBox className={"fixed bottom-0 right-0 z-50 p-4"} />
           </main>
         </div>
