@@ -11,9 +11,9 @@ export const useEmployeesStore = create((set: any) => ({
     updateEmployee: (employee: Employee) => set((state: any) => ({ employees: state.employees.map((e: Employee) => e.id === employee.id ? employee : e) }))
 }));
 
-export const loadEmployees = async (OrganizationId: string) => {
+export const loadEmployees = async (currentOrganizationId: string) => {
     try {
-      useEmployeesStore.getState().setEmployees(await requestOrganizationEmployees(OrganizationId));
+      useEmployeesStore.getState().setEmployees(await requestOrganizationEmployees(currentOrganizationId));
     } catch (err) {
       console.log(err);
     }
