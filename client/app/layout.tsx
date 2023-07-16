@@ -10,6 +10,8 @@ import { Sidebar } from "@/components/sidebar";
 import { cookies } from "next/headers";
 import jwtDecode from "jwt-decode";
 import { getNewAccessToken } from "@/services/auth";
+import { Item } from "@/types";
+import { DropdownSelect } from "@/components/DropdownSelect";
 
 export const metadata = {
   title: "ContractrPro"
@@ -56,6 +58,25 @@ export default async function RootLayout({ children }: { children: ReactNode; })
     console.log("Error getting user", err);
   }
 
+  const testItems: Array<Item> = [
+    {
+      itemKey: "1",
+      itemLabel: "test"
+    },
+    {
+      itemKey: "2",
+      itemLabel: "test2"
+    },
+    {
+      itemKey: "3",
+      itemLabel: "test3"
+    },
+    {
+      itemKey: "4",
+      itemLabel: "test4"
+    },
+  ];
+
   return (
     <html lang="en" suppressHydrationWarning>
     <link
@@ -80,6 +101,7 @@ export default async function RootLayout({ children }: { children: ReactNode; })
           <main id={"main"}
                 className="flex flex-grow border-foreground-100 sm:border-t-2 sm:border-l-2 rounded-tl-md bg-foreground-50 w-full h-auto">
             {children}
+            <DropdownSelect name={"Test"} items={testItems} className={"absolute top-0 left-0"} />
             <ToastBox className={"fixed bottom-0 right-0 z-50 p-4"} />
           </main>
         </div>
