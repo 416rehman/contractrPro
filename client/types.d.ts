@@ -74,3 +74,8 @@ type Employee = {
   UpdatedByUserId?: string,
   OrganizationId?: string,
 } & any;
+
+type Item = {
+  itemKey: string,
+  itemLabel: label,
+}
