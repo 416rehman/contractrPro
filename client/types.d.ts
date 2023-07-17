@@ -76,8 +76,8 @@ type Employee = {
 } & any;
 
 type Item = {
-  itemKey: string,
-  itemLabel: string,
+  key: string,
+  name: string,
 }
 
 type Invoice = {
