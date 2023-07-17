@@ -1,9 +1,10 @@
 plugins:
   - jekyll-relative-links
+  - jekyll-remote-theme
 relative_links:
   enabled: true
   collections: true
-theme: minimal
+remote_theme: pages-themes/minimal@v0.2.0
 include:
   - CONTRIBUTING.md
   - README.md
@@ -14,3 +15,4 @@ include:
   - CONTRIBUTING.md
   - ISSUE_TEMPLATE.md
   - PULL_REQUEST_TEMPLATE.md
+show_downloads: false
