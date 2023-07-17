@@ -3,19 +3,26 @@
 import { IconTriangleInvertedFilled } from '@tabler/icons-react';
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button } from "@nextui-org/react";
 import { Item } from '@/types';
+import { useMemo, useState } from 'react';
 import { useToastsStore } from '@/services/toast';
 
 type Props = {
-    name: string,
     items: Array<Item>,
     className?: string,
 }
 
-export function DropdownSelect({name, items, className}: Props) {
+export function DropdownSelect({items, className}: Props) {
 
     const toastsStore = useToastsStore(state => state);
 
-    const selectAction = () => {
+    const [selectedItems, setSelectedItems] = useState(new Set([`${items[0].name}`]));
+
+    const selectedValue = useMemo(
+      () => Array.from(selectedItems).join(", ").replaceAll("_", " "),
+      [selectedItems]
+    );
+    
+    const selectedAction = () => {
         console.log("TODO: Select Action");
         toastsStore.addToast({
           id: "select-action",
@@ -24,25 +31,32 @@ export function DropdownSelect({name, items, className}: Props) {
           type: "error"
         });
     }
-    
+
     return (
         <div className={className}>
             <Dropdown>
                 <DropdownTrigger>
-                    <Button size={"lg"} endContent={<IconTriangleInvertedFilled width={12} height={12}/>}>
-                        {name}
+                    <Button size={"lg"} endContent={<IconTriangleInvertedFilled width={12} height={12} />}>
+                        {selectedValue}
                     </Button>
                 </DropdownTrigger>
-                <DropdownMenu aria-label="Dynamic Actions" items={items} onAction={() => selectAction()}>
+                <DropdownMenu 
+                    aria-label="Single Selection Actions"
+                    disallowEmptySelection
+                    selectionMode="single"
+                    selectedKeys={selectedItems}
+                    onSelectionChange={setSelectedItems}
+                    items={items}
+                    onAction={() => selectedAction()}
+                >
                     {items.map((item) => (
-                        <DropdownItem key={item.itemKey}>
-                            {item.itemLabel}
+                        <DropdownItem key={item.key} >
+                            {item.name}
                         </DropdownItem>
                     ))}
                 </DropdownMenu>
             </Dropdown>
         </div>
-        
     );
 }
 
