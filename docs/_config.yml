@@ -4,7 +4,7 @@ plugins:
 relative_links:
   enabled: true
   collections: true
-remote_theme: pages-themes/minimal@v0.2.0
+remote_theme: pages-themes/leap-day@v0.2.0
 include:
   - CONTRIBUTING.md
   - README.md
