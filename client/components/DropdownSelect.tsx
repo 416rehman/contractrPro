@@ -11,6 +11,11 @@ type Props = {
     className?: string,
 }
 
+/**
+ * The DropdownSelect component renders a dropdown menu button where the user can select an item from it (from the items array parameter), 
+ * activating its action and showing its key value on the button. Its styling is also added to the rendered div by passing the className parameter
+ * to its className. 
+ */
 export function DropdownSelect({items, className}: Props) {
 
     const toastsStore = useToastsStore(state => state);
