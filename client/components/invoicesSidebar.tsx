@@ -15,6 +15,10 @@ type Props = {
   className?: string;
 }
 
+/**
+ * The InvoicesSidebar component renders a sidebar of the list of invoices for the user to click on one if they want to view its data in its page.
+ * Underneath the list is a button that will allow them to create a new invoice, taking them to the create page that will allow them to do that.
+ */
 export default function InvoicesSidebar({ className }: Props) {
   const [currentOrg] = useUserStore(state => [state.currentOrganization]);
   const [invoices] = useInvoicesStore(state => [state.invoices]);
