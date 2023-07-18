@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "docs": "node ./extract.js"
+    "docs": "node ../.github/scripts/commentsToMarkdown.js"
   },
   "dependencies": {
     "@nextui-org/button": "^0.0.0-dev-v2-20230622022515",

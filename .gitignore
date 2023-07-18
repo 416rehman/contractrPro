@@ -6,3 +6,5 @@ node_modules
 .vscode
 jest.env
 dump/
+api/db/dump/
+docs/index.md

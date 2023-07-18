@@ -1,8 +1,8 @@
 const fs = require("fs");
 const path = require("path");
 
-const componentsDir = "./components";
-const outputFilePath = path.join("../docs/index.md");
+const componentsDir = "../client/components";
+const outputFilePath = "../docs/index.md";
 
 // Read the TypeScript files in the components directory
 fs.readdir(componentsDir, (data, files) => {
@@ -106,7 +106,9 @@ function saveCommentsToMarkdown(comments) {
   markdownContent += `# ${title}\n\n${description}\n\n`;
 
   for (const [filename, comment] of Object.entries(comments)) {
-    markdownContent += `### [${filename}](${path.join("client", "components", filename)})\n\n`;
+    const link = "https://github.com/416rehman/contractrPro/tree/dev/client/components/" + filename;
+    
+    markdownContent += `### [${filename}](${link})\n\n`;
     markdownContent += `${comment}\n\n`;
   }
 

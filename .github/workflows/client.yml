@@ -18,7 +18,7 @@ jobs:
     environment: "Dev Env"
     defaults:
       run:
-        working-directory: ./client
+        working-directory: ./github/scripts
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
