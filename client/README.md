@@ -1,40 +1,14 @@
-# Next.js & NextUI Template
+# ContractrPro - Client
 
-This is a template for creating applications using Next.js 13 (app directory) and NextUI (v2).
+![CI](https://github.com/416rehman/contractrPro/actions/workflows/client.yml/badge.svg)
 
-## Technologies Used
+This is the client side of the ContractrPro application. It is built using NextJS.
 
-- [Next.js 13](https://nextjs.org/docs/getting-started)
-- [NextUI v2](https://nextui-docs-v2.vercel.app/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [Tailwind Variants](https://tailwind-variants.org)
-- [TypeScript](https://www.typescriptlang.org/)
-- [Framer Motion](https://www.framer.com/motion/)
-- [next-themes](https://github.com/pacocoursey/next-themes)
+You can view the components usability requirements **[here](https://416rehman.github.io/contractrPro/)**.
 
-## How to Use
+## Getting Started
 
+To get started, clone this repository and run `npm install` to install all dependencies. Then run `npm run dev` to start
+the development server.
 
-### Use the template with create-next-app
-
-To create a new project based on this template using `create-next-app`, run the following command:
-
-```bash
-npx create-next-app -e https://github.com/nextui-org/next-app-template
-```
-
-### Install dependencies
-
-```bash
-npm install
-```
-
-### Run the development server
-
-```bash
-npm run dev
-```
-
-## License
-
-Licensed under the [MIT license](https://github.com/nextui-org/next-app-template/blob/main/LICENSE).
+Note: Make sure you have the ContractrPro API and Database running before starting the client.

@@ -1,6 +1,12 @@
 name: ContractrPro Client CI
 
 on:
+  pull_request:
+    branches: [ main, dev ]
+    paths:
+      - "docs/**"
+      - "client/**"
+      - ".github/workflows/**"
   # Runs the inside pushes to the main and dev branches
   push:
     branches: [ main, dev ]
