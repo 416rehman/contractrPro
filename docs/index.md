@@ -8,6 +8,13 @@ This page contains a list of all the client components in the project and their 
 This also serves as a reference to the functionality of the components, and can be used as a usability test plan.
 
 
+### [DropdownSelect.tsx](https://github.com/416rehman/contractrPro/tree/dev/client/components/DropdownSelect.tsx)
+
+The DropdownSelect component renders a dropdown menu button where the user can select an item from it (from the items array parameter),<br/>
+activating its action and showing its key value on the button. Its styling is also added to the rendered div by passing the className parameter<br/>
+to its className.<br/>
+
+
 ### [LoadingSpinner.tsx](https://github.com/416rehman/contractrPro/tree/dev/client/components/LoadingSpinner.tsx)
 
 The default loading spinner used throughout the application and is used as the main loading indicator for pages.<br/>
@@ -53,6 +60,20 @@ TODO: Implement filtering<br/>
 This is the modal for creating an organization. This is a controlled component and can be opened and closed via the isOpen prop.<br/>
 Right now only the form is implemented. The actual API call to create an organization is not implemented yet.<br/>
 TODO: Create the Organization service to handle CRUD operations for organizations.<br/>
+
+
+### [employeeForm.tsx](https://github.com/416rehman/contractrPro/tree/dev/client/components/employeeForm.tsx)
+
+The EmployeeForm component renders a form for the user to input the name, phone, email, and permissions when creating an employee for a selected organization<br/>
+(otherwise it will prompt them to join or create one). When they click on the save button, the created employee will be added to the employees list in their account<br/>
+for them to look at in its own page, showing two buttons beside it: Edit (lets them update the employee's data) and Delete in a dropdown button (deletes the employee's data with a<br/>
+confirmation).<br/>
+
+
+### [employeesSidebar.tsx](https://github.com/416rehman/contractrPro/tree/dev/client/components/employeesSidebar.tsx)
+
+The EmployeesSidebar component renders a sidebar of the list of employees for the user to click on one if they want to view its data in its page.<br/>
+Underneath the list is a button that will allow them to create a new employee, taking them to the create page that will allow them to do that.<br/>
 
 
 ### [homeCTA.tsx](https://github.com/416rehman/contractrPro/tree/dev/client/components/homeCTA.tsx)
