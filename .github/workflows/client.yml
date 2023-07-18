@@ -6,6 +6,7 @@ on:
     branches: [ main, dev ]
     paths:
       - "docs/**"
+      - "client/**"
       - ".github/workflows/**"
 jobs:
   format-api:

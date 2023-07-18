@@ -26,11 +26,7 @@ type Props = {
   onOpenChange: () => void;
 }
 
-/**
- * This is the modal for creating an organization. This is a controlled component and can be opened and closed via the isOpen prop.
- * Right now only the form is implemented. The actual API call to create an organization is not implemented yet.
- * TODO: Create the Organization service to handle CRUD operations for organizations.
- */
+
 export default function CreateOrganizationModal({ isOpen, onOpenChange }: Props) {
   const user = useUserStore(state => state.user);
   const toastsStore = useToastsStore(state => state);
