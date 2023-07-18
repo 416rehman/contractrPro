@@ -41,6 +41,7 @@ fs.readdir(componentsDir, (data, files) => {
     if (!comments[file]) {
       //   Exit the script if a comment is not found
       console.error("No usability comment found for", file);
+      console.log("Consider adding a comment above the `export default` line in the file.");
       return process.exit(1);
     }
   });
