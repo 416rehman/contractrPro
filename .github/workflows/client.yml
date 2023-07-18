@@ -9,7 +9,7 @@ on:
       - "client/**"
       - ".github/workflows/**"
 jobs:
-  format-api:
+  generate-markdown:
     # Only runs if the triggering actor is not the GitHub Actions bot
     if: github.triggering_actor != 'github-actions[bot]'
     permissions:
