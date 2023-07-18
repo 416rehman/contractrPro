@@ -18,12 +18,18 @@ import { IconChevronDown, IconDeviceFloppy, IconEdit, IconTrash } from "@tabler/
 import clsx from "clsx";
 import { useUserStore } from "@/services/user";
 import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/dropdown";
-import { OrganizationSelector } from "@/components/organizationSelector";
+import OrganizationSelector from "@/components/organizationSelector";
 
 type Props = {
   id: string;
   className?: string;
 }
+
+/**
+ * This is the main form for editing and or creating a client. The form receives the client id as a prop.
+ * If the client id is undefined, the form will be in create mode. Otherwise, it will be in edit mode.
+ * It handles communication with the API and updates the local state via the Client service.
+ */
 export default function ClientForm({ id, className }: Props) {
   const [client] = useClientsStore(state => [state.clients.find((client: any) => client.id === id)]);
   const [isEditing, setIsEditing] = useState(false);
@@ -46,7 +52,7 @@ export default function ClientForm({ id, className }: Props) {
   const onSaveHandler = async () => {
     // Save the edited client here
     setIsSaving(true);
-    
+
     await updateClient(editedClient, currentOrg?.id);
 
     setIsEditing(!editedClient?.id);

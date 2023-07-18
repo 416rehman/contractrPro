@@ -29,6 +29,23 @@ export interface Toast {
   startContent?: ReactNode;
 }
 
+/**
+ * A toast component that shows a message for a few seconds. It can be used to show a success, error, warning or info message.
+ * It is used in tandem with the **ToastBox** component which occupies the bottom right corner of the screen and shows all the toasts.
+ * The Toasts service can be used to add toasts from anywhere in the app.
+ * - The **title** is shown in bold at the top of the toast.
+ * - The **message** is shown below the title.
+ * - The **type** determines the color of the toast. It can be "info", "success", "error" or "warning".
+ * - The **durationInSecs** determines how long the toast is shown. It is 5 seconds by default.
+ * - The **body** can be any ReactNode. It is shown below the message.
+ * - The **showDuration** determines whether the duration progress bar is shown. It is true by default.
+ * - The **hideCloseButton** determines whether the close button is shown. It is false by default.
+ * - The **onClose** is called when the toast is closed.
+ * - The **isPressable** determines whether the toast is pressable. It is false by default.
+ * - The **onPress** is called when the toast is pressed.
+ * - The **endContent** is shown at the end (right side) of the toast.
+ * - The **startContent** is shown at the start (left side) of the toast.
+ */
 export default function Toast({
                                 title,
                                 type,

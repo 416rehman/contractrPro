@@ -5,12 +5,19 @@ import { Divider } from "@nextui-org/divider";
 import { Button, ButtonGroup } from "@nextui-org/button";
 import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/dropdown";
 import { IconChevronDown } from "@tabler/icons-react";
+import { Job } from "@/types";
 
 interface JobProps {
   jobs: Job[];
   onSelectJob: (job: Job) => void;
 }
 
+/**
+ * This is the main form for editing and or creating a job. The form receives the job id as a prop.
+ * If the job id is undefined, the form will be in create mode. Otherwise, it will be in edit mode.
+ * It handles communication with the API and updates the local state via the Job service.
+ * TODO: Implement this component and the Job service.
+ */
 export default function JobsNavbar({ jobs, onSelectJob }: JobProps) {
   return (
     <div className="jobs-navbar flex flex-col items-center justify-between gap-4 px-2">

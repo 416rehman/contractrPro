@@ -15,6 +15,12 @@ type Props = {
   className?: string;
 }
 
+/**
+ * This is the sidebar for the clients page. It displays a list of clients and should allow the user to filter them.
+ * It handles communication with the API and updates the local state via the Client service.
+ * This is used in tandem with the ClientForm component to edit/create clients.
+ * TODO: Implement filtering
+ */
 export default function ClientsSidebar({ className }: Props) {
   const [currentOrg] = useUserStore(state => [state.currentOrganization]);
   const [clients] = useClientsStore(state => [state.clients]);

@@ -12,7 +12,12 @@ import { useToastsStore } from "@/services/toast";
 import { Link } from "@nextui-org/link";
 import { Card, CardBody } from "@nextui-org/card";
 
-export default function LoginComponent(props: any) {
+/**
+ * This is the login form component. It is used to login to the application.
+ * It shows a form with a username and password field. Though the user can login with either their username or email.
+ * It also has links to the signup page and the forgot password page.
+ */
+export default function LoginForm(props: any) {
   const addToast = useToastsStore((state) => state.addToast);
   const [phone, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -66,6 +71,7 @@ export default function LoginComponent(props: any) {
                    }
                    type={isVisible ? "text" : "password"}
             />
+            <Link href={"/forgot-password"} className={"text-sm"}>Forgot password?</Link>
           </div>
           <Button type="submit" isLoading={isLoading} className={"font-medium"}
                   startContent={<IconLogin className={"text-foreground-500"} />}>Login</Button>

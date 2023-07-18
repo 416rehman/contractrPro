@@ -1,4 +1,4 @@
-import SignupComponent from "@/components/signup";
+import SignupForm from "@/components/signupForm";
 import AuthRedirectServer from "@/components/server/authRedirectServer";
 
 export const metadata = {
@@ -12,7 +12,7 @@ export default function LoginPage() {
     <>
       <AuthRedirectServer redirectIf={"logged-in"} to={"/"}>
         <div className={"flex flex-col items-center justify-center w-full h-full"}>
-          <SignupComponent className={"flex flex-col items-center justify-center w-full max-w-md"} />
+          <SignupForm className={"flex flex-col items-center justify-center w-full max-w-md"} />
         </div>
       </AuthRedirectServer>
     </>

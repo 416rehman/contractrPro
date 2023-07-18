@@ -14,17 +14,25 @@ import NextLink from "next/link";
 import { Input } from "@nextui-org/input";
 import { Button } from "@nextui-org/button";
 import { IconSearch } from "@tabler/icons-react";
-import { UserMenu } from "@/components/userMenu";
+import UserMenu from "@/components/userMenu";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import AuthFallback from "@/components/authFallback";
 import { VisitorMenu } from "@/components/visitorMenu";
 import { useUserStore } from "@/services/user/";
-import { OrganizationSelector } from "@/components/organizationSelector";
+import OrganizationSelector from "@/components/organizationSelector";
 import { Divider } from "@nextui-org/divider";
 import { sidebarItems } from "@/components/sidebar";
 
-export const Topbar = () => {
+/**
+ * The main navigation component of the app. It is shown at the top of the screen.
+ * - Always visible.
+ * - If no user is logged in, it shows the visitor menu.
+ * - If a user is logged in, it shows the user menu, a search bar, and the organization selector.
+ * - In mobile, it shows a hamburger menu that shows its content in a vertical navbar.
+ * - In mobile, it also shows the sidebar items in a vertical navbar.
+ */
+export default function Topbar() {
   const user = useUserStore(state => state.user);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);

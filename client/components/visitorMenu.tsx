@@ -8,11 +8,19 @@ import { Tooltip } from "@nextui-org/tooltip";
 import { Button } from "@nextui-org/button";
 import NextLink from "next/link";
 import { useRouter } from "next/navigation";
-import { ThemeSwitch } from "@/components/theme-switch";
+import ThemeSwitch from "@/components/theme-switch";
 import React from "react";
 
 type display = "dropdown" | "navbar" | "both";
 
+/**
+ * The menu for visitors (not logged-in users). Contains the login and signup buttons.
+ * - is a dropdown on small screens
+ * - is a navbar on large screens
+ * - contains a theme switch
+ * - contains a link to the login page
+ * - contains a link to the signup page
+ */
 export const VisitorMenu = () => {
   const router = useRouter();
   const { theme, setTheme } = useTheme();

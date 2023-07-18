@@ -10,6 +10,13 @@ type Props = {
   onOpenChange: () => void;
   onOpen: () => void;
 }
+
+/**
+ * This is the modal for joining an organization. This is a controlled component and can be opened and closed via the isOpen prop.
+ * Right now only the form is implemented. The actual API call to join an organization is not implemented yet.
+ * The user should be able to join an organization via a join code or a link which will be provided by the organization.
+ * TODO: Create the Organization service to handle CRUD operations for organizations.
+ */
 export default function JoinOrganizationModal({ isOpen, onOpenChange }: Props) {
   const [joinCode, setJoinCode] = useState("");
   const toastsStore = useToastsStore(state => state);

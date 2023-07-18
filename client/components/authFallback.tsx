@@ -9,8 +9,11 @@ type AuthSwitchProps = {
   children?: ReactNode | ReactNode[] | null;
 }
 
-// Renders content, but if the fallbackIf condition is met, renders the fallback instead
-
+/**
+ * Renders content, but if the fallbackIf condition is met, renders the fallback instead.
+ * This is used for authentication/authorization purposes such as redirecting to the login page if the user is not logged in.
+ * The server-side version of this component is AuthSwitchServer.
+ */
 export default function AuthFallback({ fallbackIf, to, children }: AuthSwitchProps) {
   const user = useUserStore(state => state.user);
 

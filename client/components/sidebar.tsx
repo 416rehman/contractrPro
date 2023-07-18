@@ -62,7 +62,15 @@ export const sidebarItems = [
   }
 ];
 
-export const Sidebar = (props: HTMLAttributes<HTMLDivElement>) => {
+/**
+ * This is the main sidebar for the application. It displays a list of links to the main pages of the application.
+ * - It requires the user to be logged in.
+ * - The sidebar is collapsible
+ * - It displays a tooltip on hover for each item
+ * - It highlights the current page
+ * - It becomes a top bar on mobile (merged with TopBar)
+ */
+export default function Sidebar(props: HTMLAttributes<HTMLDivElement>) {
   const [isExtended, setIsExtended] = useState(false);
   const pathname = usePathname();
 

@@ -11,8 +11,15 @@ import { Link } from "@nextui-org/link";
 import { useToastsStore } from "@/services/toast";
 import { Card, CardBody } from "@nextui-org/card";
 
-
-export default function SignupComponent(props: any) {
+/**
+ * The default signup form component. It is used to create a new account.
+ * - Shows a form with a username, email and password field.
+ * - It also has a link to the login page.
+ * - On submit, the button is disabled until the request is completed.
+ * - On success, the user is redirected to the login page.
+ * - On error, the error is shown in a toast.
+ */
+export default function SignupForm(props: any) {
   const [phone, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");

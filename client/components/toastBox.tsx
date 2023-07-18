@@ -2,18 +2,17 @@
 
 import Toast from "@/components/toast";
 import { useToastsStore } from "@/services/toast";
-import { Button } from "@nextui-org/button";
 
+/**
+ * The toast box component. It is used to contain all the toasts.
+ * - is a container for all the toasts.
+ * - displayed on top of all other components.
+ * - occupies the bottom right corner of the screen.
+ */
 export default function ToastBox(props: any) {
   const toastStore = useToastsStore(state => state);
 
   return <div id={"toasts"} {...props}>
-    <Button onPress={() => {
-      toastStore.addToast({ id: "demo-toast", title: "DEMO", message: "This is a demo toast" });
-    }}>
-      Add Demo Toast
-    </Button>
-
     {toastStore.toasts.map(toast =>
       <Toast key={toast.id} {...toast} onClose={() => {
         toastStore.removeToast(toast.id);

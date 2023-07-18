@@ -1,6 +1,5 @@
 "use client";
 
-import { FC } from "react";
 import { VisuallyHidden } from "@react-aria/visually-hidden";
 import { SwitchProps, useSwitch } from "@nextui-org/switch";
 import { useTheme } from "next-themes";
@@ -15,11 +14,14 @@ export interface ThemeSwitchProps {
   size?: "sm" | "md" | "lg";
 }
 
-export const ThemeSwitch: FC<ThemeSwitchProps> = ({
-                                                    size = "md",
-                                                    className,
-                                                    classNames
-                                                  }) => {
+/**
+ * A switch to toggle between light and dark mode. It uses the next-themes package.
+ * - is icon only
+ * - shows a tooltip on hover
+ * - changes the theme on click
+ * - displays different icons depending on the current theme
+ */
+export default function ThemeSwitch({ size = "md", className, classNames }: ThemeSwitchProps) {
   const { theme, setTheme } = useTheme();
   const isSSR = useIsSSR();
 

@@ -33,7 +33,15 @@ export const UserMenuGeneric = (props: tUser & { children: CollectionChildren<ob
   );
 };
 
-export const UserMenu = (props: tUser) => {
+/**
+ * This is the user menu component. It is used to show the user menu in the top right corner of the screen.
+ * - shows the user's unique username and email.
+ * - also shows the user's profile picture.
+ * - has a dropdown menu with options to logout, go to settings, etc.
+ * - In mobile view, it only shows the user's avatar.
+ * - In mobile view, it shows the user's username and email in the dropdown menu.
+ */
+export default function UserMenu(props: tUser) {
   const { theme, setTheme } = useTheme();
 
   const onAction = async (action: string) => {

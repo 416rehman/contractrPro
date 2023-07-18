@@ -30,12 +30,19 @@ const OrgItem = ({ logoUrl, description, name }) => {
   />;
 };
 
-export function OrganizationSelector({
-                                       className,
-                                       hideActions,
-                                       defaultTitle = "Select an Organization",
-                                       defaultSubtitle
-                                     }: Props) {
+/**
+ * The organization selector is the main component for selecting an organization. It is used in the header and in any pages that require an organization to be selected.
+ * ContractrPro is a multi-tenant application, so the organization is a key part of the application and most of the operations are scoped to an organization.
+ * This component is a dropdown that lists the organizations the user is a member of. It also has actions for creating and joining organizations.
+ * Upon selecting an organization, the `currentOrganization` state is updated in the user store. The `create organization` and `join organization` actions open their respective modals.
+ * For more, see the **`JoinOrganizationModal`** and **`CreateOrganizationModal`** components.
+ */
+export default function OrganizationSelector({
+                                               className,
+                                               hideActions,
+                                               defaultTitle = "Select an Organization",
+                                               defaultSubtitle
+                                             }: Props) {
   // disclosure for the join organization modal
   const { isOpen: isJoinOpen, onOpen: onJoinOpen, onOpenChange: onJoinOpenChange } = useDisclosure();
   // another disclosure for the create organization modal
@@ -80,7 +87,7 @@ export function OrganizationSelector({
 
   return <>
     <JoinOrganizationModal isOpen={isJoinOpen} onOpenChange={onJoinOpenChange} onOpen={onJoinOpen} />
-    <CreateOrganizationModal isOpen={isCreateOpen} onOpenChange={onCreateOpenChange} onOpen={onCreateOpen} />
+    <CreateOrganizationModal isOpen={isCreateOpen} onOpenChange={onCreateOpenChange} />
 
     <Dropdown placement="bottom-start" backdrop={"opaque"} isOpen={dropdownOpenTime > 0}
               onClose={() => Date.now() - dropdownOpenTime < 50 ? null : setDropdownOpenTime(0)}

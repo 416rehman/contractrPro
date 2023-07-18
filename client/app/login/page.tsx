@@ -1,4 +1,4 @@
-import LoginComponent from "@/components/login";
+import LoginForm from "@/components/loginForm";
 import AuthRedirectServer from "@/components/server/authRedirectServer";
 // import { useEffect } from "react";
 
@@ -23,7 +23,7 @@ export default function LoginPage() {
     <>
       <AuthRedirectServer redirectIf={"logged-in"} to={"/"}>
         <div className={"flex flex-col items-center justify-center w-full h-full"}>
-          <LoginComponent className={"flex flex-col items-center justify-center"} />
+          <LoginForm className={"flex flex-col items-center justify-center"} />
         </div>
       </AuthRedirectServer>
     </>
