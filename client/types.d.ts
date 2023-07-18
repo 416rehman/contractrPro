@@ -61,3 +61,72 @@ type Client = {
   UpdatedByUserId?: string,
   OrganizationId?: string,
 } & any;
+
+type Employee = {
+  id?: string,
+  name: string,
+  email: string,
+  phone: string,
+  permissions: string,
+  UserId?: string,
+  createdAt?: string, 
+  updatedAt?: string,
+  UpdatedByUserId?: string,
+  OrganizationId?: string,
+} & any;
+
+type Item = {
+  key: string,
+  name: string,
+}
+
+type Invoice = {
+  id?: string,
+  invoiceNumber: string,
+  date: string,
+  dueDate: string,
+  poNumber: string,
+  note: string,
+  taxRate: string,
+  BillToClientId?: string,
+  ContractId?: string,
+  JobId?: string,
+  InvoiceEntries: Array<InvoiceEntry>,
+  createdAt?: string, 
+  updatedAt?: string,
+  UpdatedByUserId?: string,
+  OrganizationId?: string,
+} & any;
+
+type Expense = {
+  id?: string,
+  description: string,
+  date: string,
+  VendorId?: string,
+  ContractId?: string,
+  JobId?: string,
+  ExpenseEntries: Array<ExpenseEntry>,
+  createdAt?: string, 
+  updatedAt?: string,
+  UpdatedByUserId?: string,
+  OrganizationId?: string,
+} & any;
+
+type InvoiceEntry = {
+  id?: string,
+  name: string,
+  description: string,
+  quantity: string,
+  unitCost: string,
+  InvoiceId?: string,
+} & any;
+
+
+type ExpenseEntry = {
+  id?: string,
+  name: string,
+  description: string,
+  quantity: string,
+  unitCost: string,
+  ExpenseId?: string,
+} & any;

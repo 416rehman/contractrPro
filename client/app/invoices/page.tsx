@@ -1,9 +1,9 @@
 import { title } from "@/components/primitives";
 
-export default function DocsPage() {
+export default function InvoicesPage() {
   return (
-    <div>
-      <h1 className={title()}>Invoices</h1>
+    <div className="flex flex-col flex-grow w-full items-center justify-center">
+      <p className={title()}>Invoices</p>
     </div>
   );
 }
