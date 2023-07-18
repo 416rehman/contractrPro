@@ -17,8 +17,8 @@ type Props = {
 
 /**
  * The EmployeeForm component renders a form for the user to input the name, phone, email, and permissions when creating an employee for a selected organization 
- * (otherwise it will prompt them to join or create one). When they click on the save button, the created employee will be added to the employees list for them 
- * to look at it, showing two buttons beside it: Edit (lets them update the employee's data) and Delete in a dropdown button (deletes the employee's data with a 
+ * (otherwise it will prompt them to join or create one). When they click on the save button, the created employee will be added to the employees list in their account
+ * for them to look at in its own page, showing two buttons beside it: Edit (lets them update the employee's data) and Delete in a dropdown button (deletes the employee's data with a 
  * confirmation).
  */
 export default function EmployeeForm({ id, className }: Props) {
