@@ -19,7 +19,7 @@ export const loadInvoices = async (currentOrganizationId: string) => {
     }
 };
   
-export const updateInvoices = async (invoice: Invoice, currentOrganizationId: string) => {
+export const updateInvoice = async (invoice: Invoice, currentOrganizationId: string) => {
     try {
       if (currentOrganizationId) {
         if (invoice?.id) {
