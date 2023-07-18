@@ -100,14 +100,15 @@ function extractComment(data) {
 // Save the comments to a Markdown file
 function saveCommentsToMarkdown(comments) {
   const title = "Components";
-  const description = "This page contains a list of all the components in the project and their purpose, used to help with development and debugging.";
+  const description = "This page contains a list of all the client components in the project and their purpose, used to help with development and debugging." + "\n"
+    + "This also serves as a reference to the functionality of the components, and can be used as a usability test plan." + "\n";
 
   let markdownContent = "---\nlayout: default\n---\n\n";
   markdownContent += `# ${title}\n\n${description}\n\n`;
 
   for (const [filename, comment] of Object.entries(comments)) {
     const link = "https://github.com/416rehman/contractrPro/tree/dev/client/components/" + filename;
-    
+
     markdownContent += `### [${filename}](${link})\n\n`;
     markdownContent += `${comment}\n\n`;
   }

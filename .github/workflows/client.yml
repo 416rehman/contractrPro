@@ -1,4 +1,4 @@
-name: ContractrPro Docs CI
+name: ContractrPro Client CI
 
 on:
   # Runs the inside pushes to the main and dev branches
@@ -18,7 +18,7 @@ jobs:
     environment: "Dev Env"
     defaults:
       run:
-        working-directory: ./github/scripts
+        working-directory: .github/scripts
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
