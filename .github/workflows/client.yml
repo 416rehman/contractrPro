@@ -29,7 +29,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: "18.16.0"
-          cache: "npm"
       - name: Generate Markdown docs for components
         run: node commentsToMarkdown.js
       - name: Commit changes
