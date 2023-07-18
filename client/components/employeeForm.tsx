@@ -15,12 +15,17 @@ type Props = {
     className?: string,
 }
 
+/**
+ * The EmployeeForm component renders a form for the user to input the name, phone, email, and permissions when creating an employee for a selected organization 
+ * (otherwise it will prompt them to join or create one). When they click on the save button, the created employee will be added to the employees list for them 
+ * to look at it, showing two buttons beside it: Edit (lets them update the employee's data) and Delete in a dropdown button (deletes the employee's data with a 
+ * confirmation).
+ */
 export default function EmployeeForm({ id, className }: Props) {
     const [employee] = useEmployeesStore(state => [state.employees.find((employee: any) => employee.id === id)]);
     const [isEditing, setIsEditing] = useState(false);
     const [editedEmployee, setEditedEmployee] = useState<any>(); // Save the edited employee here
     const currentOrg = useUserStore(state => state.currentOrganization);
-    const currentUser = useUserStore(state => state.user);
     const [isSaving, setIsSaving] = useState(false);
 
     // For delete modal dialog
@@ -139,14 +144,8 @@ export default function EmployeeForm({ id, className }: Props) {
                          type={"email"} name={"email"} onChange={onChangeHandler}
                          variant={isEditing ? "flat" : "underlined"} labelPlacement={"outside"} />
                   <Input label={"Permissions"} placeholder={"Permissions"} value={editedEmployee?.permissions}
-                            isReadOnly={!isEditing} type={"text"} name={"permissions"} onChange={onChangeHandler}
+                            isReadOnly={!isEditing} type={"number"} name={"permissions"} onChange={onChangeHandler}
                             variant={isEditing ? "flat" : "underlined"} labelPlacement={"outside"} />
-                  {!isEditing && employee?.id && (
-                    <Input label={"User ID"} placeholder={"User ID"} value={currentUser?.id} 
-                            isReadOnly={!isEditing} type={"text"} name={"user ID"} onChange={onChangeHandler} 
-                            variant={isEditing ? "flat" : "underlined"} labelPlacement={"outside"} />
-                  )}
-                  
                 </form>
                 <div className={"flex flex-col gap-1"}>
                   <span className={"text-xs text-default-500"}>Last updated: {employee?.updatedAt}</span>
