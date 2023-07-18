@@ -1,0 +1,40 @@
+name: ContractrPro Docs CI
+
+on:
+  # Runs the inside pushes to the main and dev branches
+  push:
+    branches: [ main, dev ]
+    paths:
+      - "docs/**"
+      - ".github/workflows/**"
+jobs:
+  format-api:
+    # Only runs if the triggering actor is not the GitHub Actions bot
+    if: github.triggering_actor != 'github-actions[bot]'
+    permissions:
+      contents: write
+    # Uses a Ubuntu Docker VM to run the application on
+    runs-on: ubuntu-latest
+    environment: "Dev Env"
+    defaults:
+      run:
+        working-directory: ./client
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
+          token: ${{ secrets.PAT }}
+      - name: Setup Node for API
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18.16.0"
+          cache: "npm"
+          cache-dependency-path: ./api/package-lock.json
+      - name: Generate Markdown docs for components
+        run: npm run docs
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Generated markdown docs
+          branch: ${{ github.head_ref }}

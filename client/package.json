@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "docs": "node ./extract.js"
   },
   "dependencies": {
     "@nextui-org/button": "^0.0.0-dev-v2-20230622022515",
