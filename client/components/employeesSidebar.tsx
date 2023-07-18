@@ -15,6 +15,10 @@ type Props = {
   className?: string;
 }
 
+/**
+ * The EmployeesSidebar component renders a sidebar of the list of employees for the user to click on one if they want to view its data in its page.
+ * Underneath the list is a button that will allow them to create a new user, taking them to the create page that will allow them to do that.
+ */
 export default function EmployeesSidebar({ className }: Props) {
   const [currentOrg] = useUserStore(state => [state.currentOrganization]);
   const [employees] = useEmployeesStore(state => [state.employees]);
