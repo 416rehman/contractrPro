@@ -1,8 +1,8 @@
 const fs = require("fs");
 const path = require("path");
 
-const componentsDir = "../client/components";
-const outputFilePath = "../docs/index.md";
+const componentsDir = "../../client/components";
+const outputFilePath = "../../docs/index.md";
 const link = "https://github.com/416rehman/contractrPro/tree/dev/client/components/";
 const noCommentString = "No usability comment found for";
 const todoInCommentString = "**Work In Progress**: This component is not yet complete.";
