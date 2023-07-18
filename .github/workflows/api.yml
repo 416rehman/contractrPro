@@ -1,4 +1,4 @@
-name: ContractrPro CI
+name: ContractrPro API CI
 
 on:
   # Runs the inside pull requests to the main and dev branches
