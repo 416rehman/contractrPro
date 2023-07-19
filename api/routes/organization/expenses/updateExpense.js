@@ -10,7 +10,7 @@ const { pick } = require('../../../utils/index')
 // Example request body:
 // {
 //         "description": "Quod omnis pariatur non facere odio.",
-//         "date": "2023-04-05T12:00:08.085Z",
+//         "issueDate": "2023-04-05T12:00:08.085Z",
 //         "VendorId": "b1b1b1b1-b1b1-b1b1-b1b1-b1b1b1b1b1b1",
 //         "ExpenseEntries": [{
 //             "name": "paid joemama1",
