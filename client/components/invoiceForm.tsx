@@ -36,7 +36,6 @@ import { Divider } from "@nextui-org/divider";
 import ClientSelector from "@/components/clientSelector";
 import { Tooltip } from "@nextui-org/tooltip";
 import moment from "moment";
-import { useTheme } from "next-themes";
 
 type Props = {
   id: string;
@@ -59,9 +58,6 @@ export default function InvoiceForm({ id, className }: Props) {
 
   // For delete modal dialog
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-
-  // To switch to light mode when printing
-  const theme = useTheme();
 
   useEffect(() => {
     setEditedInvoice(invoice);
@@ -189,10 +185,7 @@ export default function InvoiceForm({ id, className }: Props) {
                     </DropdownTrigger>
                     <DropdownMenu className={"print:hidden"}>
                       <DropdownItem key={"print"} description={"Print this invoiceEntries"} onPress={() => {
-                        const ogTheme = theme.theme;
-                        theme.setTheme("light");
                         window.print();
-                        theme.setTheme(ogTheme);
                       }}
                                     startContent={<IconPrinter className={"text-default-500"} />} shortcut={"P"}>
                         Print
