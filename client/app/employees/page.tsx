@@ -3,6 +3,9 @@ import { title } from "@/components/primitives";
 import { IconCirclePlus } from "@tabler/icons-react";
 import NextLink from "next/link";
 
+export const metadata = {
+  title: "Employees | ContractrPro"
+};
 export default function EmployeesPage() {
   return (
     <div className="flex flex-col flex-grow w-full items-center justify-center">

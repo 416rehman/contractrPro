@@ -33,7 +33,8 @@ export default function InvoiceEntriesTable({ invoiceEntries, isEditing, onEntry
 
     switch (columnKey) {
       case "name":
-        return <Input key={invoiceEntry.id} value={cellValue}
+        return <Input aria-label={"Name"}
+                      key={invoiceEntry.id} value={cellValue}
                       placeholder="Name" variant={"underlined"}
                       isReadOnly={!editMode}
                       size={"sm"}
@@ -42,19 +43,22 @@ export default function InvoiceEntriesTable({ invoiceEntries, isEditing, onEntry
                       }}
                       onChange={(e) => onEntryChanged(columnKey, e.target.value, invoiceEntry.id)} />;
       case "description":
-        return <Input key={invoiceEntry.id} value={cellValue} placeholder="Description"
+        return <Input aria-label={"Description"}
+                      key={invoiceEntry.id} value={cellValue} placeholder="Description"
                       variant={"underlined"}
                       size={"sm"}
                       isReadOnly={!editMode}
                       onChange={(e) => onEntryChanged(columnKey, e.target.value, invoiceEntry.id)} />;
       case "quantity":
-        return <Input key={invoiceEntry.id} value={cellValue} type="number" placeholder="Quantity"
+        return <Input aria-label={"Quantity"}
+                      key={invoiceEntry.id} value={cellValue} type="number" placeholder="Quantity"
                       variant={"underlined"}
                       size={"sm"}
                       isReadOnly={!editMode}
                       onChange={(e) => onEntryChanged(columnKey, e.target.value, invoiceEntry.id)} />;
       case "unitCost":
-        return <Input key={invoiceEntry.id} value={cellValue} type="number" placeholder="Unit Cost"
+        return <Input aria-label={"Unit Cost"}
+                      key={invoiceEntry.id} value={cellValue} type="number" placeholder="Unit Cost"
                       className={"font-medium"}
                       variant={"underlined"}
                       size={"sm"}
@@ -69,26 +73,27 @@ export default function InvoiceEntriesTable({ invoiceEntries, isEditing, onEntry
         const qtyValueAsNumber = Number(invoiceEntry["quantity"]);
         const costValue = Number(invoiceEntry["unitCost"]);
         const totalValue = qtyValueAsNumber * costValue;
-        return totalValue ?
-          <div className="relative flex justify-end items-center gap-2">
-            <span className={"flex-grow font-medium text-tiny"}><span
-              className="text-default-400 text-small">$</span>{totalValue.toFixed(2)}</span>
-            {editMode ? <Dropdown>
-              <DropdownTrigger>
-                <Button isIconOnly size="sm" variant="light">
-                  <IconDotsVertical className="text-default-300" />
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu onAction={(key) => {
-                if (key === "delete") {
-                  onEntryDeleted(invoiceEntry.id);
-                }
-              }}>
-                <DropdownItem startContent={<IconTrash className={"text-default-500"} />}
-                              key={"delete"}>Delete</DropdownItem>
-              </DropdownMenu>
-            </Dropdown> : null}
-          </div> : null;
+        const isTouched = invoiceEntry["name"] || invoiceEntry["description"] || invoiceEntry["quantity"] || invoiceEntry["unitCost"];
+
+        return <div className="relative flex justify-end items-center gap-2">
+          {!isNaN(totalValue) && <span className={"flex-grow font-medium text-tiny"}><span
+            className="text-default-400 text-small pr-2">$</span>{totalValue.toFixed(2)}</span>}
+          {editMode && isTouched && <Dropdown>
+            <DropdownTrigger>
+              <Button isIconOnly size="sm" variant="light">
+                <IconDotsVertical className="text-default-300" />
+              </Button>
+            </DropdownTrigger>
+            <DropdownMenu onAction={(key) => {
+              if (key === "delete") {
+                onEntryDeleted(invoiceEntry.id);
+              }
+            }}>
+              <DropdownItem startContent={<IconTrash className={"text-default-500"} />}
+                            key={"delete"}>Delete</DropdownItem>
+            </DropdownMenu>
+          </Dropdown>}
+        </div>;
     }
   };
 

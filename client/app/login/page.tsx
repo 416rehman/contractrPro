@@ -3,7 +3,7 @@ import AuthRedirectServer from "@/components/server/authRedirectServer";
 // import { useEffect } from "react";
 
 export const metadata = {
-  title: "Log In"
+  title: "Log In | ContractrPro"
 };
 
 

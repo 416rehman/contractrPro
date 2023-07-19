@@ -10,15 +10,18 @@ import Sidebar from "@/components/sidebar";
 import { cookies } from "next/headers";
 import jwtDecode from "jwt-decode";
 import { getNewAccessToken } from "@/services/auth";
-import { Item } from "@/types";
-import { DropdownSelect } from "@/components/DropdownSelect";
 
 export const metadata = {
-  title: "ContractrPro"
+  title: "ContractrPro",
+  description: "Take control of your business",
+  openGraph: {
+    images: ["https://i.imgur.com/ad5LO1C.png"]
+  }
 };
 
 // The user is populated on the server via getUserViaCookies and used by other components such as AuthRedirectServer etc
 // It is used to check if the user is authenticated on the server side. On client side we use the auth and user services
+// @ts-ignore
 export let user = null;
 
 const getUserViaCookies = async (accessTokenCookieName = "accessToken", refreshTokenCookieName = "refreshToken") => {
@@ -58,25 +61,6 @@ export default async function RootLayout({ children }: { children: ReactNode; })
     console.log("Error getting user", err);
   }
 
-  const testItems: Array<Item> = [
-    {
-      key: "test1",
-      name: "Test"
-    },
-    {
-      key: "test2",
-      name: "Test2"
-    },
-    {
-      key: "test3",
-      name: "Test3"
-    },
-    {
-      key: "test4",
-      name: "Test4"
-    },
-  ];
-
   return (
     <html lang="en" suppressHydrationWarning>
     <link
@@ -93,16 +77,16 @@ export default async function RootLayout({ children }: { children: ReactNode; })
     >
     <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }} loggedInUser={user}>
       <div className="relative flex flex-col flex-grow w-full h-full">
-        <Topbar />
+        <Topbar className={"print:hidden"} />
         <div className="flex flex-row gap-x-0 gap-y-0 flex-grow w-full h-full">
           <AuthFallback fallbackIf={"logged-in"}
-                        to={<Sidebar className={"hidden sm:flex sm:flex-col px-2 py-4 items-center gap-8"} />} />
+                        to={<Sidebar
+                          className={"hidden md:flex md:print:hidden md:flex-col px-2 py-4 items-center gap-8"} />} />
 
           <main id={"main"}
-                className="flex flex-grow border-foreground-100 sm:border-t-2 sm:border-l-2 rounded-tl-md bg-foreground-50 w-full h-auto">
+                className="flex flex-grow border-foreground-100 md:border-t-2 md:border-l-2 rounded-tl-md bg-foreground-50 w-full h-auto">
             {children}
-            <DropdownSelect items={testItems} className={"absolute top-1/2 right-0 transform -translate-y-1/2"} />
-            <ToastBox className={"fixed bottom-0 right-0 z-50 p-4"} />
+            <ToastBox className={"fixed bottom-0 right-0 z-50 p-4 print:hidden"} />
           </main>
         </div>
       </div>

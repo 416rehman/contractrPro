@@ -16,7 +16,7 @@ export const UserMenuGeneric = (props: tUser & { children: CollectionChildren<ob
       <DropdownTrigger>
         <Card className={clsx("p-2 pl-3")} isPressable>
           <div className={clsx("flex flex-row gap-10 items-center")}>
-            <div className="hidden sm:flex flex-col gap-1">
+            <div className="hidden md:flex flex-col gap-1">
               <div className="flex flex-col items-start">
                 <p className="font-bold text-sm">{props.name}</p>
                 <p className="text-default-500 text-xs">{props.email}</p>
@@ -61,7 +61,7 @@ export default function UserMenu(props: tUser) {
   return (
     <UserMenuGeneric {...props} onAction={onAction}>
       <DropdownSection showDivider>
-        <DropdownItem key="profile" className="h-14 gap-2 flex pointer-events-none sm:hidden" isReadOnly>
+        <DropdownItem key="profile" className="h-14 gap-2 flex pointer-events-none md:hidden" isReadOnly>
           <p>Signed in as</p>
           <p className="font-semibold">@{props.username}</p>
         </DropdownItem>

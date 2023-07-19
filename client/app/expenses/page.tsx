@@ -1,5 +1,8 @@
 import { title } from "@/components/primitives";
 
+export const metadata = {
+  title: "Expenses | ContractrPro"
+};
 export default function ExpensePage() {
   return (
     <div>

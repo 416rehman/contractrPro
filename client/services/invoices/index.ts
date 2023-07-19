@@ -29,6 +29,10 @@ export const loadInvoices = async (currentOrganizationId: string) => {
 export const updateInvoiceAndPersist = async (invoice: Invoice, currentOrganizationId: string) => {
   try {
     if (currentOrganizationId) {
+
+      // Remove empty invoice entries
+      invoice.InvoiceEntries = invoice?.InvoiceEntries.filter((entry) => entry.name || entry.unitCost || entry.quantity || entry.description) || [];
+
       if (invoice?.id) {
         await requestUpdateInvoice(invoice, currentOrganizationId);
         useInvoicesStore.getState().updateInvoice(invoice);

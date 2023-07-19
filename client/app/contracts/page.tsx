@@ -1,5 +1,8 @@
 import { title } from "@/components/primitives";
 
+export const metadata = {
+  title: "Contracts | ContractrPro"
+};
 export default function AboutPage() {
   return (<>
       <section className="flex flex-col flex-grow gap-4 py-8 h-full" id={"contracts"}>

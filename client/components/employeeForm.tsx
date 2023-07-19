@@ -18,6 +18,8 @@ import clsx from "clsx";
 import { useUserStore } from "@/services/user";
 import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/dropdown";
 import OrganizationSelector from "@/components/organizationSelector";
+import { Tooltip } from "@nextui-org/tooltip";
+import moment from "moment";
 
 type Props = {
   id: string,
@@ -93,7 +95,7 @@ export default function EmployeeForm({ id, className }: Props) {
               <ModalHeader className="flex flex-col gap-1">Delete employee</ModalHeader>
               <ModalBody> Are you sure you want to delete this employee? </ModalBody>
               <ModalFooter>
-                <Button variant="light" onClick={onClose}>
+                <Button variant="light" onPress={onClose}>
                   Close
                 </Button>
                 <Button color="danger" onPress={() => {
@@ -119,7 +121,7 @@ export default function EmployeeForm({ id, className }: Props) {
               {employee?.id && (
                 <ButtonGroup variant="flat" size={"sm"} color={"default"}>
                   <Button endContent={<IconEdit />}
-                          onClick={() => setIsEditing(true)}
+                          onPress={() => setIsEditing(true)}
                           isDisabled={isEditing}>
                     Edit
                   </Button>
@@ -156,20 +158,28 @@ export default function EmployeeForm({ id, className }: Props) {
                      isReadOnly={!isEditing} type={"number"} name={"permissions"} onChange={onChangeHandler}
                      variant={isEditing ? "flat" : "underlined"} labelPlacement={"outside"} />
             </form>
-            <div className={"flex flex-col gap-1"}>
-              <span className={"text-xs text-default-500"}>Last updated: {employee?.updatedAt}</span>
-              <span className={"text-xs text-default-500"}>Created: {employee?.createdAt}</span>
+            <div className={"flex flex-col gap-1 items-start"}>
+              {employee?.updatedAt &&
+                <Tooltip content={employee?.updatedAt}>
+                  <span className={"text-xs text-default-500"}>Updated {moment(employee?.updatedAt).fromNow()}</span>
+                </Tooltip>
+              }
+              {employee?.createdAt && (
+                <Tooltip content={employee?.createdAt}>
+                  <span className={"text-xs text-default-500"}>Created {moment(employee?.createdAt).fromNow()}</span>
+                </Tooltip>
+              )}
             </div>
           </CardBody>
           <CardFooter>
             <div className={"flex gap-2 justify-between flex-grow"}>
               {isEditing && employee?.id ? (
                 <>
-                  <Button variant={"light"} onClick={() => setIsEditing(false)} color={"danger"}
+                  <Button variant={"light"} onPress={() => setIsEditing(false)} color={"danger"}
                           className={"font-medium hover:bg-danger-200"}>
                     Cancel
                   </Button>
-                  <Button variant={"flat"} onClick={onSaveHandler} loading={isSaving}
+                  <Button variant={"flat"} onPress={onSaveHandler} loading={isSaving}
                           className={"text-default-800 font-medium hover:bg-primary-200"}
                           endContent={<IconDeviceFloppy />}>
                     Save
@@ -178,7 +188,7 @@ export default function EmployeeForm({ id, className }: Props) {
               ) : null}
               {/*  if no employee Id this is a new employee */}
               {!employee?.id && (
-                <Button variant={"flat"} onClick={onSaveHandler} loading={isSaving}
+                <Button variant={"flat"} onPress={onSaveHandler} loading={isSaving}
                         className={"text-default-800 font-medium hover:bg-primary-200"}
                         endContent={<IconDeviceFloppy />}>
                   Save

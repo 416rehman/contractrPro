@@ -20,7 +20,8 @@ export default function JobForm({ job, updateJob }: IJobFormProps) {
   return (
     <form>
       <h1>Job# {job.id}</h1>
-      <Input placeholder="Job Name" width="80%" value={job.name} onChange={handleChange} />
+      <Input aria-label="Job Name"
+             placeholder="Job Name" width="80%" value={job.name} onChange={handleChange} />
       <Button auto>Save</Button>
     </form>
   );

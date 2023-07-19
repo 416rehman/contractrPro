@@ -2,7 +2,7 @@ import SignupForm from "@/components/signupForm";
 import AuthRedirectServer from "@/components/server/authRedirectServer";
 
 export const metadata = {
-  title: "Sign Up",
+  title: "Sign Up | ContractrPro",
   description: "Sign up for an account"
 };
 

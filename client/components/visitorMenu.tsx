@@ -47,7 +47,7 @@ export const VisitorMenu = () => {
       display: "both"
     },
     {
-      content: <ThemeSwitch size={"md"} className={"hidden sm:flex"} key="theme-switch" />,
+      content: <ThemeSwitch size={"md"} className={"hidden md:flex"} key="theme-switch" />,
       isolated: true, // The content will not be wrapped
       display: "navbar"
     },
@@ -71,7 +71,7 @@ export const VisitorMenu = () => {
   return (
     <>
       {/*// Show on screens bigger than sm*/}
-      <NavbarContent className={"hidden sm:flex"}>
+      <NavbarContent className={"hidden md:flex"}>
         {visitorItems.map((item, index) => (
           <NavbarItem key={index}>
             {(item.display == "both" || item.display == "navbar") && (item.isolated ? item.content : (
@@ -86,7 +86,7 @@ export const VisitorMenu = () => {
         ))}
       </NavbarContent>
       {/*// Show on screens smaller than sm*/}
-      <NavbarContent className={"flex sm:hidden"}>
+      <NavbarContent className={"flex md:hidden"}>
         <NavbarItem className={"gap-2 flex flex-row"}>
           {
             <Button as={NextLink} color="primary" href={visitorItems[0].href} variant="flat" size={"md"}>

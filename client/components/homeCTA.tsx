@@ -19,7 +19,7 @@ export default function HomeCTA() {
           tool to help you manage your business.
         </h3>
       </div>
-      <div className="flex flex-col gap-y-4 w-full sm:w-1/3">
+      <div className="flex flex-col gap-y-4 w-full md:w-1/3">
         <h3 className="text-2xl font-semibold">Get started today</h3>
         <SignupForm />
       </div>

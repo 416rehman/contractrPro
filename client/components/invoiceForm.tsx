@@ -23,6 +23,7 @@ import {
   IconEdit,
   IconHash,
   IconPercentage,
+  IconPrinter,
   IconTrash
 } from "@tabler/icons-react";
 import clsx from "clsx";
@@ -31,6 +32,11 @@ import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-o
 import OrganizationSelector from "@/components/organizationSelector";
 import { Invoice } from "@/types";
 import InvoiceEntriesTable from "@/components/invoiceEntriesTable";
+import { Divider } from "@nextui-org/divider";
+import ClientSelector from "@/components/clientSelector";
+import { Tooltip } from "@nextui-org/tooltip";
+import moment from "moment";
+import { useTheme } from "next-themes";
 
 type Props = {
   id: string;
@@ -44,13 +50,18 @@ type Props = {
  */
 export default function InvoiceForm({ id, className }: Props) {
   const [invoice] = useInvoicesStore(state => [state.invoices.find((invoice: any) => invoice.id === id)]);
-  const [isEditing, setIsEditing] = useState(false);
   const [editedInvoice, setEditedInvoice] = useState<Invoice | null>(); // Save the edited invoiceEntries here
+
   const currentOrg = useUserStore(state => state.currentOrganization);
+
+  const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
   // For delete modal dialog
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
+  // To switch to light mode when printing
+  const theme = useTheme();
 
   useEffect(() => {
     setEditedInvoice(invoice);
@@ -140,7 +151,7 @@ export default function InvoiceForm({ id, className }: Props) {
               <ModalHeader className="flex flex-col gap-1">Delete invoice</ModalHeader>
               <ModalBody> Are you sure you want to delete this invoice? </ModalBody>
               <ModalFooter>
-                <Button variant="light" onClick={onClose}>
+                <Button variant="light" onPress={onClose}>
                   Close
                 </Button>
                 <Button color="danger" onPress={() => {
@@ -164,9 +175,9 @@ export default function InvoiceForm({ id, className }: Props) {
             </div>
             <div>
               {invoice?.id && (
-                <ButtonGroup variant="flat" size={"sm"} color={"default"}>
+                <ButtonGroup variant="flat" size={"sm"} color={"default"} className={"print:hidden"}>
                   <Button startContent={<IconEdit />}
-                          onClick={() => setIsEditing(true)}
+                          onPress={() => setIsEditing(true)}
                           isDisabled={isEditing}>
                     Edit
                   </Button>
@@ -176,8 +187,18 @@ export default function InvoiceForm({ id, className }: Props) {
                         <IconChevronDown />
                       </Button>
                     </DropdownTrigger>
-                    <DropdownMenu>
+                    <DropdownMenu className={"print:hidden"}>
+                      <DropdownItem key={"print"} description={"Print this invoiceEntries"} onPress={() => {
+                        const ogTheme = theme.theme;
+                        theme.setTheme("light");
+                        window.print();
+                        theme.setTheme(ogTheme);
+                      }}
+                                    startContent={<IconPrinter className={"text-default-500"} />} shortcut={"P"}>
+                        Print
+                      </DropdownItem>
                       <DropdownItem key={"delete"} description={"Delete this invoiceEntries"} onPress={onOpen}
+                                    className={"text-danger-500"}
                                     startContent={<IconTrash className={"text-default-500"} />} shortcut={"D"}>
                         Delete
                       </DropdownItem>
@@ -187,8 +208,20 @@ export default function InvoiceForm({ id, className }: Props) {
               )}
             </div>
           </CardHeader>
-          <CardBody className={"flex flex-col gap-4"}>
+          <CardBody className={"flex flex-col gap-4 printable"}>
             <form className={clsx("flex flex-col gap-4", { "pointer-events-none": !isEditing })}>
+
+              <ClientSelector
+                isDisabled={!isEditing}
+                label={"Bill to Client"}
+                onClientChange={(clients) => {
+                  if (clients.length > 0 && clients[0]?.id) {
+                    setEditedInvoice((prev) => ({ ...prev, BillToClientId: clients[0]?.id }));
+                  }
+                }}
+                selectedIds={[editedInvoice?.BillToClientId]}
+              />
+
               <div className={"flex flex-row gap-4"}>
                 <Input label={"Invoice #"} placeholder={"123456"} value={editedInvoice?.invoiceNumber}
                        isReadOnly={!isEditing}
@@ -217,35 +250,54 @@ export default function InvoiceForm({ id, className }: Props) {
                        type={"text"} name={"poNumber"} onChange={onChangeHandler}
                        startContent={<IconHash className={"text-default-400"} size={"20"} />}
                        variant={isEditing ? "flat" : "bordered"} labelPlacement={"outside"} />
-                <Input label={"Tax Rate"} placeholder={"13"} value={editedInvoice?.poNumber}
+              </div>
+              <InvoiceEntriesTable invoiceEntries={editedInvoice?.InvoiceEntries} isEditing={isEditing}
+                                   onEntryDeleted={onEntryDeleteHandler}
+                                   onEntryChanged={onEntryChangedHandler} />
+              <div className={"flex flex-row gap-4 justify-between"}>
+                <Input label={"Tax Rate"} placeholder={"13"} value={editedInvoice?.taxRate} className={"w-1/4"}
+                       size={"sm"}
                        isReadOnly={!isEditing}
                        startContent={<IconPercentage className={"text-default-400"} size={"20"} />}
                        type={"number"} name={"taxRate"} onChange={onChangeHandler}
                        variant={isEditing ? "flat" : "bordered"} labelPlacement={"outside"} />
+                <div className={"flex flex-col gap-2 items-end"}>
+                  <span className={"text-sm font-medium text-default-500"}>Subtotal: $<span
+                    className={"text-default-800"}>{editedInvoice?.InvoiceEntries?.reduce((acc, entry) => acc + entry.unitCost * entry.quantity, 0)}</span></span>
+                  <span className={"text-sm font-medium text-default-500"}>Tax: $<span
+                    className={"text-default-800"}>{(editedInvoice?.InvoiceEntries?.reduce((acc, entry) => acc + entry.unitCost * entry.quantity, 0) * (editedInvoice?.taxRate || 0) / 100).toFixed(2)}</span></span>
+                  <span className={"text-medium font-medium text-default-500"}>Total: $<span
+                    className={"text-default-800"}>{(editedInvoice?.InvoiceEntries?.reduce((acc, entry) => acc + entry.unitCost * entry.quantity, 0) * (1 + (editedInvoice?.taxRate || 0) / 100)).toFixed(2)}</span></span>
+
+                </div>
               </div>
+              <Divider />
               <Textarea label={"Note"} placeholder={"This is a customer facing note."} value={editedInvoice?.note}
                         isReadOnly={!isEditing} name={"note"} onChange={onChangeHandler}
                         variant={isEditing ? "flat" : "bordered"} labelPlacement={"outside"} />
-
             </form>
-            <div className={"flex flex-col gap-1"}>
-              <span className={"text-xs text-default-500"}>Last updated: {invoice?.updatedAt}</span>
-              <span className={"text-xs text-default-500"}>Created: {invoice?.createdAt}</span>
-            </div>
-
-            <InvoiceEntriesTable invoiceEntries={editedInvoice?.InvoiceEntries} isEditing={isEditing}
-                                 onEntryDeleted={onEntryDeleteHandler}
-                                 onEntryChanged={onEntryChangedHandler} />
           </CardBody>
           <CardFooter>
+            <div className={"flex flex-col gap-1 items-start"}>
+              {invoice?.updatedAt &&
+                <Tooltip content={invoice?.updatedAt}>
+                  <span className={"text-xs text-default-500"}>Updated {moment(invoice?.updatedAt).fromNow()}</span>
+                </Tooltip>
+              }
+              {invoice?.createdAt && (
+                <Tooltip content={invoice?.createdAt}>
+                  <span className={"text-xs text-default-500"}>Created {moment(invoice?.createdAt).fromNow()}</span>
+                </Tooltip>
+              )}
+            </div>
             <div className={"flex gap-2 justify-between flex-grow"}>
               {isEditing && invoice?.id ? (
                 <>
-                  <Button variant={"light"} onClick={onCancelHandler} color={"danger"}
+                  <Button variant={"light"} onPress={onCancelHandler} color={"danger"}
                           className={"font-medium hover:bg-danger-200"}>
                     Cancel
                   </Button>
-                  <Button variant={"flat"} onClick={onSaveHandler} loading={isSaving}
+                  <Button variant={"flat"} onPress={onSaveHandler} loading={isSaving}
                           className={"text-default-800 font-medium hover:bg-primary-200"}
                           startContent={<IconDeviceFloppy />}>
                     Save
@@ -254,7 +306,7 @@ export default function InvoiceForm({ id, className }: Props) {
               ) : null}
               {/*  if no invoiceEntries Id this is a new invoiceEntries */}
               {!invoice?.id && (
-                <Button variant={"flat"} onClick={onSaveHandler} loading={isSaving}
+                <Button variant={"flat"} onPress={onSaveHandler} loading={isSaving}
                         className={"text-default-800 font-medium hover:bg-primary-200"}
                         startContent={<IconDeviceFloppy />}>
                   Save

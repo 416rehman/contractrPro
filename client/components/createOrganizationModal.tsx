@@ -83,18 +83,16 @@ export default function CreateOrganizationModal({ isOpen, onOpenChange }: Props)
             <>
               <ModalHeader className="flex flex-col gap-1">Create an Organization</ModalHeader>
               <ModalBody>
-                <Input
-                  autoFocus
-                  startContent={
-                    <IconHash className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
-                  }
-                  label="Name"
-                  placeholder={(user?.name || "John Doe") + "'s Awesome Organization"}
-                  variant="bordered"
-                  value={organization?.name}
-                  onChange={(e) => setOrganization({ ...organization, name: e.target.value })}
-                  description={"This will be displayed on your invoices and estimates, and cannot be changed later."}
-                />
+                <Input label="Name"
+                       autoFocus
+                       startContent={
+                         <IconHash className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+                       }
+                       placeholder={(user?.name || "John Doe") + "'s Awesome Organization"}
+                       variant="bordered"
+                       value={organization?.name}
+                       onChange={(e) => setOrganization({ ...organization, name: e.target.value })}
+                       description={"This will be displayed on your invoices and estimates, and cannot be changed later."} />
                 <Accordion
                   showDivider={true}
                   variant="splitted"
@@ -195,7 +193,7 @@ export default function CreateOrganizationModal({ isOpen, onOpenChange }: Props)
               <Spacer y={1} />
               <Divider />
               <ModalFooter className={"flex flex-row justify-between"}>
-                <Button color="danger" variant="light" onClick={onClose}>
+                <Button color="danger" variant="light" onPress={onClose}>
                   Close
                 </Button>
                 <Button variant={"flat"} color={"primary"} onPress={() => {

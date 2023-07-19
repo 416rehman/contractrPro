@@ -76,7 +76,7 @@ export default function Sidebar(props: HTMLAttributes<HTMLDivElement>) {
 
   const ExtendSidebarButton = () => (
     <Tooltip content={isExtended ? "Collapse" : "Expand"} placement={"right"} showArrow={true}>
-      <Button isIconOnly={!isExtended} onClick={() => setIsExtended(!isExtended)} variant={"light"} size={"sm"}
+      <Button isIconOnly={!isExtended} onPress={() => setIsExtended(!isExtended)} variant={"light"} size={"sm"}
               className={"min-w-full"}>
         {isExtended ? <IconLayoutSidebarLeftCollapse size={"20"} /> : <IconLayoutSidebarLeftExpand size={"20"} />}
         {isExtended ? "Collapse" : null}
@@ -85,7 +85,7 @@ export default function Sidebar(props: HTMLAttributes<HTMLDivElement>) {
   );
 
   return (
-    <div className={" sm:flex sm:flex-col gap-8 p-2 items-center" + " " + props.className} {...props}>
+    <div className={" md:flex md:flex-col gap-8 p-2 items-center" + " " + props.className} {...props}>
       <ExtendSidebarButton />
       <div className={"flex flex-col justify-between gap-4"}>
         {sidebarItems.map((item) => (

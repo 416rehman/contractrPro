@@ -32,4 +32,31 @@
     ::-webkit-scrollbar-thumb:hover {
         @apply shadow-[inset_0_0_10px_10px_theme("colors.content4")] border-solid border-3 border-transparent rounded-2xl;
     }
+
+    .label {
+        @apply block text-small font-medium text-foreground after:ml-0.5 will-change-auto origin-top-left transition-all !duration-200 !ease-[cubic-bezier(0,0,0.2,1)] motion-reduce:transition-none;
+    }
+}
+
+@media print and (min-device-width: 800px) {
+    /*Light mode for printing*/
+    html {
+        @apply !light;
+        zoom: 1.5;
+    }
+
+    a:after {
+        content: "(" attr(href) ")";
+    }
+}
+
+@media print {
+    /*Light mode for printing*/
+    html {
+        @apply !light;
+    }
+
+    a:after {
+        content: "(" attr(href) ")";
+    }
 }

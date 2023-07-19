@@ -22,7 +22,8 @@ export default function JobsNavbar({ jobs, onSelectJob }: JobProps) {
   return (
     <div className="jobs-navbar flex flex-col items-center justify-between gap-4 px-2">
       <div className={"w-full flex flex-col gap-2"}>
-        <Input placeholder="Search" width="80%" />
+        <Input aria-label="Search Jobs"
+               placeholder="Search" width="80%" />
         <Divider />
         {jobs.map((job) => (
           <ButtonGroup variant="flat" key={job.id} className="w-full">

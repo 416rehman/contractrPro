@@ -1,5 +1,7 @@
 "use client";
 
+import { Button } from "@nextui-org/button";
+
 export default function GlobalError({
                                       error,
                                       reset
@@ -14,7 +16,7 @@ export default function GlobalError({
     <p className={"text-myred-500"}>
       <strong>{error.message}</strong>
     </p>
-    <button onClick={() => reset()}>Try again</button>
+    <Button onPress={() => reset()}>Try again</Button>
     </body>
     </html>
   );

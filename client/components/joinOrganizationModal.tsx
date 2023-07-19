@@ -43,16 +43,15 @@ export default function JoinOrganizationModal({ isOpen, onOpenChange }: Props) {
             <>
               <ModalHeader className="flex flex-col gap-1">Join an Organization</ModalHeader>
               <ModalBody>
-                <Input
-                  autoFocus
-                  startContent={
-                    <IconHash className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
-                  }
-                  label="Join Code"
-                  placeholder="513123"
-                  variant="bordered"
-                  value={joinCode}
-                  onChange={(e) => setJoinCode(e.target.value)}
+                <Input label="Join Code"
+                       autoFocus
+                       startContent={
+                         <IconHash className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+                       }
+                       placeholder="513123"
+                       variant="bordered"
+                       value={joinCode}
+                       onChange={(e) => setJoinCode(e.target.value)}
                 />
                 <p className="text-sm text-default-500 font-medium">
                   Join codes should look like
@@ -65,7 +64,7 @@ export default function JoinOrganizationModal({ isOpen, onOpenChange }: Props) {
               <Spacer y={1} />
               <Divider />
               <ModalFooter className={"flex flex-row justify-between"}>
-                <Button color="danger" variant="light" onClick={onClose}>
+                <Button color="danger" variant="light" onPress={onClose}>
                   Close
                 </Button>
                 <Button variant={"flat"} color={"primary"} onPress={() => {

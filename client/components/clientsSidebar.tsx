@@ -41,7 +41,8 @@ export default function ClientsSidebar({ className }: Props) {
     <CardHeader className={"flex flex-col gap-2"}>
       <h1 className={"text-2xl font-bold"}>Clients</h1>
       {/*  Search bar*/}
-      <Input placeholder={"Filter"} size={"sm"} endContent={<IconListSearch className={"text-default-400"} />}
+      <Input aria-label={"Filter clients"} placeholder={"Filter"} size={"sm"}
+             endContent={<IconListSearch className={"text-default-400"} />}
              variant={"underlined"}
              onChange={handleFilterChange} />
     </CardHeader>
@@ -71,7 +72,7 @@ export default function ClientsSidebar({ className }: Props) {
 
   // for mobile version have a dropdown
   const dropdown = <Popover className={className}>
-    <PopoverTrigger className={"w-full flex sm:hidden"}>
+    <PopoverTrigger className={"w-full flex md:hidden"}>
       <Button variant={"ghost"} className={""} endContent={<IconChevronDown />}>
         Clients
       </Button>
@@ -82,10 +83,10 @@ export default function ClientsSidebar({ className }: Props) {
   </Popover>;
 
   return <>
-    <div className={"hidden sm:flex sm:flex-col sm:gap-2 sm:w-1/4"}>
+    <div className={"hidden md:flex md:flex-col md:gap-2 md:w-1/4"}>
       {sidebar}
     </div>
-    <div className={"flex sm:hidden"}>
+    <div className={"flex md:hidden"}>
       {dropdown}
     </div>
   </>;
