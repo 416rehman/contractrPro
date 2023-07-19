@@ -83,6 +83,32 @@ This is usually the first thing a user sees when they visit the site, if they ar
 It is also used as the fallback for the home page if the user is not logged in.<br/>
 
 
+### [invoiceEntriesTable.tsx](https://github.com/416rehman/contractrPro/tree/dev/client/components/invoiceEntriesTable.tsx)
+
+This is a table component for the Invoices page. It displays all the invoice entries.<br/>
+It renders an extra row at the bottom for the user to enter a new invoice entry in.<br/>
+On typing in the empty row, a new empty row is created at the bottom.<br/>
+Also has an action button to delete the invoice entry from the invoice.<br/>
+The empty row and actions are hidden in edit mode<br/>
+
+
+### [invoiceForm.tsx](https://github.com/416rehman/contractrPro/tree/dev/client/components/invoiceForm.tsx)
+
+This is the main form for editing and or creating an Invoice. The form receives the invoice id as a prop.<br/>
+If the invoice id is undefined, the form will be in create mode. Otherwise, it will be in edit mode.<br/>
+It handles communication with the API and updates the local state via the Invoice service.<br/>
+
+
+### [invoiceSidebar.tsx](https://github.com/416rehman/contractrPro/tree/dev/client/components/invoiceSidebar.tsx)
+
+**Work In Progress**: This component is not yet complete.
+
+This is the sidebar for the invoices page. It displays a list of invoices and should allow the user to filter them.<br/>
+It handles communication with the API and updates the local state via the Invoice service.<br/>
+This is used in tandem with the InvoiceForm component to edit/create invoices.<br/>
+TODO: Implement filtering<br/>
+
+
 ### [jobForm.tsx](https://github.com/416rehman/contractrPro/tree/dev/client/components/jobForm.tsx)
 
 **Work In Progress**: This component is not yet complete.
