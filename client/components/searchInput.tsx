@@ -14,7 +14,16 @@ type Props = {
   isReadOnly?: boolean;
 }
 
-// Shows an input if typing
+/**
+ * Search input that allows the user to select items from a list.
+ * The list is displayed in a dropdown.
+ * The user can search for items in the list.
+ * The user can select multiple items from the list if selectionMode is "multiple".
+ * The user can select only one item from the list if selectionMode is "single".
+ * The input itself cannot be selected.
+ * The trigger and items are passed as props.
+ * The items are passed as an array of DropdownItem elements.
+ */
 export default function SearchInput({
                                       items,
                                       selectionMode,

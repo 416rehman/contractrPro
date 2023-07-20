@@ -13,6 +13,11 @@ type Props = {
   isDisabled?: boolean;
 } & React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
+/**
+ * Allows the user to select a client from a list of clients.
+ * If no clients are cached, it will load them from the server.
+ * Uses the SearchInput component to display the list of clients.
+ */
 export default function ClientSelector({ onClientChange, selectedClientIds, label, isDisabled, ...props }: Props) {
   const clients = useClientsStore((state) => state.clients);
   const currentOrg = useUserStore((state) => state.currentOrganization);
