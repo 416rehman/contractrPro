@@ -66,7 +66,7 @@ export default function SearchInput({
           <label className={"label flex flex-col gap-2"}>
             <span>{label}</span>
             <Card shadow={"none"} isPressable={true} onPress={() => setIsOpen(true)}
-                  className={clsx("border bg-default-100 flex flex-col items-start justify-start p-2 group-data-[focus=true]:border-foreground", isReadOnly ? "bg-transparent" : "bg-default-100")}>
+                  className={clsx("bg-default-100 border-2 border-default-200 flex flex-col items-start justify-start p-2 group-data-[focus=true]:border-foreground", isReadOnly ? "bg-transparent" : "bg-default-100")}>
               {trigger}
             </Card>
           </label>
