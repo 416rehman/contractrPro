@@ -8,13 +8,6 @@ This page contains a list of all the client components in the project and their 
 This also serves as a reference to the functionality of the components, and can be used as a usability test plan.
 
 
-### [DropdownSelect.tsx](https://github.com/416rehman/contractrPro/tree/dev/client/components/DropdownSelect.tsx)
-
-The DropdownSelect component renders a dropdown menu button where the user can select an item from it (from the items array parameter),<br/>
-activating its action and showing its key value on the button. Its styling is also added to the rendered div by passing the className parameter<br/>
-to its className.<br/>
-
-
 ### [LoadingSpinner.tsx](https://github.com/416rehman/contractrPro/tree/dev/client/components/LoadingSpinner.tsx)
 
 The default loading spinner used throughout the application and is used as the main loading indicator for pages.<br/>
@@ -41,6 +34,13 @@ Functions similarly to AuthFallback, but redirects instead of rendering a fallba
 This is the main form for editing and or creating a client. The form receives the client id as a prop.<br/>
 If the client id is undefined, the form will be in create mode. Otherwise, it will be in edit mode.<br/>
 It handles communication with the API and updates the local state via the Client service.<br/>
+
+
+### [clientSelector.tsx](https://github.com/416rehman/contractrPro/tree/dev/client/components/clientSelector.tsx)
+
+Allows the user to select a client from a list of clients.<br/>
+If no clients are cached, it will load them from the server.<br/>
+Uses the SearchInput component to display the list of clients.<br/>
 
 
 ### [clientsSidebar.tsx](https://github.com/416rehman/contractrPro/tree/dev/client/components/clientsSidebar.tsx)
@@ -153,6 +153,18 @@ ContractrPro is a multi-tenant application, so the organization is a key part of
 This component is a dropdown that lists the organizations the user is a member of. It also has actions for creating and joining organizations.<br/>
 Upon selecting an organization, the `currentOrganization` state is updated in the user store. The `create organization` and `join organization` actions open their respective modals.<br/>
 For more, see the **`JoinOrganizationModal`** and **`CreateOrganizationModal`** components.<br/>
+
+
+### [searchInput.tsx](https://github.com/416rehman/contractrPro/tree/dev/client/components/searchInput.tsx)
+
+Search input that allows the user to select items from a list.<br/>
+The list is displayed in a dropdown.<br/>
+The user can search for items in the list.<br/>
+The user can select multiple items from the list if selectionMode is "multiple".<br/>
+The user can select only one item from the list if selectionMode is "single".<br/>
+The input itself cannot be selected.<br/>
+The trigger and items are passed as props.<br/>
+The items are passed as an array of DropdownItem elements.<br/>
 
 
 ### [sidebar.tsx](https://github.com/416rehman/contractrPro/tree/dev/client/components/sidebar.tsx)
