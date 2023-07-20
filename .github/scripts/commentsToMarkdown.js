@@ -7,8 +7,7 @@ const link = "https://github.com/416rehman/contractrPro/tree/dev/client/componen
 const noCommentString = "No usability comment found for";
 const todoInCommentString = "**Work In Progress**: This component is not yet complete.";
 const title = "Components";
-const description = "This page contains a list of all the client components in the project and their purpose, used to help with development and debugging." + "\n"
-  + "This also serves as a reference to the functionality of the components, and can be used as a usability test plan." + "\n";
+const description = "This page contains a list of all the client components in the project and their purpose, used to help with development and debugging." + "\n" + "This also serves as a reference to the functionality of the components, and can be used as a usability test plan." + "\n";
 
 // Read the TypeScript files in the components directory
 fs.readdir(componentsDir, (data, files) => {
@@ -64,13 +63,12 @@ function extractComment(data) {
       const commentText = line.slice(2).trim();
       if (commentText) {
         comment += commentText;
-        comment += "\n";
       }
     } else if (line.startsWith("/**")) {
       // Multi-line comment
       const commentText = line.slice(3).trim();
       if (commentText) {
-        comment += commentText ? (commentText + "<br/>\n") : "";
+        comment += commentText ? (commentText) : "";
       }
     } else if (line.startsWith("*")) {
       if (line.endsWith("*/")) {
@@ -78,7 +76,6 @@ function extractComment(data) {
         const commentText = line.slice(0, -2).trim();
         if (commentText) {
           comment += commentText;
-          comment += "<br/>\n";
         }
         break;
       } else {
@@ -86,7 +83,6 @@ function extractComment(data) {
         const commentText = line.slice(1).trim();
         if (commentText) {
           comment += commentText;
-          comment += "<br/>\n";
         }
       }
     } else if (line.startsWith("export default")) {
@@ -107,19 +103,17 @@ function extractComment(data) {
   return comment;
 }
 
-// Save the comments to a Markdown file
+// Save the comments to a Markdown file as a table
 function saveCommentsToMarkdown(comments) {
-  let markdownContent = "---\nlayout: default\n---\n\n";
-  markdownContent += `# ${title}\n\n${description}\n\n`;
+  let markdownContent = `# ${title}\n\n${description}\n\n`;
+
+  // Table header
+  markdownContent += "| Filename | Comment |\n";
+  markdownContent += "| -------- | ------- |\n";
 
   for (const [filename, comment] of Object.entries(comments)) {
-    markdownContent += `### [${filename}](${link + filename})\n\n`;
-
     const isTodo = comment && comment.toLowerCase().includes("todo");
-    markdownContent += isTodo ? todoInCommentString + "\n\n" : "";
-
-    markdownContent += (comment || noCommentString + " " + filename);
-    markdownContent += "\n\n";
+    markdownContent += `| [${filename}](${link + filename}) | ${comment + (isTodo ? "<span><br/>" + todoInCommentString + "</span>" : "") || noCommentString} |\n`;
   }
 
   fs.writeFileSync(outputFilePath, markdownContent);
