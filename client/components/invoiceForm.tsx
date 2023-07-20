@@ -207,12 +207,12 @@ export default function InvoiceForm({ id, className }: Props) {
               <ClientSelector
                 isDisabled={!isEditing}
                 label={"Bill to Client"}
-                onClientChange={(clients) => {
-                  if (clients.length > 0 && clients[0]?.id) {
-                    setEditedInvoice((prev) => ({ ...prev, BillToClientId: clients[0]?.id }));
+                onClientChange={(changedClients) => {
+                  if (changedClients.length > 0 && changedClients[0]?.id) {
+                    setEditedInvoice((prev) => ({ ...prev, BillToClientId: changedClients[0]?.id }));
                   }
                 }}
-                selectedIds={[editedInvoice?.BillToClientId]}
+                selectedClientIds={new Set([editedInvoice?.BillToClientId])}
               />
 
               <div className={"flex flex-row gap-4"}>

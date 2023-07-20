@@ -8,29 +8,16 @@ import { Client } from "@/types";
 
 type Props = {
   onClientChange?: (clients: Client[]) => void;
-  selectedIds?: string[];
+  selectedClientIds?: Set<string>;
   label?: string;
   isDisabled?: boolean;
 } & React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
 
-export default function ClientSelector({ onClientChange, selectedIds, label, isDisabled, ...props }: Props) {
+export default function ClientSelector({ onClientChange, selectedClientIds, label, isDisabled, ...props }: Props) {
   const clients = useClientsStore((state) => state.clients);
   const currentOrg = useUserStore((state) => state.currentOrganization);
-  const [selectedClientIds, setSelectedClientIds] = useState(new Set<string>());
   const [query, setQuery] = useState("");
   const [filteredClients, setFilteredClients] = useState([]);
-
-  useEffect(() => {
-    if (!selectedIds) return;
-
-    setSelectedClientIds(new Set(selectedIds));
-  }, [selectedIds]);
-
-  useEffect(() => {
-    if (!onClientChange) return;
-
-    onClientChange(clients.filter((client) => selectedClientIds.has(client.id)));
-  }, [selectedClientIds, clients, onClientChange]);
 
   useEffect(() => {
     if (!currentOrg) return;
@@ -49,6 +36,13 @@ export default function ClientSelector({ onClientChange, selectedIds, label, isD
     setFilteredClients(clients.filter((client) => client.name.toLowerCase().includes(query.toLowerCase())));
   }, [query, clients]);
 
+  const onSelectionChangedHandler = (selectedIds: Set<string>) => {
+    if (!onClientChange) return;
+
+    const selectedClients = clients.filter((client) => selectedIds.has(client.id));
+    onClientChange(selectedClients);
+  };
+
   return <SearchInput {...props}
                       isReadOnly={isDisabled}
                       items={
@@ -57,7 +51,7 @@ export default function ClientSelector({ onClientChange, selectedIds, label, isD
                                 description={client.description || client.email || client.phone || client.website || ""} />
                         </DropdownItem>)}
                       selectionMode={"single"}
-                      onSelectionChange={setSelectedClientIds}
+                      onSelectionChange={onSelectionChangedHandler}
                       onQueryChange={setQuery}
                       label={label}
                       trigger={selectedClientIds.size ?
