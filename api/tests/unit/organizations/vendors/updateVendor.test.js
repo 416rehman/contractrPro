@@ -28,11 +28,26 @@ describe('Update organization vendor', () => {
 
         expect(response.body.status).toBe('success')
         expect(response.body.data).toHaveProperty('id', vendorId)
-        expect(response.body.data).toHaveProperty('name', updatedVendorData.name)
-        expect(response.body.data).toHaveProperty('phone', updatedVendorData.phone)
-        expect(response.body.data).toHaveProperty('email', updatedVendorData.email)
-        expect(response.body.data).toHaveProperty('website', updatedVendorData.website)
-        expect(response.body.data).toHaveProperty('description', updatedVendorData.description)
+        expect(response.body.data).toHaveProperty(
+            'name',
+            updatedVendorData.name
+        )
+        expect(response.body.data).toHaveProperty(
+            'phone',
+            updatedVendorData.phone
+        )
+        expect(response.body.data).toHaveProperty(
+            'email',
+            updatedVendorData.email
+        )
+        expect(response.body.data).toHaveProperty(
+            'website',
+            updatedVendorData.website
+        )
+        expect(response.body.data).toHaveProperty(
+            'description',
+            updatedVendorData.description
+        )
         expect(response.body.data).toHaveProperty('createdAt')
         expect(response.body.data).toHaveProperty('updatedAt')
         expect(response.body.data).toHaveProperty('UpdatedByUserId')

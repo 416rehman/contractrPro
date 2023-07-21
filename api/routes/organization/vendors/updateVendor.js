@@ -9,7 +9,6 @@ const { sequelize, Vendor } = require('../../../db')
 // Updates an organization's vendor by ID
 module.exports = async (req, res) => {
     try {
-
         const orgId = req.params.org_id
         const vendorId = req.params.vendor_id
 

@@ -9,7 +9,6 @@ const { isValidUUID } = require('../../../utils/isValidUUID')
 // Creates an organization's vendor
 module.exports = async (req, res) => {
     try {
-
         const orgId = req.params.org_id
 
         if (!orgId || !isValidUUID(orgId)) {
