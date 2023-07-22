@@ -27,6 +27,7 @@ module.exports.define = (sequelize, DataTypes) => {
             description: {
                 type: DataTypes.STRING(1024),
             },
+            
         },
         {
             indexes: [
@@ -43,9 +44,6 @@ module.exports.define = (sequelize, DataTypes) => {
     )
 
     Vendor.associate = (models) => {
-        Vendor.belongsTo(models.Organization, {
-            onDelete: 'CASCADE',
-        }) // the organization that owns this client
 
         Vendor.hasMany(models.Expense, {
             foreignKey: { allowNull: false },
