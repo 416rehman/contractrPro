@@ -33,7 +33,9 @@ module.exports = async (req, res) => {
             })
 
             if (!vendor) {
-                return res.status(400).json(createErrorResponse('Vendor not found'))
+                return res
+                    .status(400)
+                    .json(createErrorResponse('Vendor not found'))
             }
 
             return res.status(200).json(createSuccessResponse(vendor))
