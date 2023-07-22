@@ -16,7 +16,7 @@ beforeAll(async () => {
     vendorId = vendorToDelete.id
 
     const strangerVendor = await Vendor.create({
-        ...fake.mockClientData(),
+        ...fake.mockVendorData(),
         OrganizationId: orgResuts[1].id,
     })
     strangerVendorId = strangerVendor.id
@@ -26,7 +26,7 @@ afterAll(async () => {
     await sequelize.close()
 })
 describe('Delete organization vendor', () => {
-    it('should delete an organization vendor', async () => {
+    it('Should delete an organization vendor', async () => {
         const response = await request(app)
             .delete(`/organizations/${orgId}/vendors/${vendorId}`)
             .expect(200)
@@ -35,7 +35,7 @@ describe('Delete organization vendor', () => {
         expect(response.body.data).toBe(1)
     })
 
-    it('should return 400 if organization ID is invalid', async () => {
+    it('Should return 400 if organization ID is invalid', async () => {
         const invalidOrgId = 'invalid-org-id'
 
         const response = await request(app)
@@ -45,7 +45,7 @@ describe('Delete organization vendor', () => {
         expect(response.body.status).toBe('error')
     })
 
-    it('should return 400 if vendor ID is invalid', async () => {
+    it('Should return 400 if vendor ID is invalid', async () => {
         const invalidVendorId = 'invalid-vendor-id'
 
         const response = await request(app)
@@ -55,7 +55,7 @@ describe('Delete organization vendor', () => {
         expect(response.body.status).toBe('error')
     })
 
-    it('should return 400 if vendor is not found', async () => {
+    it('Should return 400 if vendor is not found', async () => {
         jest.spyOn(Vendor, 'destroy').mockImplementationOnce(() => 0)
 
         const response = await request(app)
@@ -65,7 +65,7 @@ describe('Delete organization vendor', () => {
         expect(response.body.status).toBe('error')
     })
 
-    it('should return 400 if the vendor is not in the organization', async () => {
+    it('Should return 400 if the vendor is not in the organization', async () => {
         const response = await request(app)
             .delete(`/organizations/${orgId}/vendors/${strangerVendorId}`)
             .expect(400)
@@ -73,7 +73,7 @@ describe('Delete organization vendor', () => {
         expect(response.body.status).toBe('error')
     })
 
-    it('should return 400 if an exception occurs', async () => {
+    it('Should return 400 if an exception occurs', async () => {
         jest.spyOn(sequelize, 'transaction').mockImplementationOnce(() => {
             throw new Error('Something went wrong')
         })
