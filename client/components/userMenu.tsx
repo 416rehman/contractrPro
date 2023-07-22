@@ -22,7 +22,7 @@ export const UserMenuGeneric = (props: tUser & { children: CollectionChildren<ob
                 <p className="text-default-500 text-xs">{props.email}</p>
               </div>
             </div>
-            <Avatar isBordered radius="sm" src="https://i.pravatar.cc/150?u=a04258114e29026708c" />
+            <Avatar isBordered radius="sm" src={props.avatarUrl || "/defaultImages/userDefault.png"} />
           </div>
         </Card>
       </DropdownTrigger>

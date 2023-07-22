@@ -87,7 +87,7 @@ type Invoice = {
   dueDate: string,
   poNumber: string,
   note: string,
-  taxRate: string,
+  taxRate: number,
   BillToClientId?: string,
   ContractId?: string,
   JobId?: string,
@@ -116,8 +116,8 @@ type InvoiceEntry = {
   id?: string,
   name: string,
   description: string,
-  quantity: string,
-  unitCost: string,
+  quantity: number,
+  unitCost: number,
   InvoiceId?: string,
 } & any;
 
@@ -126,7 +126,7 @@ type ExpenseEntry = {
   id?: string,
   name: string,
   description: string,
-  quantity: string,
-  unitCost: string,
+  quantity: number,
+  unitCost: number,
   ExpenseId?: string,
 } & any;

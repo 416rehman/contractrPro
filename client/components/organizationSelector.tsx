@@ -6,7 +6,7 @@ import JoinOrganizationModal from "@/components/joinOrganizationModal";
 import { useDisclosure } from "@nextui-org/react";
 import clsx from "clsx";
 import CreateOrganizationModal from "@/components/createOrganizationModal";
-import { loadUserOrganizations, useUserStore } from "@/services/user";
+import { loadUserOrganizations, setCurrentOrganization, useUserStore } from '@/services/user'
 import { getLocalStorageItem } from "@/utils/safeLocalStorage";
 
 type Props = {
@@ -21,7 +21,7 @@ const OrgItem = ({ logoUrl, description, name }) => {
     as="button"
     avatarProps={{
       isBordered: true,
-      src: logoUrl || "https://cdn-icons-png.flaticon.com/512/7025/7025285.png"
+      src: logoUrl || "/defaultImages/organizationDefault.png"
     }}
     className="transition-transform justify-start hover:bg-default-100 flex flex-row items-center p-1 pr-2 rounded-full max-w-10"
     description={description}
@@ -48,7 +48,7 @@ export default function OrganizationSelector({
   // another disclosure for the create organization modal
   const { isOpen: isCreateOpen, onOpen: onCreateOpen, onOpenChange: onCreateOpenChange } = useDisclosure();
 
-  const [userOrgs, currentOrg, setCurrentOrg] = useUserStore(state => [state.organizations, state.currentOrganization, state.setCurrentOrganization]);
+  const [userOrgs, currentOrg] = useUserStore(state => [state.organizations, state.currentOrganization]);
 
   const [selectedOrganization, setSelectedOrganization] = useState(null);
 
@@ -77,8 +77,7 @@ export default function OrganizationSelector({
           console.log("Unknown action");
       }
     } else {
-      // setCurrentOrg(userOrgs?.find(org => org.id === id));
-      setCurrentOrg(userOrgs?.find(org => org.id === id));
+      setCurrentOrganization(userOrgs?.find(org => org.id === id));
     }
   };
 

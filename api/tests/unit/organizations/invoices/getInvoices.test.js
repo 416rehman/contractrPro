@@ -27,7 +27,7 @@ describe('Get all organization invoices', () => {
         const invoice = data[0]
         expect(invoice).toHaveProperty('id')
         expect(invoice).toHaveProperty('invoiceNumber')
-        expect(invoice).toHaveProperty('date')
+        expect(invoice).toHaveProperty('issueDate')
         expect(invoice).toHaveProperty('createdAt')
         expect(invoice).toHaveProperty('updatedAt')
         expect(invoice).toHaveProperty('ContractId')
@@ -64,7 +64,7 @@ describe('Get all organization invoices', () => {
         const invoice = data[0]
         expect(invoice).toHaveProperty('id')
         expect(invoice).toHaveProperty('invoiceNumber')
-        expect(invoice).toHaveProperty('date')
+        expect(invoice).toHaveProperty('issueDate')
         expect(invoice).toHaveProperty('createdAt')
         expect(invoice).toHaveProperty('updatedAt')
         expect(invoice).toHaveProperty('ContractId')

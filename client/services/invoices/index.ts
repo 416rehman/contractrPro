@@ -20,7 +20,13 @@ export const useInvoicesStore = create((set: any) => ({
 
 export const loadInvoices = async (currentOrganizationId: string) => {
   try {
-    useInvoicesStore.getState().setInvoices(await requestAllOrganizationInvoices(currentOrganizationId));
+    const currentInvoices = useInvoicesStore.getState().invoices;
+    const orgInvoices = await requestAllOrganizationInvoices(currentOrganizationId);
+
+    // if the new invoices are different from the current invoices, update the store
+    if (orgInvoices.length !== currentInvoices.length || orgInvoices.some((invoice, i) => invoice.id !== currentInvoices[i].id)) {
+        useInvoicesStore.getState().setInvoices(orgInvoices);
+    }
   } catch (err) {
     console.log(err);
   }

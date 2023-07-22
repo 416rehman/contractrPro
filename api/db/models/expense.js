@@ -14,6 +14,11 @@ module.exports.define = (sequelize, DataTypes) => {
         date: {
             type: DataTypes.DATE,
         },
+        taxRate: {
+            type: DataTypes.FLOAT(),
+            allowNull: false,
+            defaultValue: 0,
+        },
     })
 
     Expense.associate = (models) => {

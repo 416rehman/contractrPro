@@ -1,4 +1,5 @@
 import { request } from "@/utils/request";
+import { Organization } from '@/types'
 
 const apiUrl = process.env.API_URL || "http://localhost:4000";
 
@@ -9,8 +10,23 @@ export async function requestUserOrganizations(UserId = "me") {
       method: "GET",
       credentials: "include"
     });
-    
+
     return Promise.resolve(data?.Organizations);
+  } catch (err) {
+    console.log(err);
+    return Promise.reject(err?.message || err);
+  }
+}
+
+export async function requestCreateOrganization(organization: Organization) {
+  try {
+    const data = await request(`${apiUrl}/organizations`, {
+      method: "POST",
+      credentials: "include",
+      body: JSON.stringify(organization)
+    });
+
+    return Promise.resolve(data);
   } catch (err) {
     console.log(err);
     return Promise.reject(err?.message || err);

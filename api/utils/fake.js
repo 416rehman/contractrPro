@@ -118,6 +118,7 @@ const mockInvoiceData = () => {
     return {
         invoiceNumber: faker.string.alphanumeric(8),
         invoiceDate: faker.date.past(),
+        issueDate: faker.date.past(),
         dueDate: faker.date.future(),
         poNumber: faker.string.alphanumeric(8),
         note: faker.lorem.sentence(),

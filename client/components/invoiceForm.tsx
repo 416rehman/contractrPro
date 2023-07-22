@@ -75,7 +75,7 @@ export default function InvoiceForm({ id, className }: Props) {
     if (!editedInvoice?.InvoiceEntries?.find((entry) => entry.id === id)) {
       setEditedInvoice((prev) => ({
         ...prev,
-        InvoiceEntries: [...prev?.InvoiceEntries, { id, [name]: value }]
+        InvoiceEntries: [...(prev?.InvoiceEntries || []), { id, [name]: value }]
       }));
     }
     // otherwise, update the entry with the given id

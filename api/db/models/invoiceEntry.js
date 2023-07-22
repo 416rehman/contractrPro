@@ -13,7 +13,7 @@ module.exports.define = (sequelize, DataTypes) => {
         },
         description: {
             type: DataTypes.STRING(512),
-            allowNull: false,
+            allowNull: true,
         },
         quantity: {
             type: DataTypes.INTEGER,
