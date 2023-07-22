@@ -13,7 +13,8 @@ afterAll(async () => {
     await sequelize.close()
 })
 describe('Add vendor to organization', () => {
-    it('It should add a vendor to an organization', async () => {
+    
+    it('Should add a vendor to an organization', async () => {
         const vendorData = fake.mockVendorData()
 
         const response = await request(app)
@@ -24,19 +25,16 @@ describe('Add vendor to organization', () => {
         expect(response.body.status).toBe('success')
         expect(response.body.data).toHaveProperty('id')
         expect(response.body.data).toHaveProperty('name', vendorData.name)
-        expect(response.body.data).toHaveProperty('phone', vendorData.email)
-        expect(response.body.data).toHaveProperty('email', vendorData.phone)
+        expect(response.body.data).toHaveProperty('phone', vendorData.phone)
+        expect(response.body.data).toHaveProperty('email', vendorData.email)
         expect(response.body.data).toHaveProperty('website', vendorData.website)
-        expect(response.body.data).toHaveProperty(
-            'description',
-            vendorData.description
-        )
+        expect(response.body.data).toHaveProperty('description', vendorData.description)
         expect(response.body.data).toHaveProperty('OrganizationId', orgId)
         expect(response.body.data).toHaveProperty('UpdatedByUserId')
         expect(response.body.data).toHaveProperty('updatedAt')
         expect(response.body.data).toHaveProperty('createdAt')
 
-        // cleanup - delete the vendor
+        // Cleanup - delete the vendor
         if (response?.body?.data?.id) {
             await Vendor.destroy({
                 where: { id: response.body.data.id },
@@ -44,7 +42,7 @@ describe('Add vendor to organization', () => {
         }
     })
 
-    it('should return 400 if a vendor with same email or phone already exists', async () => {
+    it('Should return 400 if a vendor with same email or phone already exists', async () => {
         const vendorData = fake.mockVendorData()
 
         // Create first vendor
@@ -62,7 +60,7 @@ describe('Add vendor to organization', () => {
         expect(response.body.status).toBe('error')
         expect(response.body.message).toBeDefined()
 
-        // cleanup - delete the vendor
+        // Cleanup - delete the vendor
         if (initVendor?.id) {
             await Vendor.destroy({
                 where: { id: initVendor.id },
@@ -70,7 +68,7 @@ describe('Add vendor to organization', () => {
         }
     })
 
-    it('should return 400 if an error occurs during saving', async () => {
+    it('Should return 400 if an error occurs during saving', async () => {
         jest.spyOn(Vendor, 'create').mockImplementation(() => {
             throw new Error('Something went wrong')
         })
