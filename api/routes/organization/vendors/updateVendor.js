@@ -46,9 +46,14 @@ module.exports = async (req, res) => {
                 throw new Error('Vendor not found')
             }
 
-            const updateVendor = queryResult[1][0]
+            //queryResult returns:
+            // [
+            //     <number of rows updated>,
+            //     [<array of updated rows>]
+            // ]
+            const updatedVendor = queryResult[1][0]
 
-            return res.status(200).json(createSuccessResponse(updateVendor))
+            return res.status(200).json(createSuccessResponse(updatedVendor))
         })
     } catch (error) {
         return res.status(400).json(createErrorResponse('', error))
