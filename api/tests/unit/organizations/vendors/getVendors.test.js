@@ -12,7 +12,7 @@ afterAll(async () => {
     await sequelize.close()
 })
 describe('Get organization vendors', () => {
-    it('should return organization vendors', async () => {
+    it('Should return organization vendors', async () => {
         const response = await request(app)
             .get(`/organizations/${orgId}/vendors`)
             .expect(200)
@@ -32,7 +32,7 @@ describe('Get organization vendors', () => {
         expect(vendor).toHaveProperty('OrganizationId')
     })
 
-    it('should return an error if an exception occurs', async () => {
+    it('Should return an error if an exception occurs', async () => {
         jest.spyOn(Vendor, 'findAll').mockImplementationOnce(() => {
             throw new Error('Something went wrong')
         })
