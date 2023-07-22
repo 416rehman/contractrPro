@@ -17,7 +17,7 @@ module.exports = async (req, res) => {
         }
 
         await sequelize.transaction(async (transaction) => {
-            const organizationVendors = await Vendor.findAll({
+            const vendors = await Vendor.findAll({
                 where: {
                     OrganizationId: orgId,
                 },
@@ -26,7 +26,7 @@ module.exports = async (req, res) => {
 
             return res
                 .status(200)
-                .json(createSuccessResponse(organizationVendors))
+                .json(createSuccessResponse(vendors))
         })
     } catch (error) {
         res.status(400).json(createErrorResponse('', error))
