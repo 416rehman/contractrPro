@@ -71,20 +71,20 @@ export default async function RootLayout({ children }: { children: ReactNode; })
     />
     <body
       className={clsx(
-        "bg-background font-sans antialiased min-h-screen min-w-screen flex flex-col",
+        "bg-background font-sans antialiased h-screen min-w-screen flex flex-col",
         fontSans.variable
       )}
     >
     <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }} loggedInUser={user}>
       <div className="relative flex flex-col flex-grow w-full h-full">
         <Topbar className={"print:hidden"} />
-        <div className="flex flex-row gap-x-0 gap-y-0 flex-grow w-full h-full">
+        <div className="flex flex-row gap-x-0 gap-y-0 flex-grow w-full h-full overflow-y-auto">
           <AuthFallback fallbackIf={"logged-in"}
                         to={<Sidebar
                           className={"hidden md:flex md:print:hidden md:flex-col px-2 py-4 items-center gap-8"} />} />
 
           <main id={"main"}
-                className="flex flex-grow border-foreground-100 md:border-t-2 md:border-l-2 rounded-tl-md bg-foreground-50 w-full h-auto">
+                className="flex flex-grow border-foreground-100 md:border-t-2 md:border-l-2 rounded-tl-md bg-foreground-50 w-full h-auto overflow-y-auto">
             {children}
             <ToastBox className={"fixed bottom-0 right-0 z-50 p-4 print:hidden"} />
           </main>
