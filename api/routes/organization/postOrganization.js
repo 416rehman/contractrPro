@@ -1,4 +1,9 @@
-const { sequelize, Organization, Address, OrganizationMember } = require('../../db')
+const {
+    sequelize,
+    Organization,
+    Address,
+    OrganizationMember,
+} = require('../../db')
 const {
     createSuccessResponse,
     createErrorResponse,
@@ -32,13 +37,16 @@ module.exports = async (req, res) => {
             })
 
             // add the owner to the organization
-            await OrganizationMember.create({
-                OrganizationId: org.id,
-                UserId: req.auth.id,
-                name: req.auth.name,
-                email: req.auth.email,
-                phone: req.auth.phone || null,
-            }, { transaction })
+            await OrganizationMember.create(
+                {
+                    OrganizationId: org.id,
+                    UserId: req.auth.id,
+                    name: req.auth.name,
+                    email: req.auth.email,
+                    phone: req.auth.phone || null,
+                },
+                { transaction }
+            )
 
             return res.status(201).json(createSuccessResponse(org))
         })

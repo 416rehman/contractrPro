@@ -35,19 +35,19 @@ describe('Create invoice', () => {
         expect(InvoiceEntries[0]).toHaveProperty('id')
         expect(InvoiceEntries[0]).toHaveProperty(
             'name',
-            invoiceData.InvoiceEntries[0].name,
+            invoiceData.InvoiceEntries[0].name
         )
         expect(InvoiceEntries[0]).toHaveProperty(
             'description',
-            invoiceData.InvoiceEntries[0].description,
+            invoiceData.InvoiceEntries[0].description
         )
         expect(InvoiceEntries[0]).toHaveProperty(
             'quantity',
-            invoiceData.InvoiceEntries[0].quantity,
+            invoiceData.InvoiceEntries[0].quantity
         )
         expect(InvoiceEntries[0]).toHaveProperty(
             'unitCost',
-            invoiceData.InvoiceEntries[0].unitCost,
+            invoiceData.InvoiceEntries[0].unitCost
         )
         expect(InvoiceEntries[0]).toHaveProperty('InvoiceId', id)
 

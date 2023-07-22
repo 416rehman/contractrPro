@@ -26,18 +26,22 @@ module.exports.define = (sequelize, DataTypes) => {
             type: DataTypes.SMALLINT,
             defaultValue: 0,
         },
-        startDate: { // Date the job is scheduled to start
+        startDate: {
+            // Date the job is scheduled to start
             type: DataTypes.DATE,
             allowNull: false,
             defaultValue: DataTypes.NOW,
         },
-        dueDate: { // Date the job is scheduled to end - if null, uses the project's due date
+        dueDate: {
+            // Date the job is scheduled to end - if null, uses the project's due date
             type: DataTypes.DATE,
         },
-        completionDate: { // Date the job was completed
+        completionDate: {
+            // Date the job was completed
             type: DataTypes.DATE,
         },
-        totalCost: {    // Total cost of the job
+        totalCost: {
+            // Total cost of the job
             type: DataTypes.DECIMAL(10, 2),
             defaultValue: 0,
         },
