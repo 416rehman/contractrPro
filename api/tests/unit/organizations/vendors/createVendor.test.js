@@ -13,7 +13,6 @@ afterAll(async () => {
     await sequelize.close()
 })
 describe('Add vendor to organization', () => {
-    
     it('Should add a vendor to an organization', async () => {
         const vendorData = fake.mockVendorData()
 
@@ -28,7 +27,10 @@ describe('Add vendor to organization', () => {
         expect(response.body.data).toHaveProperty('phone', vendorData.phone)
         expect(response.body.data).toHaveProperty('email', vendorData.email)
         expect(response.body.data).toHaveProperty('website', vendorData.website)
-        expect(response.body.data).toHaveProperty('description', vendorData.description)
+        expect(response.body.data).toHaveProperty(
+            'description',
+            vendorData.description
+        )
         expect(response.body.data).toHaveProperty('OrganizationId', orgId)
         expect(response.body.data).toHaveProperty('UpdatedByUserId')
         expect(response.body.data).toHaveProperty('updatedAt')
