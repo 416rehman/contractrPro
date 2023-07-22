@@ -24,9 +24,7 @@ module.exports = async (req, res) => {
                 transaction,
             })
 
-            return res
-                .status(200)
-                .json(createSuccessResponse(vendors))
+            return res.status(200).json(createSuccessResponse(vendors))
         })
     } catch (error) {
         res.status(400).json(createErrorResponse('', error))
