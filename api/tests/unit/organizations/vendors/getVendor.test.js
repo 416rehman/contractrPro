@@ -21,7 +21,7 @@ afterAll(async () => {
     await sequelize.close()
 })
 describe('Get organization vendor', () => {
-    it('should return an organization vendor', async () => {
+    it('Should return an organization vendor', async () => {
         const response = await request(app)
             .get(`/organizations/${orgId}/vendors/${vendor.id}`)
             .expect(200)
@@ -41,7 +41,7 @@ describe('Get organization vendor', () => {
         expect(body).toHaveProperty('OrganizationId')
     })
 
-    it('should return an error if a bad vendor ID is provided', async () => {
+    it('Should return an error if a bad vendor ID is provided', async () => {
         const response = await request(app)
             .get(`/organizations/${orgId}/vendors/123`)
             .expect(400)
@@ -49,7 +49,7 @@ describe('Get organization vendor', () => {
         expect(response.body.status).toBe('error')
     })
 
-    it('should return an error if a bad organization ID is provided', async () => {
+    it('Should return an error if a bad organization ID is provided', async () => {
         const response = await request(app)
             .get(`/organizations/123/vendors/${vendor.id}`)
             .expect(400)
@@ -57,7 +57,7 @@ describe('Get organization vendor', () => {
         expect(response.body.status).toBe('error')
     })
 
-    it('should return an error if the vendor does not belong to the organization', async () => {
+    it('Should return an error if the vendor does not belong to the organization', async () => {
         const response = await request(app)
             .get(`/organizations/${orgId}/vendors/${strangerVendor.id}`)
             .expect(400)
@@ -65,7 +65,7 @@ describe('Get organization vendor', () => {
         expect(response.body.status).toBe('error')
     })
 
-    it('should return an error if an exception occurs', async () => {
+    it('Should return an error if an exception occurs', async () => {
         jest.spyOn(Vendor, 'findAll').mockImplementationOnce(() => {
             throw new Error('Something went wrong')
         })
