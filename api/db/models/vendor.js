@@ -27,7 +27,6 @@ module.exports.define = (sequelize, DataTypes) => {
             description: {
                 type: DataTypes.STRING(1024),
             },
-            
         },
         {
             indexes: [
@@ -44,7 +43,6 @@ module.exports.define = (sequelize, DataTypes) => {
     )
 
     Vendor.associate = (models) => {
-
         Vendor.hasMany(models.Expense, {
             foreignKey: { allowNull: false },
         })
