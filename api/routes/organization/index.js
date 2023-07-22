@@ -64,4 +64,9 @@ routes.use('/:org_id/expenses', require('./expenses'))
  */
 routes.use('/:org_id/invoices', require('./invoices'))
 
+/**
+ * @api {use} /organizations/:org_id/vendors Uses the organization's vendors router
+ */
+routes.use('/:org_id/vendors', require('./vendors'))
+
 module.exports = routes
