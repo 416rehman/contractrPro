@@ -24,7 +24,7 @@ module.exports = async (req, res) => {
         }
 
         await sequelize.transaction(async (transaction) => {
-            const organizationVendor = await Vendor.findOne({
+            const vendor = await Vendor.findOne({
                 where: {
                     OrganizationId: orgId,
                     id: vendorId,
@@ -34,7 +34,7 @@ module.exports = async (req, res) => {
 
             return res
                 .status(200)
-                .json(createSuccessResponse(organizationVendor))
+                .json(createSuccessResponse(vendor))
         })
     } catch (error) {
         res.status(400).json(createErrorResponse('', error))
