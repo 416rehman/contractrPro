@@ -1,6 +1,5 @@
-//*******************************************TODO******************* */
-//PUT /organizations/:org_id/contracts/:contract_id
-const { sequelize, Contract } = require('../../../db')
+const { sequelize, Contract, Job } = require('../../../db')
+const { Op } = require('sequelize')
 const {
     createSuccessResponse,
     createErrorResponse,
@@ -32,10 +31,26 @@ module.exports = async (req, res) => {
                 'dueDate',
                 'completionDate',
                 'status',
+                'ClientId',
             ]),
             UpdatedByUserId: req.auth.id,
             OrganizationId: orgId,
         }
+
+        const Jobs =
+            req.body?.Jobs?.map((entry) =>
+                pick(entry, [
+                    'reference',
+                    'name',
+                    'description',
+                    'status',
+                    'startDate',
+                    'dueDate',
+                    'payout',
+                ])
+            ) || []
+
+        console.log('Jobs: ', Jobs)
 
         await sequelize.transaction(async (transaction) => {
             const queryResult = await Contract.update(body, {
@@ -51,7 +66,47 @@ module.exports = async (req, res) => {
                 throw new Error('Contract not found')
             }
 
-            const updatedContract = queryResult[1][0]
+            const updatedContract = queryResult[1][0]?.dataValues
+
+            if (Jobs.length > 0) {
+                // Update or create jobs
+                const newJobs = await Promise.all(
+                    Jobs.map(async (job) => {
+                        const [updatedJob] = await Job.upsert(
+                            {
+                                ...job,
+                                ContractId: contractId,
+                                OrganizationId: orgId,
+                                UpdatedByUserId: req.auth.id,
+                            },
+                            {
+                                returning: true,
+                                transaction,
+                            }
+                        )
+                        return updatedJob
+                    })
+                )
+
+                console.log('newJobs: ', newJobs)
+
+                // Delete the jobs that were not updated
+                const jobIds = newJobs.map((job) => job.id)
+                const result = await Job.destroy({
+                    where: {
+                        id: {
+                            [Op.notIn]: jobIds,
+                        },
+                        ContractId: contractId,
+                    },
+                    transaction,
+                })
+
+                console.log('result: ', result)
+
+                updatedContract.Jobs = newJobs
+                console.log('updatedContract: ', updatedContract)
+            }
             return res.status(200).json(createSuccessResponse(updatedContract))
         })
     } catch (err) {
