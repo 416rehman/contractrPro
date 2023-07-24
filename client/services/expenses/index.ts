@@ -13,8 +13,10 @@ export const useExpensesStore = create((set: any) => ({
     setExpenses: (expenses: Expense[]) => set({ expenses }),
     addExpense: (expense: Expense) => set((state: any) => ({ expenses: [...state.expenses, expense] })),
     removeExpense: (expense: Expense) => set((state: any) => ({ expenses: state.expenses.filter((e: Expense) => e.id !== expense.id) })),
-    updateExpense: (expense: Expense) => set((state: any) => ({ expenses: state.expenses.map((e: Expense) => e.id === expense.id ? expense : e) })),
-}))
+    updateExpense: (expense: Expense) => {
+        set((state: any) => ({ expenses: state.expenses.map((e: Expense) => e.id === expense.id ? expense : e) }));
+      }
+}));
 
 export const loadExpenses = async (currentOrganizationId: string) => {
     try {
@@ -33,6 +35,9 @@ export const loadExpenses = async (currentOrganizationId: string) => {
 export const updateExpenses = async (expense: Expense, currentOrganizationId: string) => {
     try {
         if (currentOrganizationId) {
+            // Remove empty expense entries
+            expense.expenseEntries = expense?.expenseEntries.filter((entry) => entry.name || entry.unitCost || entry.quantity || entry.description) || [];
+
             if (expense?.id) {
                 await requestUpdateExpense(expense, currentOrganizationId)
                 useExpensesStore.getState().updateExpense(expense)
@@ -59,9 +64,9 @@ export const deleteExpense = async (expense: Expense, currentOrganizationId: str
             console.log(await requestDeleteExpense(expense, currentOrganizationId))
         }
         useExpensesStore.getState().removeExpense(expense)
-        useToastsStore.getState().addToast({ id: 'delete-expense', type: 'success', message: 'Expense deleted' })
+        useToastsStore.getState().addToast({ id: 'delete-expenseEntires', type: 'success', message: 'Expense deleted' })
 
     } catch (err) {
-        useToastsStore.getState().addToast({ id: 'delete-expense-error', type: 'error', message: err?.message || err })
+        useToastsStore.getState().addToast({ id: 'delete-expenseEntries-error', type: 'error', message: err?.message || err })
     }
 }
