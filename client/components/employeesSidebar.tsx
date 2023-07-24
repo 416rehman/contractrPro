@@ -4,7 +4,7 @@ import { CardFooter, Input } from "@nextui-org/react";
 import { Button } from "@nextui-org/button";
 import NextLink from "next/link";
 import clsx from "clsx";
-import { IconBuilding, IconChevronDown, IconListSearch } from "@tabler/icons-react";
+import { IconAt, IconChevronDown, IconListSearch } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { loadEmployees, useEmployeesStore } from "@/services/employees";
 import { useUserStore } from "@/services/user";
@@ -51,7 +51,7 @@ export default function EmployeesSidebar({ className }: Props) {
               className={"w-full justify-start text-default-600 font-medium"}
               as={NextLink}
               href={"/employees/" + employee?.id}
-              startContent={<IconBuilding className={"text-default-300"} size={"20"} />}
+              startContent={<IconAt className={"text-default-300"} size={"20"} />}
               variant={params.id === employee?.id ? "flat" : "light"}
               size={"sm"}>
               <span className={"truncate"}>{employee?.name}</span>

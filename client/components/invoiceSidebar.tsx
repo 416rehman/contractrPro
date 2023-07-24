@@ -4,7 +4,7 @@ import { CardFooter, Input } from "@nextui-org/react";
 import { Button } from "@nextui-org/button";
 import NextLink from "next/link";
 import clsx from "clsx";
-import { IconBuilding, IconChevronDown, IconListSearch } from "@tabler/icons-react";
+import { IconChevronDown, IconListSearch, IconReceipt2 } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { loadInvoices, useInvoicesStore } from "@/services/invoices";
 import { useUserStore } from "@/services/user";
@@ -54,7 +54,7 @@ export default function InvoicesSidebar({ className }: Props) {
               className={"w-full justify-start text-default-600 font-medium"}
               as={NextLink}
               href={"/invoices/" + invoice?.id}
-              startContent={<IconBuilding className={"text-default-300"} size={"20"} />}
+              startContent={<IconReceipt2 className={"text-default-300"} size={"20"} />}
               variant={params.id === invoice?.id ? "flat" : "light"}
               size={"sm"}>
               <span className={"truncate"}>{invoice?.invoiceNumber}</span>
