@@ -62,6 +62,19 @@ type Client = {
   OrganizationId?: string,
 } & any;
 
+type Vendor= {
+  id?: string,
+  name: string,
+  phone: string,
+  email: string,
+  website: string,
+  description: string,
+  createdAt?: string,
+  updatedAt?: string,
+  UpdatedByUserId?: string,
+  OrganizationId?: string,
+} & any;
+
 type Employee = {
   id?: string,
   name: string,
@@ -105,6 +118,7 @@ type Expense = {
   VendorId?: string,
   ContractId?: string,
   JobId?: string,
+  taxRate: number,
   ExpenseEntries: Array<ExpenseEntry>,
   createdAt?: string,
   updatedAt?: string,
