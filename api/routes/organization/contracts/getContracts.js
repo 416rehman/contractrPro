@@ -1,4 +1,4 @@
-const { sequelize, Contract } = require('../../../db')
+const { sequelize, Contract, Job } = require('../../../db')
 const { isValidUUID } = require('../../../utils/isValidUUID')
 
 const {
@@ -9,6 +9,7 @@ const {
 // Gets the organization's contracts
 module.exports = async (req, res) => {
     try {
+        const expand = req.query.expand
         const orgID = req.params.org_id
 
         if (!orgID || !isValidUUID(orgID)) {
@@ -18,7 +19,7 @@ module.exports = async (req, res) => {
         }
 
         await sequelize.transaction(async (transaction) => {
-            const organizationContracts = await Contract.findAll({
+            const options = {
                 attributes: {
                     exclude: ['organization_id'],
                 },
@@ -26,7 +27,12 @@ module.exports = async (req, res) => {
                     OrganizationId: orgID,
                 },
                 transaction,
-            })
+            }
+
+            if (expand) {
+                options.include = { model: Job }
+            }
+            const organizationContracts = await Contract.findAll(options)
 
             return res
                 .status(200)
