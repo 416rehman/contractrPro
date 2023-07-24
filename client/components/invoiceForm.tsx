@@ -56,6 +56,16 @@ export default function InvoiceForm({ id, className }: Props) {
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
+
+  // Confirm reload if editing
+  useEffect(() => {
+    if (isEditing) {
+      window.onbeforeunload = () => true;
+    } else {
+      window.onbeforeunload = null;
+    }
+  }, [isEditing]);
+
   // For delete modal dialog
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
