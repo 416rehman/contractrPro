@@ -45,10 +45,6 @@ module.exports = async (req, res) => {
                 UpdatedByUserId: req.auth.id,
             }
 
-            if (req.body.Jobs) {
-                body.Jobs = req.body.Jobs
-            }
-
             const include = [
                 {
                     model: Organization,
@@ -59,6 +55,19 @@ module.exports = async (req, res) => {
             ]
 
             if (req.body?.Jobs?.length) {
+                body.Jobs =
+                    req.body?.Jobs?.map((job) =>
+                        pick(job, [
+                            'reference',
+                            'name',
+                            'description',
+                            'status',
+                            'startDate',
+                            'dueDate',
+                            'payout',
+                        ])
+                    ) || []
+
                 include.push({
                     model: Job,
                 })
