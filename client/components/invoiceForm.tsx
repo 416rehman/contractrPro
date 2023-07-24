@@ -21,6 +21,7 @@ import {
   IconChevronDown,
   IconDeviceFloppy,
   IconEdit,
+  IconFileTypeCsv,
   IconHash,
   IconPercentage,
   IconPrinter,
@@ -28,7 +29,7 @@ import {
 } from "@tabler/icons-react";
 import clsx from "clsx";
 import { useUserStore } from "@/services/user";
-import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/dropdown";
+import { Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger } from "@nextui-org/dropdown";
 import OrganizationSelector from "@/components/organizationSelector";
 import { Invoice } from "@/types";
 import InvoiceEntriesTable from "@/components/invoiceEntriesTable";
@@ -135,6 +136,25 @@ export default function InvoiceForm({ id, className }: Props) {
     setIsSaving(false);
   };
 
+  const exportAsCSV = () => {
+    if (!editedInvoice.InvoiceEntries) return;
+
+    // Generate comma separated headers
+    const headers = "" + Object.keys(editedInvoice.InvoiceEntries[0]).join(",");
+
+    // Generate comma separated values
+    const values = editedInvoice.InvoiceEntries.map((job) => Object.values(job).join(",")).join("\n");
+
+    // Create hidden element and click it to download
+    const element = document.createElement("a");
+    element.setAttribute("href", "data:text/csv;charset=utf-8," + encodeURIComponent(headers + "\n" + values));
+    element.setAttribute("download", `${editedInvoice.id + "-invoice" || "invoice"}.csv`);
+    element.style.display = "none";
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  };
+
   if (!currentOrg) {
     return <div className={clsx("flex flex-col flex-grow w-full", className)}>
       <div className={"flex justify-center w-full"}>
@@ -194,13 +214,20 @@ export default function InvoiceForm({ id, className }: Props) {
                       </Button>
                     </DropdownTrigger>
                     <DropdownMenu className={"print:hidden"}>
-                      <DropdownItem key={"print"} description={"Print this invoiceEntries"} onPress={() => {
-                        window.print();
-                      }}
-                                    startContent={<IconPrinter className={"text-default-500"} />} shortcut={"P"}>
-                        Print
-                      </DropdownItem>
-                      <DropdownItem key={"delete"} description={"Delete this invoiceEntries"} onPress={onOpen}
+                      <DropdownSection title={"Actions"} showDivider={true}>
+                        <DropdownItem key={"print"} description={"Print this Contract"} onPress={() => {
+                          window.print();
+                        }}
+                                      startContent={<IconPrinter className={"text-default-500"} />} shortcut={"P"}>
+                          Print
+                        </DropdownItem>
+                        <DropdownItem key={"export"} description={"Export in CSV file format"}
+                                      onPress={() => exportAsCSV()}
+                                      startContent={<IconFileTypeCsv className={"text-default-500"} />} shortcut={"E"}>
+                          Export
+                        </DropdownItem>
+                      </DropdownSection>
+                      <DropdownItem key={"delete"} description={"Delete this Contract"} onPress={onOpen}
                                     className={"text-danger-500"}
                                     startContent={<IconTrash className={"text-default-500"} />} shortcut={"D"}>
                         Delete
