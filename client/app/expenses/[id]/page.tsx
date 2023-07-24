@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import ExpenseForm from "@/components/expenseForm";
 
 type Props = {
   params: { id: string }
@@ -16,6 +17,8 @@ export async function generateMetadata(
   };
 }
 
-export default function Page({ params }: { params: { id: string } }) {
-  return <div>Expense: {params.id}</div>;
+export default function ExpensePage({ params }: { params: { id: string } }) {
+  return <div className={"flex flex-grow overflow-y-auto"}>
+    <ExpenseForm id={params.id} className={"items-center max-w-full md:max-w-3xl"} />
+  </div>;
 }
