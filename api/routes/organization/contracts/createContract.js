@@ -1,4 +1,4 @@
-const { sequelize, Client, Contract, Organization } = require('../../../db')
+const { sequelize, Job, Contract, Organization } = require('../../../db')
 const {
     createSuccessResponse,
     createErrorResponse,
@@ -31,13 +31,6 @@ module.exports = async (req, res) => {
                     .json(createErrorResponse('Organization not found'))
             }
 
-            const organizationClient = await Client.findOne({
-                where: {
-                    OrganizationId: orgID,
-                },
-                transaction,
-            })
-
             const body = {
                 ...pick(req.body, [
                     'name',
@@ -46,21 +39,33 @@ module.exports = async (req, res) => {
                     'dueDate',
                     'completionDate',
                     'status',
+                    'ClientId',
                 ]),
-                ClientId: organizationClient.id,
                 OrganizationId: orgID,
-                organization_id: orgID,
-                ownerId: req.auth.id,
                 UpdatedByUserId: req.auth.id,
             }
 
-            const createOrganizationContract = await Contract.create(body, {
-                include: {
+            if (req.body.Jobs) {
+                body.Jobs = req.body.Jobs
+            }
+
+            const include = [
+                {
                     model: Organization,
                     where: {
                         id: orgID,
                     },
                 },
+            ]
+
+            if (req.body?.Jobs?.length) {
+                include.push({
+                    model: Job,
+                })
+            }
+
+            const createOrganizationContract = await Contract.create(body, {
+                include: include,
                 transaction,
             })
 

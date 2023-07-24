@@ -103,6 +103,7 @@ module.exports.define = (sequelize, DataTypes) => {
     User.associate = (models) => {
         User.belongsToMany(models.Organization, {
             through: 'OrganizationMember',
+            onDelete: 'SET NULL', // If the user is deleted, the associated OrganizationMember is not deleted.
         })
 
         User.hasOne(models.Address, {

@@ -28,12 +28,6 @@ module.exports = async (req, res) => {
                 transaction,
             })
 
-            if (!organizationContracts || organizationContracts.length === 0) {
-                return res
-                    .status(400)
-                    .json(createErrorResponse('Organization not found'))
-            }
-
             return res
                 .status(200)
                 .json(createSuccessResponse(organizationContracts))
