@@ -26,6 +26,7 @@ module.exports = async (req, res) => {
             ...pick(req.body, [
                 'description',
                 'date',
+                'taxRate',
                 'VendorId',
                 'ContractId',
                 'JobId',
