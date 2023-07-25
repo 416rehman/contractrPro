@@ -4,9 +4,9 @@ import { CardFooter, Input } from "@nextui-org/react";
 import { Button } from "@nextui-org/button";
 import NextLink from "next/link";
 import clsx from "clsx";
-import { IconAt, IconChevronDown, IconListSearch } from "@tabler/icons-react";
+import { IconChartTreemap, IconChevronDown, IconListSearch } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
-import { loadEmployees, useEmployeesStore } from "@/services/employees";
+import { loadContracts, useContractsStore } from "@/services/contracts";
 import { useUserStore } from "@/services/user";
 import { useParams } from "next/navigation";
 import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/popover";
@@ -16,62 +16,65 @@ type Props = {
 }
 
 /**
- * The EmployeesSidebar component renders a sidebar of the list of employees for the user to click on one if they want to view its data in its page.
- * Underneath the list is a button that will allow them to create a new employee, taking them to the create page that will allow them to do that.
+ * This is the sidebar for the contracts page. It displays a list of contracts and should allow the user to filter them.
+ * It handles communication with the API and updates the local state via the Contract service.
+ * This is used in tandem with the ContractForm component to edit/create contracts.
+ * TODO: Implement filtering
  */
-export default function EmployeesSidebar({ className }: Props) {
+export default function ContractsSidebar({ className }: Props) {
   const [currentOrg] = useUserStore(state => [state.currentOrganization]);
-  const [employees] = useEmployeesStore(state => [state.employees]);
+  const [contracts] = useContractsStore(state => [state.contracts]);
   const [filter, setFilter] = useState("");
   const params = useParams();
 
   useEffect(() => {
-    loadEmployees(currentOrg?.id);
+    loadContracts(currentOrg?.id);
   }, [currentOrg?.id]);
 
   const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFilter(e.target.value);
-    employees.filter((item: any) => item.name.toLowerCase().includes(e.target.value.toLowerCase()));
+    contracts.filter((item: any) => item.name.toLowerCase().includes(e.target.value.toLowerCase()));
   };
 
   const sidebar = <Card shadow={"none"} isBlurred={true}
                         className={clsx("border-none rounded-none", className)}>
     <CardHeader className={"flex flex-col gap-2"}>
-      <h1 className={"text-2xl font-bold"}>Employees</h1>
+      <h1 className={"text-2xl font-bold"}>Contracts</h1>
       {/*  Search bar*/}
-      <Input placeholder={"Filter"} size={"sm"} endContent={<IconListSearch className={"text-default-400"} />}
+      <Input aria-label={"Filter contracts"}
+             placeholder={"Filter"} size={"sm"} endContent={<IconListSearch className={"text-default-400"} />}
              variant={"underlined"}
              onChange={handleFilterChange} />
     </CardHeader>
     <CardBody className={"p-2"}>
       <ul className={"flex flex-col w-full"}>
-        {employees && employees.map((employee) => (
-          <li key={employee.id}>
+        {contracts && contracts.map((contract) => (
+          <li key={contract.id}>
             <Button
               className={"w-full justify-start text-default-600 font-medium"}
               as={NextLink}
-              href={"/employees/" + employee?.id}
-              startContent={<IconAt className={"text-default-300"} size={"20"} />}
-              variant={params.id === employee?.id ? "flat" : "light"}
+              href={"/contracts/" + contract?.id}
+              startContent={<IconChartTreemap className={"text-default-300"} size={"20"} />}
+              variant={params.id === contract?.id ? "flat" : "light"}
               size={"sm"}>
-              <span className={"truncate"}>{employee?.name}</span>
+              <span className={"truncate"}>{contract?.name}</span>
             </Button>
           </li>
         ))}
       </ul>
     </CardBody>
     <CardFooter>
-      <Button variant={"ghost"} className={"flex-grow"} href={"/employees/new"} as={NextLink}>
-        Create New Employee
+      <Button variant={"ghost"} className={"flex-grow font-md"} href={"/contracts/new"} as={NextLink}>
+        Create New Contract
       </Button>
     </CardFooter>
   </Card>;
 
   // for mobile version have a dropdown
-  const dropdown = <Popover className={className}>
-    <PopoverTrigger className={"w-full flex md:hidden"}>
+  const dropdown = <Popover>
+    <PopoverTrigger className={clsx("w-full flex md:hidden", className)}>
       <Button variant={"ghost"} className={""} endContent={<IconChevronDown />}>
-        Employees
+        Contracts
       </Button>
     </PopoverTrigger>
     <PopoverContent className={"rounded-md !w-[94vw] !h-[85vh] p-1"}>

@@ -1,5 +1,5 @@
 "use client";
-import { deleteInvoiceAndPersist, updateInvoiceAndPersist, useInvoicesStore } from "@/services/invoices";
+import { deleteContractAndPersist, updateContractAndPersist, useContractsStore } from "@/services/contracts";
 import {
   CardFooter,
   Input,
@@ -22,8 +22,6 @@ import {
   IconDeviceFloppy,
   IconEdit,
   IconFileTypeCsv,
-  IconHash,
-  IconPercentage,
   IconPrinter,
   IconTrash
 } from "@tabler/icons-react";
@@ -31,12 +29,12 @@ import clsx from "clsx";
 import { useUserStore } from "@/services/user";
 import { Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger } from "@nextui-org/dropdown";
 import OrganizationSelector from "@/components/organizationSelector";
-import { Invoice } from "@/types";
-import InvoiceEntriesTable from "@/components/invoiceEntriesTable";
+import { Contract } from "@/types";
 import { Divider } from "@nextui-org/divider";
 import ClientSelector from "@/components/clientSelector";
 import { Tooltip } from "@nextui-org/tooltip";
 import moment from "moment";
+import ContractJobsTable from "@/components/contractJobsTable";
 
 type Props = {
   id: string;
@@ -44,19 +42,18 @@ type Props = {
 }
 
 /**
- * This is the main form for editing and or creating an Invoice. The form receives the invoice id as a prop.
- * If the invoice id is undefined, the form will be in create mode. Otherwise, it will be in edit mode.
- * It handles communication with the API and updates the local state via the Invoice service.
+ * This is the main form for editing and or creating an Contract. The form receives the contract id as a prop.
+ * If the contract id is undefined, the form will be in create mode. Otherwise, it will be in edit mode.
+ * It handles communication with the API and updates the local state via the Contract service.
  */
-export default function InvoiceForm({ id, className }: Props) {
-  const [invoice] = useInvoicesStore(state => [state.invoices.find((invoice: any) => invoice.id === id)]);
-  const [editedInvoice, setEditedInvoice] = useState<Invoice | null>(); // Save the edited invoiceEntries here
+export default function ContractForm({ id, className }: Props) {
+  const [contract] = useContractsStore(state => [state.contracts.find((contract: any) => contract.id === id)]);
+  const [editedContract, setEditedContract] = useState<Contract | null>(); // Save the edited contractEntries here
 
   const currentOrg = useUserStore(state => state.currentOrganization);
 
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-
 
   // Confirm reload if editing
   useEffect(() => {
@@ -71,88 +68,41 @@ export default function InvoiceForm({ id, className }: Props) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   useEffect(() => {
-    setEditedInvoice(invoice);
-    setIsEditing(!invoice);
-  }, [invoice]);
+    setEditedContract(contract);
+    setIsEditing(!contract);
+  }, [contract]);
 
   const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEditedInvoice({ ...editedInvoice, [e.target.name]: e.target.value });
-  };
-
-  const onEntryChangedHandler = (name: string, value: any, id: string) => {
-    if (!id) return;
-
-    // if an entry with the given id does not exist, create a new entry
-    if (!editedInvoice?.InvoiceEntries?.find((entry) => entry.id === id)) {
-      setEditedInvoice((prev) => ({
-        ...prev,
-        InvoiceEntries: [...(prev?.InvoiceEntries || []), { id, [name]: value }]
-      }));
-    }
-    // otherwise, update the entry with the given id
-    else {
-      setEditedInvoice((prev) => ({
-        ...prev,
-        InvoiceEntries: prev?.InvoiceEntries?.map((entry) => entry.id === id ? { ...entry, [name]: value } : entry)
-      }));
-    }
-  };
-
-  const onEntryDeleteHandler = (id: string) => {
-    if (!id) return;
-
-    setEditedInvoice((prev) => ({
-      ...prev,
-      InvoiceEntries: prev?.InvoiceEntries?.filter((entry) => entry.id !== id)
-    }));
+    setEditedContract({ ...editedContract, [e.target.name]: e.target.value });
   };
 
   const onSaveHandler = async () => {
-    // Save the edited invoiceEntries here
+    // Save the edited contractEntries here
     setIsSaving(true);
 
-    await updateInvoiceAndPersist(editedInvoice, currentOrg?.id);
+    await updateContractAndPersist(editedContract, currentOrg?.id);
 
-    setIsEditing(!editedInvoice?.id);
-    if (!editedInvoice?.id) {
-      setEditedInvoice(undefined);
+    setIsEditing(!editedContract?.id);
+    if (!editedContract?.id) {
+      setEditedContract(undefined);
     }
 
     setIsSaving(false);
   };
 
   const onCancelHandler = () => {
-    if (editedInvoice?.id) {
-      setIsEditing(!editedInvoice?.id);
-      setEditedInvoice(invoice);
+    if (editedContract?.id) {
+      setIsEditing(!editedContract?.id);
+      setEditedContract(contract);
     }
   };
 
   const onDeleteHandler = async () => {
-    // Delete the invoiceEntries here
+    // Delete the contractEntries here
     setIsSaving(true);
     setIsEditing(false);
-    await deleteInvoiceAndPersist(editedInvoice, currentOrg?.id);
+    await deleteContractAndPersist(editedContract, currentOrg?.id);
     setIsSaving(false);
-  };
-
-  const exportAsCSV = () => {
-    if (!editedInvoice.InvoiceEntries) return;
-
-    // Generate comma separated headers
-    const headers = "" + Object.keys(editedInvoice.InvoiceEntries[0]).join(",");
-
-    // Generate comma separated values
-    const values = editedInvoice.InvoiceEntries.map((job) => Object.values(job).join(",")).join("\n");
-
-    // Create hidden element and click it to download
-    const element = document.createElement("a");
-    element.setAttribute("href", "data:text/csv;charset=utf-8," + encodeURIComponent(headers + "\n" + values));
-    element.setAttribute("download", `${editedInvoice.id + "-invoice" || "invoice"}.csv`);
-    element.style.display = "none";
-    document.body.appendChild(element);
-    element.click();
-    document.body.removeChild(element);
   };
 
   if (!currentOrg) {
@@ -168,14 +118,63 @@ export default function InvoiceForm({ id, className }: Props) {
     </div>;
   }
 
+  const onEntryChangedHandler = (name: string, value: any, id: string) => {
+    if (!id) return;
+
+    console.log(`Updating ${name} to ${value} for job with id ${id}`);
+
+    // if an entry with the given id does not exist, create a new entry
+    if (!editedContract?.Jobs?.find((entry) => entry.id === id)) {
+      setEditedContract((prev) => ({
+        ...prev,
+        Jobs: [...(prev?.Jobs || []), { id, [name]: value }]
+      }));
+    }
+    // otherwise, update the entry with the given id
+    else {
+      setEditedContract((prev) => ({
+        ...prev,
+        Jobs: prev?.Jobs?.map((entry) => entry.id === id ? { ...entry, [name]: value } : entry)
+      }));
+    }
+  };
+
+  const onEntryDeleteHandler = (id: string) => {
+    if (!id) return;
+
+    setEditedContract((prev) => ({
+      ...prev,
+      Jobs: prev?.Jobs?.filter((entry) => entry.id !== id)
+    }));
+  };
+
+  const exportAsCSV = () => {
+    if (!editedContract.Jobs) return;
+
+    // Generate comma separated headers
+    const headers = "" + Object.keys(editedContract.Jobs[0]).join(",");
+
+    // Generate comma separated values
+    const values = editedContract.Jobs.map((job) => Object.values(job).join(",")).join("\n");
+
+    // Create hidden element and click it to download
+    const element = document.createElement("a");
+    element.setAttribute("href", "data:text/csv;charset=utf-8," + encodeURIComponent(headers + "\n" + values));
+    element.setAttribute("download", `${editedContract.name || "contract"}-jobs.csv`);
+    element.style.display = "none";
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  };
+
   return (
     <div className={clsx("flex flex-col flex-grow w-full", className)}>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange} backdrop={"opaque"}>
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col gap-1">Delete invoice</ModalHeader>
-              <ModalBody> Are you sure you want to delete this invoice? </ModalBody>
+              <ModalHeader className="flex flex-col gap-1">Delete contract</ModalHeader>
+              <ModalBody> Are you sure you want to delete this contract? </ModalBody>
               <ModalFooter>
                 <Button variant="light" onPress={onClose}>
                   Close
@@ -183,7 +182,7 @@ export default function InvoiceForm({ id, className }: Props) {
                 <Button color="danger" onPress={() => {
                   onDeleteHandler();
                   onClose();
-                  setEditedInvoice(undefined);
+                  setEditedContract(undefined);
                 }}>
                   Delete
                 </Button>
@@ -197,10 +196,10 @@ export default function InvoiceForm({ id, className }: Props) {
           <CardHeader className={"flex gap-2"}>
             <div className={"flex-grow flex italic flex-col gap-1 items-start"}>
               <span className={"text-xs text-default-500"}>{currentOrg?.id}</span>
-              <span className={"text-xs text-default-500"}>{editedInvoice?.id}</span>
+              <span className={"text-xs text-default-500"}>{editedContract?.id}</span>
             </div>
             <div>
-              {invoice?.id && (
+              {contract?.id && (
                 <ButtonGroup variant="flat" size={"sm"} color={"default"} className={"print:hidden"}>
                   <Button startContent={<IconEdit />}
                           onPress={() => setIsEditing(true)}
@@ -240,88 +239,72 @@ export default function InvoiceForm({ id, className }: Props) {
           </CardHeader>
           <CardBody className={"flex flex-col gap-4 printable"}>
             <form className={clsx("flex flex-col gap-4", { "pointer-events-none": !isEditing })}>
-
-              <ClientSelector
-                isDisabled={!isEditing}
-                label={"Bill to Client"}
-                onClientChange={(changedClients) => {
-                  if (changedClients.length > 0 && changedClients[0]?.id) {
-                    setEditedInvoice((prev) => ({ ...prev, BillToClientId: changedClients[0]?.id }));
-                  }
-                }}
-                selectedClientIds={[editedInvoice?.BillToClientId]}
-              />
-
-              <div className={"flex flex-row gap-4"}>
-                <Input label={"Invoice #"} placeholder={"123456"} value={editedInvoice?.invoiceNumber}
+              <div className={"flex flex-row gap-4 flex-wrap"}>
+                <Input label={"Name"} placeholder={"123456"} value={editedContract?.name}
+                       className={"flex-grow w-auto"}
                        isReadOnly={!isEditing}
                        type={"text"}
                        startContent={<Icon123 className={"text-default-400"} size={"20"} />}
                        isRequired={true}
-                       name={"invoiceNumber"} onChange={onChangeHandler}
+                       name={"name"} onChange={onChangeHandler}
                        variant={isEditing ? "flat" : "bordered"} labelPlacement={"outside"} />
+                <ClientSelector
+                  className={"flex-grow"}
+                  isDisabled={!isEditing}
+                  label={"Client"}
+                  onClientChange={(changedClients) => {
+                    if (changedClients.length > 0 && changedClients[0]?.id) {
+                      setEditedContract((prev) => ({ ...prev, ClientId: changedClients[0]?.id }));
+                    }
+                  }}
+                  selectedClientIds={[editedContract?.ClientId]}
+                />
+              </div>
+              <Textarea label={"Description"} placeholder={"This is an awesome contract!"}
+                        className={"flex-grow w-auto"}
+                        value={editedContract?.description}
+                        isReadOnly={!isEditing} name={"description"} onChange={onChangeHandler}
+                        variant={isEditing ? "flat" : "bordered"} labelPlacement={"outside"} />
+              <div className={"flex flex-row gap-4 flex-wrap"}>
                 <Input label={"Date Issued"} placeholder={"31-12-2023"}
-                       value={editedInvoice?.issueDate && new Date(editedInvoice?.issueDate).toISOString().slice(0, -1)}
+                       className={"flex-grow w-auto"}
+                       value={editedContract?.startDate && new Date(editedContract?.startDate).toISOString().slice(0, -1)}
                        isReadOnly={!isEditing}
                        type={"datetime-local"} name={"issueDate"} onChange={onChangeHandler}
                        startContent={<IconCalendarStar className={"text-default-400"} size={"20"} />}
                        isRequired={true}
                        variant={isEditing ? "flat" : "bordered"} labelPlacement={"outside"} />
-              </div>
-              <div className={"flex flex-row gap-4"}>
+
                 <Input label={"Due Date"} placeholder={"31-12-2023"}
-                       value={editedInvoice?.dueDate && new Date(editedInvoice?.dueDate).toISOString().slice(0, -1)}
+                       className={"flex-grow w-auto"}
+                       value={editedContract?.dueDate && new Date(editedContract?.dueDate).toISOString().slice(0, -1)}
                        isReadOnly={!isEditing}
                        startContent={<IconCalendar className={"text-default-400"} size={"20"} />}
                        type={"datetime-local"} name={"dueDate"} onChange={onChangeHandler}
                        variant={isEditing ? "flat" : "bordered"} labelPlacement={"outside"} />
-                <Input label={"PO Number"} placeholder={"This is for your use"} value={editedInvoice?.poNumber}
-                       isReadOnly={!isEditing}
-                       type={"text"} name={"poNumber"} onChange={onChangeHandler}
-                       startContent={<IconHash className={"text-default-400"} size={"20"} />}
-                       variant={isEditing ? "flat" : "bordered"} labelPlacement={"outside"} />
-              </div>
-              <InvoiceEntriesTable invoiceEntries={editedInvoice?.InvoiceEntries} isEditing={isEditing}
-                                   onEntryDeleted={onEntryDeleteHandler}
-                                   onEntryChanged={onEntryChangedHandler} />
-              <div className={"flex flex-row gap-4 justify-between"}>
-                <Input label={"Tax Rate"} placeholder={"13"} value={editedInvoice?.taxRate} className={"w-1/4"}
-                       size={"sm"}
-                       isReadOnly={!isEditing}
-                       startContent={<IconPercentage className={"text-default-400"} size={"20"} />}
-                       type={"number"} name={"taxRate"} onChange={onChangeHandler}
-                       variant={isEditing ? "flat" : "bordered"} labelPlacement={"outside"} />
-                <div className={"flex flex-col gap-2 items-end"}>
-                  <span className={"text-sm font-medium text-default-500"}>Subtotal: $<span
-                    className={"text-default-800"}>{editedInvoice?.InvoiceEntries?.reduce((acc, entry) => acc + entry.unitCost * entry.quantity, 0)}</span></span>
-                  <span className={"text-sm font-medium text-default-500"}>Tax: $<span
-                    className={"text-default-800"}>{(editedInvoice?.InvoiceEntries?.reduce((acc, entry) => acc + entry.unitCost * entry.quantity, 0) * (editedInvoice?.taxRate || 0) / 100).toFixed(2)}</span></span>
-                  <span className={"text-medium font-medium text-default-500"}>Total: $<span
-                    className={"text-default-800"}>{(editedInvoice?.InvoiceEntries?.reduce((acc, entry) => acc + entry.unitCost * entry.quantity, 0) * (1 + (editedInvoice?.taxRate || 0) / 100)).toFixed(2)}</span></span>
-
-                </div>
               </div>
               <Divider />
-              <Textarea label={"Note"} placeholder={"This is a customer facing note."} value={editedInvoice?.note}
-                        isReadOnly={!isEditing} name={"note"} onChange={onChangeHandler}
-                        variant={isEditing ? "flat" : "bordered"} labelPlacement={"outside"} />
+              <ContractJobsTable jobs={editedContract?.Jobs} isEditing={isEditing}
+                                 onEntryDeleted={onEntryDeleteHandler}
+                                 onEntryChanged={onEntryChangedHandler} />
+              <Divider />
+              <div className={"flex flex-row gap-1 items-start flex-grow justify-between w-full"}>
+                {contract?.createdAt && (
+                  <Tooltip content={contract?.createdAt}>
+                    <span className={"text-xs text-default-500"}>Created {moment(contract?.createdAt).fromNow()}</span>
+                  </Tooltip>
+                )}
+                {contract?.updatedAt &&
+                  <Tooltip content={contract?.updatedAt}>
+                    <span className={"text-xs text-default-500"}>Updated {moment(contract?.updatedAt).fromNow()}</span>
+                  </Tooltip>
+                }
+              </div>
             </form>
           </CardBody>
-          <CardFooter>
-            <div className={"flex flex-col gap-1 items-start"}>
-              {invoice?.updatedAt &&
-                <Tooltip content={invoice?.updatedAt}>
-                  <span className={"text-xs text-default-500"}>Updated {moment(invoice?.updatedAt).fromNow()}</span>
-                </Tooltip>
-              }
-              {invoice?.createdAt && (
-                <Tooltip content={invoice?.createdAt}>
-                  <span className={"text-xs text-default-500"}>Created {moment(invoice?.createdAt).fromNow()}</span>
-                </Tooltip>
-              )}
-            </div>
-            <div className={"flex gap-2 justify-between flex-grow"}>
-              {isEditing && invoice?.id ? (
+          <CardFooter className={"flex flex-col justify-between"}>
+            <div className={"flex gap-2 justify-between items-start flex-grow print:hidden"}>
+              {isEditing && contract?.id ? (
                 <>
                   <Button variant={"light"} onPress={onCancelHandler} color={"danger"}
                           className={"font-medium hover:bg-danger-200"}>
@@ -334,8 +317,8 @@ export default function InvoiceForm({ id, className }: Props) {
                   </Button>
                 </>
               ) : null}
-              {/*  if no invoiceEntries Id this is a new invoiceEntries */}
-              {!invoice?.id && (
+              {/*  if no contractEntries Id this is a new contractEntries */}
+              {!contract?.id && (
                 <Button variant={"flat"} onPress={onSaveHandler} loading={isSaving}
                         className={"text-default-800 font-medium hover:bg-primary-200"}
                         startContent={<IconDeviceFloppy />}>

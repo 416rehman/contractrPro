@@ -1,4 +1,4 @@
-const { sequelize, Contract } = require('../../../db')
+const { sequelize, Contract, Job, OrganizationMember } = require('../../../db')
 const { isValidUUID } = require('../../../utils/isValidUUID')
 
 const {
@@ -9,6 +9,7 @@ const {
 // Gets the organization's contracts
 module.exports = async (req, res) => {
     try {
+        const expand = req.query.expand
         const orgID = req.params.org_id
 
         if (!orgID || !isValidUUID(orgID)) {
@@ -18,7 +19,7 @@ module.exports = async (req, res) => {
         }
 
         await sequelize.transaction(async (transaction) => {
-            const organizationContracts = await Contract.findAll({
+            const options = {
                 attributes: {
                     exclude: ['organization_id'],
                 },
@@ -26,12 +27,40 @@ module.exports = async (req, res) => {
                     OrganizationId: orgID,
                 },
                 transaction,
-            })
+            }
 
-            if (!organizationContracts || organizationContracts.length === 0) {
-                return res
-                    .status(400)
-                    .json(createErrorResponse('Organization not found'))
+            if (expand) {
+                options.include = {
+                    model: Job,
+                    include: {
+                        model: OrganizationMember,
+                    },
+                }
+            }
+            const organizationContracts = await Contract.findAll(options)
+            for (let i = 0; i < organizationContracts?.length; i++) {
+                // the jobs
+                for (
+                    let j = 0;
+                    j < organizationContracts[i].Jobs?.length;
+                    j++
+                ) {
+                    organizationContracts[i].Jobs[j].dataValues.JobMembers =
+                        organizationContracts[i].Jobs[
+                            j
+                        ].OrganizationMembers.map(
+                            (orgMember) => orgMember.JobMember
+                        )
+                    organizationContracts[i].Jobs[j].dataValues.assignedTo =
+                        organizationContracts[i].Jobs[
+                            j
+                        ].dataValues.JobMembers.map(
+                            (m) => m.OrganizationMemberId
+                        )
+
+                    delete organizationContracts[i].Jobs[j].dataValues
+                        .OrganizationMembers
+                }
             }
 
             return res

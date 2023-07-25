@@ -1,4 +1,4 @@
-import InvoiceForm from "@/components/invoiceForm";
+import ContractForm from "@/components/contractForm";
 import { Metadata } from "next";
 
 type Props = {
@@ -13,12 +13,12 @@ export async function generateMetadata(
   const id = params.id;
 
   return {
-    title: (id === "new" ? "New Invoice" : "Invoice " + id) + " | ContractrPro"
+    title: (id === "new" ? "New Contract" : "Contract " + id) + " | ContractrPro"
   };
 }
 
 export default function ClientPage({ params }: { params: { id: string } }) {
   return <div className={"flex flex-grow overflow-y-auto"}>
-    <InvoiceForm id={params.id} className={"items-center max-w-full"} />
+    <ContractForm id={params.id} className={"items-center max-w-full"} />
   </div>;
 }
