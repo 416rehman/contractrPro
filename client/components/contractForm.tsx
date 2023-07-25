@@ -121,7 +121,7 @@ export default function ContractForm({ id, className }: Props) {
   const onEntryChangedHandler = (name: string, value: any, id: string) => {
     if (!id) return;
 
-    console.log(`Updating ${name} to ${value} for entry with id ${id}`);
+    console.log(`Updating ${name} to ${value} for job with id ${id}`);
 
     // if an entry with the given id does not exist, create a new entry
     if (!editedContract?.Jobs?.find((entry) => entry.id === id)) {
@@ -239,33 +239,35 @@ export default function ContractForm({ id, className }: Props) {
           </CardHeader>
           <CardBody className={"flex flex-col gap-4 printable"}>
             <form className={clsx("flex flex-col gap-4", { "pointer-events-none": !isEditing })}>
-
-              <ClientSelector
-                isDisabled={!isEditing}
-                label={"Client"}
-                onClientChange={(changedClients) => {
-                  if (changedClients.length > 0 && changedClients[0]?.id) {
-                    setEditedContract((prev) => ({ ...prev, ClientId: changedClients[0]?.id }));
-                  }
-                }}
-                selectedClientIds={new Set([editedContract?.ClientId])}
-              />
-
-              <div className={"flex flex-row gap-4"}>
+              <div className={"flex flex-row gap-4 flex-wrap"}>
                 <Input label={"Name"} placeholder={"123456"} value={editedContract?.name}
+                       className={"flex-grow w-auto"}
                        isReadOnly={!isEditing}
                        type={"text"}
                        startContent={<Icon123 className={"text-default-400"} size={"20"} />}
                        isRequired={true}
                        name={"name"} onChange={onChangeHandler}
                        variant={isEditing ? "flat" : "bordered"} labelPlacement={"outside"} />
-                <Textarea label={"Description"} placeholder={"This is an awesome contract!"}
-                          value={editedContract?.description}
-                          isReadOnly={!isEditing} name={"description"} onChange={onChangeHandler}
-                          variant={isEditing ? "flat" : "bordered"} labelPlacement={"outside"} />
+                <ClientSelector
+                  className={"flex-grow"}
+                  isDisabled={!isEditing}
+                  label={"Client"}
+                  onClientChange={(changedClients) => {
+                    if (changedClients.length > 0 && changedClients[0]?.id) {
+                      setEditedContract((prev) => ({ ...prev, ClientId: changedClients[0]?.id }));
+                    }
+                  }}
+                  selectedClientIds={[editedContract?.ClientId]}
+                />
               </div>
-              <div className={"flex flex-row gap-4"}>
+              <Textarea label={"Description"} placeholder={"This is an awesome contract!"}
+                        className={"flex-grow w-auto"}
+                        value={editedContract?.description}
+                        isReadOnly={!isEditing} name={"description"} onChange={onChangeHandler}
+                        variant={isEditing ? "flat" : "bordered"} labelPlacement={"outside"} />
+              <div className={"flex flex-row gap-4 flex-wrap"}>
                 <Input label={"Date Issued"} placeholder={"31-12-2023"}
+                       className={"flex-grow w-auto"}
                        value={editedContract?.startDate && new Date(editedContract?.startDate).toISOString().slice(0, -1)}
                        isReadOnly={!isEditing}
                        type={"datetime-local"} name={"issueDate"} onChange={onChangeHandler}
@@ -274,6 +276,7 @@ export default function ContractForm({ id, className }: Props) {
                        variant={isEditing ? "flat" : "bordered"} labelPlacement={"outside"} />
 
                 <Input label={"Due Date"} placeholder={"31-12-2023"}
+                       className={"flex-grow w-auto"}
                        value={editedContract?.dueDate && new Date(editedContract?.dueDate).toISOString().slice(0, -1)}
                        isReadOnly={!isEditing}
                        startContent={<IconCalendar className={"text-default-400"} size={"20"} />}

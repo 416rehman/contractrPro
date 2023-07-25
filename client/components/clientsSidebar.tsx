@@ -83,7 +83,7 @@ export default function ClientsSidebar({ className }: Props) {
   </Popover>;
 
   return <>
-    <div className={"hidden md:flex md:flex-col md:gap-2 md:w-1/4"}>
+    <div className={"hidden md:flex md:flex-col md:gap-2 md:min-w-1/4"}>
       {sidebar}
     </div>
     <div className={"flex md:hidden"}>

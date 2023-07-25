@@ -45,6 +45,9 @@ module.exports.define = (sequelize, DataTypes) => {
             type: DataTypes.DECIMAL(10, 2),
             defaultValue: 0,
         },
+        assignedTo: {
+            type: DataTypes.VIRTUAL,
+        },
     })
 
     Job.associate = (models) => {

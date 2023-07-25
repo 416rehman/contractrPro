@@ -24,7 +24,7 @@ type Props = {
  * Dropdown for selecting the type of job status
  * Shows colored text depending on the status
  */
-export default function JobStatusDropdown({ value, onChange }: Props) {
+export default function JobStatusSelector({ value, onChange }: Props) {
   const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
 
   const selectedValue = React.useMemo(

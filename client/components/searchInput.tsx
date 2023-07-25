@@ -11,6 +11,8 @@ type Props = {
   onQueryChange?: (query: string) => void;
   selectedKeys?: Set<string>;
   label?: string;
+  className?: string;
+  showLabel?: boolean;
   isReadOnly?: boolean;
 }
 
@@ -28,7 +30,9 @@ export default function SearchInput({
                                       items,
                                       selectionMode,
                                       onSelectionChange,
+                                      className,
                                       trigger,
+                                      showLabel = true,
                                       onQueryChange,
                                       selectedKeys,
                                       label,
@@ -36,6 +40,12 @@ export default function SearchInput({
                                     }: Props) {
   const [query, setQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    if (isOpen === false) {
+      setQuery("");
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     if (onQueryChange) {
@@ -69,16 +79,19 @@ export default function SearchInput({
   };
 
   return (
-    <div>
+    <div className={"flex-grow"}>
       <Dropdown triggerScaleOnOpen={false} isOpen={isOpen} onOpenChange={setIsOpen}>
         <DropdownTrigger>
-          <label className={"label flex flex-col gap-2"}>
-            <span>{label}</span>
-            <Card shadow={"none"} isPressable={true} onPress={() => setIsOpen(true)}
-                  className={clsx("bg-default-100 border-2 border-default-200 flex flex-col items-start justify-start p-2 group-data-[focus=true]:border-foreground", isReadOnly ? "bg-transparent" : "bg-default-100")}>
+          <div className={className}>
+            {showLabel && <label className={"label flex flex-col gap-2"} htmlFor={"trigger"}>
+              <span>{label}</span>
+            </label>
+            }
+            <Card shadow={"none"} isPressable={true} onPress={() => setIsOpen(true)} aria-label={label} id={"trigger"}
+                  className={clsx("w-full bg-default-100 border-2 border-default-200 flex flex-col items-start justify-start py-1 px-2 group-data-[focus=true]:border-foreground", isReadOnly ? "bg-transparent" : "bg-default-100")}>
               {trigger}
             </Card>
-          </label>
+          </div>
         </DropdownTrigger>
         <DropdownMenu onSelectionChange={selectionChangeHandler} selectionMode={selectionMode}
                       selectedKeys={selectedKeys}>

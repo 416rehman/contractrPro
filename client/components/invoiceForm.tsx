@@ -249,7 +249,7 @@ export default function InvoiceForm({ id, className }: Props) {
                     setEditedInvoice((prev) => ({ ...prev, BillToClientId: changedClients[0]?.id }));
                   }
                 }}
-                selectedClientIds={new Set([editedInvoice?.BillToClientId])}
+                selectedClientIds={[editedInvoice?.BillToClientId]}
               />
 
               <div className={"flex flex-row gap-4"}>

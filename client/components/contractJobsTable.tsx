@@ -4,7 +4,8 @@ import { Job } from "@/types";
 import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/dropdown";
 import { Button } from "@nextui-org/button";
 import { IconCurrencyDollar, IconDotsVertical, IconTrash } from "@tabler/icons-react";
-import JobStatusDropdown from "@/components/jobStatusDropdown";
+import JobStatusSelector from "@/components/jobStatusSelector";
+import OrgMemberSelector from "@/components/OrgMemberSelector";
 
 const columns = [
   { name: "Name", uid: "name" },
@@ -12,6 +13,7 @@ const columns = [
   { name: "Start Date", uid: "startDate" },
   { name: "Due Date", uid: "dueDate" },
   { name: "Payout", uid: "payout" },
+  { name: "Assigned To", uid: "assignedTo" },
   { name: "Status", uid: "status" }
 ];
 
@@ -88,13 +90,26 @@ export default function ContractJobsTable({ jobs, isEditing, onEntryChanged, onE
                       isReadOnly={!editMode}
                       startContent={<IconCurrencyDollar />}
                       onChange={(e) => onEntryChanged(columnKey, e.target.value, job.id)} />;
+      case "assignedTo":
+        return <OrgMemberSelector
+          className={"px-2"}
+          isDisabled={!isEditing}
+          label={"Client"}
+          inline={true}
+          onOrgMemberChange={(changedMembers) => {
+            if (changedMembers.length > 0 && changedMembers[0]?.id) {
+              onEntryChanged(columnKey, changedMembers?.map((member) => member.id), job.id);
+            }
+          }}
+          selectedOrgMemberIds={cellValue}
+        />;
       case "status":
         const isTouched = columns.some((column) => {
           return !!job[column.uid];
         });
 
         return <div className="relative flex justify-end items-center gap-2">
-          <JobStatusDropdown value={cellValue} onChange={(value) => onEntryChanged(columnKey, value, job.id)} />
+          <JobStatusSelector value={cellValue} onChange={(value) => onEntryChanged(columnKey, value, job.id)} />
           {editMode && isTouched && <Dropdown>
             <DropdownTrigger>
               <Button isIconOnly size="sm" variant="light">
@@ -114,11 +129,13 @@ export default function ContractJobsTable({ jobs, isEditing, onEntryChanged, onE
     }
   };
 
-  const items = jobs ? [...jobs, { id: Math.random().toString(36).substring(7) }] : [{ id: Math.random().toString(36).substring(7) }];
+  const items = jobsData ? [...jobsData, { id: Math.random().toString(36).substring(7) }] : [{ id: Math.random().toString(36).substring(7) }];
 
   return ((
-    <div>
-      <Table aria-label="Contract Jobs" removeWrapper={true}>
+    <div className={"overflow-auto pointer-events-auto"}>
+      <Table aria-label="Contract Jobs" removeWrapper={true} classNames={{
+        table: isEditing ? [""] : ["pointer-events-none"]
+      }}>
         <TableHeader columns={columns}>
           {(column) => (
             <TableColumn key={column.uid} align={"start"}>
