@@ -11,6 +11,7 @@ import {
   useDisclosure
 } from "@nextui-org/react";
 import { Card, CardBody, CardHeader } from "@nextui-org/card";
+import { Icon123, IconAbc, IconMail, IconPhone } from '@tabler/icons-react';
 import { useEffect, useState } from "react";
 import { Button, ButtonGroup } from "@nextui-org/button";
 import { IconChevronDown, IconDeviceFloppy, IconEdit, IconTrash } from "@tabler/icons-react";
@@ -154,19 +155,27 @@ export default function EmployeeForm({ id, className }: Props) {
           </CardHeader>
           <CardBody className={"flex flex-col gap-4"}>
             <form className={clsx("flex flex-col gap-4", { "pointer-events-none": !isEditing })}>
-              <Input label={"Name"} placeholder={"Name"} value={editedEmployee?.name} isReadOnly={!isEditing}
+              
+              <Input label={"Name"} placeholder={"John Doe"} value={editedEmployee?.name} isReadOnly={!isEditing}
                      type={"text"}
+                     startContent={<IconAbc className={"text-default-400"} size={"20"} />} 
                      name={"name"} onChange={onChangeHandler}
-                     variant={isEditing ? "flat" : "underlined"} labelPlacement={"outside"} />
-              <Input label={"Phone"} placeholder={"Phone"} value={editedEmployee?.phone} isReadOnly={!isEditing}
-                     type={"text"} name={"phone"} onChange={onChangeHandler}
-                     variant={isEditing ? "flat" : "underlined"} labelPlacement={"outside"} />
-              <Input label={"Email"} placeholder={"Email"} value={editedEmployee?.email} isReadOnly={!isEditing}
-                     type={"email"} name={"email"} onChange={onChangeHandler}
-                     variant={isEditing ? "flat" : "underlined"} labelPlacement={"outside"} />
-              <Input label={"Permissions"} placeholder={"Permissions"} value={editedEmployee?.permissions}
-                     isReadOnly={!isEditing} type={"number"} name={"permissions"} onChange={onChangeHandler}
-                     variant={isEditing ? "flat" : "underlined"} labelPlacement={"outside"} />
+                     variant={isEditing ? "flat" : "bordered"} labelPlacement={"outside"} />
+              <Input label={"Phone"} placeholder={"1-111-222-3333"} value={editedEmployee?.phone} isReadOnly={!isEditing}
+                     type={"text"} 
+                     startContent={<IconPhone className={"text-default-400"} size={"20"} />}
+                     name={"phone"} onChange={onChangeHandler}
+                     variant={isEditing ? "flat" : "bordered"} labelPlacement={"outside"} />
+              <Input label={"Email"} placeholder={"johndoe@email.com"} value={editedEmployee?.email} isReadOnly={!isEditing}
+                     type={"email"} 
+                     startContent={<IconMail className={"text-default-400"} size={"20"} />}
+                     name={"email"} onChange={onChangeHandler}
+                     variant={isEditing ? "flat" : "bordered"} labelPlacement={"outside"} />
+              <Input label={"Permissions"} placeholder={"5"} value={editedEmployee?.permissions} isReadOnly={!isEditing} 
+                     type={"number"} 
+                     startContent={<Icon123 className={"text-default-400"} size={"20"} />}
+                     name={"permissions"} onChange={onChangeHandler}
+                     variant={isEditing ? "flat" : "bordered"} labelPlacement={"outside"} />
             </form>
             <div className={"flex flex-col gap-1 items-start"}>
               {employee?.updatedAt &&
