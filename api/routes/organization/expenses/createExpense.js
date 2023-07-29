@@ -22,6 +22,20 @@ module.exports = async (req, res) => {
                 .json(createErrorResponse('Invalid organization_id'))
         }
 
+        const ExpenseEntries =
+        req.body?.ExpenseEntries?.map((entry) =>
+            pick(entry, ['description', 'quantity', 'unitCost', 'name'])
+        ) || []
+
+        if (ExpenseEntries.length === 0) {
+            return res
+                .status(400)
+                .json(
+                    createErrorResponse(
+                        'ExpenseEntries is required. Provide at least one entry, like this: { "ExpenseEntries": [{ "description": "some description", "quantity": 1, "unitPrice": 100, "name": "some name" }] }'
+                    )
+                )
+        }
         const body = {
             ...pick(req.body, [
                 'description',

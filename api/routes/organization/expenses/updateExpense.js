@@ -33,6 +33,23 @@ module.exports = async (req, res) => {
                 .json(createErrorResponse('Invalid expense_id'))
         }
 
+        const ExpenseEntries =
+            req.body?.ExpenseEntries?.map((entry) =>
+                pick(entry, ['description', 'quantity', 'unitCost', 'name'])
+            ) || []
+
+        if (ExpenseEntries.length === 0) {
+            return res
+                .status(400)
+                .json(
+                    createErrorResponse(
+                        'ExpenseEntries is required. Provide at least one entry, like this: { "ExpenseEntries": [{ "description": "some description", "quantity": 1, "unitPrice": 100, "name": "some name" }] }'
+                    )
+                )
+        }
+
+        console.log('ExpenseEntries', ExpenseEntries)
+
         const body = {
             ...pick(req.body, [
                 'description',
@@ -65,7 +82,7 @@ module.exports = async (req, res) => {
                 transaction,
             })
 
-            if (req.body.ExpenseEntries && req.body.ExpenseEntries.length > 0) {
+            if (ExpenseEntries && ExpenseEntries.length > 0) {
                 // delete all existing entries first
                 await ExpenseEntry.destroy({
                     where: {
@@ -92,10 +109,10 @@ module.exports = async (req, res) => {
                     OrganizationId: org_id,
                     id: expense_id,
                 },
+                transaction,
                 include: {
                     model: ExpenseEntry,
                 },
-                transaction,
             })
 
             res.status(200).json(createSuccessResponse(expense))

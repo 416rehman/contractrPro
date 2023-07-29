@@ -36,7 +36,7 @@ export const updateExpenses = async (expense: Expense, currentOrganizationId: st
     try {
         if (currentOrganizationId) {
             // Remove empty expense entries
-            expense.expenseEntries = expense?.expenseEntries.filter((entry) => entry.name || entry.unitCost || entry.quantity || entry.description) || [];
+            expense.ExpenseEntries = expense?.ExpenseEntries.filter((entry) => entry.name || entry.unitCost || entry.quantity || entry.description) || [];
 
             if (expense?.id) {
                 await requestUpdateExpense(expense, currentOrganizationId)
