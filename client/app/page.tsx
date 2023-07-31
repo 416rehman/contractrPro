@@ -4,8 +4,8 @@ import HomeCTA from "@/components/homeCTA";
 import React from "react";
 import AuthSwitchServer from "@/components/server/authSwitchServer";
 import { subtitle, title } from "@/components/primitives";
-import { Snippet } from "@nextui-org/snippet";
-import { Code } from "@nextui-org/code";
+import OrganizationSelector from "@/components/organizationSelector";
+import { Spacer } from "@nextui-org/spacer";
 
 export const metadata: Metadata = {
   title: {
@@ -28,24 +28,18 @@ export default function Home() {
 
   return <AuthSwitchServer contentIfLoggedIn={
     <section className="flex flex-col justify-center gap-4 flex-grow items-start w-full">
-      <div className="flex flex-col flex-grow text-center justify-center w-full">
-        <h1 className={title()}>Make&nbsp;</h1>
-        <h1 className={title({ color: "violet" })}>beautiful&nbsp;</h1>
+      <div className="flex flex-col flex-grow text-center justify-center items-center w-full">
+        <h1 className={title()}>Do&nbsp;<span className={title({ color: "violet" })}>more&nbsp;</span></h1>
+
         <br />
         <h1 className={title()}>
-          websites regardless of your design experience.
+          with ContractrPro.
         </h1>
         <h2 className={subtitle({ class: "mt-4" })}>
-          Beautiful, fast and modern React UI library.
+          Get started by selecting your organization.
         </h2>
-      </div>
-
-      <div className="mt-8">
-        <Snippet hideSymbol hideCopyButton variant="bordered">
-  			<span>
-  				Get started by editing <Code color="primary">app/page.tsx</Code>
-  			</span>
-        </Snippet>
+        <Spacer y={4} />
+        <OrganizationSelector />
       </div>
     </section>
   } contentIfLoggedOut={

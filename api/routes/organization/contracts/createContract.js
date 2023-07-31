@@ -93,35 +93,40 @@ module.exports = async (req, res) => {
                 include: include,
                 transaction,
             })
-
-            for (let i = 0; i < createdContract?.Jobs?.length; i++) {
-                const job = createdContract.Jobs[i]
-                const memberIds = job.assignedTo
-                if (!memberIds?.length) {
-                    continue
-                }
-
-                // remove any job members that are not defined in the request
-                await JobMember.destroy({
-                    where: {
-                        JobId: job.id,
-                        OrganizationMemberId: {
-                            [Op.notIn]: memberIds,
-                        },
-                    },
-                })
-
-                const result = await JobMember.bulkCreate(
-                    memberIds.map((memberId) => ({
-                        JobId: job.id,
-                        OrganizationMemberId: memberId,
-                    }))
-                )
-
-                createdContract.dataValues.Jobs[i].dataValues.assignedTo =
-                    result.map((m) => m.OrganizationMemberId)
-            }
         })
+    } catch (err) {
+        error = err
+        statusCode = statusCode || 500
+    }
+
+    try {
+        for (let i = 0; i < createdContract?.Jobs?.length; i++) {
+            const job = createdContract.Jobs[i]
+            const memberIds = job.assignedTo
+            if (!memberIds?.length) {
+                continue
+            }
+
+            // remove any job members that are not defined in the request
+            await JobMember.destroy({
+                where: {
+                    JobId: job.id,
+                    OrganizationMemberId: {
+                        [Op.notIn]: memberIds,
+                    },
+                },
+            })
+
+            const result = await JobMember.bulkCreate(
+                memberIds.map((memberId) => ({
+                    JobId: job.id,
+                    OrganizationMemberId: memberId,
+                }))
+            )
+
+            createdContract.dataValues.Jobs[i].dataValues.assignedTo =
+                result.map((m) => m.OrganizationMemberId)
+        }
     } catch (err) {
         error = err
         statusCode = statusCode || 500

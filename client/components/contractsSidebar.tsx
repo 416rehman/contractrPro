@@ -4,7 +4,7 @@ import { CardFooter, Input } from "@nextui-org/react";
 import { Button } from "@nextui-org/button";
 import NextLink from "next/link";
 import clsx from "clsx";
-import { IconChartTreemap, IconChevronDown, IconListSearch } from "@tabler/icons-react";
+import { IconChartTreemap, IconChevronDown, IconCirclePlus, IconListSearch } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { loadContracts, useContractsStore } from "@/services/contracts";
 import { useUserStore } from "@/services/user";
@@ -19,36 +19,40 @@ type Props = {
  * This is the sidebar for the contracts page. It displays a list of contracts and should allow the user to filter them.
  * It handles communication with the API and updates the local state via the Contract service.
  * This is used in tandem with the ContractForm component to edit/create contracts.
- * TODO: Implement filtering
  */
 export default function ContractsSidebar({ className }: Props) {
   const [currentOrg] = useUserStore(state => [state.currentOrganization]);
   const [contracts] = useContractsStore(state => [state.contracts]);
+  const [contractsToDisplay, setContractsToDisplay] = useState(contracts);
   const [filter, setFilter] = useState("");
   const params = useParams();
 
   useEffect(() => {
-    loadContracts(currentOrg?.id);
+    if (currentOrg?.id) {
+      loadContracts(currentOrg?.id);
+    }
   }, [currentOrg?.id]);
 
-  const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFilter(e.target.value);
-    contracts.filter((item: any) => item.name.toLowerCase().includes(e.target.value.toLowerCase()));
-  };
+  useEffect(() => {
+    const contractsToDisplay = contracts.filter((item: any) => item.name.toLowerCase().includes(filter.toLowerCase()));
+    setContractsToDisplay(contractsToDisplay);
+  }, [filter, contracts]);
 
   const sidebar = <Card shadow={"none"} isBlurred={true}
                         className={clsx("border-none rounded-none", className)}>
     <CardHeader className={"flex flex-col gap-2"}>
       <h1 className={"text-2xl font-bold"}>Contracts</h1>
       {/*  Search bar*/}
-      <Input aria-label={"Filter contracts"}
-             placeholder={"Filter"} size={"sm"} endContent={<IconListSearch className={"text-default-400"} />}
+      <Input aria-label={"Filter Contracts"} placeholder={"Filter"} size={"sm"}
+             startContent={<IconListSearch className={"text-default-400"} />}
              variant={"underlined"}
-             onChange={handleFilterChange} />
+             isClearable={true}
+             onClear={() => setFilter("")}
+             onChange={(e) => setFilter(e.target.value)} />
     </CardHeader>
     <CardBody className={"p-2"}>
       <ul className={"flex flex-col w-full"}>
-        {contracts && contracts.map((contract) => (
+        {contractsToDisplay && contractsToDisplay.map((contract) => (
           <li key={contract.id}>
             <Button
               className={"w-full justify-start text-default-600 font-medium"}
@@ -64,8 +68,9 @@ export default function ContractsSidebar({ className }: Props) {
       </ul>
     </CardBody>
     <CardFooter>
-      <Button variant={"ghost"} className={"flex-grow font-md"} href={"/contracts/new"} as={NextLink}>
-        Create New Contract
+      <Button variant={"light"} className={"flex-grow"} href={"/contracts/new"} as={NextLink}
+              startContent={<IconCirclePlus className={"text-default-500"} />}>
+        New Contract
       </Button>
     </CardFooter>
   </Card>;

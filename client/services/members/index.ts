@@ -1,46 +1,54 @@
 import { create } from "zustand";
-import {
-    requestCreateOrgMember,
-    requestDeleteOrgMember,
-    requestOrganizationOrgMembers,
-    requestUpdateOrgMember
-} from "@/services/members/api";
-import { OrgMember } from "@/types";
+import { requestCreateMember, requestDeleteMember, requestMembers, requestUpdateMember } from "@/services/members/api";
+import { Member } from "@/types";
 import { useToastsStore } from "@/services/toast";
+import { clearMemberCommentsStore } from "@/services/members/comments";
 
-export const useOrgMembersStore = create((set: any) => ({
-  orgMembers: [] as OrgMember[],
-  setOrgMembers: (orgMembers: OrgMember[]) => set({ orgMembers }),
-  addOrgMember: (orgMember: OrgMember) => set((state: any) => ({ orgMembers: [...state.orgMembers, orgMember] })),
-  removeOrgMember: (orgMember: OrgMember) => set((state: any) => ({ orgMembers: state.orgMembers.filter((c: OrgMember) => c.id !== orgMember.id) })),
-  updateOrgMember: (orgMember: OrgMember) => set((state: any) => ({ orgMembers: state.orgMembers.map((c: OrgMember) => c.id === orgMember.id ? orgMember : c) }))
+export const useMembersStore = create((set: any) => ({
+  members: [] as Member[],
+  setMembers: (newMembers: Member[]) => set({ members: newMembers }),
+  addMember: (newMember: Member) => set((state: any) => ({ members: [...state.members, newMember] })),
+  removeMember: (member: Member) => set((state: any) => ({ members: state.members.filter((c: Member) => c.id !== member.id) })),
+  updateMember: (member: Member) => set((state: any) => ({ members: state.members.map((c: Member) => c.id === member.id ? member : c) })),
+  lastRequestedOn: null as Date | null
 }));
 
-export const loadOrgMembers = async (currentOrganizationId: string) => {
+export const loadMembers = async (currentOrganizationId: string) => {
+  if (!useMembersStore.getState().lastRequestedOn) {
+    useMembersStore.getState().lastRequestedOn = new Date();
+  } else {
+    const now = new Date();
+    const diff = now.getTime() - useMembersStore.getState().lastRequestedOn.getTime();
+    // if the last request was less than 5 seconds ago, don't make another request
+    if (diff < 5000) {
+      return;
+    }
+    useMembersStore.getState().lastRequestedOn = now;
+  }
   try {
-    const currentOrgMembers = useOrgMembersStore.getState().orgMembers;
-    const orgOrgMembers = await requestOrganizationOrgMembers(currentOrganizationId);
+    const currentMembers = useMembersStore.getState().members;
+    const orgMembers = await requestMembers(currentOrganizationId);
 
-    // if the new orgMembers are different from the current orgMembers, update the store
-    if (orgOrgMembers.length !== currentOrgMembers.length || orgOrgMembers.some((orgMember, i) => orgMember.id !== currentOrgMembers[i].id)) {
-      useOrgMembersStore.getState().setOrgMembers(orgOrgMembers);
+    // if the new members are different from the current members, update the store
+    if (orgMembers.length !== currentMembers.length || orgMembers.some((orgMember, i) => orgMember.id !== currentMembers[i].id)) {
+      useMembersStore.getState().setMembers(orgMembers);
     }
   } catch (err) {
     console.log(err);
   }
 };
 
-export const updateOrgMember = async (orgMember: OrgMember, currentOrganizationId: string) => {
+export const updateMemberAndPersist = async (orgMember: Member, currentOrganizationId: string) => {
   try {
     if (currentOrganizationId) {
       if (orgMember?.id) {
-        await requestUpdateOrgMember(orgMember, currentOrganizationId);
-        useOrgMembersStore.getState().updateOrgMember(orgMember);
-        useToastsStore.getState().addToast({ id: orgMember.id, type: "success", message: "OrgMember updated" });
+        await requestUpdateMember(orgMember, currentOrganizationId);
+        useMembersStore.getState().updateMember(orgMember);
+        useToastsStore.getState().addToast({ id: orgMember.id, type: "success", message: "Member updated" });
       } else {
-        const newOrgMember = await requestCreateOrgMember(orgMember, currentOrganizationId);
-        useOrgMembersStore.getState().addOrgMember(newOrgMember);
-        useToastsStore.getState().addToast({ id: "update-orgMember", type: "success", message: "OrgMember created" });
+        const newMember = await requestCreateMember(orgMember, currentOrganizationId);
+        useMembersStore.getState().addMember(newMember);
+        useToastsStore.getState().addToast({ id: "update-orgMember", type: "success", message: "Member created" });
       }
     }
 
@@ -49,15 +57,21 @@ export const updateOrgMember = async (orgMember: OrgMember, currentOrganizationI
   }
 };
 
-export const deleteOrgMember = async (orgMember: OrgMember, currentOrganizationId: string) => {
+export const deleteMemberAndPersist = async (orgMember: Member, currentOrganizationId: string) => {
   try {
     if (currentOrganizationId) {
-      console.log(await requestDeleteOrgMember(orgMember, currentOrganizationId));
+      console.log(await requestDeleteMember(orgMember, currentOrganizationId));
     }
-    useOrgMembersStore.getState().removeOrgMember(orgMember);
-    useToastsStore.getState().addToast({ id: "delete-orgMember", type: "success", message: "OrgMember deleted" });
+    useMembersStore.getState().removeMember(orgMember);
+    useToastsStore.getState().addToast({ id: "delete-orgMember", type: "success", message: "Member deleted" });
 
   } catch (err) {
     useToastsStore.getState().addToast({ id: "delete-orgMember-error", type: "error", message: err?.message || err });
   }
+};
+
+export const clearMembersStore = () => {
+  useMembersStore.getState().setMembers([]);
+  useMembersStore.getState().lastRequestedOn = null;
+  clearMemberCommentsStore();
 };

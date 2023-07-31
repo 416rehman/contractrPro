@@ -1,10 +1,10 @@
 import { request } from "@/utils/request";
-import { OrgMember } from "@/types";
+import { Member } from "@/types";
 
-const apiUrl = process.env.API_URL || "http://localhost:4000";
+const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 // Gets the current organization's members from the server
-export async function requestOrganizationOrgMembers(OrganizationId: string) {
+export async function requestMembers(OrganizationId: string) {
   try {
     const data = await request(`${apiUrl}/organizations/${OrganizationId}/members`, {
       method: "GET",
@@ -19,7 +19,7 @@ export async function requestOrganizationOrgMembers(OrganizationId: string) {
 }
 
 // Updates a member
-export async function requestUpdateOrgMember(member: OrgMember, OrganizationId: string) {
+export async function requestUpdateMember(member: Member, OrganizationId: string) {
   try {
     const data = await request(`${apiUrl}/organizations/${OrganizationId}/members/${member.id}`, {
       method: "PUT",
@@ -35,7 +35,7 @@ export async function requestUpdateOrgMember(member: OrgMember, OrganizationId: 
 }
 
 // Deletes a member
-export async function requestDeleteOrgMember(member: OrgMember, OrganizationId: string) {
+export async function requestDeleteMember(member: Member, OrganizationId: string) {
   try {
     const data = await request(`${apiUrl}/organizations/${OrganizationId}/members/${member.id}`, {
       method: "DELETE",
@@ -50,7 +50,7 @@ export async function requestDeleteOrgMember(member: OrgMember, OrganizationId: 
 }
 
 // Creates a member
-export async function requestCreateOrgMember(member: OrgMember, OrganizationId: string) {
+export async function requestCreateMember(member: Member, OrganizationId: string) {
   try {
     const data = await request(`${apiUrl}/organizations/${OrganizationId}/members`, {
       method: "POST",

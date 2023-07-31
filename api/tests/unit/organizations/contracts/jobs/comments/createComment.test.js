@@ -87,7 +87,7 @@ describe('Create comment for job', () => {
                 `/organizations/${orgId}/contracts/${contractId}/jobs/${jobId}/comments`
             )
             .field('content', commentData.content)
-            .attach('attachments', fileToAttachPath)
+            .attach('Attachments', fileToAttachPath)
             .expect(200)
 
         const { status, data } = response.body
@@ -97,7 +97,7 @@ describe('Create comment for job', () => {
         expect(data.Attachments).toBeDefined()
         expect(Array.isArray(data.Attachments)).toBe(true)
         expect(data.Attachments.length).toBe(1)
-        expect(data.Attachments[0].filename).toBe(fileToAttachName)
+        expect(data.Attachments[0].name).toBe(fileToAttachName)
     })
 
     it('should return 400 if organization ID is invalid', async () => {
@@ -161,7 +161,7 @@ describe('Create comment for job', () => {
                 `/organizations/${orgId}/contracts/${contractId}/jobs/${jobId}/comments`
             )
             .field('content', '')
-            .attach('attachments', fileToAttachPath)
+            .attach('Attachments', fileToAttachPath)
             .expect(200)
 
         const { status, data } = response.body
@@ -171,7 +171,7 @@ describe('Create comment for job', () => {
         expect(data.Attachments).toBeDefined()
         expect(Array.isArray(data.Attachments)).toBe(true)
         expect(data.Attachments.length).toBe(1)
-        expect(data.Attachments[0].filename).toBe(fileToAttachName)
+        expect(data.Attachments[0].name).toBe(fileToAttachName)
     })
 
     it('should return 400 if comment content is too long', async () => {

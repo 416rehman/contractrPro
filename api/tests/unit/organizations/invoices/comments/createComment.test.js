@@ -67,7 +67,7 @@ describe('Create comment for invoice', () => {
         const response = await request(app)
             .post(`/organizations/${orgId}/invoices/${invoiceId}/comments`)
             .field('content', commentData.content)
-            .attach('attachments', fileToAttachPath)
+            .attach('Attachments', fileToAttachPath)
             .expect(200)
 
         const { status, data } = response.body
@@ -77,7 +77,7 @@ describe('Create comment for invoice', () => {
         expect(data.Attachments).toBeDefined()
         expect(Array.isArray(data.Attachments)).toBe(true)
         expect(data.Attachments.length).toBe(1)
-        expect(data.Attachments[0].filename).toBe(fileToAttachName)
+        expect(data.Attachments[0].name).toBe(fileToAttachName)
     })
 
     it('should return 400 if organization ID is invalid', async () => {
@@ -135,7 +135,7 @@ describe('Create comment for invoice', () => {
         const response = await request(app)
             .post(`/organizations/${orgId}/invoices/${invoiceId}/comments`)
             .field('content', '')
-            .attach('attachments', fileToAttachPath)
+            .attach('Attachments', fileToAttachPath)
             .expect(200)
 
         const { status, data } = response.body
@@ -145,7 +145,7 @@ describe('Create comment for invoice', () => {
         expect(data.Attachments).toBeDefined()
         expect(Array.isArray(data.Attachments)).toBe(true)
         expect(data.Attachments.length).toBe(1)
-        expect(data.Attachments[0].filename).toBe(fileToAttachName)
+        expect(data.Attachments[0].name).toBe(fileToAttachName)
     })
 
     it('should return 400 if comment content is too long', async () => {
