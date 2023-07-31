@@ -41,12 +41,12 @@ describe('GET /organizations/:org_id/members/:member_id', () => {
         expect(res.body.data).toHaveProperty('UserId')
     })
 
-    test('Should return an error if the organization ID is not a valid UUID', async () => {
+    test('Should return an error if the organization ID is invalid', async () => {
         const res = await request(app)
             .get(
                 '/organizations/123/members/ee250697-62a6-45c7-bf1e-172dcc67c12d'
             )
-            .expect(400)
+            .expect(403)
 
         expect(res.body).toHaveProperty('status', 'error')
     })

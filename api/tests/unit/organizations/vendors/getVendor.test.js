@@ -49,10 +49,10 @@ describe('Get organization vendor', () => {
         expect(response.body.status).toBe('error')
     })
 
-    it('Should return an error if a bad organization ID is provided', async () => {
+    it('Should return 403 if organization ID is invalid', async () => {
         const response = await request(app)
             .get(`/organizations/123/vendors/${vendor.id}`)
-            .expect(400)
+            .expect(403)
 
         expect(response.body.status).toBe('error')
     })

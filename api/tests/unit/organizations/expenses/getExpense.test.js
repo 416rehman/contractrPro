@@ -78,12 +78,12 @@ describe('Get all organization expenses', () => {
         expect(expenseEntry).toHaveProperty('ExpenseId', body.id)
     })
 
-    it('should return 400 if organization ID is invalid', async () => {
+    it('should return 403 if organization ID is invalid', async () => {
         const invalidOrgId = 'invalid-org-id'
 
         const response = await request(app)
             .get(`/organizations/${invalidOrgId}/expenses?expand=true`)
-            .expect(400)
+            .expect(403)
 
         const { status } = response.body
 

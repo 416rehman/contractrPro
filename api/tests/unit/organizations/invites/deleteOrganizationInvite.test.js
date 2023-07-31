@@ -30,10 +30,10 @@ describe('Delete organization invite', () => {
         expect(response.body.status).toBe('success')
     })
 
-    it('should return 400 if Organization ID is invalid', async () => {
+    it('should return 403 if Organization ID is invalid', async () => {
         const response = await request(app)
             .delete(`/organizations/bad-id/invites/${inviteID}`)
-            .expect(400)
+            .expect(403)
 
         expect(response.body.status).toBe('error')
     })

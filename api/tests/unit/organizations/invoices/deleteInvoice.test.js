@@ -30,11 +30,11 @@ describe('Delete invoice', () => {
         expect(data).toBe(1)
     })
 
-    it('should return 400 if organization ID is invalid', async () => {
+    it('should return 403 if organization ID is invalid', async () => {
         const invalidOrgId = 'invalid-org-id'
         const response = await request(app)
             .delete(`/organizations/${invalidOrgId}/invoices/${invoiceId}`)
-            .expect(400)
+            .expect(403)
 
         const { status } = response.body
 

@@ -57,13 +57,13 @@ describe('Update invoice', () => {
         expect(status).toBe('error')
     })
 
-    it('should return 400 if organization ID is invalid', async () => {
+    it('should return 403 if organization ID is invalid', async () => {
         const invalidOrgId = 'invalid-org-id'
         const invoiceId = orgInvoice.id
 
         const response = await request(app)
             .put(`/organizations/${invalidOrgId}/invoices/${invoiceId}`)
-            .expect(400)
+            .expect(403)
 
         const { status } = response.body
 
