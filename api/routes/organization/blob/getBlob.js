@@ -32,7 +32,7 @@ module.exports = async (req, res) => {
             return res.status(400).json(createErrorResponse('Blob not found.'))
         }
 
-        const actualFileName = attachment.filename
+        const actualFileName = attachment.name
 
         const data = await s3.get(blobId)
         if (!data) {
@@ -41,8 +41,10 @@ module.exports = async (req, res) => {
                 .json(createErrorResponse('Failed to get blob.'))
         }
 
+        console.log({ actualFileName })
+
         res.writeHead(200, {
-            'Content-Type': attachment.mimetype,
+            'Content-Type': attachment.type,
             'Content-Length': data.ContentLength,
             'Content-Disposition': download
                 ? `attachment; filename=${actualFileName}`

@@ -1,4 +1,5 @@
 "use client";
+import { useRouter } from "next/navigation";
 import { deleteInvoiceAndPersist, updateInvoiceAndPersist, useInvoicesStore } from "@/services/invoices";
 import {
   CardFooter,
@@ -37,6 +38,8 @@ import { Divider } from "@nextui-org/divider";
 import ClientSelector from "@/components/clientSelector";
 import { Tooltip } from "@nextui-org/tooltip";
 import moment from "moment";
+import { InvoiceCommentSection } from "@/components/invoiceCommentSection";
+import { Spacer } from "@nextui-org/spacer";
 
 type Props = {
   id: string;
@@ -49,6 +52,8 @@ type Props = {
  * It handles communication with the API and updates the local state via the Invoice service.
  */
 export default function InvoiceForm({ id, className }: Props) {
+  const router = useRouter();
+
   const [invoice] = useInvoicesStore(state => [state.invoices.find((invoice: any) => invoice.id === id)]);
   const [editedInvoice, setEditedInvoice] = useState<Invoice | null>(); // Save the edited invoiceEntries here
 
@@ -56,7 +61,6 @@ export default function InvoiceForm({ id, className }: Props) {
 
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-
 
   // Confirm reload if editing
   useEffect(() => {
@@ -111,11 +115,12 @@ export default function InvoiceForm({ id, className }: Props) {
     // Save the edited invoiceEntries here
     setIsSaving(true);
 
-    await updateInvoiceAndPersist(editedInvoice, currentOrg?.id);
+    const result = await updateInvoiceAndPersist(editedInvoice, currentOrg?.id);
 
     setIsEditing(!editedInvoice?.id);
     if (!editedInvoice?.id) {
-      setEditedInvoice(undefined);
+      // navigate to the new invoice
+      router.push(`/invoices/${result?.id}`);
     }
 
     setIsSaving(false);
@@ -192,7 +197,7 @@ export default function InvoiceForm({ id, className }: Props) {
           )}
         </ModalContent>
       </Modal>
-      <div className={"flex justify-center w-full"}>
+      <div className={"flex flex-col justify-center w-full gap-5"}>
         <Card shadow={"none"} className={"border-none w-full"}>
           <CardHeader className={"flex gap-2"}>
             <div className={"flex-grow flex italic flex-col gap-1 items-start"}>
@@ -252,7 +257,7 @@ export default function InvoiceForm({ id, className }: Props) {
                 selectedClientIds={[editedInvoice?.BillToClientId]}
               />
 
-              <div className={"flex flex-row gap-4"}>
+              <div className={"flex flex-row gap-4 flex-wrap lg:flex-nowrap"}>
                 <Input label={"Invoice #"} placeholder={"123456"} value={editedInvoice?.invoiceNumber}
                        isReadOnly={!isEditing}
                        type={"text"}
@@ -345,6 +350,10 @@ export default function InvoiceForm({ id, className }: Props) {
             </div>
           </CardFooter>
         </Card>
+        {invoice?.id && (
+          <InvoiceCommentSection invoice={invoice} />
+        )}
+        <Spacer y={10} />
       </div>
     </div>
   );

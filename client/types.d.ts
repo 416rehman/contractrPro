@@ -49,7 +49,7 @@ export type Client = {
 } & any;
 
 
-type Vendor= {
+type Vendor = {
   id?: string,
   name: string,
   phone: string,
@@ -62,7 +62,7 @@ type Vendor= {
   OrganizationId?: string,
 } & any;
 
-type Employee = {
+type Member = {
   id?: string,
   name: string,
   email: string,
@@ -132,16 +132,6 @@ export type ExpenseEntry = {
   ExpenseId?: string,
 } & any;
 
-export type OrgMember = {
-  id?: string,
-  name: string,
-  email?: string,
-  phone?: string,
-  UpdatedByUserId?: string,
-  OrganizationId?: string,  // the organization that this member belongs to
-  UserId?: string,  // the user associated with this member
-}
-
 type Contract = {
   id?: string,
   name: string,
@@ -178,4 +168,32 @@ interface JobMember {
   id?: string,
   JobId?: string,
   OrganizationMemberId?: string,
+}
+
+type Attachment = {
+  "id"?: string
+  "name"?: string
+  "type"?: string
+  "size"?: number
+  "accessUrl"?: string
+  "createdAt"?: string
+  "updatedAt"?: string
+  "CommentId"?: string
+  "markedForDeletion"?: boolean
+}
+
+type Comment = {
+  "id"?: string,
+  "content"?: string,
+  "createdAt"?: string,
+  "updatedAt"?: string,
+  "ClientId"?: string
+  "OrganizationId"?: string
+  "ContractId"?: string
+  "VendorId"?: string
+  "ExpenseId"?: string
+  "InvoiceId"?: string
+  "AuthorId"?: string
+  "UpdatedByUserId"?: string
+  "Attachments"?: Array<Attachment | any>
 }

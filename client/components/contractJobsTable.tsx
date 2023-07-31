@@ -5,7 +5,7 @@ import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-o
 import { Button } from "@nextui-org/button";
 import { IconCurrencyDollar, IconDotsVertical, IconTrash } from "@tabler/icons-react";
 import JobStatusSelector from "@/components/jobStatusSelector";
-import OrgMemberSelector from "@/components/OrgMemberSelector";
+import MemberSelector from "@/components/OrgMemberSelector";
 
 const columns = [
   { name: "Name", uid: "name" },
@@ -91,17 +91,17 @@ export default function ContractJobsTable({ jobs, isEditing, onEntryChanged, onE
                       startContent={<IconCurrencyDollar />}
                       onChange={(e) => onEntryChanged(columnKey, e.target.value, job.id)} />;
       case "assignedTo":
-        return <OrgMemberSelector
+        return <MemberSelector
           className={"px-2"}
           isDisabled={!isEditing}
           label={"Client"}
           inline={true}
-          onOrgMemberChange={(changedMembers) => {
+          onMemberChange={(changedMembers) => {
             if (changedMembers.length > 0 && changedMembers[0]?.id) {
               onEntryChanged(columnKey, changedMembers?.map((member) => member.id), job.id);
             }
           }}
-          selectedOrgMemberIds={cellValue}
+          selectedMemberIds={cellValue}
         />;
       case "status":
         const isTouched = columns.some((column) => {

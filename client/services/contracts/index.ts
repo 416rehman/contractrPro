@@ -7,6 +7,7 @@ import {
 } from "@/services/contracts/api";
 import { Contract } from "@/types";
 import { useToastsStore } from "../toast";
+import { clearContractCommentsStore } from "@/services/contracts/comments";
 
 export const useContractsStore = create((set: any) => ({
   contracts: [] as Contract[],
@@ -15,10 +16,22 @@ export const useContractsStore = create((set: any) => ({
   removeContract: (inovice: Contract) => set((state: any) => ({ contracts: state.contracts.filter((i: Contract) => i.id !== inovice.id) })),
   updateContract: (contract: Contract) => {
     set((state: any) => ({ contracts: state.contracts.map((i: Contract) => i.id === contract.id ? contract : i) }));
-  }
+  },
+  lastRequestedOn: null as Date | null
 }));
 
 export const loadContracts = async (currentOrganizationId: string) => {
+  if (!useContractsStore.getState().lastRequestedOn) {
+    useContractsStore.getState().lastRequestedOn = new Date();
+  } else {
+    const now = new Date();
+    const diff = now.getTime() - useContractsStore.getState().lastRequestedOn.getTime();
+    // if the last request was less than 5 seconds ago, don't make another request
+    if (diff < 5000) {
+      return;
+    }
+    useContractsStore.getState().lastRequestedOn = now;
+  }
   try {
     const currentContracts = useContractsStore.getState().contracts;
     const orgContracts = await requestAllOrganizationContracts(currentOrganizationId);
@@ -40,6 +53,7 @@ export const updateContractAndPersist = async (contract: Contract, currentOrgani
         await requestUpdateContract(contract, currentOrganizationId);
         useContractsStore.getState().updateContract(contract);
         useToastsStore.getState().addToast({ id: contract.id, type: "success", message: "Contract updated" });
+        return contract;
       } else {
         const newContract = await requestCreateContract(contract, currentOrganizationId);
         useContractsStore.getState().addContract(newContract);
@@ -48,6 +62,7 @@ export const updateContractAndPersist = async (contract: Contract, currentOrgani
           type: "success",
           message: "Contract created"
         });
+        return newContract;
       }
     }
 
@@ -75,4 +90,11 @@ export const deleteContractAndPersist = async (contract: Contract, currentOrgani
       message: err?.message || err
     });
   }
+};
+
+
+export const clearContractsStore = () => {
+  useContractsStore.getState().setContracts([]);
+  useContractsStore.getState().lastRequestedOn = null;
+  clearContractCommentsStore();
 };

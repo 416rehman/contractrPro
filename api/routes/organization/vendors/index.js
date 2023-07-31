@@ -31,4 +31,9 @@ routes.put('/:vendor_id', require('./updateVendor'))
  */
 routes.delete('/:vendor_id', require('./deleteVendor'))
 
+/**
+ * @api {use} /organizations/:org_id/vendors/:vendor_id/comments Invoice comments
+ */
+routes.use('/:vendor_id/comments', require('./comments'))
+
 module.exports = routes

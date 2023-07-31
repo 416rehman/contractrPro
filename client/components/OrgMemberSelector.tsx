@@ -1,14 +1,14 @@
 import SearchInput from "@/components/searchInput";
-import { loadOrgMembers, useOrgMembersStore } from "@/services/members";
+import { loadMembers, useMembersStore } from "@/services/members";
 import { useEffect, useState } from "react";
 import { useUserStore } from "@/services/user";
 import { DropdownItem } from "@nextui-org/dropdown";
 import { User } from "@nextui-org/user";
-import { OrgMember } from "@/types";
+import { Member } from "@/types";
 
 type Props = {
-  onOrgMemberChange?: (members: OrgMember[]) => void;
-  selectedOrgMemberIds?: string[];
+  onMemberChange?: (members: Member[]) => void;
+  selectedMemberIds?: string[];
   label?: string;
   showLabel?: boolean;
   className?: string;
@@ -21,48 +21,48 @@ type Props = {
  * If no members are cached, it will load them from the server.
  * Uses the SearchInput component to display the list of members.
  */
-export default function OrgMemberSelector({
-                                            onOrgMemberChange,
-                                            selectedOrgMemberIds,
-                                            label,
-                                            isDisabled,
-                                            className,
-                                            inline,
-                                            ...props
-                                          }: Props) {
-  const members = useOrgMembersStore((state) => state.orgMembers);
+export default function MemberSelector({
+                                         onMemberChange,
+                                         selectedMemberIds,
+                                         label,
+                                         isDisabled,
+                                         className,
+                                         inline,
+                                         ...props
+                                       }: Props) {
+  const members = useMembersStore((state) => state.members);
   const currentOrg = useUserStore((state) => state.currentOrganization);
   const [query, setQuery] = useState("");
-  const [filteredOrgMembers, setFilteredOrgMembers] = useState([]);
+  const [filteredMembers, setFilteredMembers] = useState([]);
 
   useEffect(() => {
     if (!currentOrg) return;
 
     if (!members || members.length === 0) {
-      loadOrgMembers(currentOrg.id);
+      loadMembers(currentOrg.id);
     }
   }, [currentOrg, members]);
 
   useEffect(() => {
     if (!query || query.length === 0) {
-      setFilteredOrgMembers(members);
+      setFilteredMembers(members);
       return;
     }
 
-    setFilteredOrgMembers(members.filter((member) => member.name.toLowerCase().includes(query.toLowerCase())));
+    setFilteredMembers(members.filter((member) => member.name.toLowerCase().includes(query.toLowerCase())));
   }, [query, members]);
 
   const onSelectionChangedHandler = (selectedIds: Set<string>) => {
-    if (!onOrgMemberChange) return;
+    if (!onMemberChange) return;
 
-    const selectedOrgMembers = members.filter((member) => selectedIds.has(member.id));
-    onOrgMemberChange(selectedOrgMembers);
+    const selectedMembers = members.filter((member) => selectedIds.has(member.id));
+    onMemberChange(selectedMembers);
   };
 
   return <SearchInput {...props}
                       isReadOnly={isDisabled}
                       items={
-                        filteredOrgMembers.map((member) => <DropdownItem key={member.id} textValue={member.id}>
+                        filteredMembers.map((member) => <DropdownItem key={member.id} textValue={member.id}>
                           <User name={member.name}
                                 description={member.description || member.email || member.phone || member.website || ""} />
                         </DropdownItem>)}
@@ -72,11 +72,11 @@ export default function OrgMemberSelector({
                       onQueryChange={setQuery}
                       showLabel={!inline}
                       label={label}
-                      selectedKeys={new Set(selectedOrgMemberIds)}
-                      trigger={selectedOrgMemberIds?.length ?
+                      selectedKeys={new Set(selectedMemberIds)}
+                      trigger={selectedMemberIds?.length ?
                         (inline ? <div className={"flex flex-row gap-2"}>
                             {
-                              members.filter((member) => selectedOrgMemberIds.includes(member.id))
+                              members.filter((member) => selectedMemberIds.includes(member.id))
                                 .map((member) => (
                                   <div key={member.id} className={"overflow-clip truncate text-myblue-600"}>
                                     <span className={"text-sm font-light select-none text-default-500"}>@</span>
@@ -85,7 +85,7 @@ export default function OrgMemberSelector({
                             }
                           </div> :
                           <div>
-                            {members.filter((member) => selectedOrgMemberIds.includes(member.id))
+                            {members.filter((member) => selectedMemberIds.includes(member.id))
                               .map((member) => <User key={member.id} name={member.name}
                                                      description={member.email || member.phone || ""} />)}
                           </div>)

@@ -4,9 +4,9 @@ import { CardFooter, Input } from "@nextui-org/react";
 import { Button } from "@nextui-org/button";
 import NextLink from "next/link";
 import clsx from "clsx";
-import { IconAt, IconChevronDown, IconListSearch } from "@tabler/icons-react";
+import { IconAt, IconChevronDown, IconCirclePlus, IconListSearch } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
-import { loadEmployees, useEmployeesStore } from "@/services/employees";
+import { loadMembers, useMembersStore } from "@/services/members";
 import { useUserStore } from "@/services/user";
 import { useParams } from "next/navigation";
 import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/popover";
@@ -16,53 +16,61 @@ type Props = {
 }
 
 /**
- * The EmployeesSidebar component renders a sidebar of the list of employees for the user to click on one if they want to view its data in its page.
- * Underneath the list is a button that will allow them to create a new employee, taking them to the create page that will allow them to do that.
+ * The MembersSidebar component renders a sidebar of the list of members for the user to click on one if they want to view its data in its page.
+ * Underneath the list is a button that will allow them to create a new member, taking them to the create page that will allow them to do that.
  */
-export default function EmployeesSidebar({ className }: Props) {
+export default function MembersSidebar({ className }: Props) {
   const [currentOrg] = useUserStore(state => [state.currentOrganization]);
-  const [employees] = useEmployeesStore(state => [state.employees]);
+  const [members] = useMembersStore(state => [state.members]);
+  const [membersToDisplay, setMembersToDisplay] = useState(members);
   const [filter, setFilter] = useState("");
   const params = useParams();
 
   useEffect(() => {
-    loadEmployees(currentOrg?.id);
+    if (currentOrg?.id) {
+      loadMembers(currentOrg?.id);
+    }
   }, [currentOrg?.id]);
 
-  const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFilter(e.target.value);
-    employees.filter((item: any) => item.name.toLowerCase().includes(e.target.value.toLowerCase()));
-  };
+  useEffect(() => {
+    // filter
+    const membersToDisplay = members.filter((item: any) => item.name.toLowerCase().includes(filter.toLowerCase()));
+    setMembersToDisplay(membersToDisplay);
+  }, [filter, members]);
 
   const sidebar = <Card shadow={"none"} isBlurred={true}
                         className={clsx("border-none rounded-none", className)}>
     <CardHeader className={"flex flex-col gap-2"}>
-      <h1 className={"text-2xl font-bold"}>Employees</h1>
+      <h1 className={"text-2xl font-bold"}>Members</h1>
       {/*  Search bar*/}
-      <Input placeholder={"Filter"} size={"sm"} endContent={<IconListSearch className={"text-default-400"} />}
+      <Input aria-label={"Filter Members"} placeholder={"Filter"} size={"sm"}
+             startContent={<IconListSearch className={"text-default-400"} />}
              variant={"underlined"}
-             onChange={handleFilterChange} />
+             isClearable={true}
+             onClear={() => setFilter("")}
+             onChange={(e) => setFilter(e.target.value)} />
     </CardHeader>
     <CardBody className={"p-2"}>
       <ul className={"flex flex-col w-full"}>
-        {employees && employees.map((employee) => (
-          <li key={employee.id}>
+        {membersToDisplay && membersToDisplay.map((member) => (
+          <li key={member.id}>
             <Button
               className={"w-full justify-start text-default-600 font-medium"}
               as={NextLink}
-              href={"/employees/" + employee?.id}
+              href={"/members/" + member?.id}
               startContent={<IconAt className={"text-default-300"} size={"20"} />}
-              variant={params.id === employee?.id ? "flat" : "light"}
+              variant={params.id === member?.id ? "flat" : "light"}
               size={"sm"}>
-              <span className={"truncate"}>{employee?.name}</span>
+              <span className={"truncate"}>{member?.name}</span>
             </Button>
           </li>
         ))}
       </ul>
     </CardBody>
     <CardFooter>
-      <Button variant={"ghost"} className={"flex-grow"} href={"/employees/new"} as={NextLink}>
-        Create New Employee
+      <Button variant={"light"} className={"flex-grow"} href={"/members/new"} as={NextLink}
+              startContent={<IconCirclePlus className={"text-default-500"} />}>
+        New Member
       </Button>
     </CardFooter>
   </Card>;
@@ -71,7 +79,7 @@ export default function EmployeesSidebar({ className }: Props) {
   const dropdown = <Popover className={className}>
     <PopoverTrigger className={"w-full flex md:hidden"}>
       <Button variant={"ghost"} className={""} endContent={<IconChevronDown />}>
-        Employees
+        Members
       </Button>
     </PopoverTrigger>
     <PopoverContent className={"rounded-md !w-[94vw] !h-[85vh] p-1"}>

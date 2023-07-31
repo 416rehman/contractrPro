@@ -78,9 +78,9 @@ module.exports = async (req, res) => {
 
                     return {
                         id: file.key,
-                        filename: file.originalname,
-                        mimetype: file.mimetype,
-                        fileSizeBytes: file.size,
+                        name: file.originalname,
+                        type: file.mimetype,
+                        size: file.size,
                         accessUrl,
                         CommentId: comment.id,
                     }

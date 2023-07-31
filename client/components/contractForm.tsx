@@ -1,4 +1,5 @@
 "use client";
+import { useRouter } from "next/navigation";
 import { deleteContractAndPersist, updateContractAndPersist, useContractsStore } from "@/services/contracts";
 import {
   CardFooter,
@@ -35,6 +36,8 @@ import ClientSelector from "@/components/clientSelector";
 import { Tooltip } from "@nextui-org/tooltip";
 import moment from "moment";
 import ContractJobsTable from "@/components/contractJobsTable";
+import { Spacer } from "@nextui-org/spacer";
+import { ContractCommentSection } from "@/components/contractCommentSection";
 
 type Props = {
   id: string;
@@ -47,6 +50,7 @@ type Props = {
  * It handles communication with the API and updates the local state via the Contract service.
  */
 export default function ContractForm({ id, className }: Props) {
+  const router = useRouter();
   const [contract] = useContractsStore(state => [state.contracts.find((contract: any) => contract.id === id)]);
   const [editedContract, setEditedContract] = useState<Contract | null>(); // Save the edited contractEntries here
 
@@ -80,11 +84,11 @@ export default function ContractForm({ id, className }: Props) {
     // Save the edited contractEntries here
     setIsSaving(true);
 
-    await updateContractAndPersist(editedContract, currentOrg?.id);
+    const result = await updateContractAndPersist(editedContract, currentOrg?.id);
 
     setIsEditing(!editedContract?.id);
     if (!editedContract?.id) {
-      setEditedContract(undefined);
+      router.push(`/contracts/${result?.id}`);
     }
 
     setIsSaving(false);
@@ -120,8 +124,6 @@ export default function ContractForm({ id, className }: Props) {
 
   const onEntryChangedHandler = (name: string, value: any, id: string) => {
     if (!id) return;
-
-    console.log(`Updating ${name} to ${value} for job with id ${id}`);
 
     // if an entry with the given id does not exist, create a new entry
     if (!editedContract?.Jobs?.find((entry) => entry.id === id)) {
@@ -191,7 +193,7 @@ export default function ContractForm({ id, className }: Props) {
           )}
         </ModalContent>
       </Modal>
-      <div className={"flex justify-center w-full"}>
+      <div className={"flex justify-center flex-col w-full"}>
         <Card shadow={"none"} className={"border-none w-full"}>
           <CardHeader className={"flex gap-2"}>
             <div className={"flex-grow flex italic flex-col gap-1 items-start"}>
@@ -328,6 +330,10 @@ export default function ContractForm({ id, className }: Props) {
             </div>
           </CardFooter>
         </Card>
+        {contract?.id && (
+          <ContractCommentSection contract={contract} />
+        )}
+        <Spacer y={10} />
       </div>
     </div>
   );

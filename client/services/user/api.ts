@@ -1,7 +1,7 @@
 import { request } from "@/utils/request";
-import { Organization } from '@/types'
+import { Organization } from "@/types";
 
-const apiUrl = process.env.API_URL || "http://localhost:4000";
+const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 // Gets the loggedInUser's organizations from the server, and stores them in the loggedInUser store and returns them
 export async function requestUserOrganizations(UserId = "me") {

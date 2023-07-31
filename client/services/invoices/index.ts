@@ -7,6 +7,7 @@ import {
 } from "@/services/invoices/api";
 import { Invoice } from "@/types";
 import { useToastsStore } from "../toast";
+import { clearInvoiceCommentsStore } from "@/services/invoices/comments";
 
 export const useInvoicesStore = create((set: any) => ({
   invoices: [] as Invoice[],
@@ -15,17 +16,29 @@ export const useInvoicesStore = create((set: any) => ({
   removeInvoice: (inovice: Invoice) => set((state: any) => ({ invoices: state.invoices.filter((i: Invoice) => i.id !== inovice.id) })),
   updateInvoice: (invoice: Invoice) => {
     set((state: any) => ({ invoices: state.invoices.map((i: Invoice) => i.id === invoice.id ? invoice : i) }));
-  }
+  },
+  lastRequestedOn: null as Date | null
 }));
 
 export const loadInvoices = async (currentOrganizationId: string) => {
+  if (!useInvoicesStore.getState().lastRequestedOn) {
+    useInvoicesStore.getState().lastRequestedOn = new Date();
+  } else {
+    const now = new Date();
+    const diff = now.getTime() - useInvoicesStore.getState().lastRequestedOn.getTime();
+    // if the last request was less than 5 seconds ago, don't make another request
+    if (diff < 5000) {
+      return;
+    }
+    useInvoicesStore.getState().lastRequestedOn = now;
+  }
   try {
     const currentInvoices = useInvoicesStore.getState().invoices;
     const orgInvoices = await requestAllOrganizationInvoices(currentOrganizationId);
 
     // if the new invoices are different from the current invoices, update the store
     if (orgInvoices.length !== currentInvoices.length || orgInvoices.some((invoice, i) => invoice.id !== currentInvoices[i].id)) {
-        useInvoicesStore.getState().setInvoices(orgInvoices);
+      useInvoicesStore.getState().setInvoices(orgInvoices);
     }
   } catch (err) {
     console.log(err);
@@ -43,6 +56,7 @@ export const updateInvoiceAndPersist = async (invoice: Invoice, currentOrganizat
         await requestUpdateInvoice(invoice, currentOrganizationId);
         useInvoicesStore.getState().updateInvoice(invoice);
         useToastsStore.getState().addToast({ id: invoice.id, type: "success", message: "Invoice updated" });
+        return invoice;
       } else {
         const newInvoice = await requestCreateInvoice(invoice, currentOrganizationId);
         useInvoicesStore.getState().addInvoice(newInvoice);
@@ -51,6 +65,7 @@ export const updateInvoiceAndPersist = async (invoice: Invoice, currentOrganizat
           type: "success",
           message: "Invoice created"
         });
+        return newInvoice;
       }
     }
 
@@ -78,4 +93,10 @@ export const deleteInvoiceAndPersist = async (invoice: Invoice, currentOrganizat
       message: err?.message || err
     });
   }
+};
+
+export const clearInvoicesStore = () => {
+  useInvoicesStore.getState().setInvoices([]);
+  useInvoicesStore.getState().lastRequestedOn = null;
+  clearInvoiceCommentsStore();
 };

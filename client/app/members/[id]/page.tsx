@@ -1,4 +1,4 @@
-import EmployeeForm from "@/components/employeeForm";
+import MemberForm from "@/components/memberForm";
 import { Metadata } from "next";
 
 type Props = {
@@ -13,12 +13,12 @@ export async function generateMetadata(
   const id = params.id;
 
   return {
-    title: (id === "new" ? "New Employee" : "Employee " + id) + " | ContractrPro"
+    title: (id === "new" ? "New Member" : "Member " + id) + " | ContractrPro"
   };
 }
 
-export default function EmployeePage({ params }: { params: { id: string } }) {
+export default function MemberPage({ params }: { params: { id: string } }) {
   return <div className={"flex flex-grow overflow-y-auto justify-center"}>
-    <EmployeeForm id={params.id} className={"items-center max-w-full md:max-w-xl"} />
+    <MemberForm id={params.id} className={"items-center max-w-full md:max-w-xl"} />
   </div>;
 }

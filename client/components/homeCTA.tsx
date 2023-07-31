@@ -12,7 +12,7 @@ export default function HomeCTA() {
       <div className="flex flex-col w-fit gap-y-4">
         <div className="flex flex-col">
           <h1 className={title({ color: "turquoise" })}>ContractrPro</h1>
-          <h2 className={title({ size: "sm" })}>Take control of your business</h2>
+          <h2 className={title()}>Take control of your business</h2>
         </div>
         <h3 className={subtitle()}>
           ContractrPro is a simple, easy to use, and powerful <br />

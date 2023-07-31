@@ -1,7 +1,7 @@
 import { request } from "@/utils/request";
 import { Client } from "@/types";
 
-const apiUrl = process.env.API_URL || "http://localhost:4000";
+const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 // Gets the current organization's clients from the server
 export async function requestOrganizationClients(OrganizationId: string) {

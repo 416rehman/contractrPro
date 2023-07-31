@@ -9,7 +9,7 @@ type AuthOptions = {
 
 // The request utility will return a typed response and automatically renew the access token if it is expired.
 // By default it will use the accessToken and refreshToken in the cookie, but you can override this by passing in a refreshToken or accessToken in the options.
-export async function request(url: string, options: AuthOptions = { credentials: "include" }) {
+export async function request(url: string, options: AuthOptions = { credentials: "include" }, defaults = true) {
   const accessToken = options.accessToken || getCookieValue("accessToken");
   const refreshToken = options.refreshToken || getCookieValue("refreshToken");
 
@@ -32,12 +32,15 @@ export async function request(url: string, options: AuthOptions = { credentials:
   }
 
   try {
-    if (!options?.headers?.["Content-Type"]) {
-      options.headers = {
-        ...options.headers,
-        "Content-Type": "application/json"
-      };
+    if (defaults) { // Set default options
+      if (!options?.headers?.["Content-Type"]) {
+        options.headers = {
+          ...options.headers,
+          "Content-Type": "application/json"
+        };
+      }
     }
+
     const result = await fetch(url, options);
     const body = await result.json();
     if (!result.ok) {

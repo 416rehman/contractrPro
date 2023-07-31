@@ -4,19 +4,19 @@ import { IconCirclePlus } from "@tabler/icons-react";
 import NextLink from "next/link";
 
 export const metadata = {
-  title: "Employees | ContractrPro"
+  title: "Members | ContractrPro"
 };
-export default function EmployeesPage() {
+export default function MembersPage() {
   return (
     <div className="flex flex-col flex-grow w-full items-center justify-center">
-      <p className={title()}>Employees</p>
+      <p className={title()}>Members</p>
       <br />
-      <p>Select an employee from the list on the left</p>
+      <p>Select an member from the list on the left</p>
       <p>or create a new one.</p>
       <br />
       <Button color="secondary" size={"lg"} endContent={<IconCirclePlus className={"text-tr-light-200"} />}
-              as={NextLink} href={"/employees/new"}>
-        Create new employee
+              as={NextLink} href={"/members/new"}>
+        Create new member
       </Button>
     </div>
   );
