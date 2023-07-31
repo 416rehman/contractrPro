@@ -123,7 +123,7 @@ describe('Update comment for job', () => {
                 `/organizations/${orgId}/contracts/${contractId}/jobs/${jobId}/comments/${comment.id}`
             )
             .field('content', 'new content')
-            .attach('attachments', fileToAttachPath) // Pass a single file path
+            .attach('Attachments', fileToAttachPath) // Pass a single file path
             .expect(200)
 
         const { status } = response.body
