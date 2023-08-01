@@ -47,3 +47,17 @@ export async function requestUpdateOrganization(organization: Organization) {
     return Promise.reject(err?.message || err);
   }
 }
+
+export async function requestDeleteOrganization(organizationId: string) {
+  try {
+    const data = await request(`${apiUrl}/organizations/${organizationId}`, {
+      method: "DELETE",
+      credentials: "include"
+    });
+
+    return Promise.resolve(data);
+  } catch (err) {
+    console.log(err);
+    return Promise.reject(err?.message || err);
+  }
+}
