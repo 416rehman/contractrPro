@@ -6,7 +6,6 @@ const {
 const { isValidUUID } = require('../../../utils/isValidUUID')
 const { pick } = require('../../../utils/index')
 
-
 module.exports = async (req, res) => {
     try {
         const { org_id, expense_id } = req.params
