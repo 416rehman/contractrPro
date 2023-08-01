@@ -23,9 +23,9 @@ module.exports = async (req, res) => {
         }
 
         const ExpenseEntries =
-        req.body?.ExpenseEntries?.map((entry) =>
-            pick(entry, ['description', 'quantity', 'unitCost', 'name'])
-        ) || []
+            req.body?.ExpenseEntries?.map((entry) =>
+                pick(entry, ['description', 'quantity', 'unitCost', 'name'])
+            ) || []
 
         if (ExpenseEntries.length === 0) {
             return res
