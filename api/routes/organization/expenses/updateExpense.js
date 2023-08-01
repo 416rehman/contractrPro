@@ -6,21 +6,7 @@ const {
 const { isValidUUID } = require('../../../utils/isValidUUID')
 const { pick } = require('../../../utils/index')
 
-// update expense
-// Example request body:
-// {
-//         "description": "Quod omnis pariatur non facere odio.",
-//         "issueDate": "2023-04-05T12:00:08.085Z",
-//         "VendorId": "b1b1b1b1-b1b1-b1b1-b1b1-b1b1b1b1b1b1",
-//         "ExpenseEntries": [{
-//             "name": "paid joemama1",
-//             "description": "whatever1",
-//             "quantity": 5,
-//             "unitCost": 10,
-//         }]
-// }
-// NOTE: ExpenseEntries is optional - if provided, it will REPLACE all existing entries
-// NOTE: ContractId, and JobId are optional entities to associate with the expense
+
 module.exports = async (req, res) => {
     try {
         const { org_id, expense_id } = req.params
@@ -48,8 +34,6 @@ module.exports = async (req, res) => {
                 )
         }
 
-        console.log('ExpenseEntries', ExpenseEntries)
-
         const body = {
             ...pick(req.body, [
                 'description',
@@ -63,6 +47,8 @@ module.exports = async (req, res) => {
             OrganizationId: org_id,
             UpdatedByUserId: req.auth.id,
         }
+
+        console.log('body', body)
 
         await sequelize.transaction(async (transaction) => {
             let expense = await Expense.findOne({
@@ -93,7 +79,7 @@ module.exports = async (req, res) => {
 
                 // create new entries
                 await ExpenseEntry.bulkCreate(
-                    req.body.ExpenseEntries.map((entry) => ({
+                    ExpenseEntries.map((entry) => ({
                         ...entry,
                         ExpenseId: expense.id,
                         UpdatedByUserId: req.auth.id,
@@ -102,19 +88,19 @@ module.exports = async (req, res) => {
                         transaction,
                     }
                 )
-            }
 
-            // re-fetch expense with entries
-            expense = await Expense.findOne({
-                where: {
-                    OrganizationId: org_id,
-                    id: expense_id,
-                },
-                transaction,
-                include: {
-                    model: ExpenseEntry,
-                },
-            })
+                // re-fetch expenseEntries with entries
+                expense = await Expense.findOne({
+                    where: {
+                        OrganizationId: org_id,
+                        id: expense_id,
+                    },
+                    transaction,
+                    include: {
+                        model: ExpenseEntry,
+                    },
+                })
+            }
 
             res.status(200).json(createSuccessResponse(expense))
         })

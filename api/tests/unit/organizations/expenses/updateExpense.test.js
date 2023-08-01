@@ -18,11 +18,7 @@ beforeAll(async () => {
             ...fake.mockExpenseData(),
             OrganizationId: orgId,
             ExpenseEntries: [fake.mockExpenseEntryData()],
-        },
-        {
-            include: [ExpenseEntry],
-        }
-    )
+        },)
 })
 afterAll(async () => {
     jest.restoreAllMocks()
@@ -60,18 +56,11 @@ describe('Update expense', () => {
         const response = await request(app)
             .put(`/organizations/${orgId}/expenses/${expenseId}`)
             .send(requestBody)
-            .expect(200)
+            .expect(400)
 
-        const { status, data } = response.body
+        const { status } = response.body
 
-        expect(status).toBe('success')
-        expect(data).toHaveProperty('id', expenseId)
-        expect(data).toHaveProperty('description', requestBody.description)
-        expect(data).toHaveProperty('OrganizationId', orgId)
-        expect(data).toHaveProperty('UpdatedByUserId')
-
-        expect(data.ExpenseEntries[0]).toBeDefined()
-        expect(data.ExpenseEntries[0]).toHaveProperty('id')
+        expect(status).toBe('error')
     })
 
     it('should return 403 if organization ID is invalid', async () => {

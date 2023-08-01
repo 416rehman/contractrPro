@@ -17,7 +17,7 @@ export const useExpensesStore = create((set: any) => ({
     removeExpense: (expense: Expense) => set((state: any) => ({ expenses: state.expenses.filter((e: Expense) => e.id !== expense.id) })),
     updateExpense: (expense: Expense) => {
         set((state: any) => ({ expenses: state.expenses.map((e: Expense) => e.id === expense.id ? expense : e) }));
-      }
+      },
     lastRequestedOn: null as Date | null
 
 }));
@@ -65,14 +65,17 @@ export const updateExpenses = async (expense: Expense, currentOrganizationId: st
                     id: 'update-expense',
                     type: 'success',
                     message: 'Expense created',
-                })
+                });
+                return newExpense;
             }
         }
 
     } catch (err) {
         useToastsStore.getState().addToast({ id: 'update-expense-error', type: 'error', message: err?.message || err })
     }
-export const deleteExpense = async (expense: Expense, currentOrganizationId: string) => {
+};
+
+  export const deleteExpense = async (expense: Expense, currentOrganizationId: string) => {
     try {
           if (currentOrganizationId) {
               console.log(await requestDeleteExpense(expense, currentOrganizationId))
@@ -84,7 +87,7 @@ export const deleteExpense = async (expense: Expense, currentOrganizationId: str
         useToastsStore.getState().addToast({ id: 'delete-expenseEntries-error', type: 'error', message: err?.message || err })
     }
 
-};
+  };
 
 export const clearExpensesStore = () => {
   useExpensesStore.getState().setExpenses([]);
