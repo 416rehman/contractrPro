@@ -10,6 +10,7 @@ import { Comment } from "@/types";
 import { Link } from "@nextui-org/link";
 import { loadMembers, useMembersStore } from "@/services/members";
 import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/dropdown";
+import moment from "moment";
 
 type CommentProps = {
   comment: Comment
@@ -107,8 +108,8 @@ export default function CommentComponent({ comment, onSave, onDelete }: CommentP
                 {author?.name || "❔Anonymous"}
               </Link>
               <span className={"text-sm text-gray-500"}>
-                commented on
-                <span className={"font-medium"}> {new Date(editedComment?.createdAt).toLocaleDateString()}</span>
+                commented
+                <span className={"font-medium"}> {moment(editedComment?.createdAt).fromNow()}</span>
               </span>
             </div>
             {!isEditing &&

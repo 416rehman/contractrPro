@@ -21,7 +21,7 @@ import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-o
 import OrganizationSelector from "@/components/organizationSelector";
 import { Tooltip } from "@nextui-org/tooltip";
 import moment from "moment";
-import { VendorCommentSection } from "@/components/vendorCommentSection";
+import VendorCommentSection from "@/components/vendorCommentSection";
 import { Spacer } from "@nextui-org/spacer";
 
 type Props = {
