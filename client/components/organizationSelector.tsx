@@ -6,7 +6,7 @@ import { IconBuildingSkyscraper, IconCirclePlus } from "@tabler/icons-react";
 import JoinOrganizationModal from "@/components/joinOrganizationModal";
 import { useDisclosure } from "@nextui-org/react";
 import clsx from "clsx";
-import CreateOrganizationModal from "@/components/createOrganizationModal";
+import OrganizationModal from "@/components/organizationModal";
 import { loadUserOrganizations, setCurrentOrganization, useUserStore } from "@/services/user";
 
 type Props = {
@@ -88,7 +88,7 @@ export default function OrganizationSelector({
 
   return <>
     <JoinOrganizationModal isOpen={isJoinOpen} onOpenChange={onJoinOpenChange} onOpen={onJoinOpen} />
-    <CreateOrganizationModal isOpen={isCreateOpen} onOpenChange={onCreateOpenChange} />
+    <OrganizationModal isOpen={isCreateOpen} onOpenChange={onCreateOpenChange} />
 
     <Dropdown placement="bottom-start" backdrop={"opaque"} isOpen={dropdownOpenTime > 0}
               onClose={() => Date.now() - dropdownOpenTime < 50 ? null : setDropdownOpenTime(0)}

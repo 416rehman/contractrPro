@@ -22,7 +22,7 @@ import OrganizationSelector from "@/components/organizationSelector";
 import { Tooltip } from "@nextui-org/tooltip";
 import moment from "moment";
 import { Spacer } from "@nextui-org/spacer";
-import { ClientCommentSection } from "@/components/clientCommentSection";
+import ClientCommentSection from "@/components/clientCommentSection";
 
 type Props = {
   id: string;
