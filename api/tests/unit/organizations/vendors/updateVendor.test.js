@@ -54,7 +54,7 @@ describe('Update organization vendor', () => {
         expect(response.body.data).toHaveProperty('OrganizationId', orgId)
     })
 
-    it('Should return 400 if organization ID is invalid', async () => {
+    it('Should return 403 if organization ID is invalid', async () => {
         const invalidOrgId = 'invalid-org-id'
         const vendorId = vendor.id
         const updatedVendorData = fake.mockVendorData()
@@ -62,7 +62,7 @@ describe('Update organization vendor', () => {
         const response = await request(app)
             .put(`/organizations/${invalidOrgId}/vendors/${vendorId}`)
             .send(updatedVendorData)
-            .expect(400)
+            .expect(403)
 
         expect(response.body.status).toBe('error')
     })

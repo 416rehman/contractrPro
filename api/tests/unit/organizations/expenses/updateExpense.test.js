@@ -74,13 +74,13 @@ describe('Update expense', () => {
         expect(data.ExpenseEntries[0]).toHaveProperty('id')
     })
 
-    it('should return 400 if organization ID is invalid', async () => {
+    it('should return 403 if organization ID is invalid', async () => {
         const invalidOrgId = 'invalid-org-id'
         const expenseId = orgExpense.id
 
         const response = await request(app)
             .put(`/organizations/${invalidOrgId}/expenses/${expenseId}`)
-            .expect(400)
+            .expect(403)
 
         const { status } = response.body
 

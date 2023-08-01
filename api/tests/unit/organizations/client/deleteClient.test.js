@@ -35,12 +35,12 @@ describe('Delete organization client', () => {
         expect(response.body.data).toBe(1)
     })
 
-    it('should return 400 if organization ID is invalid', async () => {
+    it('should return 403 if organization ID is invalid', async () => {
         const invalidOrgId = 'invalid-org-id'
 
         const response = await request(app)
             .delete(`/organizations/${invalidOrgId}/clients/${clientId}`)
-            .expect(400)
+            .expect(403)
 
         expect(response.body.status).toBe('error')
     })

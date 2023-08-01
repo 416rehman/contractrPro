@@ -29,10 +29,10 @@ describe('GET /organizations/:org_id/members', () => {
         expect(res.body.data[0]).toHaveProperty('name')
     })
 
-    test('Should return an error if the organization ID is not a UUID', async () => {
+    test('Should return an error if the organization ID is invalid', async () => {
         const res = await request(app)
             .get('/organizations/123/members')
-            .expect(400)
+            .expect(403)
 
         expect(res.body).toHaveProperty('status', 'error')
     })

@@ -100,7 +100,7 @@ describe('Create comment for job', () => {
         expect(data.Attachments[0].name).toBe(fileToAttachName)
     })
 
-    it('should return 400 if organization ID is invalid', async () => {
+    it('should return 403 if organization ID is invalid', async () => {
         const invalidOrgId = 'invalid-org-id'
 
         const response = await request(app)
@@ -108,7 +108,7 @@ describe('Create comment for job', () => {
                 `/organizations/${invalidOrgId}/contracts/${contractId}/jobs/${jobId}/comments`
             )
             .send(fake.mockCommentData())
-            .expect(400)
+            .expect(403)
 
         const { status } = response.body
 
