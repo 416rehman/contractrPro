@@ -60,20 +60,27 @@ module.exports = async (req, res) => {
             )
         } else if (isFlagSet(type, tokenFlags.USER_PHONE_VERIFY_TOKEN)) {
             await sequelize.transaction(async (t) => {
+                const object = JSON.parse(tokenInstance.data)
+                if (!object || !object.phoneCountry || !object.phoneNumber) {
+                    return res
+                        .status(400)
+                        .json(
+                            createErrorResponse(
+                                'This token requires a phone number in the format { phoneCountry: "1", phoneNumber: "1234567890" }'
+                            )
+                        )
+                }
                 await user.update(
                     {
-                        phone: tokenInstance.data,
+                        phoneCountry: object.phoneCountry,
+                        phoneNumber: object.phoneNumber,
                         flags: user.flags | UserFlags.VERIFIED_PHONE, // Adds the VERIFIED_PHONE flag to the user's flags
                     },
                     { transaction: t }
                 )
                 await tokenInstance.destroy({ transaction: t })
             })
-            return res.send(
-                createSuccessResponse(
-                    'Phone verified and set to ' + tokenInstance.data
-                )
-            )
+            return res.send(createSuccessResponse('Phone verified and updated'))
         } else if (isFlagSet(type, tokenFlags.USER_PASSWORD_RESET_TOKEN)) {
             await sequelize.transaction(async (t) => {
                 if (!data || data.length < 1) {

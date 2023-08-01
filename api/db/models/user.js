@@ -55,9 +55,23 @@ module.exports.define = (sequelize, DataTypes) => {
                 allowNull: false,
                 unique: true,
             },
-            phone: {
-                type: DataTypes.STRING(25),
-                unique: true,
+            phoneCountry: {
+                type: DataTypes.STRING(5), // This is the country code
+                validate: {
+                    is: {
+                        args: /^[0-9]{1,5}$/, // Must be a number between 1 and 5 digits long
+                        msg: 'Phone country must be a number between 1 and 5 digits long',
+                    },
+                },
+            },
+            phoneNumber: {
+                type: DataTypes.STRING(20), // This is the phone number without the country code
+                validate: {
+                    is: {
+                        args: /^[0-9]{1,20}$/, // Must be a number between 1 and 20 digits long
+                        msg: 'Phone number must be a number between 1 and 20 digits long',
+                    },
+                },
             },
             password: {
                 type: DataTypes.STRING(255),
@@ -97,6 +111,12 @@ module.exports.define = (sequelize, DataTypes) => {
                     }
                 },
             },
+            indexes: [
+                {
+                    unique: true,
+                    fields: ['phoneCountry', 'phoneNumber'],
+                },
+            ],
         }
     )
 

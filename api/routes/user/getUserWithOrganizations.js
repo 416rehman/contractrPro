@@ -20,15 +20,8 @@ module.exports = async (req, res) => {
             const userOrganizations = await User.findOne({
                 attributes: {
                     exclude: [
-                        'username',
-                        'name',
-                        'email',
-                        'phone',
                         'password',
-                        'avatarUrl',
                         'refreshToken',
-                        'createdAt',
-                        'updatedAt',
                         'deletedAt',
                         'UpdatedByUserId',
                     ],

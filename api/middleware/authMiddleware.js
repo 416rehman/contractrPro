@@ -21,7 +21,8 @@ if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
         const userData = await User.findOne({
             attributes: {
                 exclude: [
-                    'phone',
+                    'phoneCountry',
+                    'phoneNumber',
                     'password',
                     'refreshToken',
                     'deletedAt',
@@ -83,7 +84,8 @@ if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
                     const userData = await User.findOne({
                         attributes: {
                             exclude: [
-                                'phone',
+                                'phoneCountry',
+                                'phoneNumber',
                                 'password',
                                 'refreshToken',
                                 'deletedAt',

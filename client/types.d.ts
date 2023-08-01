@@ -3,11 +3,13 @@ export type tUser = {
   name: string;
   username: string;
   email?: string;
-  phone?: string;
+  phoneCountry?: string;
+  phoneNumber?: string;
   avatarUrl: string;
   flags?: object;
   createdAt?: string;
   updatedAt?: string;
+  Organizations?: Organization[];
 } & any;
 
 export type UserAccount = tUser & {

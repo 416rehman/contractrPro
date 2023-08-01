@@ -53,13 +53,13 @@ export default function ClientsSidebar({ className }: Props) {
     </CardHeader>
     <CardBody className={"p-2"}>
       <ul className={"flex flex-col w-full"}>
-        {clients && clients.map((client) => (
+        {clientsToDisplay && clientsToDisplay.map((client) => (
           <li key={client.id}>
             <Button
               className={"w-full justify-start text-default-600 font-medium"}
               as={NextLink}
               href={"/clients/" + client?.id}
-              startContent={<IconBuilding className={"text-default-300"} size={"20"} />}
+              startContent={<IconBuilding className={"text-default-400"} size={"20"} />}
               variant={params.id === client?.id ? "flat" : "light"}
               size={"sm"}>
               <span className={"truncate"}>{client?.name}</span>

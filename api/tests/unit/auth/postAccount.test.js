@@ -21,7 +21,10 @@ describe('POST /auth/account', () => {
         expect(res.body.data).toHaveProperty('username', accountData.username)
         expect(res.body.data).toHaveProperty('email', accountData.email)
         expect(res.body.data).toHaveProperty('name', accountData.name)
-        expect(res.body.data).toHaveProperty('phone', accountData.phone)
+        expect(res.body.data).toHaveProperty(
+            'phoneNumber',
+            accountData.phoneNumber
+        )
         expect(res.body.data).toHaveProperty('avatarUrl', accountData.avatarUrl)
 
         expect(res.body).not.toHaveProperty('password')

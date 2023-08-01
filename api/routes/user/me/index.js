@@ -23,4 +23,14 @@ routes.post('/email', require('./changeEmail'))
  */
 routes.post('/phone', require('./changePhone'))
 
+/**
+ * @api {post} /me/password Change the signedInUser's avatarUrl
+ */
+routes.post('/avatar', require('./changeAvatar'))
+
+/**
+ * @api {post} /me/name Change the signedInUser's name
+ */
+routes.post('/name', require('./changeName'))
+
 module.exports = routes

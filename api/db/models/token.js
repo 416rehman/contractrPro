@@ -113,16 +113,17 @@ module.exports.define = (sequelize, DataTypes) => {
     /**
      * Create a token for phone verification and insert it into the database
      * @param UserId  The user for whom the token is being created
-     * @param phone  After the token is used, the user's phone will be set to this value
+     * @param phoneCountry  After the token is used, the user's phoneCountry will be set to this value
+     * @param phoneNumber  After the token is used, the user's phoneNumber will be set to this value
      * @returns {{UserId: *, token: string, expiresAt: Date, flags: number, data: *}} The token object that can be inserted into the database
      */
-    Token.phoneVerifyTokenTemplate = (UserId, phone) => {
+    Token.phoneVerifyTokenTemplate = (UserId, phoneCountry, phoneNumber) => {
         return {
             UserId,
             token: generateRandomCode(6), // 6 digit code for phone verification
             expiresAt: new Date(new Date().getTime() + 24 * 60 * 60 * 1000), // 24 hours
             flags: module.exports.tokenFlags.USER_PHONE_VERIFY_TOKEN,
-            data: phone,
+            data: JSON.stringify({ phoneCountry, phoneNumber }),
         }
     }
 

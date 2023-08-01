@@ -11,16 +11,26 @@ import {
   useDisclosure
 } from "@nextui-org/react";
 import { Card, CardBody, CardHeader } from "@nextui-org/card";
-import { Icon123, IconAbc, IconMail, IconPhone } from '@tabler/icons-react';
+import {
+  Icon123,
+  IconAbc,
+  IconChevronDown,
+  IconDeviceFloppy,
+  IconEdit,
+  IconMail,
+  IconPhone,
+  IconTrash
+} from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { Button, ButtonGroup } from "@nextui-org/button";
-import { IconChevronDown, IconDeviceFloppy, IconEdit, IconTrash } from "@tabler/icons-react";
 import clsx from "clsx";
 import { useUserStore } from "@/services/user";
 import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/dropdown";
 import OrganizationSelector from "@/components/organizationSelector";
 import { Tooltip } from "@nextui-org/tooltip";
 import moment from "moment";
+import { useToastsStore } from "@/services/toast";
+import { useRouter } from "next/navigation";
 
 type Props = {
   id: string,
@@ -34,11 +44,13 @@ type Props = {
  * It handles communication with the API and updates the local state via the Member service.
  */
 export default function MemberForm({ id, className }: Props) {
+  const router = useRouter();
   const [member] = useMembersStore(state => [state.members.find((member: any) => member.id === id)]);
   const [isEditing, setIsEditing] = useState(false);
   const [editedMember, setEditedMember] = useState<any>(); // Save the edited member here
   const currentOrg = useUserStore(state => state.currentOrganization);
   const [isSaving, setIsSaving] = useState(false);
+  const addToast = useToastsStore(state => state.addToast);
 
 
   // Confirm reload if editing
@@ -66,17 +78,25 @@ export default function MemberForm({ id, className }: Props) {
     // Save the edited member here
     setIsSaving(true);
 
-    await updateMemberAndPersist(editedMember, currentOrg?.id);
+    const newMember = await updateMemberAndPersist(editedMember, currentOrg?.id);
 
     setIsEditing(!editedMember?.id);
     if (!editedMember?.id) {
-      setEditedMember(undefined);
+      router.push(`/members/${newMember?.id}`);
     }
 
     setIsSaving(false);
   };
 
   const onDeleteHandler = async () => {
+    if (editedMember?.UserId === currentOrg?.OwnerId) {
+      return addToast({
+        id: "delete-member",
+        title: "Error",
+        message: "You cannot delete the owner of the organization",
+        type: "error"
+      });
+    }
     // Delete the member here
     setIsSaving(true);
     setIsEditing(false);
@@ -104,7 +124,9 @@ export default function MemberForm({ id, className }: Props) {
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">Delete member</ModalHeader>
-              <ModalBody> Are you sure you want to delete this member? </ModalBody>
+              <ModalBody>
+                <p>Are you sure you want to delete this member?</p>
+              </ModalBody>
               <ModalFooter>
                 <Button variant="light" onPress={onClose}>
                   Close
@@ -142,8 +164,10 @@ export default function MemberForm({ id, className }: Props) {
                         <IconChevronDown />
                       </Button>
                     </DropdownTrigger>
-                    <DropdownMenu>
-                      <DropdownItem key={"delete"} description={"Delete this member"} onPress={onOpen}
+                    <DropdownMenu disabledKeys={member?.UserId === currentOrg?.OwnerId ? ["delete"] : []}>
+                      <DropdownItem key={"delete"}
+                                    description={member?.UserId === currentOrg?.OwnerId ? "Cannot delete the owner" : "Delete this member"}
+                                    onPress={onOpen}
                                     startContent={<IconTrash className={"text-default-500"} />} shortcut={"D"}>
                         Delete
                       </DropdownItem>
@@ -155,23 +179,24 @@ export default function MemberForm({ id, className }: Props) {
           </CardHeader>
           <CardBody className={"flex flex-col gap-4"}>
             <form className={clsx("flex flex-col gap-4", { "pointer-events-none": !isEditing })}>
-            <Input label={"Name"} placeholder={"John Doe"} value={editedMember?.name} isReadOnly={!isEditing}
+              <Input label={"Name"} placeholder={"John Doe"} value={editedMember?.name} isReadOnly={!isEditing}
                      type={"text"}
-                     startContent={<IconAbc className={"text-default-400"} size={"20"} />} 
+                     startContent={<IconAbc className={"text-default-400"} size={"20"} />}
                      name={"name"} onChange={onChangeHandler}
                      variant={isEditing ? "flat" : "bordered"} labelPlacement={"outside"} />
               <Input label={"Phone"} placeholder={"1-111-222-3333"} value={editedMember?.phone} isReadOnly={!isEditing}
-                     type={"text"} 
+                     type={"text"}
                      startContent={<IconPhone className={"text-default-400"} size={"20"} />}
                      name={"phone"} onChange={onChangeHandler}
                      variant={isEditing ? "flat" : "bordered"} labelPlacement={"outside"} />
-              <Input label={"Email"} placeholder={"johndoe@email.com"} value={editedMember?.email} isReadOnly={!isEditing}
-                     type={"email"} 
+              <Input label={"Email"} placeholder={"johndoe@email.com"} value={editedMember?.email}
+                     isReadOnly={!isEditing}
+                     type={"email"}
                      startContent={<IconMail className={"text-default-400"} size={"20"} />}
                      name={"email"} onChange={onChangeHandler}
                      variant={isEditing ? "flat" : "bordered"} labelPlacement={"outside"} />
-              <Input label={"Permissions"} placeholder={"5"} value={editedMember?.permissions} isReadOnly={!isEditing} 
-                     type={"number"} 
+              <Input label={"Permissions"} placeholder={"5"} value={editedMember?.permissions} isReadOnly={!isEditing}
+                     type={"number"}
                      startContent={<Icon123 className={"text-default-400"} size={"20"} />}
                      name={"permissions"} onChange={onChangeHandler}
                      variant={isEditing ? "flat" : "bordered"} labelPlacement={"outside"} />

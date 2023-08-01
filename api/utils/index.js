@@ -47,6 +47,10 @@ module.exports.pick = (obj, fields) => {
     for (const field of fields) {
         if (Object.prototype.hasOwnProperty.call(obj, field)) {
             picked[field] = obj[field]
+            // if it can be trimmed, trim it
+            if (typeof picked[field] === 'string') {
+                picked[field] = picked[field].trim()
+            }
         }
     }
     return picked

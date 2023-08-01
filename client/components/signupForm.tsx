@@ -20,7 +20,7 @@ import { Card, CardBody } from "@nextui-org/card";
  * - On error, the error is shown in a toast.
  */
 export default function SignupForm(props: any) {
-  const [phone, setEmail] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
 
@@ -33,7 +33,7 @@ export default function SignupForm(props: any) {
   const onSubmit = async (e: any) => {
     e.preventDefault();
     setIsLoading(true);
-    signup(phone, password, username).then(() => {
+    signup(email, password, username).then(() => {
       addToast({
         id: "signup",
         title: "Success",
@@ -63,7 +63,7 @@ export default function SignupForm(props: any) {
             <Input label="Username" placeholder="Enter your username"
                    endContent={<IconAt className={"text-default-400"} />}
                    onChange={(e: any) => setUsername(e.target.value)} maxLength={32} />
-            <Input label="Email" placeholder="Enter your phone" type="phone"
+            <Input label="Email" placeholder="Enter your email" type="email"
                    endContent={<IconMailFilled className={"text-default-400"} />}
                    onChange={(e: any) => setEmail(e.target.value)} />
             <Input label="Password" placeholder="Enter your password"

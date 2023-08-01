@@ -4,12 +4,13 @@ import { CardFooter, Input } from "@nextui-org/react";
 import { Button } from "@nextui-org/button";
 import NextLink from "next/link";
 import clsx from "clsx";
-import { IconAt, IconChevronDown, IconCirclePlus, IconListSearch } from "@tabler/icons-react";
+import { IconAt, IconChevronDown, IconCirclePlus, IconCrown, IconListSearch } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { loadMembers, useMembersStore } from "@/services/members";
 import { useUserStore } from "@/services/user";
 import { useParams } from "next/navigation";
 import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/popover";
+import { Tooltip } from "@nextui-org/tooltip";
 
 type Props = {
   className?: string;
@@ -59,10 +60,18 @@ export default function MembersSidebar({ className }: Props) {
               className={"w-full justify-start text-default-600 font-medium"}
               as={NextLink}
               href={"/members/" + member?.id}
-              startContent={<IconAt className={"text-default-300"} size={"20"} />}
+              startContent={<IconAt className={"text-default-400"} size={"20"} />}
               variant={params.id === member?.id ? "flat" : "light"}
               size={"sm"}>
-              <span className={"truncate"}>{member?.name}</span>
+              <div className={"flex flex-row gap-2 justify-between items-center w-full"}>
+                <span className={"truncate"}>{member?.name}</span>
+                {currentOrg?.OwnerId === member?.UserId &&
+                  <Tooltip content={"Owner"}>
+                    <IconCrown className={"text-yellow-600"} size={"16"} />
+                  </Tooltip>
+                }
+              </div>
+
             </Button>
           </li>
         ))}

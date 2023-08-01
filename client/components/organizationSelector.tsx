@@ -7,7 +7,7 @@ import JoinOrganizationModal from "@/components/joinOrganizationModal";
 import { useDisclosure } from "@nextui-org/react";
 import clsx from "clsx";
 import OrganizationModal from "@/components/organizationModal";
-import { loadUserOrganizations, setCurrentOrganization, useUserStore } from "@/services/user";
+import { loadUserWithOrganizations, setCurrentOrganization, useUserStore } from "@/services/user";
 
 type Props = {
   className?: string;
@@ -48,19 +48,19 @@ export default function OrganizationSelector({
   // another disclosure for the create organization modal
   const { isOpen: isCreateOpen, onOpen: onCreateOpen, onOpenChange: onCreateOpenChange } = useDisclosure();
 
-  const [userOrgs, currentOrg] = useUserStore(state => [state.organizations, state.currentOrganization]);
+  const [userData, currentOrg] = useUserStore(state => [state.user, state.currentOrganization]);
 
   const [selectedOrganization, setSelectedOrganization] = useState(null);
 
   useEffect(() => {
-    if (!userOrgs || userOrgs.length === 0) {
-      loadUserOrganizations();
+    if (!userData?.Organizations || userData?.Organizations.length === 0) {
+      loadUserWithOrganizations();
     }
 
     if (currentOrg?.id) {
       setSelectedOrganization(currentOrg);
     }
-  }, [userOrgs, currentOrg]);
+  }, [userData?.Organizations, currentOrg]);
 
   const onActionHandler = (id) => {
     if (id.startsWith("action_")) {
@@ -79,7 +79,7 @@ export default function OrganizationSelector({
       if (currentOrg?.id === id) {
         return;
       }
-      setCurrentOrganization(userOrgs?.find(org => org.id === id));
+      setCurrentOrganization(userData?.Organizations?.find(org => org.id === id));
     }
   };
 
@@ -105,7 +105,7 @@ export default function OrganizationSelector({
       </DropdownTrigger>
       <DropdownMenu aria-label="User Organizations" variant="faded" onAction={onActionHandler}>
         <DropdownSection title={"Your Organizations"}>
-          {userOrgs?.map((org) => (
+          {userData?.Organizations?.map((org) => (
             <DropdownItem key={org.id} textValue={org.name} className={clsx("flex flex-row items-center", {
               "bg-default-100 text-primary": currentOrg?.id === org.id
             })}>
