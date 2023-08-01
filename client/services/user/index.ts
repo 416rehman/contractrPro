@@ -1,11 +1,13 @@
 import { create } from "zustand";
 import { Organization, tUser } from "@/types";
+
 import {
   requestCreateOrganization,
   requestDeleteOrganization,
   requestUpdateOrganization,
   requestUserOrganizations
 } from "@/services/user/api";
+
 import { clearInvoicesStore } from "@/services/invoices";
 import { clearExpensesStore } from "@/services/expenses";
 import { clearMembersStore } from "@/services/members";

@@ -3,6 +3,7 @@
 import { subtitle, title } from "@/components/primitives";
 import { Spacer } from "@nextui-org/spacer";
 import OrganizationSelector from "@/components/organizationSelector";
+
 import React, { useEffect } from "react";
 import { deleteOrganizationAndPersist, useUserStore } from "@/services/user";
 import OrganizationForm from "@/components/organizationForm";
@@ -39,7 +40,9 @@ export default function Dashboard() {
 
   return (
     <div className="flex flex-row flex-wrap flex-grow gap-4 p-2 md:p-10">
+
       <DashboardOrganizationForm currentOrganization={currentOrganization} />
+
       <Divider orientation={"vertical"} className={"hidden md:block"} />
       <div className="flex flex-col gap-4">
         <h1 className={title()}>At a glance!</h1>
@@ -47,6 +50,7 @@ export default function Dashboard() {
       </div>
     </div>
   );
+
 }
 
 type DashboardOrganizationFormProps = {

@@ -16,8 +16,9 @@ type Props = {
 }
 
 /**
- * The MembersSidebar component renders a sidebar of the list of members for the user to click on one if they want to view its data in its page.
- * Underneath the list is a button that will allow them to create a new member, taking them to the create page that will allow them to do that.
+ * This is the sidebar for the members page. It displays a list of members and should allow the user to filter them.
+ * It handles communication with the API and updates the local state via the Member service.
+ * This is used in tandem with the MemberForm component to edit/create members.
  */
 export default function MembersSidebar({ className }: Props) {
   const [currentOrg] = useUserStore(state => [state.currentOrganization]);
