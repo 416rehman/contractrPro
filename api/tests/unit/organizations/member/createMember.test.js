@@ -7,6 +7,7 @@ const {
     sequelize,
 } = require('../../../../db')
 const fake = require('../../../../utils/fake')
+const { randomInt } = require('crypto')
 
 let orgId, userId
 beforeAll(async () => {
@@ -15,7 +16,7 @@ beforeAll(async () => {
 
     // Get an existing user ID
     const membersResult = await User.findAll()
-    userId = membersResult[0].id
+    userId = membersResult[randomInt(0, membersResult.length - 1)].id
 })
 afterAll(async () => {
     jest.restoreAllMocks()
