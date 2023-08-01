@@ -28,10 +28,9 @@ type Props = {
 }
 
 /**
- * The EmployeeForm component renders a form for the user to input the name, phone, email, and permissions when creating an employee for a selected organization
- * (otherwise it will prompt them to join or create one). When they click on the save button, the created employee will be added to the employees list in their account
- * for them to look at in its own page, showing two buttons beside it: Edit (lets them update the employee's data) and Delete in a dropdown button (deletes the employee's data with a
- * confirmation).
+ * This is the main form for editing and or creating an employee. The form receives the employee id as a prop.
+ * If the employee id is undefined, the form will be in create mode. Otherwise, it will be in edit mode.
+ * It handles communication with the API and updates the local state via the Employee service.
  */
 export default function EmployeeForm({ id, className }: Props) {
   const [employee] = useEmployeesStore(state => [state.employees.find((employee: any) => employee.id === id)]);
