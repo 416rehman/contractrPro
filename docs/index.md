@@ -1,9 +1,7 @@
 # Components
 
-This page contains a list of all the client components in the project and their purpose, used to help with development
-and debugging.
+This page contains a list of all the client components in the project and their purpose, used to help with development and debugging.
 This also serves as a reference to the functionality of the components, and can be used as a usability test plan.
-
 
 
 | Filename | Comment |Status|
