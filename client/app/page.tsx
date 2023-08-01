@@ -3,9 +3,7 @@ import { siteConfig } from "@/site";
 import HomeCTA from "@/components/homeCTA";
 import React from "react";
 import AuthSwitchServer from "@/components/server/authSwitchServer";
-import { subtitle, title } from "@/components/primitives";
-import OrganizationSelector from "@/components/organizationSelector";
-import { Spacer } from "@nextui-org/spacer";
+import Dashboard from "@/components/dashboard";
 
 export const metadata: Metadata = {
   title: {
@@ -26,23 +24,13 @@ export const metadata: Metadata = {
 
 export default function Home() {
 
-  return <AuthSwitchServer contentIfLoggedIn={
-    <section className="flex flex-col justify-center gap-4 flex-grow items-start w-full">
-      <div className="flex flex-col flex-grow text-center justify-center items-center w-full">
-        <h1 className={title()}>Do&nbsp;<span className={title({ color: "violet" })}>more&nbsp;</span></h1>
-
-        <br />
-        <h1 className={title()}>
-          with ContractrPro.
-        </h1>
-        <h2 className={subtitle({ class: "mt-4" })}>
-          Get started by selecting your organization.
-        </h2>
-        <Spacer y={4} />
-        <OrganizationSelector />
-      </div>
+  return (
+    <section className="flex flex-col gap-4 flex-grow w-full"><AuthSwitchServer
+      contentIfLoggedIn={
+        <Dashboard />
+      } contentIfLoggedOut={
+      <HomeCTA />
+    } />
     </section>
-  } contentIfLoggedOut={
-    <HomeCTA />
-  } />;
+  );
 }

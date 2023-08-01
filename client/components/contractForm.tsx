@@ -37,7 +37,7 @@ import { Tooltip } from "@nextui-org/tooltip";
 import moment from "moment";
 import ContractJobsTable from "@/components/contractJobsTable";
 import { Spacer } from "@nextui-org/spacer";
-import { ContractCommentSection } from "@/components/contractCommentSection";
+import ContractCommentSection from "@/components/contractCommentSection";
 
 type Props = {
   id: string;
