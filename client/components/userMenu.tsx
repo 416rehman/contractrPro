@@ -9,6 +9,7 @@ import { useTheme } from "next-themes";
 import { tUser } from "@/types";
 import { CollectionChildren } from "@react-types/shared";
 import { IconLogout, IconMoonFilled, IconSettings, IconSunFilled } from "@tabler/icons-react";
+import { useRouter } from "next/navigation";
 
 export const UserMenuGeneric = (props: tUser & { children: CollectionChildren<object>; onAction?: any }) => {
   return (
@@ -42,15 +43,15 @@ export const UserMenuGeneric = (props: tUser & { children: CollectionChildren<ob
  * - In mobile view, it shows the user's username and email in the dropdown menu.
  */
 export default function UserMenu(props: tUser) {
+  const router = useRouter();
   const { theme, setTheme } = useTheme();
 
   const onAction = async (action: string) => {
     switch (action) {
-      case "settings":
-        console.log("settings");
+      case "account":
+        router.push("/user");
         break;
       case "logout":
-        console.log("logout");
         await logout();
         break;
       case "theme":
@@ -76,12 +77,12 @@ export default function UserMenu(props: tUser) {
       </DropdownSection>
       <DropdownSection>
         <DropdownItem
-          key="settings"
-          shortcut="S"
+          key="account"
+          shortcut="A"
           description={"Change your account settings"}
           startContent={<IconSettings />}
         >
-          Settings
+          Account
         </DropdownItem>
         <DropdownItem
           key="logout"

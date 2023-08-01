@@ -21,7 +21,8 @@ module.exports = async (req, res) => {
                 'flags',
                 'createdAt',
                 'updatedAt',
-                'phone',
+                'phoneCountry',
+                'phoneNumber',
                 'avatarUrl',
             ],
         })

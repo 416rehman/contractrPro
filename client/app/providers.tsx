@@ -16,7 +16,7 @@ export interface ProvidersProps {
 
 export function Providers({ children, themeProps, loggedInUser }: ProvidersProps) {
   const [isLoaded, setIsLoaded] = React.useState(false);
-  const setUser = useUserStore(state => state.setUser);
+  const [setUser] = useUserStore(state => [state.setUser]);
 
   useEffect(() => {
     setIsLoaded(false);

@@ -10,7 +10,8 @@ module.exports = async (req, res) => {
         'password',
         'email',
         'name',
-        'phone',
+        'phoneCountry',
+        'phoneNumber',
         'avatarUrl',
     ])
 

@@ -19,7 +19,7 @@ import { Card, CardBody } from "@nextui-org/card";
  */
 export default function LoginForm(props: any) {
   const addToast = useToastsStore((state) => state.addToast);
-  const [phone, setEmail] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const [isVisible, setIsVisible] = useState(false);
@@ -29,7 +29,7 @@ export default function LoginForm(props: any) {
   const onSubmit = async (e: any) => {
     setIsLoading(true);
     e.preventDefault();
-    login(phone, password).then(() => {
+    login(email, password).then(() => {
       addToast({
         id: "login",
         title: "Logged in",
@@ -55,7 +55,7 @@ export default function LoginForm(props: any) {
           <div className="flex flex-col w-full flex-wrap gap-4">
             <h1 className={"text-2xl font-bold"}>Login</h1>
             <p className={"text-sm"}>Enter your credentials to login to your account</p>
-            <Input label="Username / Email" placeholder="Enter your phone or username"
+            <Input label="Username / Email" placeholder="Enter your email or username"
                    endContent={<div className={"flex flex-row text-default-400"}><IconAt />/<IconMailFilled /></div>}
                    onChange={(e: any) => setEmail(e.target.value)} />
             <Input label="Password" placeholder="Enter your password"

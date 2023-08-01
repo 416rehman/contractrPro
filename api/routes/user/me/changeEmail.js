@@ -9,18 +9,16 @@ const { tokenFlags } = require('../../../db/models/token')
 // When the body includes an email, it creates a new token with the USER_EMAIL_VERIFY_TOKEN flag and sends it to the user's email
 module.exports = async (req, res) => {
     try {
-        const { email } = req.body
+        const email = req.body?.email?.trim()
         const UserId = req.auth.id
 
         if (!email || email.length < 1) {
             return res.status(400).json(createErrorResponse('Missing email'))
         }
 
-        /**
-         * Create a new token and send it to the user's email
-         */
-        if (!email || email.length < 1) {
-            return res.status(400).json(createErrorResponse('Missing email'))
+        // validate email
+        if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+            return res.status(400).json(createErrorResponse('Invalid email'))
         }
 
         const user = await User.findOne({ where: { id: UserId } })
@@ -40,7 +38,7 @@ module.exports = async (req, res) => {
             const preExistingToken = await Token.findOne({
                 where: {
                     UserId: user.id,
-                    flags: tokenFlags.USER_PASSWORD_RESET_TOKEN,
+                    flags: tokenFlags.USER_EMAIL_VERIFY_TOKEN,
                 },
                 transaction,
             })
@@ -55,7 +53,8 @@ module.exports = async (req, res) => {
                 )
             )
         })
-    } catch (error) {
-        return res.status(400).json(createErrorResponse('', error))
+    } catch (err) {
+        console.error(err)
+        return res.status(500).json(createErrorResponse())
     }
 }

@@ -9,18 +9,35 @@ const { tokenFlags } = require('../../../db/models/token')
 // When the body includes a phone, it creates a new token with the USER_PHONE_VERIFY_TOKEN flag and sends it to the user's phone
 module.exports = async (req, res) => {
     try {
-        const { phone } = req.body
+        const phoneCountry = req.body?.phoneCountry?.trim()
+        const phoneNumber = req.body?.phoneNumber?.trim()
+
         const UserId = req.auth.id
 
-        if (!phone || phone.length < 1) {
-            return res.status(400).json(createErrorResponse('Missing phone'))
+        if (!phoneCountry || phoneCountry.length < 1) {
+            return res
+                .status(400)
+                .json(createErrorResponse('Missing phoneCountry'))
         }
 
-        /**
-         * Create a new token and send it to the user's phone
-         */
-        if (!phone || phone.length < 1) {
-            return res.status(400).json(createErrorResponse('Missing phone'))
+        if (!phoneNumber || phoneNumber.length < 1) {
+            return res
+                .status(400)
+                .json(createErrorResponse('Missing phoneNumber'))
+        }
+
+        // Make sure the phoneCountry is digits only and not more than 5 digits
+        if (!/^\d+$/.test(phoneCountry) || phoneCountry.length > 5) {
+            return res
+                .status(400)
+                .json(createErrorResponse('Invalid phoneCountry'))
+        }
+
+        // Make sure the phoneNumber is digits only and not more than 20 digits
+        if (!/^\d+$/.test(phoneNumber) || phoneNumber.length > 20) {
+            return res
+                .status(400)
+                .json(createErrorResponse('Invalid phoneNumber'))
         }
 
         const user = await User.findOne({ where: { id: UserId } })
@@ -29,18 +46,25 @@ module.exports = async (req, res) => {
         }
 
         // if the user's phone is the same as the phone in the request body, don't do anything
-        if (user.phone === phone) {
+        if (
+            user.phoneCountry === phoneCountry &&
+            user.phoneNumber === phoneNumber
+        ) {
             return res
-                .status(400)
+                .status(200)
                 .json(createErrorResponse('Phone already in use'))
         }
 
         await sequelize.transaction(async (transaction) => {
-            const body = Token.phoneVerifyTokenTemplate(UserId, phone)
+            const body = Token.phoneVerifyTokenTemplate(
+                UserId,
+                phoneCountry,
+                phoneNumber
+            )
             const preExistingToken = await Token.findOne({
                 where: {
                     UserId: user.id,
-                    flags: tokenFlags.USER_PASSWORD_RESET_TOKEN,
+                    flags: tokenFlags.USER_PHONE_VERIFY_TOKEN,
                 },
                 transaction,
             })

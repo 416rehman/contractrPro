@@ -28,7 +28,7 @@ routes.get('/:user_id', meHandler, require('./me/getUser'))
 routes.get(
     '/:user_id/organizations',
     meHandler,
-    require('./getUserOrganizations')
+    require('./getUserWithOrganizations')
 )
 
 /**
