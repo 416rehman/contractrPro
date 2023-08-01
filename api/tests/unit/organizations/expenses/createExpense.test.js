@@ -52,23 +52,14 @@ describe('Create expense', () => {
         expect(ExpenseEntries[0]).toHaveProperty('ExpenseId', id)
     })
 
-    it('should create an expense without entries', async () => {
+    it('should not create an expense without entries', async () => {
         const expenseData = fake.mockExpenseData()
         expenseData.ExpenseEntries = []
 
-        const response = await request(app)
+        await request(app)
             .post(`/organizations/${orgId}/expenses`)
             .send(expenseData)
-            .expect(201)
-
-        const { status, data } = response.body
-        const { id, description, ExpenseEntries } = data
-
-        expect(status).toBe('success')
-        expect(id).toBeTruthy()
-        expect(description).toBe(expenseData.description)
-        expect(ExpenseEntries).toBeInstanceOf(Array)
-        expect(ExpenseEntries.length).toBe(0)
+            .expect(400)
     })
 
     it('should return 403 if organization ID is invalid', async () => {
