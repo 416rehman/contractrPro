@@ -50,10 +50,12 @@ export const updateClient = async (client: Client, currentOrganizationId: string
         await requestUpdateClient(client, currentOrganizationId);
         useClientsStore.getState().updateClient(client);
         useToastsStore.getState().addToast({ id: client.id, type: "success", message: "Client updated" });
+        return client;
       } else {
         const newClient = await requestCreateClient(client, currentOrganizationId);
         useClientsStore.getState().addClient(newClient);
         useToastsStore.getState().addToast({ id: "update-client", type: "success", message: "Client created" });
+        return newClient;
       }
     }
 

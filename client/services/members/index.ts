@@ -45,10 +45,12 @@ export const updateMemberAndPersist = async (orgMember: Member, currentOrganizat
         await requestUpdateMember(orgMember, currentOrganizationId);
         useMembersStore.getState().updateMember(orgMember);
         useToastsStore.getState().addToast({ id: orgMember.id, type: "success", message: "Member updated" });
+        return orgMember;
       } else {
         const newMember = await requestCreateMember(orgMember, currentOrganizationId);
         useMembersStore.getState().addMember(newMember);
         useToastsStore.getState().addToast({ id: "update-orgMember", type: "success", message: "Member created" });
+        return newMember;
       }
     }
 

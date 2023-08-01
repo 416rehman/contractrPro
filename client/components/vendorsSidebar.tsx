@@ -60,7 +60,7 @@ export default function VendorsSidebar({ className }: Props) {
                 className={"w-full justify-start text-default-600 font-medium"}
                 as={NextLink}
                 href={"/vendors/" + vendor?.id}
-                startContent={<IconBuilding className={"text-default-300"} size={"20"} />}
+                startContent={<IconBuilding className={"text-default-400"} size={"20"} />}
                 variant={params.id === vendor?.id ? "flat" : "light"}
                 size={"sm"}>
                 <span className={"truncate"}>{vendor?.name}</span>

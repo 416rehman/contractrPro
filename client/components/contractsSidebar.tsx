@@ -58,7 +58,7 @@ export default function ContractsSidebar({ className }: Props) {
               className={"w-full justify-start text-default-600 font-medium"}
               as={NextLink}
               href={"/contracts/" + contract?.id}
-              startContent={<IconChartTreemap className={"text-default-300"} size={"20"} />}
+              startContent={<IconChartTreemap className={"text-default-400"} size={"20"} />}
               variant={params.id === contract?.id ? "flat" : "light"}
               size={"sm"}>
               <span className={"truncate"}>{contract?.name}</span>

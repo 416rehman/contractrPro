@@ -59,7 +59,7 @@ export default function InvoicesSidebar({ className }: Props) {
               className={"w-full justify-start text-default-600 font-medium"}
               as={NextLink}
               href={"/invoices/" + invoice?.id}
-              startContent={<IconReceipt2 className={"text-default-300"} size={"20"} />}
+              startContent={<IconReceipt2 className={"text-default-400"} size={"20"} />}
               variant={params.id === invoice?.id ? "flat" : "light"}
               size={"sm"}>
               <span className={"truncate"}>{invoice?.invoiceNumber}</span>

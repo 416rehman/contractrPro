@@ -50,10 +50,12 @@ export const updateVendor = async (vendor: Vendor, currentOrganizationId: string
         await requestUpdateVendor(vendor, currentOrganizationId);
         useVendorsStore.getState().updateVendor(vendor);
         useToastsStore.getState().addToast({ id: vendor.id, type: "success", message: "Vendor updated" });
+        return vendor;
       } else {
         const newVendor = await requestCreateVendor(vendor, currentOrganizationId);
         useVendorsStore.getState().addVendor(newVendor);
         useToastsStore.getState().addToast({ id: "update-vendor", type: "success", message: "Vendor created" });
+        return newVendor;
       }
     }
 

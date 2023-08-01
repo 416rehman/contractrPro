@@ -23,6 +23,7 @@ import { Tooltip } from "@nextui-org/tooltip";
 import moment from "moment";
 import VendorCommentSection from "@/components/vendorCommentSection";
 import { Spacer } from "@nextui-org/spacer";
+import { useRouter } from "next/navigation";
 
 type Props = {
   id: string;
@@ -35,6 +36,7 @@ type Props = {
  * It handles communication with the API and updates the local state via the Vendor service.
  */
 export default function VendorForm({ id, className }: Props) {
+  const router = useRouter();
   const [vendor] = useVendorsStore(state => [state.vendors.find((vendor: any) => vendor.id === id)]);
   const [isEditing, setIsEditing] = useState(false);
   const [editedVendor, setEditedVendor] = useState<any>(); // Save the edited vendor here
@@ -57,11 +59,13 @@ export default function VendorForm({ id, className }: Props) {
     // Save the edited vendor here
     setIsSaving(true);
 
-    await updateVendor(editedVendor, currentOrg?.id);
+    const newVendor = await updateVendor(editedVendor, currentOrg?.id);
 
     setIsEditing(!editedVendor?.id);
     if (!editedVendor?.id) {
-      setEditedVendor(undefined);
+      if (newVendor?.id) {
+        router.push(`/vendors/${newVendor.id}`);
+      }
     }
 
     setIsSaving(false);
