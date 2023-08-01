@@ -4,7 +4,6 @@ const {
     Expense,
     Organization,
     sequelize,
-    ExpenseEntry,
 } = require('../../../../db')
 const fake = require('../../../../utils/fake')
 
