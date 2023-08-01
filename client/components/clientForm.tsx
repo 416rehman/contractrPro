@@ -14,7 +14,7 @@ import {
 import { Card, CardBody, CardHeader } from "@nextui-org/card";
 import React, { useEffect, useState } from "react";
 import { Button, ButtonGroup } from "@nextui-org/button";
-import { IconChevronDown, IconDeviceFloppy, IconEdit, IconTrash } from "@tabler/icons-react";
+import { IconAbc, IconAppWindow, IconChevronDown, IconDeviceFloppy, IconEdit, IconMail, IconPhone, IconTrash } from "@tabler/icons-react";
 import clsx from "clsx";
 import { useUserStore } from "@/services/user";
 import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/dropdown";
@@ -22,7 +22,7 @@ import OrganizationSelector from "@/components/organizationSelector";
 import { Tooltip } from "@nextui-org/tooltip";
 import moment from "moment";
 import { Spacer } from "@nextui-org/spacer";
-import { ClientCommentSection } from "@/components/clientCommentSection";
+import ClientCommentSection from "@/components/clientCommentSection";
 
 type Props = {
   id: string;
@@ -158,16 +158,23 @@ export default function ClientForm({ id, className }: Props) {
             <form className={clsx("flex flex-col gap-4", { "pointer-events-none": !isEditing })}>
               <Input label={"Name"} placeholder={"Name"} value={editedClient?.name} isReadOnly={!isEditing}
                      type={"text"}
+                     startContent={<IconAbc className={"text-default-400"} size={"20"} />} 
                      name={"name"} onChange={onChangeHandler}
                      variant={isEditing ? "flat" : "underlined"} labelPlacement={"outside"} />
               <Input label={"Phone"} placeholder={"Phone"} value={editedClient?.phone} isReadOnly={!isEditing}
-                     type={"text"} name={"phone"} onChange={onChangeHandler}
+                     type={"text"} 
+                     startContent={<IconPhone className={"text-default-400"} size={"20"} />}
+                     name={"phone"} onChange={onChangeHandler}
                      variant={isEditing ? "flat" : "underlined"} labelPlacement={"outside"} />
               <Input label={"Email"} placeholder={"Email"} value={editedClient?.email} isReadOnly={!isEditing}
-                     type={"email"} name={"email"} onChange={onChangeHandler}
+                     type={"email"} 
+                     startContent={<IconMail className={"text-default-400"} size={"20"} />}
+                     name={"email"} onChange={onChangeHandler}
                      variant={isEditing ? "flat" : "underlined"} labelPlacement={"outside"} />
               <Input label={"Website"} placeholder={"Website"} value={editedClient?.website} isReadOnly={!isEditing}
-                     type={"text"} name={"website"} onChange={onChangeHandler}
+                     type={"text"} 
+                     startContent={<IconAppWindow className={"text-default-400"} size={"20"} />}
+                     name={"website"} onChange={onChangeHandler}
                      variant={isEditing ? "flat" : "underlined"} labelPlacement={"outside"} />
               <Textarea label={"Description"} placeholder={"Description"} value={editedClient?.description}
                         isReadOnly={!isEditing} name={"description"} onChange={onChangeHandler}

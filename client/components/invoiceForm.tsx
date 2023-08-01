@@ -38,7 +38,7 @@ import { Divider } from "@nextui-org/divider";
 import ClientSelector from "@/components/clientSelector";
 import { Tooltip } from "@nextui-org/tooltip";
 import moment from "moment";
-import { InvoiceCommentSection } from "@/components/invoiceCommentSection";
+import InvoiceCommentSection from "@/components/invoiceCommentSection";
 import { Spacer } from "@nextui-org/spacer";
 
 type Props = {

@@ -53,6 +53,7 @@ export const logout = async () => {
     await requestLogout();
     removeLocalStorageItem("refreshToken");
     removeLocalStorageItem("accessToken");
+    removeLocalStorageItem("currentOrganization");
 
     useUserStore.getState().setUser(null);
     return Promise.resolve(true);

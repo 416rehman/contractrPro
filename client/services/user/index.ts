@@ -1,6 +1,13 @@
 import { create } from "zustand";
 import { Organization, tUser } from "@/types";
-import { requestCreateOrganization, requestUserOrganizations } from "@/services/user/api";
+
+import {
+  requestCreateOrganization,
+  requestDeleteOrganization,
+  requestUpdateOrganization,
+  requestUserOrganizations
+} from "@/services/user/api";
+
 import { clearInvoicesStore } from "@/services/invoices";
 import { clearExpensesStore } from "@/services/expenses";
 import { clearMembersStore } from "@/services/members";
@@ -69,17 +76,34 @@ export const setCurrentOrganization = (organization: Organization | null) => {
   }
 };
 
-export const createOrganization = async (organization: Organization) => {
+export const updateOrganizationAndPersist = async (organization: Organization) => {
   try {
+    if (organization?.id) {
+      const updatedOrg = await requestUpdateOrganization(organization);
+      useUserStore.getState().setOrganizations(useUserStore.getState().organizations.map((org) => org.id === updatedOrg.id ? updatedOrg : org));
+      return updatedOrg;
+    }
+
     const createdOrg = await requestCreateOrganization(organization);
-
-    console.log("createdOrg", createdOrg);
-
     if (createdOrg) {
       useUserStore.getState().setOrganizations([...useUserStore.getState().organizations, createdOrg]);
     }
-
     return createdOrg;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+export const deleteOrganizationAndPersist = async (organizationId: string) => {
+  try {
+    const result = requestDeleteOrganization(organizationId);
+    if (result) {
+      const currentOrg = useUserStore.getState().currentOrganization;
+      useUserStore.getState().setOrganizations(useUserStore.getState().organizations.filter((org) => org.id !== organizationId));
+      if (currentOrg?.id === organizationId) {
+        setCurrentOrganization(null);
+      }
+    }
   } catch (err) {
     console.log(err);
   }

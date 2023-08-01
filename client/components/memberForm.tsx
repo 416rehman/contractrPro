@@ -11,6 +11,7 @@ import {
   useDisclosure
 } from "@nextui-org/react";
 import { Card, CardBody, CardHeader } from "@nextui-org/card";
+import { Icon123, IconAbc, IconMail, IconPhone } from '@tabler/icons-react';
 import { useEffect, useState } from "react";
 import { Button, ButtonGroup } from "@nextui-org/button";
 import { IconChevronDown, IconDeviceFloppy, IconEdit, IconTrash } from "@tabler/icons-react";
@@ -26,11 +27,11 @@ type Props = {
   className?: string,
 }
 
+
 /**
- * The MemberForm component renders a form for the user to input the name, phone, email, and permissions when creating an member for a selected organization
- * (otherwise it will prompt them to join or create one). When they click on the save button, the created member will be added to the members list in their account
- * for them to look at in its own page, showing two buttons beside it: Edit (lets them update the member's data) and Delete in a dropdown button (deletes the member's data with a
- * confirmation).
+ * This is the main form for editing and or creating a member. The form receives the member id as a prop.
+ * If the member id is undefined, the form will be in create mode. Otherwise, it will be in edit mode.
+ * It handles communication with the API and updates the local state via the Member service.
  */
 export default function MemberForm({ id, className }: Props) {
   const [member] = useMembersStore(state => [state.members.find((member: any) => member.id === id)]);
@@ -154,19 +155,26 @@ export default function MemberForm({ id, className }: Props) {
           </CardHeader>
           <CardBody className={"flex flex-col gap-4"}>
             <form className={clsx("flex flex-col gap-4", { "pointer-events-none": !isEditing })}>
-              <Input label={"Name"} placeholder={"Name"} value={editedMember?.name} isReadOnly={!isEditing}
+            <Input label={"Name"} placeholder={"John Doe"} value={editedMember?.name} isReadOnly={!isEditing}
                      type={"text"}
+                     startContent={<IconAbc className={"text-default-400"} size={"20"} />} 
                      name={"name"} onChange={onChangeHandler}
-                     variant={isEditing ? "flat" : "underlined"} labelPlacement={"outside"} />
-              <Input label={"Phone"} placeholder={"Phone"} value={editedMember?.phone} isReadOnly={!isEditing}
-                     type={"text"} name={"phone"} onChange={onChangeHandler}
-                     variant={isEditing ? "flat" : "underlined"} labelPlacement={"outside"} />
-              <Input label={"Email"} placeholder={"Email"} value={editedMember?.email} isReadOnly={!isEditing}
-                     type={"email"} name={"email"} onChange={onChangeHandler}
-                     variant={isEditing ? "flat" : "underlined"} labelPlacement={"outside"} />
-              <Input label={"Permissions"} placeholder={"Permissions"} value={editedMember?.permissions}
-                     isReadOnly={!isEditing} type={"number"} name={"permissions"} onChange={onChangeHandler}
-                     variant={isEditing ? "flat" : "underlined"} labelPlacement={"outside"} />
+                     variant={isEditing ? "flat" : "bordered"} labelPlacement={"outside"} />
+              <Input label={"Phone"} placeholder={"1-111-222-3333"} value={editedMember?.phone} isReadOnly={!isEditing}
+                     type={"text"} 
+                     startContent={<IconPhone className={"text-default-400"} size={"20"} />}
+                     name={"phone"} onChange={onChangeHandler}
+                     variant={isEditing ? "flat" : "bordered"} labelPlacement={"outside"} />
+              <Input label={"Email"} placeholder={"johndoe@email.com"} value={editedMember?.email} isReadOnly={!isEditing}
+                     type={"email"} 
+                     startContent={<IconMail className={"text-default-400"} size={"20"} />}
+                     name={"email"} onChange={onChangeHandler}
+                     variant={isEditing ? "flat" : "bordered"} labelPlacement={"outside"} />
+              <Input label={"Permissions"} placeholder={"5"} value={editedMember?.permissions} isReadOnly={!isEditing} 
+                     type={"number"} 
+                     startContent={<Icon123 className={"text-default-400"} size={"20"} />}
+                     name={"permissions"} onChange={onChangeHandler}
+                     variant={isEditing ? "flat" : "bordered"} labelPlacement={"outside"} />
             </form>
             <div className={"flex flex-col gap-1 items-start"}>
               {member?.updatedAt &&

@@ -131,3 +131,4 @@ export const DashboardOrganizationForm = ({ currentOrganization }: DashboardOrga
     </div>
   );
 };
+
