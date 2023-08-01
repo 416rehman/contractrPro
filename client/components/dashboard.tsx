@@ -54,7 +54,8 @@ export default function Dashboard() {
       </div>
       <Divider orientation={"vertical"} className={"hidden md:block"} />
       <div className="flex flex-col gap-4">
-        <h1 className={title()}>Your Projects</h1>
+        <h1 className={title()}>At a glance!</h1>
+        {/*  More quick stats and links here, such as user assigned tasks, contracts due soon, etc. */}
       </div>
     </div>
   );
