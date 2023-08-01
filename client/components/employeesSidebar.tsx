@@ -16,8 +16,10 @@ type Props = {
 }
 
 /**
- * The EmployeesSidebar component renders a sidebar of the list of employees for the user to click on one if they want to view its data in its page.
- * Underneath the list is a button that will allow them to create a new employee, taking them to the create page that will allow them to do that.
+ * This is the sidebar for the employees page. It displays a list of employees and should allow the user to filter them.
+ * It handles communication with the API and updates the local state via the Employee service.
+ * This is used in tandem with the EmployeeForm component to edit/create employees.
+ * TODO: Implement filtering
  */
 export default function EmployeesSidebar({ className }: Props) {
   const [currentOrg] = useUserStore(state => [state.currentOrganization]);
