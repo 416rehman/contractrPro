@@ -27,9 +27,10 @@ const emptyOrg = {
 type Props = {
   onSave?: () => void;
   organization?: Organization;
+  editing?: boolean;
 }
 
-export default function OrganizationForm({ onSave, organization }: Props) {
+export default function OrganizationForm({ onSave, organization, editing = true }: Props) {
   const user = useUserStore(state => state.user);
   const toastsStore = useToastsStore(state => state);
 
@@ -75,6 +76,7 @@ export default function OrganizationForm({ onSave, organization }: Props) {
     <div className={"flex flex-col gap-4 items-end"}>
       <div>
         <Input label="Name"
+               isReadOnly={!editing}
                autoFocus
                isRequired={true}
                startContent={
@@ -82,7 +84,7 @@ export default function OrganizationForm({ onSave, organization }: Props) {
                    className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
                }
                placeholder={(user?.name || "John Doe") + "'s Awesome Organization"}
-               variant="bordered"
+               variant={editing ? "default" : "underlined"}
                value={organizationData?.name}
                onChange={(e) => setOrganization({ ...organizationData, name: e.target.value })}
                description={"This will be displayed on your invoices and estimates, and cannot be changed later."} />
@@ -98,21 +100,24 @@ export default function OrganizationForm({ onSave, organization }: Props) {
                          subtitle={"Tell us about your organization. This information will be displayed on your invoices and estimates."}>
             <div className={"border-none flex flex-col gap-4"}>
               <Input label="Description" placeholder="This is my awesome organization"
-                     variant="bordered"
+                     variant={editing ? "default" : "underlined"}
+                     isReadOnly={!editing}
                      value={organizationData.description}
                      onChange={(e) => setOrganization({
                        ...organizationData,
                        description: e.target.value
                      })} />
-              <Input label="Email" placeholder="contact@cool.org" variant="bordered"
+              <Input label="Email" placeholder="contact@cool.org" variant={editing ? "default" : "underlined"}
                      value={organizationData.email}
+                     isReadOnly={!editing}
                      onChange={(e) => setOrganization({
                        ...organizationData,
                        email: e.target.value
                      })}
                      description={"This is how other's can contact your organization (optional)"} />
-              <Input label="Phone" placeholder="(123) 456-7890" variant="bordered"
+              <Input label="Phone" placeholder="(123) 456-7890" variant={editing ? "default" : "underlined"}
                      value={organizationData.phone}
+                     isReadOnly={!editing}
                      onChange={(e) => setOrganization({
                        ...organizationData,
                        phone: e.target.value
@@ -124,8 +129,9 @@ export default function OrganizationForm({ onSave, organization }: Props) {
                          indicator={<IconChevronLeft />}
                          subtitle={"Your company's public physical address."}>
             <div className={"border-none flex flex-col gap-2"}>
-              <Input label="Address Line 1" placeholder="123 Main St" variant="bordered"
+              <Input label="Address Line 1" placeholder="123 Main St" variant={editing ? "default" : "underlined"}
                      value={organizationData.Address.addressLine1}
+                     isReadOnly={!editing}
                      onChange={(e) => setOrganization({
                        ...organizationData,
                        Address: {
@@ -133,8 +139,9 @@ export default function OrganizationForm({ onSave, organization }: Props) {
                          addressLine1: e.target.value
                        }
                      })} />
-              <Input label="Address Line 2" placeholder="Unit 123" variant="bordered"
+              <Input label="Address Line 2" placeholder="Unit 123" variant={editing ? "default" : "underlined"}
                      value={organizationData.Address.addressLine2}
+                     isReadOnly={!editing}
                      onChange={(e) => setOrganization({
                        ...organizationData,
                        Address: {
@@ -142,15 +149,17 @@ export default function OrganizationForm({ onSave, organization }: Props) {
                          addressLine2: e.target.value
                        }
                      })} />
-              <Input label="City" placeholder="Toronto" variant="bordered"
+              <Input label="City" placeholder="Toronto" variant={editing ? "default" : "underlined"}
                      value={organizationData.Address.city}
+                     isReadOnly={!editing}
                      onChange={(e) => setOrganization({
                        ...organizationData,
                        Address: { ...organizationData.Address, city: e.target.value }
                      })} />
               <div className={"flex flex-row gap-2"}>
-                <Input label="Province" placeholder="Ontario" variant="bordered"
+                <Input label="Province" placeholder="Ontario" variant={editing ? "default" : "underlined"}
                        value={organizationData.Address.province}
+                       isReadOnly={!editing}
                        onChange={(e) => setOrganization({
                          ...organizationData,
                          Address: {
@@ -159,8 +168,9 @@ export default function OrganizationForm({ onSave, organization }: Props) {
                          }
                        })} />
 
-                <Input label="Postal Code" placeholder="A1B 2C3" variant="bordered"
+                <Input label="Postal Code" placeholder="A1B 2C3" variant={editing ? "default" : "underlined"}
                        value={organizationData.Address.postalCode}
+                       isReadOnly={!editing}
                        onChange={(e) => setOrganization({
                          ...organizationData,
                          Address: {
@@ -170,8 +180,9 @@ export default function OrganizationForm({ onSave, organization }: Props) {
                        })} />
               </div>
 
-              <Input label="Country" placeholder="Canada" variant="bordered"
+              <Input label="Country" placeholder="Canada" variant={editing ? "default" : "underlined"}
                      value={organizationData.Address.country}
+                     isReadOnly={!editing}
                      onChange={(e) => setOrganization({
                        ...organizationData,
                        Address: { ...organizationData.Address, country: e.target.value }
@@ -180,8 +191,9 @@ export default function OrganizationForm({ onSave, organization }: Props) {
 
           </AccordionItem>
         </Accordion>
-        <Input label="Logo URL" placeholder="https://cool.org/logo.png" variant="bordered"
+        <Input label="Logo URL" placeholder="https://cool.org/logo.png" variant={editing ? "default" : "underlined"}
                value={organizationData.logoUrl}
+               isReadOnly={!editing}
                onChange={(e) => setOrganization({ ...organizationData, logoUrl: e.target.value })}
                errorMessage={errors["logoUrl"]}
                description={"A URL to your organization's logo (optional)"} />
@@ -216,11 +228,13 @@ export default function OrganizationForm({ onSave, organization }: Props) {
             <span className={"text-default-500 text-xs"}>Updated {moment(organization?.updatedAt).fromNow()}</span>
           </div>
         )}
-        <Button variant={"flat"} color={"primary"} onPress={() => {
-          onSubmit();
-        }} className={"hover:bg-primary-50"}>
-          {organization?.id ? "Update" : "Create"} Organization
-        </Button>
+        {editing && (
+          <Button variant={"flat"} color={"primary"} onPress={() => {
+            onSubmit();
+          }} className={"hover:bg-primary-50"}>
+            {organization?.id ? "Update" : "Create"} Organization
+          </Button>
+        )}
       </div>
     </div>
   );
