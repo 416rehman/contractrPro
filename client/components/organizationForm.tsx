@@ -30,6 +30,12 @@ type Props = {
   editing?: boolean;
 }
 
+/**
+ * A form to edit an organization. If no organization is provided, it will act as a form to create a new organization.
+ * If an organization is provided, it will act as a form to view and if the editing prop is true, edit the organization.
+ * If the editing prop is false, it will act as a form to view the organization.
+ * If the onSave prop is provided, it will be called after the organization is saved/updated.
+ */
 export default function OrganizationForm({ onSave, organization, editing = true }: Props) {
   const user = useUserStore(state => state.user);
   const toastsStore = useToastsStore(state => state);
