@@ -40,10 +40,13 @@ module.exports.define = (sequelize, DataTypes) => {
             // Date the job was completed
             type: DataTypes.DATE,
         },
-        totalCost: {
-            // Total cost of the job
+        payout: {
+            // Total payout the client will give for this job
             type: DataTypes.DECIMAL(10, 2),
             defaultValue: 0,
+        },
+        assignedTo: {
+            type: DataTypes.VIRTUAL,
         },
     })
 

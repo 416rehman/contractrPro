@@ -1,3 +1,4 @@
+"use client";
 import { Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger } from "@nextui-org/dropdown";
 import { User } from "@nextui-org/user";
 import { useEffect, useState } from "react";
@@ -6,8 +7,7 @@ import JoinOrganizationModal from "@/components/joinOrganizationModal";
 import { useDisclosure } from "@nextui-org/react";
 import clsx from "clsx";
 import CreateOrganizationModal from "@/components/createOrganizationModal";
-import { loadUserOrganizations, setCurrentOrganization, useUserStore } from '@/services/user'
-import { getLocalStorageItem } from "@/utils/safeLocalStorage";
+import { loadUserOrganizations, setCurrentOrganization, useUserStore } from "@/services/user";
 
 type Props = {
   className?: string;
@@ -23,7 +23,7 @@ const OrgItem = ({ logoUrl, description, name }) => {
       isBordered: true,
       src: logoUrl || "/defaultImages/organizationDefault.png"
     }}
-    className="transition-transform justify-start hover:bg-default-100 flex flex-row items-center p-1 pr-2 rounded-full max-w-10"
+    className="transition-transform justify-start hover:bg-default-100 flex flex-row items-center p-1 pr-2 rounded-full max-w-10 font-medium"
     description={description}
     isFocusable={true}
     name={name}
@@ -59,8 +59,6 @@ export default function OrganizationSelector({
 
     if (currentOrg?.id) {
       setSelectedOrganization(currentOrg);
-    } else {
-      setSelectedOrganization(JSON.parse(getLocalStorageItem("currentOrganization") || "null"));
     }
   }, [userOrgs, currentOrg]);
 
@@ -77,6 +75,10 @@ export default function OrganizationSelector({
           console.log("Unknown action");
       }
     } else {
+      if (!id) return;
+      if (currentOrg?.id === id) {
+        return;
+      }
       setCurrentOrganization(userOrgs?.find(org => org.id === id));
     }
   };
@@ -95,7 +97,7 @@ export default function OrganizationSelector({
               showArrow={true}
               aria-label="User Organizations">
       <DropdownTrigger>
-        <div>
+        <div className={"w-fit"}>
           <OrgItem name={selectedOrganization?.name || defaultTitle}
                    description={selectedOrganization?.website || selectedOrganization?.phone || defaultSubtitle}
                    logoUrl={selectedOrganization?.logoUrl} />

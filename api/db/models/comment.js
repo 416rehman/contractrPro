@@ -20,10 +20,10 @@ module.exports.define = (sequelize, DataTypes) => {
             foreignKey: { allowNull: false },
         })
         Comment.belongsTo(models.Contract, { onDelete: 'CASCADE' }) //ContractId
-        Comment.belongsTo(models.Job, { onDelete: 'CASCADE' }) //JobId
         Comment.belongsTo(models.Expense, { onDelete: 'CASCADE' }) //ExpenseId
         Comment.belongsTo(models.Invoice, { onDelete: 'CASCADE' }) //InvoiceId
         Comment.belongsTo(models.Client, { onDelete: 'CASCADE' }) //ClientId
+        Comment.belongsTo(models.Vendor, { onDelete: 'CASCADE' }) //ProjectId
 
         Comment.hasMany(models.Attachment, {
             // CommentId - the metadata for the attachments of this comment

@@ -43,8 +43,8 @@ export const sidebarItems = [
     shortDescription: "The money you make"
   },
   {
-    label: "Employees",
-    href: "/employees",
+    label: "Members",
+    href: "/members",
     icon: IconUsers,
     shortDescription: "Members of your organization"
   },
@@ -84,6 +84,13 @@ export default function Sidebar(props: HTMLAttributes<HTMLDivElement>) {
     </Tooltip>
   );
 
+  const isActivePage = (href) => {
+    if (href === "/") {
+      return pathname === href;
+    } else {
+      return pathname.startsWith(href);
+    }
+  };
   return (
     <div className={" md:flex md:flex-col gap-8 p-2 items-center" + " " + props.className} {...props}>
       <ExtendSidebarButton />
@@ -96,8 +103,8 @@ export default function Sidebar(props: HTMLAttributes<HTMLDivElement>) {
               key={item.href}
               as={NextLink}
               href={item.href}
-              variant={pathname === item.href ? "flat" : "light"}
-              color={pathname === item.href ? "primary" : "default"}
+              variant={isActivePage(item.href) ? "flat" : "light"}
+              color={isActivePage(item.href) ? "primary" : "default"}
               size={"lg"}>
               {<item.icon stroke={1.5} />}
               {isExtended ? item.label : null}

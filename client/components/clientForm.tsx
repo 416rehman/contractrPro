@@ -21,6 +21,8 @@ import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-o
 import OrganizationSelector from "@/components/organizationSelector";
 import { Tooltip } from "@nextui-org/tooltip";
 import moment from "moment";
+import { Spacer } from "@nextui-org/spacer";
+import { ClientCommentSection } from "@/components/clientCommentSection";
 
 type Props = {
   id: string;
@@ -38,6 +40,16 @@ export default function ClientForm({ id, className }: Props) {
   const [editedClient, setEditedClient] = useState<any>(); // Save the edited client here
   const currentOrg = useUserStore(state => state.currentOrganization);
   const [isSaving, setIsSaving] = useState(false);
+
+
+  // Confirm reload if editing
+  useEffect(() => {
+    if (isEditing) {
+      window.onbeforeunload = () => true;
+    } else {
+      window.onbeforeunload = null;
+    }
+  }, [isEditing]);
 
   // For delete modal dialog
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -110,7 +122,7 @@ export default function ClientForm({ id, className }: Props) {
           )}
         </ModalContent>
       </Modal>
-      <div className={"flex justify-center w-full"}>
+      <div className={"flex flex-col justify-center w-full"}>
         <Card shadow={"none"} className={"border-none w-full"}>
           <CardHeader className={"flex gap-2"}>
             <div className={"flex-grow flex italic flex-col gap-1 items-start"}>
@@ -200,6 +212,10 @@ export default function ClientForm({ id, className }: Props) {
             </div>
           </CardFooter>
         </Card>
+        {client?.id && (
+          <ClientCommentSection client={client} />
+        )}
+        <Spacer y={10} />
       </div>
     </div>
   );

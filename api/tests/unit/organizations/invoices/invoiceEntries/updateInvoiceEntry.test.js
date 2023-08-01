@@ -68,7 +68,7 @@ describe('Update invoice entry', () => {
         expect(data.createdAt).toBeDefined()
     })
 
-    it('should return 400 if organization ID is invalid', async () => {
+    it('should return 403 if organization ID is invalid', async () => {
         const invalidOrgId = 'invalid-org-id'
         const entryId = invoiceEntry.id
         const requestBody = fake.mockInvoiceEntryData()
@@ -78,7 +78,7 @@ describe('Update invoice entry', () => {
                 `/organizations/${invalidOrgId}/invoices/${invoiceId}/entries/${entryId}`
             )
             .send(requestBody)
-            .expect(400)
+            .expect(403)
 
         const { status } = response.body
 

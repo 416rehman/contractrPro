@@ -47,6 +47,10 @@ module.exports.define = (sequelize, DataTypes) => {
             foreignKey: { allowNull: false },
         })
 
+        Vendor.hasMany(models.Comment, {
+            onDelete: 'CASCADE',
+        })
+
         Vendor.hasOne(models.Address, {
             foreignKey: { allowNull: true },
         })

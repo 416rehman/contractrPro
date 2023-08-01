@@ -18,6 +18,9 @@ module.exports.define = (sequelize, DataTypes) => {
         JobMember.belongsTo(models.User, {
             as: 'UpdatedByUser',
         })
+
+        JobMember.belongsTo(models.OrganizationMember)
+        JobMember.belongsTo(models.Job)
     }
 
     return JobMember

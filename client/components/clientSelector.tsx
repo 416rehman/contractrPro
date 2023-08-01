@@ -8,7 +8,7 @@ import { Client } from "@/types";
 
 type Props = {
   onClientChange?: (clients: Client[]) => void;
-  selectedClientIds?: Set<string>;
+  selectedClientIds?: string[];
   label?: string;
   isDisabled?: boolean;
 } & React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
@@ -59,10 +59,10 @@ export default function ClientSelector({ onClientChange, selectedClientIds, labe
                       onSelectionChange={onSelectionChangedHandler}
                       onQueryChange={setQuery}
                       label={label}
-                      trigger={selectedClientIds.size ?
-                        <div>
+                      trigger={selectedClientIds?.[0] ?
+                        <div className={"flex"}>
                           {
-                            clients.filter((client) => selectedClientIds.has(client.id))
+                            clients.filter((client) => selectedClientIds.includes(client.id))
                               .map((client) => <User key={client.id} name={client.name}
                                                      description={client.description || client.email || client.phone || client.website || ""} />)
                           }

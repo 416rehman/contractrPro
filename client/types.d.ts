@@ -1,23 +1,9 @@
-enum EStatus {
-  OPEN,
-  IN_PROGRESS,
-  COMPLETED,
-  CANCELLED
-}
-
-interface Job {
-  id: string,
-  identifier?: string,
-  name?: string,
-  description?: string,
-  status?: EStatus
-}
-
 export type tUser = {
   id?: string;
   name: string;
   username: string;
   email?: string;
+  phone?: string;
   avatarUrl: string;
   flags?: object;
   createdAt?: string;
@@ -28,7 +14,7 @@ export type UserAccount = tUser & {
   refreshToken: string;
 } & any;
 
-type Organization = {
+export type Organization = {
   id?: string;
   name: string;
   description: string;
@@ -49,7 +35,7 @@ export type Address = {
   city: string;
 } & any;
 
-type Client = {
+export type Client = {
   id?: string,
   name: string,
   phone: string,
@@ -62,7 +48,8 @@ type Client = {
   OrganizationId?: string,
 } & any;
 
-type Vendor= {
+
+type Vendor = {
   id?: string,
   name: string,
   phone: string,
@@ -75,7 +62,7 @@ type Vendor= {
   OrganizationId?: string,
 } & any;
 
-type Employee = {
+type Member = {
   id?: string,
   name: string,
   email: string,
@@ -88,12 +75,12 @@ type Employee = {
   OrganizationId?: string,
 } & any;
 
-type Item = {
+export type Item = {
   key: string,
   name: string,
 }
 
-type Invoice = {
+export type Invoice = {
   id?: string,
   invoiceNumber: string,
   issueDate: string,
@@ -111,7 +98,7 @@ type Invoice = {
   OrganizationId?: string,
 } & any;
 
-type Expense = {
+export type Expense = {
   id?: string,
   description: string,
   date: string,
@@ -126,7 +113,7 @@ type Expense = {
   OrganizationId?: string,
 } & any;
 
-type InvoiceEntry = {
+export type InvoiceEntry = {
   id?: string,
   name: string,
   description: string,
@@ -136,7 +123,7 @@ type InvoiceEntry = {
 } & any;
 
 
-type ExpenseEntry = {
+export type ExpenseEntry = {
   id?: string,
   name: string,
   description: string,
@@ -144,3 +131,69 @@ type ExpenseEntry = {
   unitCost: number,
   ExpenseId?: string,
 } & any;
+
+type Contract = {
+  id?: string,
+  name: string,
+  description: string,
+  startDate: string,
+  dueDate: string,
+  completionDate: string,
+  status: EContractStatus,
+  OrganizationId?: string, // the organization that owns this contract
+  ClientId?: string, // the client that this contract is for
+  Jobs: Array<Job>,
+  updatedAt?: string,
+  UpdatedByUserId?: string,
+  createdAt?: string,
+}
+
+interface Job {
+  id: string,
+  reference?: string,
+  name?: string,
+  description?: string,
+  status?: EJobStatus,
+  dueDate?: string,
+  completionDate?: string,
+  payout?: number,  // the amount that the client will pay for this job
+  ContractId?: string,  // the contract that this job is associated with
+  UpdatedByUserId?: string,
+  createdAt?: string,
+  updatedAt?: string,
+  JobMembers?: Array<JobMember>,
+}
+
+interface JobMember {
+  id?: string,
+  JobId?: string,
+  OrganizationMemberId?: string,
+}
+
+type Attachment = {
+  "id"?: string
+  "name"?: string
+  "type"?: string
+  "size"?: number
+  "accessUrl"?: string
+  "createdAt"?: string
+  "updatedAt"?: string
+  "CommentId"?: string
+  "markedForDeletion"?: boolean
+}
+
+type Comment = {
+  "id"?: string,
+  "content"?: string,
+  "createdAt"?: string,
+  "updatedAt"?: string,
+  "ClientId"?: string
+  "OrganizationId"?: string
+  "ContractId"?: string
+  "VendorId"?: string
+  "ExpenseId"?: string
+  "InvoiceId"?: string
+  "AuthorId"?: string
+  "UpdatedByUserId"?: string
+  "Attachments"?: Array<Attachment | any>
+}

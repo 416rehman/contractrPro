@@ -41,7 +41,7 @@ module.exports = async (req, res) => {
                 {
                     OrganizationId: org.id,
                     UserId: req.auth.id,
-                    name: req.auth.name,
+                    name: req.auth.name || req.auth.username || 'Member',
                     email: req.auth.email,
                     phone: req.auth.phone || null,
                 },

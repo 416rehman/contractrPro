@@ -1,7 +1,7 @@
 import { request } from "@/utils/request";
 import { Vendor } from "@/types";
 
-const apiUrl = process.env.API_URL || "http://localhost:4000";
+const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 // Gets the current organization's vendors from the server
 export async function requestOrganizationVendors(OrganizationId: string) {

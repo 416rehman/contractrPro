@@ -16,6 +16,7 @@ module.exports.define = (sequelize, DataTypes) => {
         },
         startDate: {
             type: DataTypes.DATE,
+            defaultValue: DataTypes.NOW,
         },
         dueDate: {
             type: DataTypes.DATE,

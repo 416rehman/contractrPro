@@ -4,7 +4,7 @@ import { CardFooter, Input } from "@nextui-org/react";
 import { Button } from "@nextui-org/button";
 import NextLink from "next/link";
 import clsx from "clsx";
-import { IconBuilding, IconChevronDown, IconListSearch } from "@tabler/icons-react";
+import { IconBuilding, IconChevronDown, IconCirclePlus, IconListSearch } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { loadClients, useClientsStore } from "@/services/clients";
 import { useUserStore } from "@/services/user";
@@ -19,32 +19,37 @@ type Props = {
  * This is the sidebar for the clients page. It displays a list of clients and should allow the user to filter them.
  * It handles communication with the API and updates the local state via the Client service.
  * This is used in tandem with the ClientForm component to edit/create clients.
- * TODO: Implement filtering
  */
 export default function ClientsSidebar({ className }: Props) {
   const [currentOrg] = useUserStore(state => [state.currentOrganization]);
   const [clients] = useClientsStore(state => [state.clients]);
+  const [clientsToDisplay, setClientsToDisplay] = useState(clients);
   const [filter, setFilter] = useState("");
   const params = useParams();
 
   useEffect(() => {
-    loadClients(currentOrg?.id);
+    if (currentOrg?.id) {
+      loadClients(currentOrg?.id);
+    }
   }, [currentOrg?.id]);
 
-  const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFilter(e.target.value);
-    clients.filter((item: any) => item.name.toLowerCase().includes(e.target.value.toLowerCase()));
-  };
+  useEffect(() => {
+    // filter
+    const clientsToDisplay = clients.filter((item: any) => item.name.toLowerCase().includes(filter.toLowerCase()));
+    setClientsToDisplay(clientsToDisplay);
+  }, [filter, clients]);
 
   const sidebar = <Card shadow={"none"} isBlurred={true}
                         className={clsx("border-none rounded-none", className)}>
     <CardHeader className={"flex flex-col gap-2"}>
       <h1 className={"text-2xl font-bold"}>Clients</h1>
       {/*  Search bar*/}
-      <Input aria-label={"Filter clients"} placeholder={"Filter"} size={"sm"}
-             endContent={<IconListSearch className={"text-default-400"} />}
+      <Input aria-label={"Filter Clients"} placeholder={"Filter"} size={"sm"}
+             startContent={<IconListSearch className={"text-default-400"} />}
              variant={"underlined"}
-             onChange={handleFilterChange} />
+             isClearable={true}
+             onClear={() => setFilter("")}
+             onChange={(e) => setFilter(e.target.value)} />
     </CardHeader>
     <CardBody className={"p-2"}>
       <ul className={"flex flex-col w-full"}>
@@ -64,8 +69,9 @@ export default function ClientsSidebar({ className }: Props) {
       </ul>
     </CardBody>
     <CardFooter>
-      <Button variant={"ghost"} className={"flex-grow"} href={"/clients/new"} as={NextLink}>
-        Create New Client
+      <Button variant={"light"} className={"flex-grow"} href={"/clients/new"} as={NextLink}
+              startContent={<IconCirclePlus className={"text-default-500"} />}>
+        New Client
       </Button>
     </CardFooter>
   </Card>;
@@ -83,7 +89,7 @@ export default function ClientsSidebar({ className }: Props) {
   </Popover>;
 
   return <>
-    <div className={"hidden md:flex md:flex-col md:gap-2 md:w-1/4"}>
+    <div className={"hidden md:flex md:flex-col md:gap-2 md:min-w-1/4"}>
       {sidebar}
     </div>
     <div className={"flex md:hidden"}>

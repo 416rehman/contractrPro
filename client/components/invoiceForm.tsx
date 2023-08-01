@@ -1,4 +1,5 @@
 "use client";
+import { useRouter } from "next/navigation";
 import { deleteInvoiceAndPersist, updateInvoiceAndPersist, useInvoicesStore } from "@/services/invoices";
 import {
   CardFooter,
@@ -21,6 +22,7 @@ import {
   IconChevronDown,
   IconDeviceFloppy,
   IconEdit,
+  IconFileTypeCsv,
   IconHash,
   IconPercentage,
   IconPrinter,
@@ -28,7 +30,7 @@ import {
 } from "@tabler/icons-react";
 import clsx from "clsx";
 import { useUserStore } from "@/services/user";
-import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/dropdown";
+import { Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger } from "@nextui-org/dropdown";
 import OrganizationSelector from "@/components/organizationSelector";
 import { Invoice } from "@/types";
 import InvoiceEntriesTable from "@/components/invoiceEntriesTable";
@@ -36,6 +38,8 @@ import { Divider } from "@nextui-org/divider";
 import ClientSelector from "@/components/clientSelector";
 import { Tooltip } from "@nextui-org/tooltip";
 import moment from "moment";
+import { InvoiceCommentSection } from "@/components/invoiceCommentSection";
+import { Spacer } from "@nextui-org/spacer";
 
 type Props = {
   id: string;
@@ -48,6 +52,8 @@ type Props = {
  * It handles communication with the API and updates the local state via the Invoice service.
  */
 export default function InvoiceForm({ id, className }: Props) {
+  const router = useRouter();
+
   const [invoice] = useInvoicesStore(state => [state.invoices.find((invoice: any) => invoice.id === id)]);
   const [editedInvoice, setEditedInvoice] = useState<Invoice | null>(); // Save the edited invoiceEntries here
 
@@ -55,6 +61,15 @@ export default function InvoiceForm({ id, className }: Props) {
 
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+
+  // Confirm reload if editing
+  useEffect(() => {
+    if (isEditing) {
+      window.onbeforeunload = () => true;
+    } else {
+      window.onbeforeunload = null;
+    }
+  }, [isEditing]);
 
   // For delete modal dialog
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -100,11 +115,12 @@ export default function InvoiceForm({ id, className }: Props) {
     // Save the edited invoiceEntries here
     setIsSaving(true);
 
-    await updateInvoiceAndPersist(editedInvoice, currentOrg?.id);
+    const result = await updateInvoiceAndPersist(editedInvoice, currentOrg?.id);
 
     setIsEditing(!editedInvoice?.id);
     if (!editedInvoice?.id) {
-      setEditedInvoice(undefined);
+      // navigate to the new invoice
+      router.push(`/invoices/${result?.id}`);
     }
 
     setIsSaving(false);
@@ -123,6 +139,25 @@ export default function InvoiceForm({ id, className }: Props) {
     setIsEditing(false);
     await deleteInvoiceAndPersist(editedInvoice, currentOrg?.id);
     setIsSaving(false);
+  };
+
+  const exportAsCSV = () => {
+    if (!editedInvoice.InvoiceEntries) return;
+
+    // Generate comma separated headers
+    const headers = "" + Object.keys(editedInvoice.InvoiceEntries[0]).join(",");
+
+    // Generate comma separated values
+    const values = editedInvoice.InvoiceEntries.map((job) => Object.values(job).join(",")).join("\n");
+
+    // Create hidden element and click it to download
+    const element = document.createElement("a");
+    element.setAttribute("href", "data:text/csv;charset=utf-8," + encodeURIComponent(headers + "\n" + values));
+    element.setAttribute("download", `${editedInvoice.id + "-invoice" || "invoice"}.csv`);
+    element.style.display = "none";
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
   };
 
   if (!currentOrg) {
@@ -162,7 +197,7 @@ export default function InvoiceForm({ id, className }: Props) {
           )}
         </ModalContent>
       </Modal>
-      <div className={"flex justify-center w-full"}>
+      <div className={"flex flex-col justify-center w-full gap-5"}>
         <Card shadow={"none"} className={"border-none w-full"}>
           <CardHeader className={"flex gap-2"}>
             <div className={"flex-grow flex italic flex-col gap-1 items-start"}>
@@ -184,13 +219,20 @@ export default function InvoiceForm({ id, className }: Props) {
                       </Button>
                     </DropdownTrigger>
                     <DropdownMenu className={"print:hidden"}>
-                      <DropdownItem key={"print"} description={"Print this invoiceEntries"} onPress={() => {
-                        window.print();
-                      }}
-                                    startContent={<IconPrinter className={"text-default-500"} />} shortcut={"P"}>
-                        Print
-                      </DropdownItem>
-                      <DropdownItem key={"delete"} description={"Delete this invoiceEntries"} onPress={onOpen}
+                      <DropdownSection title={"Actions"} showDivider={true}>
+                        <DropdownItem key={"print"} description={"Print this Contract"} onPress={() => {
+                          window.print();
+                        }}
+                                      startContent={<IconPrinter className={"text-default-500"} />} shortcut={"P"}>
+                          Print
+                        </DropdownItem>
+                        <DropdownItem key={"export"} description={"Export in CSV file format"}
+                                      onPress={() => exportAsCSV()}
+                                      startContent={<IconFileTypeCsv className={"text-default-500"} />} shortcut={"E"}>
+                          Export
+                        </DropdownItem>
+                      </DropdownSection>
+                      <DropdownItem key={"delete"} description={"Delete this Contract"} onPress={onOpen}
                                     className={"text-danger-500"}
                                     startContent={<IconTrash className={"text-default-500"} />} shortcut={"D"}>
                         Delete
@@ -212,10 +254,10 @@ export default function InvoiceForm({ id, className }: Props) {
                     setEditedInvoice((prev) => ({ ...prev, BillToClientId: changedClients[0]?.id }));
                   }
                 }}
-                selectedClientIds={new Set([editedInvoice?.BillToClientId])}
+                selectedClientIds={[editedInvoice?.BillToClientId]}
               />
 
-              <div className={"flex flex-row gap-4"}>
+              <div className={"flex flex-row gap-4 flex-wrap lg:flex-nowrap"}>
                 <Input label={"Invoice #"} placeholder={"123456"} value={editedInvoice?.invoiceNumber}
                        isReadOnly={!isEditing}
                        type={"text"}
@@ -308,6 +350,10 @@ export default function InvoiceForm({ id, className }: Props) {
             </div>
           </CardFooter>
         </Card>
+        {invoice?.id && (
+          <InvoiceCommentSection invoice={invoice} />
+        )}
+        <Spacer y={10} />
       </div>
     </div>
   );

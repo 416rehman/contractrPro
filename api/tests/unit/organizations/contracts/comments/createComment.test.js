@@ -67,7 +67,7 @@ describe('Create comment for contract', () => {
         const response = await request(app)
             .post(`/organizations/${orgId}/contracts/${contractId}/comments`)
             .field('content', commentData.content)
-            .attach('attachments', fileToAttachPath)
+            .attach('Attachments', fileToAttachPath)
             .expect(200)
 
         const { status, data } = response.body
@@ -77,10 +77,10 @@ describe('Create comment for contract', () => {
         expect(data.Attachments).toBeDefined()
         expect(Array.isArray(data.Attachments)).toBe(true)
         expect(data.Attachments.length).toBe(1)
-        expect(data.Attachments[0].filename).toBe(fileToAttachName)
+        expect(data.Attachments[0].name).toBe(fileToAttachName)
     })
 
-    it('should return 400 if organization ID is invalid', async () => {
+    it('should return 403 if organization ID is invalid', async () => {
         const invalidOrgId = 'invalid-org-id'
 
         const response = await request(app)
@@ -88,7 +88,7 @@ describe('Create comment for contract', () => {
                 `/organizations/${invalidOrgId}/contracts/${contractId}/comments`
             )
             .send(fake.mockCommentData())
-            .expect(400)
+            .expect(403)
 
         const { status } = response.body
 
@@ -135,7 +135,7 @@ describe('Create comment for contract', () => {
         const response = await request(app)
             .post(`/organizations/${orgId}/contracts/${contractId}/comments`)
             .field('content', '')
-            .attach('attachments', fileToAttachPath)
+            .attach('Attachments', fileToAttachPath)
             .expect(200)
 
         const { status, data } = response.body
@@ -145,7 +145,7 @@ describe('Create comment for contract', () => {
         expect(data.Attachments).toBeDefined()
         expect(Array.isArray(data.Attachments)).toBe(true)
         expect(data.Attachments.length).toBe(1)
-        expect(data.Attachments[0].filename).toBe(fileToAttachName)
+        expect(data.Attachments[0].name).toBe(fileToAttachName)
     })
 
     it('should return 400 if comment content is too long', async () => {

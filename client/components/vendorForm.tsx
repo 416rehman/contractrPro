@@ -21,6 +21,8 @@ import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-o
 import OrganizationSelector from "@/components/organizationSelector";
 import { Tooltip } from "@nextui-org/tooltip";
 import moment from "moment";
+import { VendorCommentSection } from "@/components/vendorCommentSection";
+import { Spacer } from "@nextui-org/spacer";
 
 type Props = {
   id: string;
@@ -110,7 +112,7 @@ export default function VendorForm({ id, className }: Props) {
           )}
         </ModalContent>
       </Modal>
-      <div className={"flex justify-center w-full"}>
+      <div className={"flex flex-col justify-center w-full"}>
         <Card shadow={"none"} className={"border-none w-full"}>
           <CardHeader className={"flex gap-2"}>
             <div className={"flex-grow flex italic flex-col gap-1 items-start"}>
@@ -200,6 +202,10 @@ export default function VendorForm({ id, className }: Props) {
             </div>
           </CardFooter>
         </Card>
+        {vendor?.id && (
+          <VendorCommentSection vendor={vendor} />
+        )}
+        <Spacer y={10} />
       </div>
     </div>
   );

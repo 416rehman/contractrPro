@@ -48,8 +48,6 @@ module.exports = async (req, res) => {
                 )
         }
 
-        console.log('InvoiceEntries', InvoiceEntries)
-
         const body = {
             ...pick(req.body, [
                 'invoiceNumber',

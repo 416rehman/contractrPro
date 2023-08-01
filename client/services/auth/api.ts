@@ -1,4 +1,4 @@
-const apiUrl = (process.env.API_URL || "http://localhost:4000");
+const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000");
 /**
  * Gets a refresh token from the server, and stores it in local storage key "refreshToken"
  * @param username

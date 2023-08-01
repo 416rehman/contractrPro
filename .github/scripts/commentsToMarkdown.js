@@ -9,6 +9,27 @@ const todoInCommentString = "**Work In Progress**: This component is not yet com
 const title = "Components";
 const description = "This page contains a list of all the client components in the project and their purpose, used to help with development and debugging." + "\n" + "This also serves as a reference to the functionality of the components, and can be used as a usability test plan." + "\n";
 
+// Reads the table in the Markdown file and returns the values in the first column
+const readOutputFilePath = () => {
+  // | [filename.tsx](link) | comment |
+  const regex = /\| \[(.+)]\(.+\) \|/;
+  const data = fs.readFileSync(outputFilePath, "utf8");
+  const lines = data.split("\n");
+  const filenames = [];
+
+  for (let i = 3; i < lines.length; i++) {
+    const line = lines[i];
+    const match = line.match(regex);
+    if (match) {
+      filenames.push(match[1]);
+    }
+  }
+
+  return filenames;
+};
+
+const previousComponents = readOutputFilePath();
+
 // Read the TypeScript files in the components directory
 fs.readdir(componentsDir, (data, files) => {
   if (data) {
@@ -108,12 +129,14 @@ function saveCommentsToMarkdown(comments) {
   let markdownContent = `# ${title}\n\n${description}\n\n`;
 
   // Table header
-  markdownContent += "| Filename | Comment |\n";
-  markdownContent += "| -------- | ------- |\n";
+  markdownContent += "| Filename | Comment |Status|\n";
+  markdownContent += "| -------- | ------- | ---- |\n";
 
   for (const [filename, comment] of Object.entries(comments)) {
     const isTodo = comment && comment.toLowerCase().includes("todo");
-    markdownContent += `| [${filename}](${link + filename}) | ${comment + (isTodo ? "<span><br/>" + todoInCommentString + "</span>" : "") || noCommentString} |\n`;
+    const isOld = previousComponents.includes(filename);
+    if (!isOld) console.log("New Component: " + filename);
+    markdownContent += `| [${filename}](${link + filename}) | ${comment + (isTodo ? "<span><br/>" + todoInCommentString + "</span>" : "") || noCommentString} | ${isOld ? "" : "New"} |\n`;
   }
 
   fs.writeFileSync(outputFilePath, markdownContent);

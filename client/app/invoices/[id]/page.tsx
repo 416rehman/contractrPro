@@ -18,7 +18,7 @@ export async function generateMetadata(
 }
 
 export default function ClientPage({ params }: { params: { id: string } }) {
-  return <div className={"flex flex-grow overflow-y-auto"}>
-    <InvoiceForm id={params.id} className={"items-center max-w-full md:max-w-3xl"} />
+  return <div className={"flex flex-grow overflow-y-auto p-10"}>
+    <InvoiceForm id={params.id} className={"items-center max-w-full"} />
   </div>;
 }
