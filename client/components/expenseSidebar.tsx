@@ -39,7 +39,7 @@ export default function ExpenseSidebar({ className }: Props) {
   const sidebar = <Card shadow={"none"} isBlurred={true}
                         className={clsx("border-none rounded-none", className)}>
     <CardHeader className={"flex flex-col gap-2"}>
-      <h1 className={"text-2xl font-bold"}>expenses</h1>
+      <h1 className={"text-2xl font-bold"}>Expenses</h1>
       {/*  Search bar*/}
       <Input aria-label={"Filter expenses"}
              placeholder={"Filter"} size={"sm"} endContent={<IconListSearch className={"text-default-400"} />}
