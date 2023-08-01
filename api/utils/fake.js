@@ -111,6 +111,7 @@ const mockExpenseData = () => {
     return {
         description: faker.lorem.sentence(),
         date: '' + faker.date.past(),
+        expenseNumber: faker.string.alphanumeric(8),
     }
 }
 

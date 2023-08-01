@@ -8,7 +8,7 @@ import { Vendor } from "@/types";
 
 type Props = {
   onVendorChange?: (vendors: Vendor[]) => void;
-  selectedVendorIds?: Set<string>;
+  selectedVendorIds?: string[];
   label?: string;
   isDisabled?: boolean;
 } & React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>;
@@ -59,10 +59,10 @@ export default function VendorSelector({ onVendorChange, selectedVendorIds, labe
                       onSelectionChange={onSelectionChangedHandler}
                       onQueryChange={setQuery}
                       label={label}
-                      trigger={selectedVendorIds.size ?
+                      trigger={selectedVendorIds?.[0] ?
                         <div>
                           {
-                            vendors.filter((vendor) => selectedVendorIds.has(vendor.id))
+                            vendors.filter((vendor) => selectedVendorIds.includes(vendor.id))
                               .map((vendor) => <User key={vendor.id} name={vendor.name}
                                                      description={vendor.description || vendor.email || vendor.phone || vendor.website || ""} />)
                           }

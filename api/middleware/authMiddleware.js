@@ -100,7 +100,15 @@ if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
                         },
                     })
 
-                    req.auth = userData.toJSON()
+                    if (!userData) {
+                        return res
+                            .status(401)
+                            .send(
+                                createErrorResponse('The user does not exist')
+                            )
+                    }
+
+                    req.auth = userData?.toJSON()
 
                     if (req.auth.flags['NA_BANNED'] === true) {
                         return res

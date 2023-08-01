@@ -16,12 +16,10 @@ import React, { useEffect, useState } from "react";
 import { Button, ButtonGroup } from "@nextui-org/button";
 import {
   Icon123,
-  IconCalendar,
   IconCalendarStar,
   IconChevronDown,
   IconDeviceFloppy,
   IconEdit,
-  IconHash,
   IconPercentage,
   IconPrinter,
   IconTrash
@@ -36,6 +34,7 @@ import { Divider } from "@nextui-org/divider";
 import VendorSelector from "@/components/vendorSelector";
 import { Tooltip } from "@nextui-org/tooltip";
 import moment from "moment";
+import ExpenseCommentSection from "@/components/expenseCommentSection";
 
 type Props = {
   id: string;
@@ -162,7 +161,7 @@ export default function Expenseform({ id, className }: Props) {
           )}
         </ModalContent>
       </Modal>
-      <div className={"flex justify-center w-full"}>
+      <div className={"flex flex-col justify-center w-full"}>
         <Card shadow={"none"} className={"border-none w-full"}>
           <CardHeader className={"flex gap-2"}>
             <div className={"flex-grow flex italic flex-col gap-1 items-start"}>
@@ -212,10 +211,16 @@ export default function Expenseform({ id, className }: Props) {
                     setEditedExpense((prev) => ({ ...prev, VendorId: changedVendors[0]?.id }));
                   }
                 }}
-                selectedVendorIds={new Set([editedExpense?.VendorId])}
+                selectedVendorIds={[editedExpense?.VendorId]}
               />
 
               <div className={"flex flex-row gap-4"}>
+                <Input label={"Expense #"} placeholder={"Expense number"} value={editedExpense?.expenseNumber}
+                       startContent={<Icon123 className={"text-default-400"} size={"20"} />}
+                       isReadOnly={!isEditing} name={"expenseNumber"} onChange={onChangeHandler}
+                       isRequired={true}
+                       variant={isEditing ? "flat" : "bordered"} labelPlacement={"outside"} />
+
                 <Input label={"Date purchased"} placeholder={"31-12-2023"}
                        value={editedExpense?.date && new Date(editedExpense?.date).toISOString().slice(0, -1)}
                        isReadOnly={!isEditing}
@@ -226,8 +231,8 @@ export default function Expenseform({ id, className }: Props) {
               </div>
               <div className={"flex flex-row gap-4"}>
                 <Textarea label={"Description"} placeholder={"Description"} value={editedExpense?.description}
-                        isReadOnly={!isEditing} name={"description"} onChange={onChangeHandler}
-                        variant={isEditing ? "flat" : "underlined"} labelPlacement={"outside"} />
+                          isReadOnly={!isEditing} name={"description"} onChange={onChangeHandler}
+                          variant={isEditing ? "flat" : "underlined"} labelPlacement={"outside"} />
               </div>
               <ExpenseEntriesTable expenseEntries={editedExpense?.ExpenseEntries} isEditing={isEditing}
                                    onEntryDeleted={onEntryDeleteHandler}
@@ -290,6 +295,9 @@ export default function Expenseform({ id, className }: Props) {
             </div>
           </CardFooter>
         </Card>
+        {expense?.id && (
+          <ExpenseCommentSection expense={expense} />
+        )}
       </div>
     </div>
   );

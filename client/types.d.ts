@@ -104,6 +104,7 @@ export type Expense = {
   id?: string,
   description: string,
   date: string,
+  expenseNumber: string,
   VendorId?: string,
   ContractId?: string,
   JobId?: string,
