@@ -59,6 +59,7 @@ module.exports = async (req, res) => {
                 'ContractId',
                 'JobId',
             ]),
+            ExpenseEntries,
             OrganizationId: org_id,
             UpdatedByUserId: req.auth.id,
         }
