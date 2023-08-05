@@ -40,6 +40,7 @@ import ExpensesTotalCard from "@/components/expensesTotalCard";
 import InvoicesTotalCard from "@/components/invoicesTotalCard";
 import SummaryCard from "@/components/summaryCard";
 import { loadContracts, useContractsStore } from "@/services/contracts";
+import { getOrganizationSummary } from "@/services/user/api";
 
 /**
  * The dashboard component. For now, it displays the current organization and allows the user to change and update it. In addition, it displays
@@ -48,10 +49,15 @@ import { loadContracts, useContractsStore } from "@/services/contracts";
  */
 export default function Dashboard() {
   const currentOrganization = useUserStore(state => state.currentOrganization);
-  const currentOrganizationSummary = useUserStore(state => state.currentOrganizationSummary);
   const [currentOrganizationContracts] = useContractsStore(state => [state.contracts]);
+  const [currentOrganizationSummary, setCurrentOrganizationSummary] = useState(null);
 
-  const contracts = currentOrganizationContracts;
+  useEffect(() => {
+    if (!currentOrganization?.id) return;
+    getOrganizationSummary(currentOrganization?.id).then((summary) => {
+      setCurrentOrganizationSummary(summary);
+    });
+  }, [currentOrganization]);
 
   if (!currentOrganization?.id) {
     return (
@@ -103,7 +109,7 @@ export default function Dashboard() {
           <h1 className={"text-3xl font-bold"}>Overview</h1>
           <div className="flex flex-row gap-4 flex-wrap">
             <DashboardOrganizationContractsDue currentOrganization={currentOrganization}
-                                               currentOrganizationContracts={contracts} />
+                                               currentOrganizationContracts={currentOrganizationContracts} />
             {currentOrganizationSummary && cards()}
           </div>
         </div>
