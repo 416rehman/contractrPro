@@ -6,13 +6,11 @@ on:
     branches: [ main, dev ]
     paths:
       - "api/**"
-      - ".github/workflows/**"
   # Runs the inside pushes to the main and dev branches
   push:
     branches: [ main, dev ]
     paths:
       - "api/**"
-      - ".github/workflows/**"
 env:
   PORT: ${{ vars.PORT }}
   DB_DATABASE: ${{ vars.DB_DATABASE }}
@@ -131,7 +129,7 @@ jobs:
     if: github.ref == 'refs/heads/dev'
     environment: "Dev Env"
     steps:
-      - name: Invote Portainer deploy webhook
+      - name: Invoke Portainer deploy webhook
         uses: distributhor/workflow-webhook@v3
         env:
           webhook_url: ${{ secrets.PORTAINER_WEBHOOK_URL }}
