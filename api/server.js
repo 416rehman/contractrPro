@@ -19,7 +19,7 @@ app.use(
 )
 const corsOptions = {
     origin: [process.env.CLIENT_URL, process.env.CLIENT_URL_DEV],
-    methods: ['POST', 'GET', 'PATCH', 'DELETE', 'OPTIONS', 'PUT'],
+    methods: ['POST', 'GET', 'PATCH', 'DELETE', 'OPTIONS', 'PUT', 'HEAD'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
 }
