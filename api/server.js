@@ -19,7 +19,11 @@ app.use(
 )
 const corsOptions = {
     origin: [process.env.CLIENT_URL, process.env.CLIENT_URL_DEV],
+    methods: ['POST', 'GET', 'PATCH', 'DELETE', 'OPTIONS', 'PUT'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
 }
+
 app.use(cors(corsOptions))
 app.options('*', cors(corsOptions))
 app.use(cookieParser(process.env.COOKIE_SECRET))
