@@ -14,6 +14,9 @@ try {
                 logger.info(
                     `Database ${process.env.DB_USER}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_DATABASE} is connected`
                 )
+                logger.info(`Environment: ${process.env.NODE_ENV}`)
+                logger.info(`Client URL: ${process.env.CLIENT_URL}`)
+                logger.info(`Client URL (dev): ${process.env.CLIENT_URL_DEV}`)
             })
         })
         .catch((err) => {
