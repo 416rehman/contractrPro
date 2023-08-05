@@ -196,11 +196,11 @@ export default function CommentComponent({ comment, onSave, onDelete }: CommentP
 
       <div className={"flex gap-5 w-full justify-end"}>
         {comment?.id ? isEditing && <>
-          <Button auto size={"sm"} variant={"light"} className={"font-medium"} color={"danger"}
+          <Button size={"sm"} variant={"light"} className={"font-medium"} color={"danger"}
                   onPress={() => setIsEditing(false)}>Cancel</Button>
-          <Button auto size={"sm"} variant={"flat"} color={"success"} onPress={saveHandler} isLoading={isSaving}
+          <Button size={"sm"} variant={"flat"} color={"success"} onPress={saveHandler} isLoading={isSaving}
                   className={"font-medium"}>{"Update"}</Button>
-        </> : <Button auto size={"sm"} variant={"flat"} color={"success"} onPress={saveHandler} isLoading={isSaving}
+        </> : <Button size={"sm"} variant={"flat"} color={"success"} onPress={saveHandler} isLoading={isSaving}
                       className={"font-medium"}>{"Comment"}</Button>
         }
       </div>

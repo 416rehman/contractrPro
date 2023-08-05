@@ -90,7 +90,7 @@ export default function OrganizationForm({ onSave, organization, editing = true 
                    className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
                }
                placeholder={(user?.name || "John Doe") + "'s Awesome Organization"}
-               variant={editing ? "default" : "underlined"}
+               variant={editing ? "flat" : "underlined"}
                value={organizationData?.name}
                onChange={(e) => setOrganization({ ...organizationData, name: e.target.value })}
                description={"This will be displayed on your invoices and estimates, and cannot be changed later."} />
@@ -106,14 +106,14 @@ export default function OrganizationForm({ onSave, organization, editing = true 
                          subtitle={"Tell us about your organization. This information will be displayed on your invoices and estimates."}>
             <div className={"border-none flex flex-col gap-4"}>
               <Input label="Description" placeholder="This is my awesome organization"
-                     variant={editing ? "default" : "underlined"}
+                     variant={editing ? "flat" : "underlined"}
                      isReadOnly={!editing}
                      value={organizationData.description}
                      onChange={(e) => setOrganization({
                        ...organizationData,
                        description: e.target.value
                      })} />
-              <Input label="Email" placeholder="contact@cool.org" variant={editing ? "default" : "underlined"}
+              <Input label="Email" placeholder="contact@cool.org" variant={editing ? "flat" : "underlined"}
                      value={organizationData.email}
                      isReadOnly={!editing}
                      onChange={(e) => setOrganization({
@@ -121,7 +121,7 @@ export default function OrganizationForm({ onSave, organization, editing = true 
                        email: e.target.value
                      })}
                      description={"This is how other's can contact your organization (optional)"} />
-              <Input label="Phone" placeholder="(123) 456-7890" variant={editing ? "default" : "underlined"}
+              <Input label="Phone" placeholder="(123) 456-7890" variant={editing ? "flat" : "underlined"}
                      value={organizationData.phone}
                      isReadOnly={!editing}
                      onChange={(e) => setOrganization({
@@ -135,7 +135,7 @@ export default function OrganizationForm({ onSave, organization, editing = true 
                          indicator={<IconChevronLeft />}
                          subtitle={"Your company's public physical address."}>
             <div className={"border-none flex flex-col gap-2"}>
-              <Input label="Address Line 1" placeholder="123 Main St" variant={editing ? "default" : "underlined"}
+              <Input label="Address Line 1" placeholder="123 Main St" variant={editing ? "flat" : "underlined"}
                      value={organizationData.Address.addressLine1}
                      isReadOnly={!editing}
                      onChange={(e) => setOrganization({
@@ -145,7 +145,7 @@ export default function OrganizationForm({ onSave, organization, editing = true 
                          addressLine1: e.target.value
                        }
                      })} />
-              <Input label="Address Line 2" placeholder="Unit 123" variant={editing ? "default" : "underlined"}
+              <Input label="Address Line 2" placeholder="Unit 123" variant={editing ? "flat" : "underlined"}
                      value={organizationData.Address.addressLine2}
                      isReadOnly={!editing}
                      onChange={(e) => setOrganization({
@@ -155,7 +155,7 @@ export default function OrganizationForm({ onSave, organization, editing = true 
                          addressLine2: e.target.value
                        }
                      })} />
-              <Input label="City" placeholder="Toronto" variant={editing ? "default" : "underlined"}
+              <Input label="City" placeholder="Toronto" variant={editing ? "flat" : "underlined"}
                      value={organizationData.Address.city}
                      isReadOnly={!editing}
                      onChange={(e) => setOrganization({
@@ -163,7 +163,7 @@ export default function OrganizationForm({ onSave, organization, editing = true 
                        Address: { ...organizationData.Address, city: e.target.value }
                      })} />
               <div className={"flex flex-row gap-2"}>
-                <Input label="Province" placeholder="Ontario" variant={editing ? "default" : "underlined"}
+                <Input label="Province" placeholder="Ontario" variant={editing ? "flat" : "underlined"}
                        value={organizationData.Address.province}
                        isReadOnly={!editing}
                        onChange={(e) => setOrganization({
@@ -174,7 +174,7 @@ export default function OrganizationForm({ onSave, organization, editing = true 
                          }
                        })} />
 
-                <Input label="Postal Code" placeholder="A1B 2C3" variant={editing ? "default" : "underlined"}
+                <Input label="Postal Code" placeholder="A1B 2C3" variant={editing ? "flat" : "underlined"}
                        value={organizationData.Address.postalCode}
                        isReadOnly={!editing}
                        onChange={(e) => setOrganization({
@@ -186,7 +186,7 @@ export default function OrganizationForm({ onSave, organization, editing = true 
                        })} />
               </div>
 
-              <Input label="Country" placeholder="Canada" variant={editing ? "default" : "underlined"}
+              <Input label="Country" placeholder="Canada" variant={editing ? "flat" : "underlined"}
                      value={organizationData.Address.country}
                      isReadOnly={!editing}
                      onChange={(e) => setOrganization({
@@ -197,7 +197,7 @@ export default function OrganizationForm({ onSave, organization, editing = true 
 
           </AccordionItem>
         </Accordion>
-        <Input label="Logo URL" placeholder="https://cool.org/logo.png" variant={editing ? "default" : "underlined"}
+        <Input label="Logo URL" placeholder="https://cool.org/logo.png" variant={editing ? "flat" : "underlined"}
                value={organizationData.logoUrl}
                isReadOnly={!editing}
                onChange={(e) => setOrganization({ ...organizationData, logoUrl: e.target.value })}
@@ -218,7 +218,7 @@ export default function OrganizationForm({ onSave, organization, editing = true 
                   />
                 </CardBody>
                 <CardFooter className="text-small justify-between select-none">
-                  <p>Your Organization's Logo</p>
+                  <p>Your Organization&apos;s Logo</p>
                   <p className="text-default-500">Preview</p>
                 </CardFooter>
               </Card>

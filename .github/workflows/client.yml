@@ -43,3 +43,46 @@ jobs:
         with:
           commit_message: Generated markdown docs
           branch: ${{ github.head_ref }}
+  build:
+    # Only runs if the triggering actor is not the GitHub Actions bot
+    if: github.triggering_actor != 'github-actions[bot]'
+    permissions:
+      contents: write
+    # Uses a Ubuntu Docker VM to run the application on
+    runs-on: ubuntu-latest
+    environment: "Dev Env"
+    defaults:
+      run:
+        working-directory: ./client
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
+          token: ${{ secrets.PAT }}
+      - name: Setup Node for API
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18.16.0"
+          cache: "npm"
+          cache-dependency-path: ./client/package-lock.json
+      - name: Install Dependencies
+        run: npm ci --no-optional
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Build Docker image
+        run: docker build -t watchdogsrox/contractrpro-client:latest .
+      - name: Push Docker image
+        run: docker push watchdogsrox/contractrpro-client:latest
+  deploy:
+    # Sends a webhook to Portainer to deploy the client stack. URL is stored in the secret PORTAINER_CLIENT_WEBHOOK_URL
+    needs: [ build ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Invoke Portainer deploy webhook
+        uses: distributhor/workflow-webhook@v3
+        env:
+          webhook_url: ${{ secrets.PORTAINER_CLIENT_WEBHOOK_URL }}

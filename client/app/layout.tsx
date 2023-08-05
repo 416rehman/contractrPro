@@ -11,6 +11,7 @@ import { cookies } from "next/headers";
 import jwtDecode from "jwt-decode";
 import { getNewAccessToken } from "@/services/auth";
 
+export const dynamic = "force-dynamic";
 export const metadata = {
   title: "ContractrPro",
   description: "Take control of your business",

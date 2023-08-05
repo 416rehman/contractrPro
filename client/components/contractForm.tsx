@@ -312,7 +312,7 @@ export default function ContractForm({ id, className }: Props) {
                           className={"font-medium hover:bg-danger-200"}>
                     Cancel
                   </Button>
-                  <Button variant={"flat"} onPress={onSaveHandler} loading={isSaving}
+                  <Button variant={"flat"} onPress={onSaveHandler} isLoading={isSaving}
                           className={"text-default-800 font-medium hover:bg-primary-200"}
                           startContent={<IconDeviceFloppy />}>
                     Save
@@ -321,7 +321,7 @@ export default function ContractForm({ id, className }: Props) {
               ) : null}
               {/*  if no contractEntries Id this is a new contractEntries */}
               {!contract?.id && (
-                <Button variant={"flat"} onPress={onSaveHandler} loading={isSaving}
+                <Button variant={"flat"} onPress={onSaveHandler} isLoading={isSaving}
                         className={"text-default-800 font-medium hover:bg-primary-200"}
                         startContent={<IconDeviceFloppy />}>
                   Save

@@ -7,7 +7,7 @@ import {
 } from "@/services/vendors/api";
 import { Vendor } from "@/types";
 import { useToastsStore } from "@/services/toast";
-import { clearMemberCommentsStore } from "@/services/members/comments";
+import { clearVendorCommentsStore } from "@/services/vendors/comments";
 
 export const useVendorsStore = create((set: any) => ({
   vendors: [] as Vendor[],
@@ -80,5 +80,5 @@ export const deleteVendor = async (vendor: Vendor, currentOrganizationId: string
 export const clearVendorStore = () => {
   useVendorsStore.getState().setVendors([]);
   useVendorsStore.getState().lastRequestedOn = null;
-  clearMemberCommentsStore();
+  clearVendorCommentsStore();
 };

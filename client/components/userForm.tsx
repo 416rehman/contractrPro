@@ -17,7 +17,7 @@ import { useToastsStore } from "@/services/toast";
 /**
  * The user form allows the user to edit their profile information. Uses the user/me/ routes
  */
-export default function UserForm(props: any) {
+export default function UserForm() {
   const user = useUserStore(state => state.user);
   const addToast = useToastsStore(state => state.addToast);
 
@@ -136,7 +136,10 @@ export default function UserForm(props: any) {
               alt={(user?.name || "user") + "'s profile picture"}
               className="w-full object-cover h-[140px] rounded-lg"
               src={newAvatar || "/defaultImages/userDefault.png"}
-              onError={(e) => e.target.setAttribute("src", "/defaultImages/userDefault.png")}
+              onError={(e) => {
+                const targetElement = e.target as HTMLElement;
+                targetElement.setAttribute("src", "/defaultImages/userDefault.png");
+              }}
             />
           </div>
           <div className="flex flex-col gap-5 flex-grow">

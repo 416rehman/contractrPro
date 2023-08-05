@@ -12,6 +12,14 @@ type Props = {
   linkText: string;
 }
 
+/**
+ * This summary card is used in the dashboard to display a summary of a particular metric - Takes the following props:
+ * @param value
+ * @param title
+ * @param icon
+ * @param link
+ * @param linkText
+ */
 export default function SummaryCard({ value, title, icon, link, linkText }: Props) {
   return (
     <Card className={"border-1 border-default-200 w-fit h-fit"}>

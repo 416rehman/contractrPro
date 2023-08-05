@@ -48,8 +48,8 @@ module.exports = async (req, res) => {
 
         return res
             .status(200)
-            .cookie('accessToken', token)
-            .cookie('refreshToken', refreshToken)
+            .cookie('accessToken', token, { sameSite: 'none' })
+            .cookie('refreshToken', refreshToken, { sameSite: 'none' })
             .json(createSuccessResponse({ token }))
     } catch (error) {
         return res.status(400).json(createErrorResponse('', error))

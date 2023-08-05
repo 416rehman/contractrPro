@@ -2,7 +2,6 @@ import { create } from "zustand";
 import { requestCreateMember, requestDeleteMember, requestMembers, requestUpdateMember } from "@/services/members/api";
 import { Member } from "@/types";
 import { useToastsStore } from "@/services/toast";
-import { clearMemberCommentsStore } from "@/services/members/comments";
 
 export const useMembersStore = create((set: any) => ({
   members: [] as Member[],
@@ -75,5 +74,4 @@ export const deleteMemberAndPersist = async (orgMember: Member, currentOrganizat
 export const clearMembersStore = () => {
   useMembersStore.getState().setMembers([]);
   useMembersStore.getState().lastRequestedOn = null;
-  clearMemberCommentsStore();
 };

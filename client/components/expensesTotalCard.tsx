@@ -10,6 +10,11 @@ type Props = {
   changeSinceLastMonth: number;
 }
 
+/**
+ * This card is used in the dashboard to display the total cost of all the expenses and a change from last month - Takes the following props:
+ * @param expensesTotal
+ * @param changeSinceLastMonth
+ */
 export default function ExpensesTotalCard({ expensesTotal, changeSinceLastMonth }: Props) {
   const [changeAsPercent, setChangeAsPercent] = useState<number>(0);
   useEffect(() => {

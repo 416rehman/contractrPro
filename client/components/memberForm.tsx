@@ -222,7 +222,7 @@ export default function MemberForm({ id, className }: Props) {
                           className={"font-medium hover:bg-danger-200"}>
                     Cancel
                   </Button>
-                  <Button variant={"flat"} onPress={onSaveHandler} loading={isSaving}
+                  <Button variant={"flat"} onPress={onSaveHandler} isLoading={isSaving}
                           className={"text-default-800 font-medium hover:bg-primary-200"}
                           endContent={<IconDeviceFloppy />}>
                     Save
@@ -231,7 +231,7 @@ export default function MemberForm({ id, className }: Props) {
               ) : null}
               {/*  if no member Id this is a new member */}
               {!member?.id && (
-                <Button variant={"flat"} onPress={onSaveHandler} loading={isSaving}
+                <Button variant={"flat"} onPress={onSaveHandler} isLoading={isSaving}
                         className={"text-default-800 font-medium hover:bg-primary-200"}
                         endContent={<IconDeviceFloppy />}>
                   Save

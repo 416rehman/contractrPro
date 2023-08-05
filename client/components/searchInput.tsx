@@ -60,7 +60,7 @@ export default function SearchInput({
       inputRef.current.focus();
     }} textValue={"search"}>
       <Input aria-label="Search"
-             placeholder="Search" onChange={(e) => setQuery(e.target.value)} ref={inputRef} size={"xs"}
+             placeholder="Search" onChange={(e) => setQuery(e.target.value)} ref={inputRef} size={"sm"}
              className={"w-full rounded-md WTF"} />
     </DropdownItem>,
     ...items
