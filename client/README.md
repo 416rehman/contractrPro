@@ -1,22 +1,14 @@
-# Bytech Labs React Client
+# ContractrPro - Client
 
+![CI](https://github.com/416rehman/contractrPro/actions/workflows/client.yml/badge.svg)
 
-## Available Scripts
+This is the client side of the ContractrPro application. It is built using NextJS.
 
-In the project directory, run:
+You can view the components usability requirements **[here](https://416rehman.github.io/contractrPro/)**.
 
-### `npm install`
+## Getting Started
 
-Installs all the dependencies from the `package.json` file
+To get started, clone this repository and run `npm install` to install all dependencies. Then run `npm run dev` to start
+the development server.
 
-### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-## Screenshots
-![Screenshot 1](https://i.imgur.com/6Q8hpZG.png)
-![Screenshot 2](https://i.imgur.com/OyjaJZw.png)
+Note: Make sure you have the ContractrPro API and Database running before starting the client.

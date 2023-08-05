@@ -8,10 +8,10 @@ module.exports.define = (sequelize, DataTypes) => {
             allowNull: false,
             primaryKey: true,
         },
-        identifier: {
-            // Custom identifier for the job
+        reference: {
+            // Custom reference number for the job
             type: DataTypes.STRING(256),
-            allowNull: false,
+            allowNull: true,
         },
         name: {
             type: DataTypes.STRING(256),
@@ -19,12 +19,34 @@ module.exports.define = (sequelize, DataTypes) => {
         },
         description: {
             type: DataTypes.STRING(512),
-            allowNull: false,
+            allowNull: true,
         },
         status: {
             // 0 = open, 1 = in progress, 2 = completed, 3 = cancelled
             type: DataTypes.SMALLINT,
             defaultValue: 0,
+        },
+        startDate: {
+            // Date the job is scheduled to start
+            type: DataTypes.DATE,
+            allowNull: false,
+            defaultValue: DataTypes.NOW,
+        },
+        dueDate: {
+            // Date the job is scheduled to end - if null, uses the project's due date
+            type: DataTypes.DATE,
+        },
+        completionDate: {
+            // Date the job was completed
+            type: DataTypes.DATE,
+        },
+        payout: {
+            // Total payout the client will give for this job
+            type: DataTypes.DECIMAL(10, 2),
+            defaultValue: 0,
+        },
+        assignedTo: {
+            type: DataTypes.VIRTUAL,
         },
     })
 

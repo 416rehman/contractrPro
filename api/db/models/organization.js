@@ -13,15 +13,15 @@ module.exports.define = (sequelize, DataTypes) => {
         },
         description: {
             type: DataTypes.STRING(512),
-            allowNull: false,
+            allowNull: true,
         },
         email: {
             type: DataTypes.STRING(255),
-            allowNull: false,
+            allowNull: true,
         },
         phone: {
             type: DataTypes.STRING(25),
-            allowNull: false,
+            allowNull: true,
         },
         website: {
             type: DataTypes.STRING(255),
@@ -29,7 +29,7 @@ module.exports.define = (sequelize, DataTypes) => {
         },
         logoUrl: {
             type: DataTypes.STRING(255),
-            allowNull: false,
+            allowNull: true,
         },
     })
 

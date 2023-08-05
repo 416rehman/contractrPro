@@ -20,7 +20,8 @@ const address = require('./models/address'),
     organizationMember = require('./models/organizationMember'),
     organization = require('./models/organization'),
     user = require('./models/user'),
-    vendor = require('./models/vendor')
+    vendor = require('./models/vendor'),
+    token = require('./models/token')
 
 const sequelize = new Sequelize(
     process.env.DB_DATABASE,
@@ -79,6 +80,7 @@ const models = {
     Organization: organization.define(sequelize, DataTypes),
     User: user.define(sequelize, DataTypes),
     Vendor: vendor.define(sequelize, DataTypes),
+    Token: token.define(sequelize, DataTypes),
 }
 
 logger.debug('Associating models...')

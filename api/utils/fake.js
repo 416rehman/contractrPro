@@ -18,7 +18,8 @@ const mockUserData = () => {
         username: faker.internet.userName(),
         name: faker.person.fullName(),
         email: faker.internet.email(),
-        phone: faker.phone.number(),
+        phoneCountry: '355',
+        phoneNumber: faker.phone.number('##########'),
         password: faker.internet.password(),
         avatarUrl: faker.image.url(),
         refreshToken: faker.string.uuid(),
@@ -110,6 +111,7 @@ const mockExpenseData = () => {
     return {
         description: faker.lorem.sentence(),
         date: '' + faker.date.past(),
+        expenseNumber: faker.string.alphanumeric(8),
     }
 }
 
@@ -118,6 +120,7 @@ const mockInvoiceData = () => {
     return {
         invoiceNumber: faker.string.alphanumeric(8),
         invoiceDate: faker.date.past(),
+        issueDate: faker.date.past(),
         dueDate: faker.date.future(),
         poNumber: faker.string.alphanumeric(8),
         note: faker.lorem.sentence(),
@@ -152,6 +155,13 @@ const mockInvoiceEntryData = () => {
 }
 
 const populate = async () => {
+    // Add the dev user.
+    const devUser = await User.create({
+        ...mockUserData(),
+        id: process.env.DEV_USER_UUID,
+        username: process.env.DEV_USER_USERNAME,
+    })
+
     async function generateDataFor(user) {
         // USER ADDRESS -------------------------------------------------------
         // Creates and persists an address in the db
@@ -167,9 +177,19 @@ const populate = async () => {
         org.set({
             // Alternative way to set multiple fields at once
             UpdatedByUserId: user.id,
-            OwnerId: user.id,
+            OwnerId: devUser.id, // We set the dev user as the owner of all these mock organizations
         })
         org = await org.save() // Persist the above changes to the db
+
+        // Add the dev user as a member of the organization otherwise the dev user won't be able to access the organization
+        const ownerMember = OrganizationMember.build(mockOrgMemberData())
+        ownerMember.set({
+            // Alternative way to set multiple fields at once
+            UpdatedByUserId: user.id,
+            OrganizationId: org.id, // the OrganizationId field is required. This is the organization that the member belongs to
+            UserId: devUser.id, // the UserId field is not required. If the member has an account, this is the user that the member belongs to
+        })
+        ownerMember.save() // Persist the above changes to the db
 
         // ORGANIZATION ADDRESS -----------------------------------------------
         // Creates, persists, and sets the address association to the organization in one step
@@ -179,12 +199,11 @@ const populate = async () => {
         // Builds an organization member object but does not persist it to the db
         const member = OrganizationMember.build(mockOrgMemberData())
         member.set({
-            // Alternative way to set multiple fields at once
             UpdatedByUserId: user.id,
-            OrganizationId: org.id, // the OrganizationId field is required. This is the organization that the member belongs to
-            UserId: user.id, // the UserId field is not required. If the member has an account, this is the user that the member belongs to
+            OrganizationId: org.id,
+            UserId: user.id,
         })
-        member.save() // Persist the above changes to the db
+        member.save()
 
         // ORGANIZATION CLIENT -----------------------------------------------
         // Creates and persists a client in the db
@@ -273,15 +292,6 @@ const populate = async () => {
 
         await generateDataFor(user)
     }
-
-    // Add the dev user.
-    const devUser = await User.create({
-        ...mockUserData(),
-        id: process.env.DEV_USER_UUID,
-        username: process.env.DEV_USER_USERNAME,
-    })
-
-    await generateDataFor(devUser)
 }
 
 module.exports = {

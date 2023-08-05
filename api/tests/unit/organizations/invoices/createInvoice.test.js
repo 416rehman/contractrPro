@@ -59,33 +59,24 @@ describe('Create invoice', () => {
         }
     })
 
-    it('should create an invoice without entries', async () => {
+    it('should fail to create an invoice without entries', async () => {
         const invoiceData = fake.mockInvoiceData()
         invoiceData.InvoiceEntries = []
 
-        const response = await request(app)
+        await request(app)
             .post(`/organizations/${orgId}/invoices`)
             .send(invoiceData)
-            .expect(201)
-
-        const { status, data } = response.body
-        const { id, invoiceNumber, InvoiceEntries } = data
-
-        expect(status).toBe('success')
-        expect(id).toBeTruthy()
-        expect(invoiceNumber).toBe(invoiceData.invoiceNumber)
-        expect(InvoiceEntries).toBeInstanceOf(Array)
-        expect(InvoiceEntries.length).toBe(0)
+            .expect(400)
     })
 
-    it('should return 400 if organization ID is invalid', async () => {
+    it('should return 403 if organization ID is invalid', async () => {
         const invalidOrgId = 'invalid-org-id'
         const invoiceData = fake.mockInvoiceData()
 
         const response = await request(app)
             .post(`/organizations/${invalidOrgId}/invoices`)
             .send(invoiceData)
-            .expect(400)
+            .expect(403)
 
         const { status } = response.body
 

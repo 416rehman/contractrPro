@@ -46,13 +46,9 @@ describe(`GET /organizations/:org_id/contracts`, () => {
         expect(res.body.status).toBe('error')
     })
 
-    it(`Should return error for trying to find contracts from an organization that doesn't exist`, async () => {
+    it(`Should return 403 if organization ID is invalid`, async () => {
         orgID = '550e8400-e29b-41d4-a716-446655430000'
 
-        const res = await request(app)
-            .get(`/organizations/${orgID}/contracts`)
-            .expect((res) => res.status === 400 || res.status === 422) // Express-validator returns 422 for validation errors
-
-        expect(res.body.status).toBe('error')
+        await request(app).get(`/organizations/${orgID}/contracts`).expect(403)
     })
 })

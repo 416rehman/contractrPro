@@ -6,4 +6,4 @@ const upload = multer({
     },
 })
 
-module.exports = upload.array('attachments', 10)
+module.exports = upload.array('Attachments', 10)

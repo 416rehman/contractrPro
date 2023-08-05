@@ -2,22 +2,15 @@ const crypto = require('crypto')
 const jwt = require('jsonwebtoken')
 
 /**
- * @returns {object} - Returns a random refresh token
+ * @returns {string} - Returns a random refresh token
  */
 module.exports.generateRefreshToken = function () {
-    return new Promise((resolve, reject) => {
-        try {
-            const refreshToken = crypto.randomBytes(64).toString('hex')
-            resolve(refreshToken)
-        } catch (e) {
-            reject(e)
-        }
-    })
+    return crypto.randomBytes(64).toString('hex')
 }
 
-// generates a random 8 character alphanumeric string
-module.exports.generateInviteCode = function () {
-    return crypto.randomBytes(4).toString('hex')
+// generates a random alphanumeric string of specified length (default 8)
+module.exports.generateRandomCode = function (length = 8) {
+    return crypto.randomBytes(length / 2).toString('hex')
 }
 
 // Checks if a string is an 8 character alphanumeric string
@@ -33,8 +26,8 @@ module.exports.isValidInviteCode = function (inviteCode) {
 module.exports.signJWT = function (payload, secret) {
     return new Promise((resolve, reject) => {
         try {
-            jwt.sign(payload, secret, { expiresIn: 30 * 60 }, (err, token) => {
-                //30 minutes
+            //15 minutes
+            jwt.sign(payload, secret, { expiresIn: 15 * 60 }, (err, token) => {
                 if (err) reject(err)
                 else resolve(token)
             })
@@ -54,6 +47,10 @@ module.exports.pick = (obj, fields) => {
     for (const field of fields) {
         if (Object.prototype.hasOwnProperty.call(obj, field)) {
             picked[field] = obj[field]
+            // if it can be trimmed, trim it
+            if (typeof picked[field] === 'string') {
+                picked[field] = picked[field].trim()
+            }
         }
     }
     return picked

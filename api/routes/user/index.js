@@ -1,3 +1,4 @@
+const meHandler = require('../../middleware/meHandler')
 const routes = require('express').Router()
 
 routes.use((req, res, next) => {
@@ -6,16 +7,37 @@ routes.use((req, res, next) => {
     next()
 })
 
-routes.get('/:user_id', require('./getUser'))
+/**
+ * @api {get} /users Get all users
+ */
+routes.get('/', require('./getUsers'))
 
 /**
- * @api {get} /user/:user_id/organizations Get organizations of a user
+ * @api {use} /me Get the current signedInUser
  */
-routes.get('/:user_id/organizations', require('./getUserOrganizations'))
+routes.use('/me', require('./me'))
 
 /**
- * @api {delete} /user/:user_id/organizations/:org_id leave the organization
+ * @api {get} /users/:user_id Get a signedInUser by id
  */
-routes.delete('/:user_id/organizations/:org_id', require('./leaveOrganization'))
+routes.get('/:user_id', meHandler, require('./me/getUser'))
+
+/**
+ * @api {get} /users/:user_id/organizations Get organizations of a signedInUser
+ */
+routes.get(
+    '/:user_id/organizations',
+    meHandler,
+    require('./getUserWithOrganizations')
+)
+
+/**
+ * @api {delete} /users/:user_id/organizations/:org_id leave the organization
+ */
+routes.delete(
+    '/:user_id/organizations/:org_id',
+    meHandler,
+    require('./leaveOrganization')
+)
 
 module.exports = routes

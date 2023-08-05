@@ -1,4 +1,9 @@
-const { sequelize, Organization } = require('../../db')
+const {
+    sequelize,
+    Organization,
+    Address,
+    OrganizationMember,
+} = require('../../db')
 const {
     createSuccessResponse,
     createErrorResponse,
@@ -16,19 +21,37 @@ module.exports = async (req, res) => {
                 'phone',
                 'website',
                 'logoUrl',
+                'Address',
             ]),
             OwnerId: req.auth.id,
             UpdatedByUserId: req.auth.id,
         }
 
+        console.log('Creating organization')
+
         await sequelize.transaction(async (transaction) => {
+            // create the new organization
             const org = await Organization.create(body, {
+                include: req.body.Address && [Address],
                 transaction,
             })
+
+            // add the owner to the organization
+            await OrganizationMember.create(
+                {
+                    OrganizationId: org.id,
+                    UserId: req.auth.id,
+                    name: req.auth.name || req.auth.username || 'Member',
+                    email: req.auth.email,
+                    phone: req.auth.phone || null,
+                },
+                { transaction }
+            )
 
             return res.status(201).json(createSuccessResponse(org))
         })
     } catch (error) {
+        console.log('Error: ', error)
         return res.status(400).json(createErrorResponse('', error))
     }
 }

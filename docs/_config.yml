@@ -1,0 +1,19 @@
+plugins:
+  - jekyll-relative-links
+  - jekyll-remote-theme
+relative_links:
+  enabled: true
+  collections: true
+remote_theme: pages-themes/merlot@v0.2.0
+include:
+  - CONTRIBUTING.md
+  - README.md
+  - LICENSE.md
+  - COPYING.md
+  - COMPONENTS.md
+  - CODE_OF_CONDUCT.md
+  - ISSUE_TEMPLATE.md
+  - PULL_REQUEST_TEMPLATE.md
+show_downloads: false
+title: ContractrPro Components
+description: A collection of client components for ContractrPro.

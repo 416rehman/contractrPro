@@ -6,21 +6,6 @@ const {
 const { isValidUUID } = require('../../../utils/isValidUUID')
 const { pick } = require('../../../utils/index')
 
-// update expense
-// Example request body:
-// {
-//         "description": "Quod omnis pariatur non facere odio.",
-//         "date": "2023-04-05T12:00:08.085Z",
-//         "VendorId": "b1b1b1b1-b1b1-b1b1-b1b1-b1b1b1b1b1b1",
-//         "ExpenseEntries": [{
-//             "name": "paid joemama1",
-//             "description": "whatever1",
-//             "quantity": 5,
-//             "unitCost": 10,
-//         }]
-// }
-// NOTE: ExpenseEntries is optional - if provided, it will REPLACE all existing entries
-// NOTE: ContractId, and JobId are optional entities to associate with the expense
 module.exports = async (req, res) => {
     try {
         const { org_id, expense_id } = req.params
@@ -33,17 +18,36 @@ module.exports = async (req, res) => {
                 .json(createErrorResponse('Invalid expense_id'))
         }
 
+        const ExpenseEntries =
+            req.body?.ExpenseEntries?.map((entry) =>
+                pick(entry, ['description', 'quantity', 'unitCost', 'name'])
+            ) || []
+
+        if (ExpenseEntries.length === 0) {
+            return res
+                .status(400)
+                .json(
+                    createErrorResponse(
+                        'ExpenseEntries is required. Provide at least one entry, like this: { "ExpenseEntries": [{ "description": "some description", "quantity": 1, "unitPrice": 100, "name": "some name" }] }'
+                    )
+                )
+        }
+
         const body = {
             ...pick(req.body, [
                 'description',
                 'date',
+                'taxRate',
                 'VendorId',
                 'ContractId',
                 'JobId',
             ]),
+            ExpenseEntries,
             OrganizationId: org_id,
             UpdatedByUserId: req.auth.id,
         }
+
+        console.log('body', body)
 
         await sequelize.transaction(async (transaction) => {
             let expense = await Expense.findOne({
@@ -64,7 +68,7 @@ module.exports = async (req, res) => {
                 transaction,
             })
 
-            if (req.body.ExpenseEntries && req.body.ExpenseEntries.length > 0) {
+            if (ExpenseEntries && ExpenseEntries.length > 0) {
                 // delete all existing entries first
                 await ExpenseEntry.destroy({
                     where: {
@@ -74,7 +78,7 @@ module.exports = async (req, res) => {
 
                 // create new entries
                 await ExpenseEntry.bulkCreate(
-                    req.body.ExpenseEntries.map((entry) => ({
+                    ExpenseEntries.map((entry) => ({
                         ...entry,
                         ExpenseId: expense.id,
                         UpdatedByUserId: req.auth.id,
@@ -83,19 +87,19 @@ module.exports = async (req, res) => {
                         transaction,
                     }
                 )
-            }
 
-            // re-fetch expense with entries
-            expense = await Expense.findOne({
-                where: {
-                    OrganizationId: org_id,
-                    id: expense_id,
-                },
-                include: {
-                    model: ExpenseEntry,
-                },
-                transaction,
-            })
+                // re-fetch expenseEntries with entries
+                expense = await Expense.findOne({
+                    where: {
+                        OrganizationId: org_id,
+                        id: expense_id,
+                    },
+                    transaction,
+                    include: {
+                        model: ExpenseEntry,
+                    },
+                })
+            }
 
             res.status(200).json(createSuccessResponse(expense))
         })

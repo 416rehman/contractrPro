@@ -27,7 +27,7 @@ describe('Get all organization invoices', () => {
         const invoice = data[0]
         expect(invoice).toHaveProperty('id')
         expect(invoice).toHaveProperty('invoiceNumber')
-        expect(invoice).toHaveProperty('date')
+        expect(invoice).toHaveProperty('issueDate')
         expect(invoice).toHaveProperty('createdAt')
         expect(invoice).toHaveProperty('updatedAt')
         expect(invoice).toHaveProperty('ContractId')
@@ -64,7 +64,7 @@ describe('Get all organization invoices', () => {
         const invoice = data[0]
         expect(invoice).toHaveProperty('id')
         expect(invoice).toHaveProperty('invoiceNumber')
-        expect(invoice).toHaveProperty('date')
+        expect(invoice).toHaveProperty('issueDate')
         expect(invoice).toHaveProperty('createdAt')
         expect(invoice).toHaveProperty('updatedAt')
         expect(invoice).toHaveProperty('ContractId')
@@ -76,12 +76,12 @@ describe('Get all organization invoices', () => {
         expect(invoice).not.toHaveProperty('InvoiceEntries')
     })
 
-    it('should return 400 if organization ID is invalid', async () => {
+    it('should return 403 if organization ID is invalid', async () => {
         const invalidOrgId = 'invalid-org-id'
 
         const response = await request(app)
             .get(`/organizations/${invalidOrgId}/invoices?expand=true`)
-            .expect(400)
+            .expect(403)
 
         const { status } = response.body
 

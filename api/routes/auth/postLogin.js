@@ -8,7 +8,7 @@ const bcrypt = require('bcrypt')
 const { pick } = require('../../utils')
 
 /**
- * @api {post} /auth/login Gets the user's opaque refresh token
+ * @api {post} /auth/login Gets the user's refresh token
  * @apiName Login
  */
 module.exports = async (req, res) => {
@@ -36,7 +36,11 @@ module.exports = async (req, res) => {
         }
 
         return res.json(
-            createSuccessResponse({ refreshToken: user.refreshToken })
+            createSuccessResponse({
+                refreshToken: user.refreshToken,
+                message:
+                    'Use this refresh token at the /auth/token endpoint to get an access token and set the cookie.',
+            })
         )
     } catch (error) {
         return res.status(400).json(createErrorResponse('', error))

@@ -10,7 +10,7 @@ const { pick } = require('../../../utils/index')
 // Example request body:
 // {
 //         "description": "Quod omnis pariatur non facere odio.",
-//         "date": "2023-04-05T12:00:08.085Z",
+//         "issueDate": "2023-04-05T12:00:08.085Z",
 //         "VendorId": "b1b1b1b1-b1b1-b1b1-b1b1-b1b1b1b1b1b1",
 //         "InvoiceEntries": [{
 //             "name": "paid joemama1",
@@ -33,6 +33,21 @@ module.exports = async (req, res) => {
                 .json(createErrorResponse('Invalid invoice_id'))
         }
 
+        const InvoiceEntries =
+            req.body?.InvoiceEntries?.map((entry) =>
+                pick(entry, ['description', 'quantity', 'unitCost', 'name'])
+            ) || []
+
+        if (InvoiceEntries.length === 0) {
+            return res
+                .status(400)
+                .json(
+                    createErrorResponse(
+                        'InvoiceEntries is required. Provide at least one entry, like this: { "InvoiceEntries": [{ "description": "some description", "quantity": 1, "unitPrice": 100, "name": "some name" }] }'
+                    )
+                )
+        }
+
         const body = {
             ...pick(req.body, [
                 'invoiceNumber',
@@ -44,11 +59,13 @@ module.exports = async (req, res) => {
                 'BillToClientId',
                 'ContractId',
                 'JobId',
-                'InvoiceEntries',
             ]),
+            InvoiceEntries,
             OrganizationId: org_id,
             UpdatedByUserId: req.auth.id,
         }
+
+        console.log('body', body)
 
         await sequelize.transaction(async (transaction) => {
             let invoice = await Invoice.findOne({
@@ -69,7 +86,7 @@ module.exports = async (req, res) => {
                 transaction,
             })
 
-            if (req.body.InvoiceEntries && req.body.InvoiceEntries.length > 0) {
+            if (InvoiceEntries && InvoiceEntries.length > 0) {
                 // delete all existing entries first
                 await InvoiceEntry.destroy({
                     where: {
@@ -79,7 +96,7 @@ module.exports = async (req, res) => {
 
                 // create new entries
                 await InvoiceEntry.bulkCreate(
-                    req.body.InvoiceEntries.map((entry) => ({
+                    InvoiceEntries.map((entry) => ({
                         ...entry,
                         InvoiceId: invoice.id,
                         UpdatedByUserId: req.auth.id,
@@ -89,7 +106,7 @@ module.exports = async (req, res) => {
                     }
                 )
 
-                // re-fetch invoice with entries
+                // re-fetch invoiceEntries with entries
                 invoice = await Invoice.findOne({
                     where: {
                         OrganizationId: org_id,

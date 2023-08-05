@@ -3,18 +3,20 @@ const app = require('../../../../server')
 const {
     OrganizationMember,
     Organization,
+    User,
     sequelize,
 } = require('../../../../db')
 const fake = require('../../../../utils/fake')
+const { randomInt } = require('crypto')
 
 let orgId, userId
 beforeAll(async () => {
     const orgs = await Organization.findAll()
     orgId = orgs[0].id
 
-    // Get existing user ID from /organizations/:org_id/members
-    const membersResult = await request(app).get(`/admin/users`).expect(200)
-    userId = membersResult.body.data.users[1].id
+    // Get an existing user ID
+    const membersResult = await User.findAll()
+    userId = membersResult[randomInt(0, membersResult.length - 1)].id
 })
 afterAll(async () => {
     jest.restoreAllMocks()
@@ -117,12 +119,16 @@ describe('Create organization member', () => {
     it('should return 400 if UserId is provided and user is already a member of the organization', async () => {
         const orgMemberInfo = fake.mockOrgMemberData()
         orgMemberInfo.UserId = userId
-
-        // Create a member with the same user ID
-        const initMember = await OrganizationMember.create({
-            ...orgMemberInfo,
-            OrganizationId: orgId,
-        })
+        let initMember
+        try {
+            // Create a member with the same user ID
+            initMember = await OrganizationMember.create({
+                ...orgMemberInfo,
+                OrganizationId: orgId,
+            })
+        } catch (error) {
+            console.log(error)
+        }
 
         const response = await request(app)
             .post(`/organizations/${orgId}/members`)
@@ -149,7 +155,7 @@ describe('Create organization member', () => {
         const orgMemberInfo = fake.mockOrgMemberData()
 
         // Mocking the implementation to simulate a server error
-        jest.spyOn(OrganizationMember, 'build').mockImplementation(() => {
+        jest.spyOn(OrganizationMember, 'create').mockImplementation(() => {
             throw new Error('Error message from the server')
         })
 

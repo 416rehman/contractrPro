@@ -1,0 +1,13 @@
+version: '3.5'
+
+services:
+  cp-api-dev:
+    build: .
+    container_name: cp-client-dev
+    #    image: watchdogsrox/contractrpro-client
+    environment:
+      - NEXT_PUBLIC_API_URL=https://contractrpro-api.ahmadz.ai
+
+networks:
+  npm-network:
+    external: true

@@ -42,7 +42,7 @@ describe('Update invoice', () => {
         expect(data.InvoiceEntries).not.toBe(orgInvoice.InvoiceEntries)
     })
 
-    it('should update the invoice and return the updated invoice without InvoiceEntries', async () => {
+    it('should NOT update the invoice without InvoiceEntries', async () => {
         const invoiceId = orgInvoice.id
 
         const requestBody = fake.mockInvoiceData()
@@ -50,26 +50,20 @@ describe('Update invoice', () => {
         const response = await request(app)
             .put(`/organizations/${orgId}/invoices/${invoiceId}`)
             .send(requestBody)
-            .expect(200)
+            .expect(400)
 
-        const { status, data } = response.body
+        const { status } = response.body
 
-        expect(status).toBe('success')
-        expect(data).toHaveProperty('id', invoiceId)
-        expect(data).toHaveProperty('invoiceNumber', requestBody.invoiceNumber)
-        expect(data).toHaveProperty('OrganizationId', orgId)
-        expect(data).toHaveProperty('UpdatedByUserId')
-
-        expect(data.InvoiceEntries).toBe(orgInvoice.InvoiceEntries)
+        expect(status).toBe('error')
     })
 
-    it('should return 400 if organization ID is invalid', async () => {
+    it('should return 403 if organization ID is invalid', async () => {
         const invalidOrgId = 'invalid-org-id'
         const invoiceId = orgInvoice.id
 
         const response = await request(app)
             .put(`/organizations/${invalidOrgId}/invoices/${invoiceId}`)
-            .expect(400)
+            .expect(403)
 
         const { status } = response.body
 

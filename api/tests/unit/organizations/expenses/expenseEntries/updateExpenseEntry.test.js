@@ -68,7 +68,7 @@ describe('Update expense entry', () => {
         expect(data.createdAt).toBeDefined()
     })
 
-    it('should return 400 if organization ID is invalid', async () => {
+    it('should return 403 if organization ID is invalid', async () => {
         const invalidOrgId = 'invalid-org-id'
         const entryId = expenseEntry.id
         const requestBody = fake.mockExpenseEntryData()
@@ -78,7 +78,7 @@ describe('Update expense entry', () => {
                 `/organizations/${invalidOrgId}/expenses/${expenseId}/entries/${entryId}`
             )
             .send(requestBody)
-            .expect(400)
+            .expect(403)
 
         const { status } = response.body
 

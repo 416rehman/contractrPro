@@ -15,7 +15,8 @@ services:
             - '4000'
         networks:
             - cp_net
-
+        env_file:
+            - ./.env
 networks:
     cp_net:
         name: cp_net

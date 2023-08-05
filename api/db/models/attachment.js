@@ -8,23 +8,23 @@ module.exports.define = (sequelize, DataTypes) => {
             allowNull: false,
             primaryKey: true,
         },
-        filename: {
+        name: {
             type: DataTypes.STRING(256),
             allowNull: false,
             // setter to limit the filename to 256 characters
             set(val) {
-                this.setDataValue('filename', val.substring(0, 256))
+                this.setDataValue('name', val.substring(0, 256))
             },
         },
-        mimetype: {
+        type: {
             type: DataTypes.STRING(256),
             allowNull: false,
             // setter to limit the mimetype to 256 characters
             set(val) {
-                this.setDataValue('mimetype', val.substring(0, 256))
+                this.setDataValue('type', val.substring(0, 256))
             },
         },
-        fileSizeBytes: {
+        size: {
             type: DataTypes.BIGINT,
             allowNull: false,
         },

@@ -52,33 +52,24 @@ describe('Create expense', () => {
         expect(ExpenseEntries[0]).toHaveProperty('ExpenseId', id)
     })
 
-    it('should create an expense without entries', async () => {
+    it('should not create an expense without entries', async () => {
         const expenseData = fake.mockExpenseData()
         expenseData.ExpenseEntries = []
 
-        const response = await request(app)
+        await request(app)
             .post(`/organizations/${orgId}/expenses`)
             .send(expenseData)
-            .expect(201)
-
-        const { status, data } = response.body
-        const { id, description, ExpenseEntries } = data
-
-        expect(status).toBe('success')
-        expect(id).toBeTruthy()
-        expect(description).toBe(expenseData.description)
-        expect(ExpenseEntries).toBeInstanceOf(Array)
-        expect(ExpenseEntries.length).toBe(0)
+            .expect(400)
     })
 
-    it('should return 400 if organization ID is invalid', async () => {
+    it('should return 403 if organization ID is invalid', async () => {
         const invalidOrgId = 'invalid-org-id'
         const expenseData = fake.mockExpenseData()
 
         const response = await request(app)
             .post(`/organizations/${invalidOrgId}/expenses`)
             .send(expenseData)
-            .expect(400)
+            .expect(403)
 
         const { status } = response.body
 
