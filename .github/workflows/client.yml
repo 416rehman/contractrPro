@@ -1,4 +1,4 @@
-name: ContractrPro Client CI
+name: ContractrPro Client
 
 on:
   pull_request:
@@ -80,6 +80,7 @@ jobs:
   deploy:
     # Sends a webhook to Portainer to deploy the client stack. URL is stored in the secret PORTAINER_CLIENT_WEBHOOK_URL
     needs: [ build ]
+    environment: "Dev Env"
     runs-on: ubuntu-latest
     steps:
       - name: Invoke Portainer deploy webhook
