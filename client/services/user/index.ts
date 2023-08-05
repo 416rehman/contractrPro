@@ -1,7 +1,8 @@
 import { create } from "zustand";
-import { Organization, tUser } from "@/types";
+import { Organization, OrganizationSummary, tUser } from "@/types";
 
 import {
+  getOrganizationSummary,
   requestAvatarChange,
   requestCreateOrganization,
   requestDeleteOrganization,
@@ -26,6 +27,10 @@ export const useUserStore = create((set: any) => ({
   currentOrganization: null as Organization | null,
   setCurrentOrganization: (organization: Organization | null) => {
     set({ currentOrganization: organization });
+  },
+  currentOrganizationSummary: null as OrganizationSummary | null,
+  setCurrentOrganizationSummary: (summary: OrganizationSummary | null) => {
+    set({ currentOrganizationSummary: summary });
   },
   lastRequestedOn: null as Date | null
 }));
@@ -71,6 +76,14 @@ export const setCurrentOrganization = (organization: Organization | null) => {
     clearMembersStore();
     clearInvoicesStore();
     clearVendorStore();
+
+    if (organization?.id) {
+      getOrganizationSummary(organization?.id).then((summary) => {
+        useUserStore.getState().setCurrentOrganizationSummary(summary);
+      });
+    } else {
+      useUserStore.getState().setCurrentOrganizationSummary(null);
+    }
   }
 };
 
@@ -202,4 +215,6 @@ export const changePhone = async (phoneCountry: string, phoneNumber: string) => 
 export const clearUserStore = () => {
   useUserStore.getState().setUser({});
   useUserStore.getState().lastRequestedOn = null;
+  useUserStore.getState().setCurrentOrganization(null);
+  useUserStore.getState().setCurrentOrganizationSummary(null);
 };

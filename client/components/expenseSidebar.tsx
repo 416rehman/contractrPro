@@ -4,9 +4,9 @@ import { CardFooter, Input } from "@nextui-org/react";
 import { Button } from "@nextui-org/button";
 import NextLink from "next/link";
 import clsx from "clsx";
-import { IconBuilding, IconChevronDown, IconListSearch } from "@tabler/icons-react";
+import { IconChevronDown, IconDevicesDollar, IconListSearch } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
-import { loadExpenses,useExpensesStore } from "@/services/expenses";
+import { loadExpenses, useExpensesStore } from "@/services/expenses";
 import { useUserStore } from "@/services/user";
 import { useParams } from "next/navigation";
 import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/popover";
@@ -25,16 +25,18 @@ export default function ExpenseSidebar({ className }: Props) {
   const [currentOrg] = useUserStore(state => [state.currentOrganization]);
   const [expenses] = useExpensesStore(state => [state.expenses]);
   const [filter, setFilter] = useState("");
+  const [expensesToDisplay, setFilteredExpenses] = useState(expenses);
   const params = useParams();
 
   useEffect(() => {
     loadExpenses(currentOrg?.id);
   }, [currentOrg?.id]);
 
-  const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFilter(e.target.value);
-    expenses.filter((item: any) => item.name.toLowerCase().includes(e.target.value.toLowerCase()));
-  };
+  useEffect(() => {
+    // filter
+    const expensesToDisplay = expenses.filter((item: any) => item.expenseNumber.toLowerCase().includes(filter.toLowerCase()));
+    setFilteredExpenses(expensesToDisplay);
+  }, [filter, expenses]);
 
   const sidebar = <Card shadow={"none"} isBlurred={true}
                         className={clsx("border-none rounded-none", className)}>
@@ -42,19 +44,24 @@ export default function ExpenseSidebar({ className }: Props) {
       <h1 className={"text-2xl font-bold"}>Expenses</h1>
       {/*  Search bar*/}
       <Input aria-label={"Filter expenses"}
-             placeholder={"Filter"} size={"sm"} endContent={<IconListSearch className={"text-default-400"} />}
+             placeholder={"Filter"} size={"sm"} startContent={<IconListSearch className={"text-default-400"} />}
              variant={"underlined"}
-             onChange={handleFilterChange} />
+             onChange={(e) => setFilter(e.target.value)}
+             onClear={() => setFilter("")}
+             value={filter}
+             isClearable={true}
+      />
+
     </CardHeader>
     <CardBody className={"p-2"}>
       <ul className={"flex flex-col w-full"}>
-        {expenses && expenses.map((expense) => (
+        {expensesToDisplay && expensesToDisplay.map((expense) => (
           <li key={expense.id}>
             <Button
               className={"w-full justify-start text-default-600 font-medium"}
               as={NextLink}
               href={"/expenses/" + expense?.id}
-              startContent={<IconBuilding className={"text-default-300"} size={"20"} />}
+              startContent={<IconDevicesDollar className={"text-default-300"} size={"20"} />}
               variant={params.id === expense?.id ? "flat" : "light"}
               size={"sm"}>
               <span className={"truncate"}>{expense?.expenseNumber}</span>
@@ -74,7 +81,7 @@ export default function ExpenseSidebar({ className }: Props) {
   const dropdown = <Popover>
     <PopoverTrigger className={clsx("w-full flex md:hidden", className)}>
       <Button variant={"ghost"} className={""} endContent={<IconChevronDown />}>
-      Expenses
+        Expenses
       </Button>
     </PopoverTrigger>
     <PopoverContent className={"rounded-md !w-[94vw] !h-[85vh] p-1"}>

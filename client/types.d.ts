@@ -200,3 +200,14 @@ type Comment = {
   "UpdatedByUserId"?: string
   "Attachments"?: Array<Attachment | any>
 }
+
+type OrganizationSummary = {
+  "numOfVendors": number,
+  "numOfMembers": number,
+  "numOfExpenses": number,
+  "numOfInvoices": number,
+  "expensesTotal": number,
+  "invoicesTotal": number,
+  "expensesTotalChangeSinceLastMonth": number,
+  "invoicesTotalChangeSinceLastMonth": number,
+}

@@ -4,16 +4,41 @@ import { subtitle, title } from "@/components/primitives";
 import { Spacer } from "@nextui-org/spacer";
 import OrganizationSelector from "@/components/organizationSelector";
 import NextLink from "next/link";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { deleteOrganizationAndPersist, useUserStore } from "@/services/user";
 import OrganizationForm from "@/components/organizationForm";
 import { Divider } from "@nextui-org/divider";
 import { Button, ButtonGroup } from "@nextui-org/button";
-import { IconChartTreemap, IconDotsVertical, IconListSearch, IconPencil, IconPencilOff, IconTrash } from "@tabler/icons-react";
+import {
+  IconBuildingStore,
+  IconChartTreemap,
+  IconDevicesDollar,
+  IconDotsVertical,
+  IconPencil,
+  IconPencilOff,
+  IconReceipt2,
+  IconTrash,
+  IconUsers
+} from "@tabler/icons-react";
 import { Tooltip } from "@nextui-org/tooltip";
 import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/dropdown";
-import { Contract, Organization, tUser } from "@/types";
-import { Card, CardBody, CardHeader, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from "@nextui-org/react";
+import { Contract, Organization } from "@/types";
+import {
+  Card,
+  CardBody,
+  CardFooter,
+  CardHeader,
+  Input,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  useDisclosure
+} from "@nextui-org/react";
+import ExpensesTotalCard from "@/components/expensesTotalCard";
+import InvoicesTotalCard from "@/components/invoicesTotalCard";
+import SummaryCard from "@/components/summaryCard";
 import { loadContracts, useContractsStore } from "@/services/contracts";
 
 /**
@@ -23,14 +48,13 @@ import { loadContracts, useContractsStore } from "@/services/contracts";
  */
 export default function Dashboard() {
   const currentOrganization = useUserStore(state => state.currentOrganization);
-  const currentUser = useUserStore(state => state.user);
+  const currentOrganizationSummary = useUserStore(state => state.currentOrganizationSummary);
   const [currentOrganizationContracts] = useContractsStore(state => [state.contracts]);
 
   const contracts = currentOrganizationContracts;
 
   if (!currentOrganization?.id) {
     return (
-      
       <div className="flex flex-col flex-grow text-center justify-center items-center w-full">
         <h1 className={title()}>Do&nbsp;<span className={title({ color: "violet" })}>more&nbsp;</span></h1>
         <br />
@@ -46,37 +70,48 @@ export default function Dashboard() {
     );
   }
 
+  const cards = () => {
+    return (
+      <>
+        <ExpensesTotalCard
+          expensesTotal={currentOrganizationSummary?.expensesTotal}
+          changeSinceLastMonth={currentOrganizationSummary?.expensesTotalChangeSinceLastMonth} />
+        <InvoicesTotalCard invoicesTotal={currentOrganizationSummary?.invoicesTotal}
+                           changeSinceLastMonth={currentOrganizationSummary?.invoicesTotalChangeSinceLastMonth} />
+        <SummaryCard value={currentOrganizationSummary?.numOfInvoices}
+                     icon={<IconReceipt2 className={"text-default-500"} size={"20"} />} title={"Invoices"}
+                     link={"/invoices"} linkText={"View Invoices"} />
+        <SummaryCard value={currentOrganizationSummary?.numOfExpenses}
+                     icon={<IconDevicesDollar className={"text-default-500"} size={"20"} />} title={"Expenses"}
+                     link={"/expenses"} linkText={"View Expenses"} />
+        <SummaryCard value={currentOrganizationSummary?.numOfMembers}
+                     icon={<IconUsers className={"text-default-500"} size={"20"} />} title={"Members"}
+                     link={"/members"} linkText={"View Members"} />
+        <SummaryCard value={currentOrganizationSummary?.numOfVendors}
+                     icon={<IconBuildingStore className={"text-default-500"} size={"20"} />} title={"Vendors"}
+                     link={"/vendors"} linkText={"View Vendors"} />
+      </>
+    );
+  };
+
   return (
 
     <div className="flex flex-col gap-4">
-      <div className="flex flex-row flex-wrap flex-grow gap-4 p-4">
-        <DashboardUserGreeting currentUser={currentUser} />
-      </div>
-
-      <div className="flex flex-row flex-wrap flex-grow gap-4 p-2 md:p-10">
-
+      <div className="flex flex-row flex-grow gap-4 p-2 flex-wrap md:p-10 md:flex-nowrap">
         <DashboardOrganizationForm currentOrganization={currentOrganization} />
-
-        <Divider orientation={"vertical"} className={"hidden md:block"} />
-
         <div className="flex flex-col gap-4">
-          <h1 className={title()}>At a glance!</h1>
-          {/*  More quick stats and links here, such as user assigned tasks, total revenue/expenses, etc. */}
+          <h1 className={"text-3xl font-bold"}>Overview</h1>
+          <div className="flex flex-row gap-4 flex-wrap">
+            <DashboardOrganizationContractsDue currentOrganization={currentOrganization}
+                                               currentOrganizationContracts={contracts} />
+            {currentOrganizationSummary && cards()}
+          </div>
         </div>
-
-        <div className="flex flex-col gap-4">
-            <DashboardOrganizationContractsDue currentOrganization={currentOrganization} currentOrganizationContracts={contracts} />
-        </div>
-
       </div>
     </div>
-   
+
   );
 
-}
-
-type DashboardUserGreetingProps = {
-  currentUser: tUser;
 }
 
 type DashboardOrganizationProps = {
@@ -86,28 +121,6 @@ type DashboardOrganizationProps = {
 type DashboardOrganizationContractsDueProps = {
   currentOrganization: Organization,
   currentOrganizationContracts: Contract[],
-}
-
-export const DashboardUserGreeting = ({ currentUser }: DashboardUserGreetingProps) => {
-
-  const currentHour: number = new Date().getHours();
-
-  let greeting: String = "";
-
-  if (currentHour < 12) {
-    greeting = 'Good Morning';
-  }
-  else if (currentHour >= 12 && currentHour <= 17) {
-    greeting = 'Good Afternoon';
-  }
-  else {
-    greeting = 'Good Evening';
-  }
-
-  return (
-    <h1 className={title()}>{greeting},&nbsp;{currentUser?.name}!</h1>
-  );
-
 }
 
 
@@ -187,61 +200,74 @@ export const DashboardOrganizationForm = ({ currentOrganization }: DashboardOrga
   );
 };
 
-export const DashboardOrganizationContractsDue = ({ currentOrganization, currentOrganizationContracts }: DashboardOrganizationContractsDueProps) => {
+export const DashboardOrganizationContractsDue = ({
+                                                    currentOrganization,
+                                                    currentOrganizationContracts
+                                                  }: DashboardOrganizationContractsDueProps) => {
 
   const [isHovered, setIsHovered] = useState(false);
 
   const sortedContractsWithDueDate = currentOrganizationContracts.filter((contract) => contract.dueDate)
-  .sort((a, b) => {
-    if (a.dueDate && !b.dueDate) {
-      return -1;
-    }
-    else if (!a.dueDate && b.dueDate) {
-      return 1;
-    }
-    else if (a.dueDate && b.dueDate) {
-      return a.dueDate.localeCompare(b.dueDate);
-    }
-    else {
-      return 0;
-    }
-  }).slice(0,10);
+    .sort((a, b) => {
+      if (a.dueDate && !b.dueDate) {
+        return -1;
+      } else if (!a.dueDate && b.dueDate) {
+        return 1;
+      } else if (a.dueDate && b.dueDate) {
+        return a.dueDate.localeCompare(b.dueDate);
+      } else {
+        return 0;
+      }
+    }).slice(0, 10);
 
   useEffect(() => {
     loadContracts(currentOrganization?.id);
   }, [currentOrganization?.id]);
 
   return (
-    <Card className={"h-full"}>
-      <CardHeader className={title()}>
-        <h1 className={"text-center text-2xl font-bold"}>Contracts&nbsp;Due</h1>
+    <Card>
+      <CardHeader className={"px-4 py-2"}>
+        <span className={"text-center font-bold"}>Upcoming Contracts</span>
       </CardHeader>
-      <CardBody>
+      <CardBody className={"px-4 py-2 flex flex-col gap-2"}>
         <Divider />
-        <br />
         {sortedContractsWithDueDate.length > 0 ?
           <ul>
             {sortedContractsWithDueDate.map((contract) => (
               <li key={contract.id}>
-                <Button onMouseOver={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)} variant={isHovered ? "flat" : "solid"} className={"text-center text-xs mb-5 w-full"} 
-                        startContent={<IconChartTreemap className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />} as={NextLink} href={"/contracts/" + contract?.id}>
+                <Button onMouseOver={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}
+                        variant={isHovered ? "flat" : "solid"} className={"text-center text-xs mb-5 w-full"}
+                        startContent={<IconChartTreemap
+                          className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />} as={NextLink}
+                        href={"/contracts/" + contract?.id}>
                   <div>
                     {contract?.name && contract.name.charAt(0).toUpperCase() + contract.name.slice(1)}
                     <br />
                     {contract?.dueDate ? <span>Due Date: {new Date(contract?.dueDate)
-                    .toLocaleString("en-CA", { year: "numeric", month: "numeric", day: "numeric", hour: "numeric", minute: "numeric", timeZone: "UTC" })
-                    .toLocaleUpperCase()}</span> : ""}
+                      .toLocaleString("en-CA", {
+                        year: "numeric",
+                        month: "numeric",
+                        day: "numeric",
+                        hour: "numeric",
+                        minute: "numeric",
+                        timeZone: "UTC"
+                      })
+                      .toLocaleUpperCase()}</span> : ""}
                   </div>
                 </Button>
-              </li>             
+              </li>
             ))}
           </ul>
-          : 
-          <div className={subtitle()}>
-            <p className={"text-center text-1xl font-bold"}>No Contracts Due</p>
-          </div>
+          :
+          <p className={" text-sm text-center text-default-500"}>No contracts due soon.</p>
         }
       </CardBody>
-    </Card>            
+      <CardFooter className={"px-4 py-2"}>
+        <NextLink href={"/contracts"}>
+          <span
+            className={"text-xs font-md underline decoration-dotted underline-offset-2 text-default-500 hover:text-default-600"}>View all contracts</span>
+        </NextLink>
+      </CardFooter>
+    </Card>
   );
-}
+};

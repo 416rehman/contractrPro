@@ -85,4 +85,9 @@ routes.use('/:org_id/invoices', authorizeOrg, require('./invoices'))
  */
 routes.use('/:org_id/vendors', authorizeOrg, require('./vendors'))
 
+/**
+ * @api {use} /organizations/:org_id/summary Uses the organization's summary router
+ */
+routes.use('/:org_id/summary', authorizeOrg, require('./summary'))
+
 module.exports = routes

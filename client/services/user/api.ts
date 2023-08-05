@@ -121,3 +121,17 @@ export async function requestPhoneChange(phoneCountry, phoneNumber, UserId = "me
     return Promise.reject(err?.message || err);
   }
 }
+
+export async function getOrganizationSummary(organizationId) {
+  try {
+    const data = await request(`${apiUrl}/organizations/${organizationId}/summary`, {
+      method: "GET",
+      credentials: "include"
+    });
+
+    return Promise.resolve(data);
+  } catch (err) {
+    console.log(err);
+    return Promise.reject(err?.message || err);
+  }
+}

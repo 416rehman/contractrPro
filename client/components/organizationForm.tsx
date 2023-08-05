@@ -1,6 +1,6 @@
 import { Accordion, AccordionItem, Button, Card, CardBody, CardFooter, Image, Input } from "@nextui-org/react";
 import { IconChevronLeft, IconHash } from "@tabler/icons-react";
-import { updateOrganizationAndPersist, useUserStore } from "@/services/user";
+import { setCurrentOrganization, updateOrganizationAndPersist, useUserStore } from "@/services/user";
 import { useToastsStore } from "@/services/toast";
 import { useEffect, useState } from "react";
 import { Organization } from "@/types";
@@ -59,7 +59,7 @@ export default function OrganizationForm({ onSave, organization, editing = true 
 
   const onSubmit = () => {
     updateOrganizationAndPersist(organizationData).then((newOrg) => {
-      useUserStore.getState().setCurrentOrganization(newOrg);
+      setCurrentOrganization(newOrg);
       toastsStore.addToast({
         id: "create-org-success",
         title: "Created Organization",
