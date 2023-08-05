@@ -38,8 +38,6 @@ if (process.env.NODE_ENV === 'development') {
     })
 }
 
-app.options('*', cors())
-
 app.use('/', routes)
 
 app.use((req, res) => {
