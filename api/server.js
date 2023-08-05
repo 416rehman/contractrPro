@@ -17,14 +17,8 @@ app.use(
         logger,
     })
 )
-app.use(
-    cors({
-        origin: ['http://localhost:3000', '*'],
-        methods: ['POST', 'GET', 'PATCH', 'DELETE', 'OPTIONS', 'PUT'],
-        allowedHeaders: ['Content-Type', 'Authorization'],
-        credentials: true,
-    })
-)
+app.use(cors())
+app.options('*', cors())
 app.use(cookieParser(process.env.COOKIE_SECRET))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
