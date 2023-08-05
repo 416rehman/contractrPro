@@ -1,4 +1,4 @@
-name: ContractrPro Client CI
+name: ContractrPro Client
 
 on:
   pull_request:
@@ -44,8 +44,8 @@ jobs:
           commit_message: Generated markdown docs
           branch: ${{ github.head_ref }}
   build:
-    # Only runs if the triggering actor is not the GitHub Actions bot
-    if: github.triggering_actor != 'github-actions[bot]'
+    # Only runs if the triggering actor is not the GitHub Actions bot and is a push to the main or dev branch
+    if: github.triggering_actor != 'github-actions[bot]' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev')
     permissions:
       contents: write
     # Uses a Ubuntu Docker VM to run the application on
@@ -80,6 +80,7 @@ jobs:
   deploy:
     # Sends a webhook to Portainer to deploy the client stack. URL is stored in the secret PORTAINER_CLIENT_WEBHOOK_URL
     needs: [ build ]
+    environment: "Dev Env"
     runs-on: ubuntu-latest
     steps:
       - name: Invoke Portainer deploy webhook

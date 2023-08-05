@@ -95,7 +95,7 @@ jobs:
     needs: [ test-api ]
     runs-on: ubuntu-latest
     environment: "Dev Env"
-    if: github.ref == 'refs/heads/dev'
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev'
     defaults:
       run:
         working-directory: ./api
