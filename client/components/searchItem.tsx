@@ -11,7 +11,7 @@ import {
   IconReceipt2,
   IconUsers
 } from "@tabler/icons-react";
-import NextLink from "next/link";
+import { useRouter } from "next/navigation";
 
 type SearchItemProps = {
   type?: "organizationMember" | "contract" | "invoice" | "expense" | "job" | "client" | "vendor" | "attachment";
@@ -99,6 +99,7 @@ const getLink = (type: SearchItemProps["type"], item: any) => {
  * SearchItem component is used by the SearchBox component to display search results, this receives an item and displays it according to its type and its fields
  */
 export default function SearchItem({ type, query, item, onClick }: SearchItemProps) {
+  const router = useRouter();
   const [parts, setParts] = useState<string[]>([]);
   const [title, setTitle] = useState<string>("");
   const [fieldName, setFieldName] = useState<string>("");
@@ -107,10 +108,10 @@ export default function SearchItem({ type, query, item, onClick }: SearchItemPro
   useEffect(() => {
     // The title will be whatever key has the query in it
     if (item) {
-      const key = Object.keys(item).find(
-        (key) =>
-          typeof item[key] === "string" && // Ensure the value is a string
-          item[key]?.toLowerCase().includes(query.toLowerCase())
+      const key = Object.keys(item).find((key) =>
+        typeof item[key] === "string" && // Ensure the value is a string
+        key !== "id" && // Ensure the key is not the id
+        item[key]?.toLowerCase().includes(query.toLowerCase())
       );
       if (key) {
         setFieldName(key);
@@ -132,10 +133,13 @@ export default function SearchItem({ type, query, item, onClick }: SearchItemPro
   return (
     <Card shadow={"none"}
           className={"p-2 flex flex-row gap-2 items-center rounded-md border-1 border-default-200 bg-content2 hover:bg-content3 truncate"}
-          isPressable={true} as={NextLink} href={getLink(type, item) + "#:~:text=" + query} onPress={onClick}>
+          isPressable={true} onPress={() => {
+      router.push(getLink(type, item) + "#:~:text=" + query);
+      onClick?.();
+    }}>
       <div className={"text-default-500"}>{getIcon(type)}</div>
-      <div className={"flex flex-col w-full truncate"}>
-        <div className={"flex flex-row items-center justify-between truncate"}>
+      <div className={"flex flex-col w-full truncate items-start"}>
+        <div className={"flex flex-row items-center justify-between truncate w-full"}>
           <p className={"text-sm font-medium truncate"}>
             {parts.map((part, index) => (
               <React.Fragment key={index}>
