@@ -95,7 +95,10 @@ const getLink = (type: SearchItemProps["type"], item: any) => {
   }
 };
 
-const SearchItem = ({ type, query, item, onClick }: SearchItemProps) => {
+/**
+ * SearchItem component is used by the SearchBox component to display search results, this receives an item and displays it according to its type and its fields
+ */
+export default function SearchItem({ type, query, item, onClick }: SearchItemProps) {
   const [parts, setParts] = useState<string[]>([]);
   const [title, setTitle] = useState<string>("");
   const [fieldName, setFieldName] = useState<string>("");
@@ -151,5 +154,3 @@ const SearchItem = ({ type, query, item, onClick }: SearchItemProps) => {
     </Card>
   );
 };
-
-export default SearchItem;
