@@ -30,7 +30,11 @@ export default function ExpensesTotalCard({ expensesTotal, changeSinceLastMonth 
       <CardBody className={"px-4 py-2 "}>
         <div className={"flex flex-col justify-center items-start w-full"}>
           <h3 className={"text-lg font-bold"}>${expensesTotal.toFixed(2)}</h3>
-          <span className={"text-xs font-md"}>{changeAsPercent > 0 ? "+" : ""}{(changeAsPercent * 100).toFixed(1)}% from last month</span>
+          {
+            changeSinceLastMonth > 0 ?
+              <span className={"text-xs font-md"}>{changeAsPercent > 0 ? "+" : ""}{(changeAsPercent * 100).toFixed(1)}% from last month</span>
+              : <span className={"text-xs font-md"}>No change from last month</span>
+          }
           <NextLink href={"/expenses"}>
             <span
               className={"text-xs font-md underline decoration-dotted underline-offset-2 text-default-500 hover:text-default-600"}>View Expenses</span>

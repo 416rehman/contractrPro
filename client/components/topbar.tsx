@@ -9,11 +9,8 @@ import {
   NavbarMenuItem,
   NavbarMenuToggle
 } from "@nextui-org/navbar";
-import { Kbd } from "@nextui-org/kbd";
 import NextLink from "next/link";
-import { Input } from "@nextui-org/input";
 import { Button } from "@nextui-org/button";
-import { IconSearch } from "@tabler/icons-react";
 import UserMenu from "@/components/userMenu";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
@@ -24,6 +21,8 @@ import OrganizationSelector from "@/components/organizationSelector";
 import { Divider } from "@nextui-org/divider";
 import { sidebarItems } from "@/components/sidebar";
 import clsx from "clsx";
+import SearchBox from "@/components/searchBox";
+import { IconAlertTriangle } from "@tabler/icons-react";
 
 /**
  * The main navigation component of the app. It is shown at the top of the screen.
@@ -35,6 +34,7 @@ import clsx from "clsx";
  */
 export default function Topbar({ className }: { className?: string }) {
   const user = useUserStore(state => state.user);
+  const currentOrganization = useUserStore(state => state.currentOrganization);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
@@ -45,28 +45,6 @@ export default function Topbar({ className }: { className?: string }) {
       setIsMenuOpen(false);
     }
   }, [isMenuOpen, pathname]);
-
-  const searchInput = (
-    <Input aria-label="Search"
-           className={"px-2"}
-           classNames={{
-             inputWrapper: "bg-default-100",
-             input: "text-sm"
-           }}
-           endContent={
-             <Kbd className="hidden lg:inline-block" keys={["command"]}>
-               K
-             </Kbd>
-           }
-           labelPlacement="outside"
-           placeholder="Search..."
-           startContent={
-             <IconSearch className="text-base text-default-400 pointer-events-none flex-shrink-0" />
-           }
-           type="search"
-    />
-  );
-
   return (
     <Navbar position="sticky" className={clsx("justify-between flex flex-row gap-2 w-full", className)}
             maxWidth={"full"}
@@ -85,7 +63,9 @@ export default function Topbar({ className }: { className?: string }) {
       <NavbarContent justify="center" className="gap-4 flex-grow">
         <AuthFallback fallbackIf={"logged-in"} to={
           <NavbarItem className={"flex-grow max-w-lg"}>
-            {searchInput}
+            {currentOrganization?.id ? <SearchBox /> :
+              <div className={"text-danger flex flex-row justify-center items-center gap-2 font-medium text-sm"}>
+                <IconAlertTriangle size={20} />Select or create an organization</div>}
           </NavbarItem>
         } />
       </NavbarContent>

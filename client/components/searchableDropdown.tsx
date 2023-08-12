@@ -26,18 +26,18 @@ type Props = {
  * The trigger and items are passed as props.
  * The items are passed as an array of DropdownItem elements.
  */
-export default function SearchInput({
-                                      items,
-                                      selectionMode,
-                                      onSelectionChange,
-                                      className,
-                                      trigger,
-                                      showLabel = true,
-                                      onQueryChange,
-                                      selectedKeys,
-                                      label,
-                                      isReadOnly
-                                    }: Props) {
+export default function SearchableDropdown({
+                                             items,
+                                             selectionMode,
+                                             onSelectionChange,
+                                             className,
+                                             trigger,
+                                             showLabel = true,
+                                             onQueryChange,
+                                             selectedKeys,
+                                             label,
+                                             isReadOnly
+                                           }: Props) {
   const [query, setQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
 

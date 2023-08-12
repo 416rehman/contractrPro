@@ -81,8 +81,15 @@ export default function CommentComponent({ comment, onSave, onDelete }: CommentP
     setIsSaving(true);
     await onSave?.(editedComment);
 
+    setIsEditing(false);
     setIsSaving(false);
   };
+
+  useEffect(() => {
+    if (!isEditing) {
+      setEditedComment(comment);
+    }
+  }, [comment, isEditing]);
 
   const onAction = async (action: string) => {
     switch (action) {

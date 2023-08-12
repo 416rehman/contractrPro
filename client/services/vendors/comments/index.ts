@@ -118,7 +118,7 @@ export const updateAndPersistVendorComment = async (vendorId: string, comment: C
       useVendorCommentsStore.getState().addVendorComment(vendorId, newComment);
     }
   } catch (err) {
-    console.log(err);
+    throw err;
   }
 };
 

@@ -46,6 +46,11 @@ routes.delete('/:org_id', authorizeOrg, require('./deleteOrganization'))
 routes.put('/:org_id', authorizeOrg, require('./putOrganization'))
 
 /**
+ * @api {get} /organizations/:org_id/search?q= Search organization
+ */
+routes.get('/:org_id/search', authorizeOrg, require('./search'))
+
+/**
  * @api {use} /organizations/:org_id/blob Get Blob
  */
 routes.use('/:org_id/blob', authorizeOrg, require('./blob'))
