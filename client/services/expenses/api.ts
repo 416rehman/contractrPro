@@ -6,7 +6,7 @@ const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 // Gets the current organization's expenses from the server
 export async function requestOrganizationExpenses(OrganizationId: string) {
   try {
-    const data = await request(`${apiUrl}/organizations/${OrganizationId}/expenses`, {
+    const data = await request(`${apiUrl}/organizations/${OrganizationId}/expenses?expand=true`, {
       method: "GET",
       credentials: "include"
     });

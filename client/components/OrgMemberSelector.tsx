@@ -1,4 +1,4 @@
-import SearchInput from "@/components/searchInput";
+import SearchableDropdown from "@/components/searchableDropdown";
 import { loadMembers, useMembersStore } from "@/services/members";
 import { useEffect, useState } from "react";
 import { useUserStore } from "@/services/user";
@@ -19,7 +19,7 @@ type Props = {
 /**
  * Allows the user to select a member from a list of members.
  * If no members are cached, it will load them from the server.
- * Uses the SearchInput component to display the list of members.
+ * Uses the SearchableDropdown component to display the list of members.
  */
 export default function MemberSelector({
                                          onMemberChange,
@@ -59,38 +59,38 @@ export default function MemberSelector({
     onMemberChange(selectedMembers);
   };
 
-  return <SearchInput {...props}
-                      isReadOnly={isDisabled}
-                      items={
-                        filteredMembers.map((member) => <DropdownItem key={member.id} textValue={member.id}>
-                          <User name={member.name}
-                                description={member.description || member.email || member.phone || member.website || ""} />
-                        </DropdownItem>)}
-                      className={className}
-                      selectionMode={"multiple"}
-                      onSelectionChange={onSelectionChangedHandler}
-                      onQueryChange={setQuery}
-                      showLabel={!inline}
-                      label={label}
-                      selectedKeys={new Set(selectedMemberIds)}
-                      trigger={selectedMemberIds?.length ?
-                        (inline ? <div className={"flex flex-row gap-2"}>
-                            {
-                              members.filter((member) => selectedMemberIds.includes(member.id))
-                                .map((member) => (
-                                  <div key={member.id} className={"overflow-clip truncate text-myblue-600"}>
-                                    <span className={"text-sm font-light select-none text-default-500"}>@</span>
-                                    <span className={"text-sm font-md"}>{member.name}</span>
-                                  </div>))
-                            }
-                          </div> :
-                          <div>
-                            {members.filter((member) => selectedMemberIds.includes(member.id))
-                              .map((member) => <User key={member.id} name={member.name}
-                                                     description={member.email || member.phone || ""} />)}
-                          </div>)
-                        :
-                        <span className={"text-default-500 w-full"}>Select members</span>
-                      }
+  return <SearchableDropdown {...props}
+                             isReadOnly={isDisabled}
+                             items={
+                               filteredMembers.map((member) => <DropdownItem key={member.id} textValue={member.id}>
+                                 <User name={member.name}
+                                       description={member.description || member.email || member.phone || member.website || ""} />
+                               </DropdownItem>)}
+                             className={className}
+                             selectionMode={"multiple"}
+                             onSelectionChange={onSelectionChangedHandler}
+                             onQueryChange={setQuery}
+                             showLabel={!inline}
+                             label={label}
+                             selectedKeys={new Set(selectedMemberIds)}
+                             trigger={selectedMemberIds?.length ?
+                               (inline ? <div className={"flex flex-row gap-2"}>
+                                   {
+                                     members.filter((member) => selectedMemberIds.includes(member.id))
+                                       .map((member) => (
+                                         <div key={member.id} className={"overflow-clip truncate text-myblue-600"}>
+                                           <span className={"text-sm font-light select-none text-default-500"}>@</span>
+                                           <span className={"text-sm font-md"}>{member.name}</span>
+                                         </div>))
+                                   }
+                                 </div> :
+                                 <div>
+                                   {members.filter((member) => selectedMemberIds.includes(member.id))
+                                     .map((member) => <User key={member.id} name={member.name}
+                                                            description={member.email || member.phone || ""} />)}
+                                 </div>)
+                               :
+                               <span className={"text-default-500 w-full"}>Select members</span>
+                             }
   />;
 }

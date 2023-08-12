@@ -16,6 +16,7 @@ import {
   IconReceipt2,
   IconUsers
 } from "@tabler/icons-react";
+import { useUserStore } from "@/services/user";
 
 export const sidebarItems = [
   {
@@ -73,6 +74,7 @@ export const sidebarItems = [
 export default function Sidebar(props: HTMLAttributes<HTMLDivElement>) {
   const [isExtended, setIsExtended] = useState(false);
   const pathname = usePathname();
+  const currentOrganization = useUserStore(state => state.currentOrganization);
 
   const ExtendSidebarButton = () => (
     <Tooltip content={isExtended ? "Collapse" : "Expand"} placement={"right"} showArrow={true}>
@@ -91,6 +93,9 @@ export default function Sidebar(props: HTMLAttributes<HTMLDivElement>) {
       return pathname.startsWith(href);
     }
   };
+  if (!currentOrganization) {
+    return null;
+  }
   return (
     <div className={" md:flex md:flex-col gap-8 p-2 items-center" + " " + props.className} {...props}>
       <ExtendSidebarButton />

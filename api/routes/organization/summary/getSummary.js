@@ -73,7 +73,7 @@ module.exports = async (req, res) => {
                 expense.ExpenseEntries.forEach((entry) => {
                     expenseTotal += entry.quantity * entry.unitCost
                 })
-                expenseTotal = expenseTotal * (1 + expense.taxRate)
+                expenseTotal = expenseTotal * (1 + expense.taxRate / 100)
                 summaryObj.expensesTotal += expenseTotal
             })
 
@@ -96,7 +96,7 @@ module.exports = async (req, res) => {
                 invoice.InvoiceEntries.forEach((entry) => {
                     invoiceTotal += entry.quantity * entry.unitCost
                 })
-                invoiceTotal = invoiceTotal * (1 + invoice.taxRate)
+                invoiceTotal = invoiceTotal * (1 + invoice.taxRate / 100)
                 summaryObj.invoicesTotal += invoiceTotal
             })
 
