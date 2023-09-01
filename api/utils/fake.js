@@ -3,6 +3,7 @@ const mockCommentData = () => ({
 })
 
 const { faker } = require('@faker-js/faker')
+const logger = require('./logger')
 const {
     User,
     Organization,
@@ -155,6 +156,11 @@ const mockInvoiceEntryData = () => {
 }
 
 const populate = async () => {
+    // if dev_user doesnt exist, populate the database
+    if (await User.findByPk(process.env.DEV_USER_UUID)) {
+        logger.info('Dev user already exists, skipping database population.')
+        return
+    }
     // Add the dev user.
     const devUser = await User.create({
         ...mockUserData(),

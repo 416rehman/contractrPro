@@ -8,11 +8,6 @@ routes.use((req, res, next) => {
 })
 
 /**
- * @api {get} /users Get all users
- */
-routes.get('/', require('./getUsers'))
-
-/**
  * @api {use} /me Get the current signedInUser
  */
 routes.use('/me', require('./me'))

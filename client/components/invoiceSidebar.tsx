@@ -4,7 +4,14 @@ import { CardFooter, Input } from "@nextui-org/react";
 import { Button } from "@nextui-org/button";
 import NextLink from "next/link";
 import clsx from "clsx";
-import { IconChevronDown, IconCirclePlus, IconListSearch, IconReceipt2 } from "@tabler/icons-react";
+import {
+  IconChevronDown,
+  IconCircleCheck,
+  IconCircleDotted,
+  IconCirclePlus,
+  IconListSearch,
+  IconReceipt2
+} from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import { loadInvoices, useInvoicesStore } from "@/services/invoices";
 import { useUserStore } from "@/services/user";
@@ -60,6 +67,11 @@ export default function InvoicesSidebar({ className }: Props) {
               as={NextLink}
               href={"/invoices/" + invoice?.id}
               startContent={<IconReceipt2 className={"text-default-400"} size={"20"} />}
+              endContent={
+                <div className={"flex-grow flex justify-end"}>
+                  {invoice?.paymentDate ? <IconCircleCheck size={"16"} /> : <IconCircleDotted size={"15"} />}
+                </div>
+              }
               variant={params.id === invoice?.id ? "flat" : "light"}
               size={"sm"}>
               <span className={"truncate"}>{invoice?.invoiceNumber}</span>

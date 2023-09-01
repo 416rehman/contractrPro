@@ -14,6 +14,7 @@ import {
   IconLayoutSidebarLeftCollapse,
   IconLayoutSidebarLeftExpand,
   IconReceipt2,
+  IconSettings,
   IconUsers
 } from "@tabler/icons-react";
 import { useUserStore } from "@/services/user";
@@ -63,6 +64,15 @@ export const sidebarItems = [
   }
 ];
 
+export const sidebarBottomItems = [
+  {
+    label: "Settings",
+    href: "/settings",
+    icon: IconSettings,
+    shortDescription: "Settings for your organization"
+  }
+];
+
 /**
  * This is the main sidebar for the application. It displays a list of links to the main pages of the application.
  * - It requires the user to be logged in.
@@ -97,10 +107,31 @@ export default function Sidebar(props: HTMLAttributes<HTMLDivElement>) {
     return null;
   }
   return (
-    <div className={" md:flex md:flex-col gap-8 p-2 items-center" + " " + props.className} {...props}>
-      <ExtendSidebarButton />
+    <div className={"md:flex md:flex-col gap-8 p-2 items-center" + " " + props.className} {...props}>
+      <div className={"flex flex-col gap-10"}>
+        <ExtendSidebarButton />
+        <div className={"flex flex-col justify-between gap-4"}>
+          {sidebarItems.map((item) => (
+            <Tooltip content={item.label} key={item.href} placement={"right"} showArrow={true}>
+              <Button
+                className={isExtended ? "justify-start" : "justify-center"}
+                isIconOnly={!isExtended}
+                key={item.href}
+                as={NextLink}
+                href={item.href}
+                variant={isActivePage(item.href) ? "flat" : "light"}
+                color={isActivePage(item.href) ? "primary" : "default"}
+                size={"lg"}>
+                {<item.icon stroke={1.5} />}
+                {isExtended ? item.label : null}
+
+              </Button>
+            </Tooltip>
+          ))}
+        </div>
+      </div>
       <div className={"flex flex-col justify-between gap-4"}>
-        {sidebarItems.map((item) => (
+        {sidebarBottomItems.map((item) => (
           <Tooltip content={item.label} key={item.href} placement={"right"} showArrow={true}>
             <Button
               className={isExtended ? "justify-start" : "justify-center"}
@@ -108,7 +139,7 @@ export default function Sidebar(props: HTMLAttributes<HTMLDivElement>) {
               key={item.href}
               as={NextLink}
               href={item.href}
-              variant={isActivePage(item.href) ? "flat" : "light"}
+              variant={isActivePage(item.href) ? "flat" : "ghost"}
               color={isActivePage(item.href) ? "primary" : "default"}
               size={"lg"}>
               {<item.icon stroke={1.5} />}

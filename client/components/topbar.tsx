@@ -19,7 +19,7 @@ import { VisitorMenu } from "@/components/visitorMenu";
 import { useUserStore } from "@/services/user/";
 import OrganizationSelector from "@/components/organizationSelector";
 import { Divider } from "@nextui-org/divider";
-import { sidebarItems } from "@/components/sidebar";
+import { sidebarBottomItems, sidebarItems } from "@/components/sidebar";
 import clsx from "clsx";
 import SearchBox from "@/components/searchBox";
 import { IconAlertTriangle } from "@tabler/icons-react";
@@ -81,22 +81,41 @@ export default function Topbar({ className }: { className?: string }) {
       {user?.id && <NavbarMenu className={"flex flex-col gap-5 w-full p-0"}>
         <OrganizationSelector className={"w-full justify-start align-middle"} />
         <Divider />
-        <div className={"w-full"}>
-          {sidebarItems.map((item) => (
-            <NavbarMenuItem key={item.href} className={"w-full"}>
-              <Button
-                className={"justify-start w-full"}
-                key={item.href}
-                as={NextLink}
-                href={item.href}
-                variant={pathname === item.href ? "flat" : "light"}
-                color={pathname === item.href ? "primary" : "default"}
-                size={"lg"}>
-                {<item.icon stroke={1.5} />}
-                {item.label}
-              </Button>
-            </NavbarMenuItem>
-          ))}
+        <div className={"w-full h-full p-2 flex flex-col justify-between"}>
+          <div>
+            {sidebarItems.map((item) => (
+              <NavbarMenuItem key={item.href} className={"w-full"}>
+                <Button
+                  className={"justify-start w-full"}
+                  key={item.href}
+                  as={NextLink}
+                  href={item.href}
+                  variant={pathname === item.href ? "flat" : "light"}
+                  color={pathname === item.href ? "primary" : "default"}
+                  size={"lg"}>
+                  {<item.icon stroke={1.5} />}
+                  {item.label}
+                </Button>
+              </NavbarMenuItem>
+            ))}
+          </div>
+          <div>
+            {sidebarBottomItems.map((item) => (
+              <NavbarMenuItem key={item.href} className={"w-full"}>
+                <Button
+                  className={"justify-start w-full"}
+                  key={item.href}
+                  as={NextLink}
+                  href={item.href}
+                  variant={pathname === item.href ? "flat" : "ghost"}
+                  color={pathname === item.href ? "primary" : "default"}
+                  size={"lg"}>
+                  {<item.icon stroke={1.5} />}
+                  {item.label}
+                </Button>
+              </NavbarMenuItem>
+            ))}
+          </div>
         </div>
       </NavbarMenu>}
 

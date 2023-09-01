@@ -1,4 +1,10 @@
-const { sequelize, Organization, User } = require('../../db')
+const {
+    sequelize,
+    Organization,
+    OrganizationSettings,
+    User,
+    Address,
+} = require('../../db')
 
 const {
     createSuccessResponse,
@@ -16,6 +22,12 @@ module.exports = async (req, res) => {
             return res.status(400).json(createErrorResponse('User ID required'))
         }
 
+        if (req.auth.id !== userID) {
+            return res
+                .status(401)
+                .json(createErrorResponse('Unauthorized access'))
+        }
+
         await sequelize.transaction(async (transaction) => {
             const userOrganizations = await User.findOne({
                 attributes: {
@@ -29,9 +41,15 @@ module.exports = async (req, res) => {
                 where: {
                     id: userID,
                 },
-                include: {
-                    model: Organization,
-                },
+                include: [
+                    {
+                        model: Organization,
+                        include: [
+                            { model: OrganizationSettings },
+                            { model: Address },
+                        ],
+                    },
+                ],
                 transaction,
             })
 

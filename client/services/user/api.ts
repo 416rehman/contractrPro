@@ -124,7 +124,7 @@ export async function requestPhoneChange(phoneCountry, phoneNumber, UserId = "me
 
 export async function getOrganizationSummary(organizationId) {
   try {
-    const data = await request(`${apiUrl}/organizations/${organizationId}/summary`, {
+    const data = await request(`${apiUrl}/organizations/${organizationId}/meta/summary`, {
       method: "GET",
       credentials: "include"
     });

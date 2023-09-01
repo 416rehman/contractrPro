@@ -45,6 +45,7 @@ module.exports = async (req, res) => {
                 'poNumber',
                 'note',
                 'taxRate',
+                'paymentDate',
                 'BillToClientId',
                 'ContractId',
                 'JobId',

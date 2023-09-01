@@ -5,7 +5,6 @@ const {
 } = require('../../../utils/response')
 
 //Retrieve user by id
-
 module.exports = async (req, res) => {
     try {
         //since user has unique id, it only return 1 user object
@@ -16,13 +15,10 @@ module.exports = async (req, res) => {
             attributes: [
                 'id',
                 'username',
-                'email',
                 'name',
                 'flags',
                 'createdAt',
                 'updatedAt',
-                'phoneCountry',
-                'phoneNumber',
                 'avatarUrl',
             ],
         })

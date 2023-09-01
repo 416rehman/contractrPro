@@ -15,7 +15,7 @@ module.exports = () => {
 
                 logger.debug(`Syncing database...`)
                 await sequelize.sync({
-                    force: true,
+                    alter: true,
                 })
 
                 logger.debug(`Populating database...`)

@@ -7,8 +7,8 @@ routes.use((req, res, next) => {
 })
 
 /**
- * @api {get} /organizations/:org_id/vendors Get organization vendors
+ * @api {get} /organizations/:org_id/meta/summary Get organization summary
  */
-routes.get('/', require('./getSummary'))
+routes.get('/summary', require('./getSummary'))
 
 module.exports = routes

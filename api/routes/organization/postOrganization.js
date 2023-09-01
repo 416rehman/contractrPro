@@ -27,8 +27,6 @@ module.exports = async (req, res) => {
             UpdatedByUserId: req.auth.id,
         }
 
-        console.log('Creating organization')
-
         await sequelize.transaction(async (transaction) => {
             // create the new organization
             const org = await Organization.create(body, {
@@ -48,10 +46,18 @@ module.exports = async (req, res) => {
                 { transaction }
             )
 
+            // create the organizationSetting
+            org.dataValues.settings = await org.createOrganizationSetting(
+                {
+                    OrganizationId: org.id,
+                    UpdatedByUserId: req.auth.id,
+                },
+                { transaction }
+            )
+
             return res.status(201).json(createSuccessResponse(org))
         })
     } catch (error) {
-        console.log('Error: ', error)
         return res.status(400).json(createErrorResponse('', error))
     }
 }

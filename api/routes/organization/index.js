@@ -93,6 +93,11 @@ routes.use('/:org_id/vendors', authorizeOrg, require('./vendors'))
 /**
  * @api {use} /organizations/:org_id/summary Uses the organization's summary router
  */
-routes.use('/:org_id/summary', authorizeOrg, require('./summary'))
+routes.use('/:org_id/meta', authorizeOrg, require('./meta'))
+
+/**
+ * @api {use} /organizations/:org_id/settings Uses the organization's settings router
+ */
+routes.use('/:org_id/settings', authorizeOrg, require('./settings'))
 
 module.exports = routes

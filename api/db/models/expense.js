@@ -31,6 +31,7 @@ module.exports.define = (sequelize, DataTypes) => {
                 {
                     unique: true,
                     fields: ['expenseNumber', 'OrganizationId'],
+                    msg: 'The expense number is already in use',
                 },
             ],
         }

@@ -22,6 +22,16 @@ module.exports = async (req, res) => {
                 .json(createErrorResponse('Organization ID is required'))
         }
 
+        if (userID !== req.auth.id) {
+            return res
+                .status(403)
+                .json(
+                    createErrorResponse(
+                        'You can only leave your own organization'
+                    )
+                )
+        }
+
         await sequelize.transaction(async (transaction) => {
             const user = await User.findOne({
                 where: {

@@ -21,7 +21,8 @@ const address = require('./models/address'),
     organization = require('./models/organization'),
     user = require('./models/user'),
     vendor = require('./models/vendor'),
-    token = require('./models/token')
+    token = require('./models/token'),
+    organizationSettings = require('./models/organizationSettings')
 
 const sequelize = new Sequelize(
     process.env.DB_DATABASE,
@@ -81,6 +82,7 @@ const models = {
     User: user.define(sequelize, DataTypes),
     Vendor: vendor.define(sequelize, DataTypes),
     Token: token.define(sequelize, DataTypes),
+    OrganizationSettings: organizationSettings.define(sequelize, DataTypes),
 }
 
 logger.debug('Associating models...')
@@ -95,7 +97,12 @@ const dumpMethods = () => {
     try {
         // loops through all models and dumps their "prototype" methods to the current directory
         const dumpDir = path.join(__dirname, 'dump')
-        if (!fs.existsSync(dumpDir)) {
+        if (fs.existsSync(dumpDir)) {
+            logger.debug(
+                `Dump directory ${dumpDir} already exists. Delete the directory to dump again.`
+            )
+            return
+        } else {
             fs.mkdirSync(dumpDir)
         }
 

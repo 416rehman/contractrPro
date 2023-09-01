@@ -1,4 +1,4 @@
-const { Client } = require('../../../db')
+const { Client, Address } = require('../../../db')
 const {
     createErrorResponse,
     createSuccessResponse,
@@ -18,6 +18,9 @@ module.exports = async (req, res) => {
         const clients = await Client.findAll({
             where: {
                 OrganizationId: orgId,
+            },
+            include: {
+                model: Address,
             },
         })
 

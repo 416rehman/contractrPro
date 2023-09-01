@@ -76,6 +76,10 @@ module.exports.define = (sequelize, DataTypes) => {
         Organization.belongsTo(models.User, {
             as: 'UpdatedByUser',
         })
+
+        Organization.hasOne(models.OrganizationSettings, {
+            foreignKey: { allowNull: false },
+        })
     }
 
     return Organization

@@ -1,4 +1,9 @@
-const { Organization, sequelize } = require('../../db')
+const {
+    Organization,
+    Address,
+    OrganizationSettings,
+    sequelize,
+} = require('../../db')
 const {
     createErrorResponse,
     createSuccessResponse,
@@ -16,8 +21,39 @@ module.exports = async (req, res) => {
                 'phone',
                 'website',
                 'logoUrl',
+                'OrganizationSetting',
+                'Address',
             ]),
             UpdatedByUserId: req.auth.id,
+        }
+
+        const include = []
+
+        if (body.Address) {
+            body.Address = pick(req.body?.Address, [
+                'country',
+                'postalCode',
+                'province',
+                'city',
+                'addressLine1',
+                'addressLine2',
+            ])
+            include.push(Address)
+        }
+
+        if (body.OrganizationSetting) {
+            body.OrganizationSetting = pick(body.OrganizationSetting, [
+                'currencyCode',
+                'currencySymbol',
+                'invoiceUseDateForNumber',
+                'invoiceDefaultTaxRate',
+                'invoiceDefaultTerms',
+                'invoiceFooterLine1',
+                'invoiceFooterLine2',
+                'invoiceBoldFooterLine1',
+                'invoiceBoldFooterLine2',
+            ])
+            include.push(OrganizationSettings)
         }
 
         const orgId = req.params.org_id
@@ -32,6 +68,7 @@ module.exports = async (req, res) => {
                 where: {
                     id: orgId,
                 },
+                include: include,
                 transaction,
                 returning: true,
             })
@@ -40,16 +77,38 @@ module.exports = async (req, res) => {
                 throw new Error('Organization not found')
             }
 
-            //queryResult returns:
-            // [
-            //     <number of rows updated>,
-            //     [<array of updated rows>]
-            // ]
+            if (body?.Address) {
+                // if an address exists, update it, otherwise create it
+                const res = await Address.upsert(
+                    { ...body.Address, OrganizationId: orgId },
+                    {
+                        transaction,
+                        returning: true,
+                    }
+                )
+
+                queryResult[1][0].Address = res[0].dataValues
+            }
+
+            if (body?.OrganizationSetting) {
+                // if an organization setting exists, update it, otherwise create it
+                const res = await OrganizationSettings.upsert(
+                    { ...body.OrganizationSetting, OrganizationId: orgId },
+                    {
+                        transaction,
+                        returning: true,
+                    }
+                )
+
+                queryResult[1][0].OrganizationSetting = res[0].dataValues
+            }
+
             const updatedOrg = queryResult[1][0]
 
             return res.status(200).json(createSuccessResponse(updatedOrg))
         })
-    } catch (error) {
-        return res.status(400).json(createErrorResponse('', error))
+    } catch (err) {
+        console.log(err)
+        return res.status(400).json(createErrorResponse('', err))
     }
 }

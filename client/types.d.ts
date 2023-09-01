@@ -25,7 +25,24 @@ export type Organization = {
   phone: string;
   logoUrl: string;
   Address: Address | null;
+  OrganizationSetting?: OrganizationSetting | null;
 } & any;
+
+export type OrganizationSetting = {
+  id?: string,
+  currencyCode: string
+  currencySymbol: string,
+  invoiceUseDateForNumber: boolean,
+  invoiceDefaultTaxRate: number,
+  invoiceDefaultTerms: string,
+  invoiceFooterLine1: string | null,
+  invoiceFooterLine2: string | null,
+  invoiceBoldFooterLine1: false,
+  invoiceBoldFooterLine2: false,
+  createdAt: string,
+  updatedAt: string,
+  OrganizationId: string,
+}
 
 export type Address = {
   id?: string;
@@ -43,6 +60,7 @@ export type Client = {
   phone: string,
   email: string,
   website: string,
+  Address?: Address | null,
   description: string,
   createdAt?: string,
   updatedAt?: string,
@@ -98,6 +116,7 @@ export type Invoice = {
   updatedAt?: string,
   UpdatedByUserId?: string,
   OrganizationId?: string,
+  paymentDate?: string | null,
 } & any;
 
 export type Expense = {

@@ -51,9 +51,18 @@
 }
 
 @media print {
+
+    * {
+        /*    Hide all scrollbars */
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        overflow: hidden;
+    }
+
     /*Light mode for printing*/
     html {
         @apply !light;
+        margin: 0 0 0 0;
     }
 
     a:after {
