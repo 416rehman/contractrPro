@@ -1,42 +1,43 @@
 version: '3.7'
 
 services:
-  cp_api:
-    container_name: cp_api
-    build:
-      context: .
-      dockerfile: test.Dockerfile
-    volumes:
-      - ./:/home/node/app
-      - node_modules:/home/node/app/node_modules
-    ports:
-      - '4000:4000'
-    expose:
-      - '4000'
-    networks:
-      - cp_net
-    env_file:
-      - ./.env
-    depends_on:
-      - postgres
-    command: [ "./wait-for-it.sh", "postgres:5432", "--", "npm", "run", "test" ]
+    cp_api:
+        container_name: cp_api
+        build:
+            context: .
+            dockerfile: test.Dockerfile
+        volumes:
+            - ./:/home/node/app
+            - node_modules:/home/node/app/node_modules
+        ports:
+            - '4000:4000'
+        expose:
+            - '4000'
+        networks:
+            - cp_net
+        env_file:
+            - ./.env
+        depends_on:
+            - postgres
+        command:
+            ['./wait-for-it.sh', 'postgres:5432', '--', 'npm', 'run', 'test']
 
-  postgres:
-    image: postgres:latest
-    container_name: postgres
-    environment:
-      POSTGRES_DB: ${DB_DATABASE}
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-    ports:
-      - '5432:5432'
-    networks:
-      - cp_net
+    postgres:
+        image: postgres:latest
+        container_name: postgres
+        environment:
+            POSTGRES_DB: ${DB_DATABASE}
+            POSTGRES_USER: ${DB_USER}
+            POSTGRES_PASSWORD: ${DB_PASSWORD}
+        ports:
+            - '5432:5432'
+        networks:
+            - cp_net
 
 volumes:
-  node_modules:
+    node_modules:
 
 networks:
-  cp_net:
-    name: cp_net
-    external: true
+    cp_net:
+        name: cp_net
+        external: true
