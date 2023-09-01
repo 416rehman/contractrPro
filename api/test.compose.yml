@@ -15,8 +15,6 @@ services:
       - '4000'
     networks:
       - cp_net
-    env_file:
-      - ./.env
     depends_on:
       - postgres
     command: [ "./wait-for-it.sh", "postgres:5432", "--", "npm", "run", "test" ]
