@@ -1,5 +1,5 @@
 const mockCommentData = () => ({
-    content: faker.lorem.words({ max: 100 }),
+    content: faker.lorem.words({ max: 10 }),
 })
 
 const { faker } = require('@faker-js/faker')

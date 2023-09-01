@@ -127,6 +127,7 @@ module.exports = async (req, res) => {
             return res.json(createSuccessResponse(comment))
         })
     } catch (error) {
+        console.log(error)
         return res
             .status(400)
             .json(createErrorResponse('An error occurred.', error))

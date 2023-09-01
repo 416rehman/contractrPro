@@ -66,8 +66,6 @@ module.exports = async (req, res) => {
             UpdatedByUserId: req.auth.id,
         }
 
-        console.log('body', body)
-
         await sequelize.transaction(async (transaction) => {
             let invoice = await Invoice.findOne({
                 where: {
