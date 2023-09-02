@@ -22,7 +22,9 @@ module.exports = () => {
                 await populate()
                 logger.debug(`Database populated!`)
             } else {
-                await sequelize.sync()
+                await sequelize.sync({
+                    alter: true,
+                })
             }
         })
         .catch((err) => {
