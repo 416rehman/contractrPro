@@ -20,7 +20,7 @@ services:
         depends_on:
             - postgres
         command:
-          ['./wait-for-it.sh', 'postgres:5432', '--', 'npm', 'run', 'start']
+            ['./wait-for-it.sh', 'postgres:5432', '--', 'npm', 'run', 'start']
 
     postgres:
         image: postgres:latest
