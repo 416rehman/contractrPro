@@ -12,21 +12,19 @@ on:
     paths:
       - "api/**"
 env:
-  PORT: ${{ vars.PORT }}
-  DB_DATABASE: ${{ vars.DB_DATABASE }}
-  DB_HOST: ${{ vars.DB_HOST }}
-  DB_PORT: ${{ vars.DB_PORT }}
-  DB_USER: ${{ vars.DB_USER }}
-  DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-  JWT_SECRET: ${{ secrets.JWT_SECRET }}
-  AWS_S3_BUCKET_NAME: ${{ vars.AWS_S3_BUCKET_NAME }}
-  AWS_S3_REGION: ${{ vars.AWS_S3_REGION }}
-  AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}
-  AWS_ACCESS_SECRET: ${{ secrets.AWS_ACCESS_SECRET }}
-  SECRET_SESSION_KEY_1: ${{ secrets.SECRET_SESSION_KEY_1 }}
-  SECRET_SESSION_KEY_2: ${{ secrets.SECRET_SESSION_KEY_2 }}
-  DEV_USER_UUID: ${{ vars.DEV_USER_UUID }}
-  DEV_USER_USERNAME: ${{ vars.DEV_USER_USERNAME }}
+  AWS_S3_REGION: ${{ vars.TEST_AWS_S3_REGION }}
+  AWS_S3_BUCKET_NAME: ${{ vars.TEST_AWS_S3_BUCKET_NAME }}
+  DB_DATABASE: ${{ vars.TEST_DB_DATABASE }}
+  DB_HOST: ${{ vars.TEST_DB_HOST }}
+  DB_PORT: ${{ vars.TEST_DB_PORT }}
+  DB_USER: ${{ vars.TEST_DB_USER }}
+  DEV_USER_USERNAME: ${{ vars.TEST_DEV_USER_USERNAME }}
+  DEV_USER_UUID: ${{ vars.TEST_DEV_USER_UUID }}
+  PORT: ${{ vars.TEST_PORT }}
+  DB_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
+  JWT_SECRET: ${{ secrets.TEST_JWT_SECRET }}
+  AWS_ACCESS_KEY: ${{ secrets.TEST_AWS_ACCESS_KEY }}
+  AWS_ACCESS_SECRET: ${{ secrets.TEST_AWS_ACCESS_SECRET }}
 
 jobs:
   format-api:
