@@ -1,11 +1,11 @@
-version: '3.5'
-volumes:
-    node_modules: # empty volume
+version: '3.7'
 
 services:
     cp_api:
         container_name: cp_api
-        build: .
+        build:
+            context: .
+            dockerfile: Dockerfile
         volumes:
             - ./:/home/node/app
             - node_modules:/home/node/app/node_modules
@@ -17,7 +17,26 @@ services:
             - cp_net
         env_file:
             - ./.env
+        depends_on:
+            - postgres
+        command:
+          ['./wait-for-it.sh', 'postgres:5432', '--', 'npm', 'run', 'start']
+
+    postgres:
+        image: postgres:latest
+        container_name: postgres
+        environment:
+            POSTGRES_DB: ${DB_DATABASE}
+            POSTGRES_USER: ${DB_USER}
+            POSTGRES_PASSWORD: ${DB_PASSWORD}
+        ports:
+            - '5432:5432'
+        networks:
+            - cp_net
+
+volumes:
+    node_modules:
+
 networks:
     cp_net:
         name: cp_net
-        external: true
