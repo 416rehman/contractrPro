@@ -88,7 +88,7 @@ jobs:
       # Replace the existing "Run tests" step with running tests inside the Docker container
       - name: Run tests in Docker
         run: |
-          docker-compose -f test.compose.yml up --build --abort-on-container-exit -e DB_DATABASE="${{ vars.TEST_DB_DATABASE }}" -e DB_HOST="${{ vars.TEST_DB_HOST }}" -e DB_PORT="${{ vars.TEST_DB_PORT }}" -e DB_USER="${{ vars.TEST_DB_USER }}" -e DB_PASSWORD="${{ secrets.TEST_DB_PASSWORD }}" -e JWT_SECRET="${{ secrets.TEST_JWT_SECRET }}" -e AWS_ACCESS_KEY="${{ secrets.TEST_AWS_ACCESS_KEY }}" -e AWS_ACCESS_SECRET="${{ secrets.TEST_AWS_ACCESS_SECRET }}" -e AWS_S3_BUCKET_NAME="${{vars.TEST_AWS_S3_BUCKET_NAME}}" -e AWS_S3_REGION="${{vars.TEST_AWS_S3_REGION}}"
+          DB_DATABASE="${{ vars.TEST_DB_DATABASE }}" DB_HOST="${{ vars.TEST_DB_HOST }}" DB_PORT="${{ vars.TEST_DB_PORT }}" DB_USER="${{ vars.TEST_DB_USER }}" DB_PASSWORD="${{ secrets.TEST_DB_PASSWORD }}" JWT_SECRET="${{ secrets.TEST_JWT_SECRET }}" AWS_ACCESS_KEY="${{ secrets.TEST_AWS_ACCESS_KEY }}" AWS_ACCESS_SECRET="${{ secrets.TEST_AWS_ACCESS_SECRET }}" AWS_S3_BUCKET_NAME="${{vars.TEST_AWS_S3_BUCKET_NAME}}" AWS_S3_REGION="${{vars.TEST_AWS_S3_REGION}}" docker-compose -f test.compose.yml up --build --abort-on-container-exit
           docker-compose -f test.compose.yml down
 
   build-dev-api:
