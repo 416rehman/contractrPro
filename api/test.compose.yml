@@ -1,56 +1,57 @@
 version: '3.7'
 
 services:
-  cp_api:
-    container_name: cp_api
-    build:
-      context: .
-      dockerfile: test.Dockerfile
-    volumes:
-      - ./:/home/node/app
-      - node_modules:/home/node/app/node_modules
-    ports:
-      - '4000:4000'
-    expose:
-      - '4000'
-    networks:
-      - cp_net
-    environment:
-      - PORT=4000
-      - DB_DATABASE=${TEST_DB_DATABASE}
-      - DB_HOST=${TEST_DB_HOST}
-      - DB_PORT=${TEST_DB_PORT}
-      - DB_USER=${TEST_DB_USER}
-      - DB_PASSWORD=${TEST_DB_PASSWORD}
-      - JWT_SECRET=${TEST_JWT_SECRET}
-      - AWS_S3_REGION=${TEST_AWS_S3_REGION}
-      - AWS_S3_BUCKET_NAME=${TEST_AWS_S3_BUCKET_NAME}
-      - AWS_ACCESS_KEY=${TEST_AWS_ACCESS_KEY}
-      - AWS_ACCESS_SECRET=${TEST_AWS_ACCESS_SECRET}
-      - DEV_USER_UUID=ea310a15-4bd4-4b17-9ee1-0a1651e4279b
-      - DEV_USER_USERNAME=dev
-      - CLIENT_URL=http://localhost:3000
-      - CLIENT_URL_DEV=http://localhost:3000
-    depends_on:
-      - postgres
-    command: [ "./wait-for-it.sh", "postgres:5432", "--", "npm", "run", "test" ]
+    cp_api:
+        container_name: cp_api
+        build:
+            context: .
+            dockerfile: test.Dockerfile
+        volumes:
+            - ./:/home/node/app
+            - node_modules:/home/node/app/node_modules
+        ports:
+            - '4000:4000'
+        expose:
+            - '4000'
+        networks:
+            - cp_net
+        environment:
+            - PORT=4000
+            - DB_DATABASE=${TEST_DB_DATABASE}
+            - DB_HOST=${TEST_DB_HOST}
+            - DB_PORT=${TEST_DB_PORT}
+            - DB_USER=${TEST_DB_USER}
+            - DB_PASSWORD=${TEST_DB_PASSWORD}
+            - JWT_SECRET=${TEST_JWT_SECRET}
+            - AWS_S3_REGION=${TEST_AWS_S3_REGION}
+            - AWS_S3_BUCKET_NAME=${TEST_AWS_S3_BUCKET_NAME}
+            - AWS_ACCESS_KEY=${TEST_AWS_ACCESS_KEY}
+            - AWS_ACCESS_SECRET=${TEST_AWS_ACCESS_SECRET}
+            - DEV_USER_UUID=ea310a15-4bd4-4b17-9ee1-0a1651e4279b
+            - DEV_USER_USERNAME=dev
+            - CLIENT_URL=http://localhost:3000
+            - CLIENT_URL_DEV=http://localhost:3000
+        depends_on:
+            - postgres
+        command:
+            ['./wait-for-it.sh', 'postgres:5432', '--', 'npm', 'run', 'test']
 
-  postgres:
-    image: postgres:latest
-    container_name: postgres
-    environment:
-      POSTGRES_DB: ${DB_DATABASE}
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-    ports:
-      - '5432:5432'
-    networks:
-      - cp_net
+    postgres:
+        image: postgres:latest
+        container_name: postgres
+        environment:
+            POSTGRES_DB: ${DB_DATABASE}
+            POSTGRES_USER: ${DB_USER}
+            POSTGRES_PASSWORD: ${DB_PASSWORD}
+        ports:
+            - '5432:5432'
+        networks:
+            - cp_net
 
 volumes:
-  node_modules:
+    node_modules:
 
 networks:
-  cp_net:
-    name: cp_net
-    external: true
+    cp_net:
+        name: cp_net
+        external: true
