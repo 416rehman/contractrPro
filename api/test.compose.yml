@@ -54,4 +54,3 @@ volumes:
 networks:
     cp_net:
         name: cp_net
-        external: true
