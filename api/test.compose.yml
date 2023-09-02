@@ -47,6 +47,7 @@ services:
             - '5432:5432'
         networks:
             - cp_net
+        command: postgres -c 'max_connections=500'
 
 volumes:
     node_modules:

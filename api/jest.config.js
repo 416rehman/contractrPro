@@ -20,4 +20,6 @@ module.exports = {
     globalSetup: './db/setup',
     // setupFiles: ['./db/setup'],
     openHandlesTimeout: 15000,
+    // Exclude folders starting with a dot from being tested
+    testPathIgnorePatterns: ['/node_modules/', '/\\..+'],
 }
