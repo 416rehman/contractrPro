@@ -59,7 +59,7 @@ module.exports.define = (sequelize, DataTypes) => {
                 unique: {
                     args: true,
                     msg: 'Email already in use by another user',
-                }
+                },
             },
             phoneCountry: {
                 type: DataTypes.STRING(5), // This is the country code

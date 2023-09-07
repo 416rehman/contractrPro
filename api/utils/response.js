@@ -10,8 +10,7 @@ module.exports.createErrorResponse = (message, err) => {
     try {
         if (err?.errors?.length) {
             hint = err.errors[0].message
-        }
-        else if (err?.message?.includes('violates foreign key constraint')) {
+        } else if (err?.message?.includes('violates foreign key constraint')) {
             // example error: "insert or update on table \"Contracts\" violates foreign key constraint \"Contracts_ClientId_fkey\""
             // We need to get the table name from the error message (i.e "Contracts") and the foreign key name (i.e "ClientId")
             const foreignKey = err?.message?.split('"')?.[3]?.split('_')?.[1]
