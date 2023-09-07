@@ -33,7 +33,10 @@ module.exports.define = (sequelize, DataTypes) => {
             username: {
                 type: DataTypes.STRING(32),
                 allowNull: false,
-                unique: true,
+                unique: {
+                    args: true,
+                    msg: 'Username already exists',
+                },
                 validate: {
                     // We require usernames to have length of at least 3, and
                     // only use letters, numbers, underscores, dashes, and dots.
@@ -53,7 +56,10 @@ module.exports.define = (sequelize, DataTypes) => {
             email: {
                 type: DataTypes.STRING(255),
                 allowNull: false,
-                unique: true,
+                unique: {
+                    args: true,
+                    msg: 'Email already in use by another user',
+                }
             },
             phoneCountry: {
                 type: DataTypes.STRING(5), // This is the country code
@@ -113,8 +119,11 @@ module.exports.define = (sequelize, DataTypes) => {
             },
             indexes: [
                 {
-                    unique: true,
                     fields: ['phoneCountry', 'phoneNumber'],
+                    unique: {
+                        args: true,
+                        msg: 'Phone number already in use by another user',
+                    },
                 },
             ],
         }

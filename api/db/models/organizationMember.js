@@ -30,11 +30,17 @@ module.exports.define = (sequelize, DataTypes) => {
         {
             indexes: [
                 {
-                    unique: true,
+                    unique: {
+                        args: true,
+                        msg: 'Email already in use by another member',
+                    },
                     fields: ['OrganizationId', 'email'], // Create index for uniqueness per organization and email
                 },
                 {
-                    unique: true,
+                    unique: {
+                        args: true,
+                        msg: 'Phone already in use by another member',
+                    },
                     fields: ['OrganizationId', 'phone'], // Create index for uniqueness per organization and phone
                 },
             ],

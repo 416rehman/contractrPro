@@ -43,8 +43,11 @@ module.exports.define = (sequelize, DataTypes) => {
         {
             indexes: [
                 {
-                    unique: true,
                     fields: ['OrganizationId', 'invoiceNumber'], // Create index for uniqueness per organization and invoiceNumber
+                    unique: {
+                        args: true,
+                        msg: 'This invoice number is already in use',
+                    },
                     msg: 'The invoice number is already in use',
                 },
             ],

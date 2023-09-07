@@ -16,8 +16,13 @@ module.exports.define = (sequelize, DataTypes) => {
             allowNull: true,
         },
         quantity: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.FLOAT(),
             allowNull: false,
+        },
+        unit: {
+            type: DataTypes.STRING(255),
+            allowNull: false,
+            defaultValue: 'ea',
         },
         unitCost: {
             type: DataTypes.FLOAT(),

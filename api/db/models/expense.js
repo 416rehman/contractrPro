@@ -29,8 +29,11 @@ module.exports.define = (sequelize, DataTypes) => {
         {
             indexes: [
                 {
-                    unique: true,
                     fields: ['expenseNumber', 'OrganizationId'],
+                    unique: {
+                        args: true,
+                        msg: 'This expense number is already in use',
+                    },
                     msg: 'The expense number is already in use',
                 },
             ],
