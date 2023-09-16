@@ -5,7 +5,7 @@ const path = require('path')
 const envFile = path.join(__dirname, 'jest.env')
 require('dotenv').config({ path: envFile })
 
-const logger = require('./utils/logger')
+const logger = require('./src/utils/logger')
 
 // Log a message to remind developers how to see more detail from log messages
 logger.info(`Testing in ${process.env.NODE_ENV} mode.`)

@@ -1,12 +1,12 @@
 const request = require('supertest')
-const app = require('../../../../server')
+const app = require('../../../../src/server')
 const {
     OrganizationMember,
     Organization,
     User,
     sequelize,
 } = require('../../../../db')
-const fake = require('../../../../utils/fake')
+const fake = require('../../../../src/utils/fake')
 const { randomInt } = require('crypto')
 
 let orgId, userId

@@ -1,4 +1,4 @@
-const { generateRandomCode } = require('../../utils')
+const { generateRandomCode } = require('../../src/utils')
 module.exports.define = (sequelize, DataTypes) => {
     const Invite = sequelize.define('Invite', {
         id: {

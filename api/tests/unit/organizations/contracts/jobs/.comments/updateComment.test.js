@@ -1,5 +1,5 @@
 const request = require('supertest')
-const app = require('../../../../../../server')
+const app = require('../../../../../../src/server')
 const {
     Comment,
     Organization,
@@ -9,7 +9,7 @@ const {
     Attachment,
     sequelize,
 } = require('../../../../../../db')
-const fake = require('../../../../../../utils/fake')
+const fake = require('../../../../../../src/utils/fake')
 const fs = require('fs')
 
 let orgId, jobId, strangerOrganizationId, strangerJobId, clientId, contractId

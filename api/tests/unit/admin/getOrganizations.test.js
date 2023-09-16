@@ -1,5 +1,5 @@
 const request = require('supertest')
-const app = require('../../../server')
+const app = require('../../../src/server')
 const { Organization, sequelize } = require('../../../db')
 
 afterAll(async () => {

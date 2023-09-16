@@ -78,7 +78,10 @@ module.exports.define = (sequelize, DataTypes) => {
         })
 
         Organization.hasOne(models.OrganizationSettings, {
-            foreignKey: { allowNull: false },
+            foreignKey: {
+                allowNull: false,
+                unique: true,
+            },
         })
     }
 

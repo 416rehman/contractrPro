@@ -1,36 +1,36 @@
 const { sequelize, dumpMethods } = require('./index')
-const logger = require('../utils/logger')
-const { populate } = require('../utils/fake')
-
-module.exports = () => {
-    dumpMethods('.methods')
-    return sequelize
-        .authenticate()
-        .then(async () => {
-            if (
-                process.env.NODE_ENV === 'test' ||
-                process.env.NODE_ENV === 'development'
-            ) {
-                logger.debug(`Running in ${process.env.NODE_ENV} mode`)
-
-                logger.debug(`Syncing database...`)
-                await sequelize.sync({
-                    alter: true,
-                })
-
-                logger.debug(`Populating database...`)
-                await populate()
-                logger.debug(`Database populated!`)
-            } else {
-                await sequelize.sync({
-                    alter: true,
-                })
-            }
-        })
-        .catch((err) => {
-            logger.error(
-                `Unable to connect to the database: ${err}.\n Make sure the database server is running.`
-            )
-            throw err
-        })
-}
+const logger = require('../src/utils/logger')
+const { populate } = require('../src/utils/fake')
+//
+// module.exports = () => {
+//     dumpMethods('.methods')
+//     return sequelize
+//         .authenticate()
+//         .then(async () => {
+//             if (
+//                 process.env.NODE_ENV === 'test' ||
+//                 process.env.NODE_ENV === 'development'
+//             ) {
+//                 logger.debug(`Running in ${process.env.NODE_ENV} mode`)
+//
+//                 logger.debug(`Syncing database...`)
+//                 await sequelize.sync({
+//                     alter: true,
+//                 })
+//
+//                 logger.debug(`Populating database...`)
+//                 await populate()
+//                 logger.debug(`Database populated!`)
+//             } else {
+//                 await sequelize.sync({
+//                     alter: true,
+//                 })
+//             }
+//         })
+//         .catch((err) => {
+//             logger.error(
+//                 `Unable to connect to the database: ${err}.\n Make sure the database server is running.`
+//             )
+//             throw err
+//         })
+// }

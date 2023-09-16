@@ -1,5 +1,5 @@
 const { DataTypes, Sequelize } = require('sequelize')
-const logger = require('../utils/logger')
+const logger = require('../src/utils/logger')
 const { Client } = require('pg')
 const fs = require('fs')
 const path = require('path')

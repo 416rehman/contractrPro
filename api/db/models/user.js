@@ -1,7 +1,7 @@
 const { Sequelize } = require('sequelize')
-const { readFlags } = require('../../utils/flags')
+const { readFlags } = require('../../src/utils/flags')
 const { hashSync } = require('bcrypt')
-const { generateRefreshToken } = require('../../utils')
+const { generateRefreshToken } = require('../../src/utils')
 
 module.exports.UserFlags = {
     // The types of tokens that can be created. These are stored as a bitmask in the Token.flags field and can store 16 different types of tokens

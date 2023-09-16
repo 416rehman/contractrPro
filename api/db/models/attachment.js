@@ -44,7 +44,7 @@ module.exports.define = (sequelize, DataTypes) => {
 
     // after delete remove the file from S3
     Attachment.afterDestroy(async (attachment) => {
-        const s3 = require('../../utils/s3')
+        const s3 = require('../../src/utils/s3')
         await s3.delete(attachment.id)
     })
 

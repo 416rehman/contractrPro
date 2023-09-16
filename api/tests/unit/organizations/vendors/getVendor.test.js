@@ -1,5 +1,5 @@
 const request = require('supertest')
-const app = require('../../../../server')
+const app = require('../../../../src/server')
 const { Organization, Vendor, sequelize } = require('../../../../db')
 const { Op } = require('sequelize')
 

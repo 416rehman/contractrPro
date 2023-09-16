@@ -1,5 +1,5 @@
 const request = require('supertest')
-const app = require('../../../../../server')
+const app = require('../../../../../src/server')
 const {
     Comment,
     Organization,
@@ -7,7 +7,7 @@ const {
     Expense,
     sequelize,
 } = require('../../../../../db')
-const fake = require('../../../../../utils/fake')
+const fake = require('../../../../../src/utils/fake')
 
 let orgId, expenseId, comment, clientId
 beforeAll(async () => {

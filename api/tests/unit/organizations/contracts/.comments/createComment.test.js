@@ -1,12 +1,12 @@
 const request = require('supertest')
-const app = require('../../../../../server')
+const app = require('../../../../../src/server')
 const {
     Client,
     Organization,
     Contract,
     sequelize,
 } = require('../../../../../db')
-const fake = require('../../../../../utils/fake')
+const fake = require('../../../../../src/utils/fake')
 const fs = require('fs')
 
 let orgId, contractId, strangerOrganizationId, strangerContractId, clientId

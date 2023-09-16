@@ -1,12 +1,12 @@
 const request = require('supertest')
-const app = require('../../../../server')
+const app = require('../../../../src/server')
 const db = require('../../../../db')
 const {
     Organization,
     OrganizationMember,
     sequelize,
 } = require('../../../../db')
-const fake = require('../../../../utils/fake')
+const fake = require('../../../../src/utils/fake')
 
 let orgId, orgMemberData
 beforeAll(async () => {

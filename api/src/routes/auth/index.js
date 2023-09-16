@@ -1,0 +1,51 @@
+const checkAuth = require('../../middleware/authMiddleware')
+const routes = require('express').Router()
+
+routes.use((req, res, next) => {
+    const path = __filename.split('/').slice(-1)[0].split('\\').slice(-1)[0]
+    res.set('Router', path)
+    next()
+})
+
+/**
+ * @api {post} /auth/login Gets the signedInUser's refresh token
+ * @apiName Login
+ */
+routes.post(
+    '/login',
+    require('./postLogin')
+)
+
+/**
+ * @api {post} /auth/ Use refresh token to get new access token
+ * @apiName GetAccountToken
+ */
+routes.post('/token', require('./token'))
+
+/**
+ * @api {post} /auth/account Register new account
+ * @apiName RegisterAccount
+ */
+routes.post(
+    '/account',
+    require('./postAccount')
+)
+
+/**
+ * @api {delete} /auth/account Delete account
+ * @apiName DeleteAccount
+ */
+routes.delete('/account', checkAuth, require('./deleteAccount'))
+
+/**
+ * @api {get} /auth/logout Logout - Clears the cookie if it exists
+ * @apiName Logout
+ */
+routes.get('/logout', require('./logout'))
+
+/**
+ * @api {post} /auth/forgot Sends a password reset token to the signedInUser's email
+ */
+routes.post('/forgot', require('./forgot'))
+
+module.exports = routes

@@ -1,0 +1,398 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Address {
+  id                                     String        @id @default(cuid())
+  country                                String        @db.VarChar(128)
+  postalCode                             String        @db.VarChar(10)
+  province                               String        @db.VarChar(128)
+  city                                   String        @db.VarChar(128)
+  addressLine1                           String        @db.VarChar(128)
+  addressLine2                           String?       @db.VarChar(128)
+  createdAt                              DateTime      @default(now())
+  updatedAt                              DateTime      @updatedAt
+  UpdatedByUserId                        String?
+  ClientId                               String?
+  OrganizationId                         String?
+  UserId                                 String?
+  VendorId                               String?
+  Clients                                Client?       @relation(fields: [ClientId], references: [id])
+  Organizations                          Organization? @relation(fields: [OrganizationId], references: [id])
+  Users_Addresses_UpdatedByUserIdToUsers User?         @relation("Addresses_UpdatedByUserIdToUsers", fields: [UpdatedByUserId], references: [id])
+  Users_Addresses_UserIdToUsers          User?         @relation("Addresses_UserIdToUsers", fields: [UserId], references: [id])
+  Vendors                                Vendor?       @relation(fields: [VendorId], references: [id])
+}
+
+model Attachment {
+  id        String   @id @default(cuid())
+  name      String   @db.VarChar(256)
+  type      String   @db.VarChar(256)
+  size      BigInt
+  accessUrl String   @db.VarChar(2048)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  CommentId String
+  Comments  Comment  @relation(fields: [CommentId], references: [id], onDelete: Cascade)
+}
+
+model Client {
+  id              String       @id @default(cuid())
+  name            String       @db.VarChar(255)
+  phone           String?      @db.VarChar(255)
+  email           String?      @db.VarChar(255)
+  website         String?      @db.VarChar(255)
+  description     String?      @db.VarChar(1024)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  UpdatedByUserId String?
+  OrganizationId  String
+  Addresses       Address[]
+  Organizations   Organization @relation(fields: [OrganizationId], references: [id], onDelete: Cascade)
+  Users           User?        @relation(fields: [UpdatedByUserId], references: [id])
+  Comments        Comment[]
+  Contracts       Contract[]
+  Invoices        Invoice[]
+
+  @@unique([phone, email])
+  @@unique([OrganizationId, email], map: "clients__organization_id_email")
+  @@unique([OrganizationId, phone], map: "clients__organization_id_phone")
+}
+
+model Comment {
+  id                                    String       @id @default(cuid())
+  content                               String       @db.VarChar(1024)
+  createdAt                             DateTime     @default(now())
+  updatedAt                             DateTime     @updatedAt
+  ClientId                              String?
+  OrganizationId                        String
+  ContractId                            String?
+  ExpenseId                             String?
+  InvoiceId                             String?
+  VendorId                              String?
+  AuthorId                              String?
+  UpdatedByUserId                       String?
+  JobId                                 String?
+  Attachments                           Attachment[]
+  Users_Comments_AuthorIdToUsers        User?        @relation("Comments_AuthorIdToUsers", fields: [AuthorId], references: [id])
+  Clients                               Client?      @relation(fields: [ClientId], references: [id], onDelete: Cascade)
+  Contracts                             Contract?    @relation(fields: [ContractId], references: [id], onDelete: Cascade)
+  Expenses                              Expense?     @relation(fields: [ExpenseId], references: [id], onDelete: Cascade)
+  Invoices                              Invoice?     @relation(fields: [InvoiceId], references: [id], onDelete: Cascade)
+  Jobs                                  Job?         @relation(fields: [JobId], references: [id], onDelete: Cascade)
+  Organizations                         Organization @relation(fields: [OrganizationId], references: [id], onDelete: Cascade)
+  Users_Comments_UpdatedByUserIdToUsers User?        @relation("Comments_UpdatedByUserIdToUsers", fields: [UpdatedByUserId], references: [id])
+  Vendors                               Vendor?      @relation(fields: [VendorId], references: [id], onDelete: Cascade)
+}
+
+model ContractMember {
+  id                   String              @id @default(cuid())
+  permissionOverwrites BigInt?
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+  ContractId           String?
+  OrganizationMemberId String?
+  UpdatedByUserId      String?
+  Contracts            Contract?           @relation(fields: [ContractId], references: [id], onDelete: Cascade)
+  OrganizationMembers  OrganizationMember? @relation(fields: [OrganizationMemberId], references: [id], onDelete: Cascade)
+  Users                User?               @relation(fields: [UpdatedByUserId], references: [id])
+
+  @@unique([ContractId, OrganizationMemberId])
+}
+
+model Contract {
+  id              String           @id @default(cuid())
+  name            String           @db.VarChar(255)
+  description     String?          @db.VarChar(1024)
+  startDate       DateTime?        @db.Timestamptz(6)
+  dueDate         DateTime?        @db.Timestamptz(6)
+  completionDate  DateTime?        @db.Timestamptz(6)
+  status          Int              @default(0) @db.SmallInt
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  ClientId        String
+  OrganizationId  String
+  UpdatedByUserId String?
+  Comments        Comment[]
+  ContractMembers ContractMember[]
+  Clients         Client           @relation(fields: [ClientId], references: [id], onDelete: Cascade)
+  Organizations   Organization     @relation(fields: [OrganizationId], references: [id], onDelete: Cascade)
+  Users           User?            @relation(fields: [UpdatedByUserId], references: [id])
+  Expenses        Expense[]
+  Invoices        Invoice[]
+  Jobs            Job[]
+}
+
+model ExpenseEntry {
+  id          String   @id @default(cuid())
+  name        String   @db.VarChar(255)
+  description String?  @db.VarChar(512)
+  quantity    Float
+  unit        String   @default("ea") @db.VarChar(255)
+  unitCost    Float
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  ExpenseId   String?
+  Expenses    Expense? @relation(fields: [ExpenseId], references: [id])
+}
+
+model Expense {
+  id              String         @id @default(cuid())
+  expenseNumber   String         @db.VarChar(255)
+  description     String?        @db.VarChar(512)
+  date            DateTime?      @db.Timestamptz(6)
+  taxRate         Float          @default(0)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  ContractId      String?
+  OrganizationId  String
+  JobId           String?
+  VendorId        String?
+  UpdatedByUserId String?
+  Comments        Comment[]
+  ExpenseEntries  ExpenseEntry[]
+  Contracts       Contract?      @relation(fields: [ContractId], references: [id])
+  Jobs            Job?           @relation(fields: [JobId], references: [id])
+  Organizations   Organization   @relation(fields: [OrganizationId], references: [id], onDelete: Cascade)
+  Users           User?          @relation(fields: [UpdatedByUserId], references: [id])
+  Vendors         Vendor?        @relation(fields: [VendorId], references: [id])
+
+  @@unique([expenseNumber, OrganizationId], map: "expenses_expense_number__organization_id")
+}
+
+model Invite {
+  id                      String              @id @db.VarChar(8)
+  uses                    Int                 @default(0)
+  maxUses                 Int                 @default(0)
+  createdAt               DateTime            @default(now())
+  updatedAt               DateTime            @updatedAt
+  OrganizationId          String
+  ForOrganizationMemberId String?
+  UpdatedByUserId         String?
+  OrganizationMembers     OrganizationMember? @relation(fields: [ForOrganizationMemberId], references: [id])
+  Organizations           Organization        @relation(fields: [OrganizationId], references: [id], onDelete: NoAction)
+  Users                   User?               @relation(fields: [UpdatedByUserId], references: [id])
+}
+
+model InvoiceEntry {
+  id          String   @id @default(cuid())
+  name        String   @db.VarChar(255)
+  description String?  @db.VarChar(512)
+  quantity    Float
+  unit        String   @default("ea") @db.VarChar(255)
+  unitCost    Float
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  InvoiceId   String?
+  Invoices    Invoice? @relation(fields: [InvoiceId], references: [id], onDelete: Cascade)
+}
+
+model Invoice {
+  id              String         @id @default(cuid())
+  invoiceNumber   String         @db.VarChar(255)
+  issueDate       DateTime       @db.Timestamptz(6)
+  dueDate         DateTime?      @db.Timestamptz(6)
+  poNumber        String?        @db.VarChar(255)
+  note            String?        @db.VarChar(512)
+  taxRate         Float          @default(0)
+  paymentDate     DateTime?      @db.Timestamptz(6)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  ContractId      String?
+  OrganizationId  String
+  JobId           String?
+  BillToClientId  String?
+  UpdatedByUserId String?
+  Comments        Comment[]
+  InvoiceEntries  InvoiceEntry[]
+  Clients         Client?        @relation(fields: [BillToClientId], references: [id])
+  Contracts       Contract?      @relation(fields: [ContractId], references: [id])
+  Jobs            Job?           @relation(fields: [JobId], references: [id])
+  Organizations   Organization   @relation(fields: [OrganizationId], references: [id], onDelete: Cascade)
+  Users           User?          @relation(fields: [UpdatedByUserId], references: [id])
+
+  @@unique([OrganizationId, invoiceNumber], map: "invoices__organization_id_invoice_number")
+}
+
+model JobMember {
+  id                   String              @id @default(cuid())
+  permissionOverwrites Int                 @default(1)
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+  JobId                String?
+  OrganizationMemberId String?
+  UpdatedByUserId      String?
+  Jobs                 Job?                @relation(fields: [JobId], references: [id], onDelete: Cascade)
+  OrganizationMembers  OrganizationMember? @relation(fields: [OrganizationMemberId], references: [id], onDelete: Cascade)
+  Users                User?               @relation(fields: [UpdatedByUserId], references: [id])
+
+  @@unique([JobId, OrganizationMemberId])
+}
+
+model Job {
+  id              String      @id @default(cuid())
+  reference       String?     @db.VarChar(256)
+  name            String      @db.VarChar(256)
+  description     String?     @db.VarChar(512)
+  status          Int?        @default(0) @db.SmallInt
+  startDate       DateTime    @db.Timestamptz(6)
+  dueDate         DateTime?   @db.Timestamptz(6)
+  completionDate  DateTime?   @db.Timestamptz(6)
+  payout          Decimal?    @default(0) @db.Decimal(10, 2)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  ContractId      String
+  UpdatedByUserId String?
+  Comments        Comment[]
+  Expenses        Expense[]
+  Invoices        Invoice[]
+  JobMembers      JobMember[]
+  Contracts       Contract    @relation(fields: [ContractId], references: [id], onDelete: Cascade)
+  Users           User?       @relation(fields: [UpdatedByUserId], references: [id])
+}
+
+model OrganizationMember {
+  id                                               String           @id @default(cuid())
+  name                                             String           @db.VarChar(512)
+  email                                            String?          @db.VarChar(255)
+  phone                                            String?          @db.VarChar(25)
+  permissions                                      Int              @default(1)
+  createdAt                                        DateTime         @default(now())
+  updatedAt                                        DateTime         @updatedAt
+  UpdatedByUserId                                  String?
+  OrganizationId                                   String?
+  UserId                                           String?
+  ContractMembers                                  ContractMember[]
+  Invites                                          Invite[]
+  JobMembers                                       JobMember[]
+  Organizations                                    Organization?    @relation(fields: [OrganizationId], references: [id], onDelete: Cascade)
+  Users_OrganizationMembers_UpdatedByUserIdToUsers User?            @relation("OrganizationMembers_UpdatedByUserIdToUsers", fields: [UpdatedByUserId], references: [id])
+  User                                             User?            @relation(fields: [userId], references: [id])
+  userId                                           String?
+
+  @@unique([OrganizationId, UserId])
+  @@unique([OrganizationId, email], map: "organization_members__organization_id_email")
+  @@unique([OrganizationId, phone], map: "organization_members__organization_id_phone")
+}
+
+model OrganizationConfig {
+  id                      String       @id @default(cuid())
+  currencyCode            String       @default("CAD") @db.VarChar(3)
+  currencySymbol          String       @default("$") @db.VarChar(3)
+  invoiceUseDateForNumber Boolean      @default(true)
+  invoiceDefaultTaxRate   Decimal      @default(0) @db.Decimal(5, 2)
+  invoiceDefaultTerms     String       @default("Due on receipt") @db.VarChar(255)
+  invoiceFooterLine1      String?      @db.VarChar(255)
+  invoiceFooterLine2      String?      @db.VarChar(255)
+  invoiceBoldFooterLine1  Boolean      @default(false)
+  invoiceBoldFooterLine2  Boolean      @default(false)
+  createdAt               DateTime     @default(now())
+  updatedAt               DateTime     @updatedAt
+  OrganizationId          String       @unique
+  Organizations           Organization @relation(fields: [OrganizationId], references: [id], onDelete: Cascade)
+}
+
+model Organization {
+  id                                         String               @id @default(cuid())
+  name                                       String               @db.VarChar(255)
+  description                                String?              @db.VarChar(512)
+  email                                      String?              @db.VarChar(255)
+  phone                                      String?              @db.VarChar(25)
+  website                                    String?              @db.VarChar(255)
+  logoUrl                                    String?              @db.VarChar(255)
+  createdAt                                  DateTime             @default(now())
+  updatedAt                                  DateTime             @updatedAt
+  OwnerId                                    String
+  UpdatedByUserId                            String?
+  Addresses                                  Address[]
+  Clients                                    Client[]
+  Comments                                   Comment[]
+  Contracts                                  Contract[]
+  Expenses                                   Expense[]
+  Invites                                    Invite[]
+  Invoices                                   Invoice[]
+  OrganizationMembers                        OrganizationMember[]
+  OrganizationConfig                         OrganizationConfig?
+  Users_Organizations_OwnerIdToUsers         User                 @relation("Organizations_OwnerIdToUsers", fields: [OwnerId], references: [id], onDelete: NoAction)
+  Users_Organizations_UpdatedByUserIdToUsers User?                @relation("Organizations_UpdatedByUserIdToUsers", fields: [UpdatedByUserId], references: [id])
+  Vendors                                    Vendor[]
+}
+
+model Token {
+  id        String   @id @default(cuid())
+  token     String   @unique @db.VarChar(128)
+  expiresAt DateTime @db.Timestamptz(6)
+  flags     Int      @unique @default(0) @db.SmallInt
+  data      String?  @db.VarChar(1024)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  UserId    String
+  Users     User     @relation(fields: [UserId], references: [id], onDelete: Cascade)
+
+  @@unique([UserId, flags], map: "tokens__user_id_flags")
+}
+
+model User {
+  id                                                             String               @id @default(cuid())
+  username                                                       String               @unique @db.VarChar(32)
+  name                                                           String?              @db.VarChar(512)
+  email                                                          String               @unique @db.VarChar(255)
+  phoneCountry                                                   String?              @db.VarChar(5)
+  phoneNumber                                                    String?              @db.VarChar(20)
+  password                                                       String               @db.VarChar(255)
+  avatarUrl                                                      String?              @db.VarChar(1024)
+  refreshToken                                                   String               @unique @db.VarChar(255)
+  flags                                                          Int?                 @db.SmallInt
+  createdAt                                                      DateTime             @default(now())
+  updatedAt                                                      DateTime             @updatedAt
+  UpdatedByUserId                                                String?
+  Addresses_Addresses_UpdatedByUserIdToUsers                     Address[]            @relation("Addresses_UpdatedByUserIdToUsers")
+  Addresses_Addresses_UserIdToUsers                              Address[]            @relation("Addresses_UserIdToUsers")
+  Clients                                                        Client[]
+  Comments_Comments_AuthorIdToUsers                              Comment[]            @relation("Comments_AuthorIdToUsers")
+  Comments_Comments_UpdatedByUserIdToUsers                       Comment[]            @relation("Comments_UpdatedByUserIdToUsers")
+  ContractMembers                                                ContractMember[]
+  Contracts                                                      Contract[]
+  Expenses                                                       Expense[]
+  Invites                                                        Invite[]
+  Invoices                                                       Invoice[]
+  JobMembers                                                     JobMember[]
+  Jobs                                                           Job[]
+  OrganizationMembers                                            OrganizationMember[]
+  OrganizationMembers_OrganizationMembers_UpdatedByUserIdToUsers OrganizationMember[] @relation("OrganizationMembers_UpdatedByUserIdToUsers")
+  Organizations_Organizations_OwnerIdToUsers                     Organization[]       @relation("Organizations_OwnerIdToUsers")
+  Organizations_Organizations_UpdatedByUserIdToUsers             Organization[]       @relation("Organizations_UpdatedByUserIdToUsers")
+  Tokens                                                         Token[]
+  Users                                                          User?                @relation("UsersToUsers", fields: [UpdatedByUserId], references: [id])
+  other_Users                                                    User[]               @relation("UsersToUsers")
+  Vendors                                                        Vendor[]
+
+  @@unique([phoneCountry, phoneNumber], map: "users_phone_country_phone_number")
+}
+
+model Vendor {
+  id              String       @id @default(cuid())
+  name            String       @db.VarChar(255)
+  phone           String?      @db.VarChar(255)
+  email           String?      @db.VarChar(255)
+  website         String?      @db.VarChar(255)
+  description     String?      @db.VarChar(1024)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  OrganizationId  String
+  UpdatedByUserId String?
+  Addresses       Address[]
+  Comments        Comment[]
+  Expenses        Expense[]
+  Organizations   Organization @relation(fields: [OrganizationId], references: [id], onDelete: Cascade)
+  Users           User?        @relation(fields: [UpdatedByUserId], references: [id])
+
+  @@unique([phone, email])
+  @@unique([OrganizationId, email], map: "vendors__organization_id_email")
+  @@unique([OrganizationId, phone], map: "vendors__organization_id_phone")
+}

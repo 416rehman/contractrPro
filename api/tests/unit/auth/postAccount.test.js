@@ -1,7 +1,7 @@
 const request = require('supertest')
-const app = require('../../../server')
+const app = require('../../../src/server')
 const { User, sequelize } = require('../../../db')
-const fake = require('../../../utils/fake')
+const fake = require('../../../src/utils/fake')
 afterAll(async () => {
     jest.restoreAllMocks()
     await sequelize.close()
