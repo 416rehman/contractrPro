@@ -1,184 +1,166 @@
-const { Op } = require('sequelize')
-const {
-    OrganizationMember,
-    Invoice,
-    Job,
-    Expense,
-    Client,
-    Contract,
-    Attachment,
-    Comment,
-    Vendor,
-} = require('../../../db')
+const prisma = require('../../prisma')
 const {
     createErrorResponse,
     createSuccessResponse,
 } = require('../../utils/response')
+const { z } = require('zod')
+const searchQuerySchema = z.object({
+    q: z.string().min(3),
+    type: z
+        .enum([
+            'organizationMember',
+            'invoice',
+            'job',
+            'expense',
+            'client',
+            'contract',
+            'attachment',
+            'vendor',
+        ])
+        .optional(),
+})
 
 const queryTypes = {
     organizationMember: (searchQuery, orgId) =>
-        OrganizationMember.findAll({
+        prisma.organizationMember.findMany({
             where: {
-                OrganizationId: orgId,
-                [Op.or]: [
-                    { name: { [Op.iLike]: `%${searchQuery}%` } },
-                    { email: { [Op.iLike]: `%${searchQuery}%` } },
-                    { phone: { [Op.iLike]: `%${searchQuery}%` } },
+                organizationId: orgId,
+                OR: [
+                    { name: { search: searchQuery } },
+                    { email: { search: searchQuery } },
+                    { phone: { search: searchQuery } },
+                    { id: { search: searchQuery } },
                 ],
             },
         }),
     invoice: (searchQuery, orgId) =>
-        Invoice.findAll({
+        prisma.invoice.findMany({
             where: {
-                OrganizationId: orgId,
-                [Op.or]: [
-                    {
-                        invoiceNumber: {
-                            [Op.iLike]: `%${searchQuery}%`,
-                        },
-                    },
-                    { poNumber: { [Op.iLike]: `%${searchQuery}%` } },
-                    { note: { [Op.iLike]: `%${searchQuery}%` } },
+                organizationId: orgId,
+                OR: [
+                    { invoiceNumber: { search: searchQuery } },
+                    { poNumber: { search: searchQuery } },
+                    { note: { search: searchQuery } },
+                    { id: { search: searchQuery } },
                 ],
             },
         }),
     job: (searchQuery, orgId) =>
-        Job.findAll({
+        prisma.job.findMany({
             where: {
-                [Op.or]: [
-                    { reference: { [Op.iLike]: `%${searchQuery}%` } },
-                    { name: { [Op.iLike]: `%${searchQuery}%` } },
-                    {
-                        description: {
-                            [Op.iLike]: `%${searchQuery}%`,
-                        },
-                    },
+                OR: [
+                    { reference: { search: searchQuery } },
+                    { name: { search: searchQuery } },
+                    { description: { search: searchQuery } },
+                    { id: { search: searchQuery } },
                 ],
-            },
-            include: [
-                {
-                    model: Contract,
-                    where: {
-                        OrganizationId: orgId,
-                    },
+                Contract: {
+                    organizationId: orgId,
                 },
-            ],
+            },
         }),
     expense: (searchQuery, orgId) =>
-        Expense.findAll({
+        prisma.expense.findMany({
             where: {
-                OrganizationId: orgId,
-                [Op.or]: [
-                    {
-                        expenseNumber: {
-                            [Op.iLike]: `%${searchQuery}%`,
-                        },
-                    },
-                    {
-                        description: {
-                            [Op.iLike]: `%${searchQuery}%`,
-                        },
-                    },
+                organizationId: orgId,
+                OR: [
+                    { expenseNumber: { search: searchQuery } },
+                    { description: { search: searchQuery } },
+                    { id: { search: searchQuery } },
                 ],
             },
         }),
     client: (searchQuery, orgId) =>
-        Client.findAll({
+        prisma.client.findMany({
             where: {
-                OrganizationId: orgId,
-                [Op.or]: [
-                    { name: { [Op.iLike]: `%${searchQuery}%` } },
-                    { email: { [Op.iLike]: `%${searchQuery}%` } },
-                    { phone: { [Op.iLike]: `%${searchQuery}%` } },
-                    { website: { [Op.iLike]: `%${searchQuery}%` } },
-                    {
-                        description: {
-                            [Op.iLike]: `%${searchQuery}%`,
-                        },
-                    },
+                organizationId: orgId,
+                OR: [
+                    { name: { search: searchQuery } },
+                    { email: { search: searchQuery } },
+                    { phone: { search: searchQuery } },
+                    { website: { search: searchQuery } },
+                    { description: { search: searchQuery } },
+                    { id: { search: searchQuery } },
                 ],
             },
         }),
     contract: (searchQuery, orgId) =>
-        Contract.findAll({
+        prisma.contract.findMany({
             where: {
-                OrganizationId: orgId,
-                [Op.or]: [
-                    { name: { [Op.iLike]: `%${searchQuery}%` } },
-                    {
-                        description: {
-                            [Op.iLike]: `%${searchQuery}%`,
-                        },
-                    },
+                organizationId: orgId,
+                OR: [
+                    { name: { search: searchQuery } },
+                    { description: { search: searchQuery } },
+                    { id: { search: searchQuery } },
                 ],
             },
         }),
     attachment: (searchQuery, orgId) =>
-        Attachment.findAll({
+        prisma.attachment.findMany({
             where: {
-                [Op.or]: [{ name: { [Op.iLike]: `%${searchQuery}%` } }],
-            },
-            include: [
-                {
-                    model: Comment,
-                    where: {
-                        OrganizationId: orgId,
-                    },
+                Comment: {
+                    organizationId: orgId,
                 },
-            ],
+                OR: [
+                    { name: { search: searchQuery } },
+                    { type: { search: searchQuery } },
+                    { commentId: { search: searchQuery } },
+                    { id: { search: searchQuery } },
+                ],
+            },
         }),
     vendor: (searchQuery, orgId) =>
-        Vendor.findAll({
+        prisma.vendor.findMany({
             where: {
-                OrganizationId: orgId,
-                [Op.or]: [
-                    { name: { [Op.iLike]: `%${searchQuery}%` } },
-                    { email: { [Op.iLike]: `%${searchQuery}%` } },
-                    { phone: { [Op.iLike]: `%${searchQuery}%` } },
-                    { website: { [Op.iLike]: `%${searchQuery}%` } },
-                    {
-                        description: {
-                            [Op.iLike]: `%${searchQuery}%`,
-                        },
-                    },
+                organizationId: orgId,
+                OR: [
+                    { name: { search: searchQuery } },
+                    { email: { search: searchQuery } },
+                    { phone: { search: searchQuery } },
+                    { website: { search: searchQuery } },
+                    { description: { search: searchQuery } },
+                    { id: { search: searchQuery } },
                 ],
             },
         }),
 }
 
 module.exports = async (req, res) => {
-    const organizationId = req.params.org_id
-    //Search route
-    const searchQuery = req.query.q
-    const searchType = req.query.type
-
-    if (!searchQuery) {
-        return res
-            .status(400)
-            .json(createErrorResponse('Missing search query parameter (q)'))
-    }
-
-    const searchFunction = queryTypes[searchType]
     try {
+        const organizationId = req.params.org_id
+        const search = searchQuerySchema.parse(req.query)
+
+        if (!search?.q) {
+            return res
+                .status(400)
+                .json(createErrorResponse('Missing search query parameter (q)'))
+        }
+
+        const searchFunction = queryTypes[search?.type]
+
         if (searchFunction) {
             // If the search type is specified, search only that type, returns an object with key of the type and value of the results
-            const results = await searchFunction(searchQuery, organizationId)
+            const results = await searchFunction(search.q, organizationId)
             return res
                 .status(200)
-                .json(createSuccessResponse({ [searchType]: results }))
+                .json(createSuccessResponse({ [search.type]: results }))
         } else {
-            // If the search type is not specified, search all types, returns an object with keys of the types and values of the results
-            const results = {}
-            for (const type in queryTypes) {
-                results[type] = await queryTypes[type](
-                    searchQuery,
-                    organizationId
+            // Using async all to run all queries in parallel
+            const results = await Promise.all(
+                Object.keys(queryTypes).map((type) =>
+                    queryTypes[type](search.q, organizationId)
                 )
-            }
+            ).then((results) =>
+                // modify final result to be an object with keys of the types and values of the results
+                results.reduce((acc, cur, i) => {
+                    acc[Object.keys(queryTypes)[i]] = cur
+                    return acc
+                }, {})
+            )
+
             return res.status(200).json(createSuccessResponse(results))
         }
     } catch (err) {
-        console.error(err)
         return res.status(500).json(createErrorResponse(err))
     }
 }

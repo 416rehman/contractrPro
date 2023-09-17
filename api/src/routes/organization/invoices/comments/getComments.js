@@ -1,4 +1,4 @@
-const { Invoice, Comment, Attachment, sequelize } = require('../../../../../db')
+const prisma = require('../../../../prisma')
 const {
     createErrorResponse,
     createSuccessResponse,
@@ -6,50 +6,40 @@ const {
 
 module.exports = async (req, res) => {
     try {
-        const orgId = req.params.org_id
         const invoiceId = req.params.invoice_id
+        const orgId = req.params.org_id
 
-        const { page = 1, limit = 10 } = req.query
+        if (!invoiceId) throw new Error('Invoice ID is required.')
 
-        const options = {
-            limit: parseInt(limit),
-            offset: (parseInt(page) - 1) * parseInt(limit),
+        const { page = 1, perPage = 10 } = req.query
+
+        const where = {
+            Invoice: {
+                id: invoiceId,
+                organizationId: orgId,
+            },
         }
 
-        await sequelize.transaction(async (transaction) => {
-            // make sure the invoice belongs to the org
-            const invoice = await Invoice.findOne({
-                where: { id: invoiceId, OrganizationId: orgId },
-                transaction,
-            })
-            if (!invoice) {
-                return res
-                    .status(400)
-                    .json(createErrorResponse('Invoice not found.'))
-            }
-
-            // Get the comments
-            const comments = await Comment.findAndCountAll({
-                where: {
-                    InvoiceId: invoiceId,
-                },
-                include: [
-                    {
-                        model: Attachment,
-                    },
-                ],
-                transaction,
-                ...options,
-            })
-            const totalPages = Math.ceil(comments.count / parseInt(limit))
-            const response = {
-                comments: comments.rows,
-                currentPage: parseInt(page),
-                totalPages,
-            }
-
-            return res.status(200).json(createSuccessResponse(response))
+        // final response should contain the total number of comments, the current page, and the total number of pages
+        const comments = await prisma.comment.findMany({
+            where,
+            include: { Attachment: true },
+            skip: (page - 1) * perPage,
+            take: perPage,
         })
+
+        const totalComments = await prisma.comment.count({
+            where,
+        })
+
+        return res.status(200).json(
+            createSuccessResponse({
+                comments,
+                totalComments,
+                page,
+                totalPages: Math.ceil(totalComments / perPage),
+            })
+        )
     } catch (err) {
         return res
             .status(400)

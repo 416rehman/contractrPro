@@ -1,41 +1,31 @@
-const { Vendor, sequelize } = require('../../../../db')
+// Add vendor to organization
+const prisma = require('../../../prisma')
 const {
     createErrorResponse,
     createSuccessResponse,
 } = require('../../../utils/response')
-const { pick } = require('../../../utils')
-const { isValidUUID } = require('../../../utils/isValidUUID')
+const { zVendor } = require('../../../validators/vendor.zod')
 
-// Creates an organization's vendor
 module.exports = async (req, res) => {
     try {
         const orgId = req.params.org_id
-
-        if (!orgId || !isValidUUID(orgId)) {
-            return res
-                .status(400)
-                .json(createErrorResponse('Organization ID is required'))
+        const data = zVendor.parse(req.body)
+        const include = {}
+        if (req.body.Address) {
+            data.Address = {
+                create: req.body.Address,
+            }
+            include.Address = true
         }
 
-        const body = {
-            ...pick(req.body, [
-                'name',
-                'phone',
-                'email',
-                'website',
-                'description',
-            ]),
-            OrganizationId: orgId,
-            UpdatedByUserId: req.auth.id,
-        }
+        data.organizationId = orgId
+        data.updatedByUserId = req.auth.id
 
-        await sequelize.transaction(async (transaction) => {
-            const vendor = await Vendor.create(body, {
-                transaction,
-            })
-
-            res.status(201).json(createSuccessResponse(vendor))
+        const vendor = await prisma.vendor.create({
+            data,
+            include,
         })
+        return res.status(201).json(createSuccessResponse(vendor))
     } catch (error) {
         res.status(400).json(createErrorResponse('', error))
     }

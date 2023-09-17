@@ -1,105 +1,31 @@
-const {
-    sequelize,
-    Job,
-    Contract,
-    Organization,
-    JobMember,
-} = require('../../../../db')
+const prisma = require('../../../prisma')
 const {
     createSuccessResponse,
     createErrorResponse,
 } = require('../../../utils/response')
-const { pick } = require('../../../utils')
-const { isValidUUID } = require('../../../utils/isValidUUID')
-const { Op } = require('sequelize')
+const { zContract } = require('../../../validators/contract.zod')
+const { zJob } = require('../../../validators/job.zod')
 
 // Creates an organization's contract
 module.exports = async (req, res) => {
-    let error = null,
-        statusCode = null,
-        createdContract = null
-
     try {
         const orgID = req.params.org_id
-        const clientId = req.body.ClientId
+        const data = zContract.parse(req.body)
+        const include = {}
 
-        if (!orgID || !isValidUUID(orgID)) {
-            statusCode = 400
-            throw new Error('Valid Organization ID required')
+        data.organizationId = orgID
+        data.updatedByUserId = req.auth.id
+
+        if (req.body?.Jobs?.length) {
+            data.Jobs = req.body.Jobs.map((job) => zJob.parse(job))
+            include.Jobs = true
         }
 
-        if (!clientId || !isValidUUID(clientId)) {
-            statusCode = 400
-            throw new Error('Valid Client ID required')
-        }
-
-        await sequelize.transaction(async (transaction) => {
-            const org = await Organization.findOne({
-                where: {
-                    id: orgID,
-                },
-                transaction,
-            })
-
-            if (!org) {
-                statusCode = 400
-                throw new Error('Organization not found')
-            }
-
-            const body = {
-                ...pick(req.body, [
-                    'name',
-                    'description',
-                    'startDate',
-                    'dueDate',
-                    'completionDate',
-                    'status',
-                    'ClientId',
-                ]),
-                OrganizationId: orgID,
-                UpdatedByUserId: req.auth.id,
-            }
-
-            const include = [
-                {
-                    model: Organization,
-                    where: {
-                        id: orgID,
-                    },
-                },
-            ]
-
-            if (req.body?.Jobs?.length) {
-                body.Jobs =
-                    req.body?.Jobs?.map((job) =>
-                        pick(job, [
-                            'reference',
-                            'name',
-                            'description',
-                            'status',
-                            'startDate',
-                            'dueDate',
-                            'payout',
-                            'assignedTo',
-                        ])
-                    ) || []
-
-                include.push({
-                    model: Job,
-                })
-            }
-
-            createdContract = await Contract.create(body, {
-                include: include,
-                transaction,
-            })
+        const createdContract = await prisma.contract.create({
+            data,
+            include,
         })
-    } catch (err) {
-        error = err
-        statusCode = statusCode || 500
-    }
 
-    try {
         for (let i = 0; i < createdContract?.Jobs?.length; i++) {
             const job = createdContract.Jobs[i]
             const memberIds = job.assignedTo
@@ -108,33 +34,27 @@ module.exports = async (req, res) => {
             }
 
             // remove any job members that are not defined in the request
-            await JobMember.destroy({
+            await prisma.jobMember.deleteMany({
                 where: {
-                    JobId: job.id,
-                    OrganizationMemberId: {
-                        [Op.notIn]: memberIds,
+                    jobId: job.id,
+                    organizationMemberId: {
+                        notIn: memberIds,
                     },
                 },
             })
 
-            const result = await JobMember.bulkCreate(
-                memberIds.map((memberId) => ({
-                    JobId: job.id,
-                    OrganizationMemberId: memberId,
-                }))
-            )
-
-            createdContract.dataValues.Jobs[i].dataValues.assignedTo =
-                result.map((m) => m.OrganizationMemberId)
+            // add any job members that are not already assigned to the job
+            await prisma.jobMember.createMany({
+                data: memberIds.map((memberId) => ({
+                    jobId: job.id,
+                    organizationMemberId: memberId,
+                })),
+                skipDuplicates: true,
+            })
         }
-    } catch (err) {
-        error = err
-        statusCode = statusCode || 500
-    }
 
-    if (error) {
-        return res.status(statusCode).json(createErrorResponse('', error))
-    } else {
         return res.status(201).json(createSuccessResponse(createdContract))
+    } catch (err) {
+        return res.status(400).json(createErrorResponse(err))
     }
 }

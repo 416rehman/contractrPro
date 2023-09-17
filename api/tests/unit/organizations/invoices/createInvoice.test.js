@@ -46,8 +46,8 @@ describe('Create invoice', () => {
             invoiceData.InvoiceEntries[0].quantity
         )
         expect(InvoiceEntries[0]).toHaveProperty(
-            'unitCost',
-            invoiceData.InvoiceEntries[0].unitCost
+            'unitPrice',
+            invoiceData.InvoiceEntries[0].unitPrice
         )
         expect(InvoiceEntries[0]).toHaveProperty('InvoiceId', id)
 

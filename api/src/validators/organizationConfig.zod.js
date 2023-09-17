@@ -1,18 +1,28 @@
-const zod = require('zod')
-module.exports.zOrganizationConfig = zod.object({
-    currencyCode: zod.string().min(1).max(3).refine((value) => {
-        return currencyCodes.includes(value)
-    }),
-    currencySymbol: zod.string().min(1).max(3).refine((value) => {
-        return currencySymbols.includes(value)
-    }),
-    invoiceUseDateForNumber: zod.boolean(),
-    invoiceDefaultTaxRate: zod.number(),
-    invoiceDefaultTerms: zod.string().max(255),
-    invoiceFooterLine1: zod.string().max(255),
-    invoiceFooterLine2: zod.string().max(255),
-    invoiceBoldFooterLine1: zod.boolean(),
-    invoiceBoldFooterLine2: zod.boolean(),
+const { z } = require('zod')
+module.exports.zOrganizationConfig = z.object({
+    currencyCode: z
+        .string()
+        .min(1)
+        .max(4)
+        .refine((value) => {
+            return currencyCodes.includes(value)
+        })
+        .optional(),
+    currencySymbol: z
+        .string()
+        .min(1)
+        .max(4)
+        .refine((value) => {
+            return currencySymbols.includes(value)
+        })
+        .optional(),
+    invoiceUseDateForNumber: z.boolean().optional(),
+    invoiceDefaultTaxRate: z.number().min(0).optional(),
+    invoiceDefaultTerms: z.string().max(255).optional(),
+    invoiceFooterLine1: z.string().max(255).optional(),
+    invoiceFooterLine2: z.string().max(255).optional(),
+    invoiceBoldFooterLine1: z.boolean().optional(),
+    invoiceBoldFooterLine2: z.boolean().optional(),
 })
 
 var currencyCodes = [

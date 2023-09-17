@@ -246,11 +246,11 @@ export default function Expenseform({ id, className }: Props) {
                        variant={isEditing ? "flat" : "bordered"} labelPlacement={"outside"} />
                 <div className={"flex flex-col gap-2 items-end"}>
                   <span className={"text-sm font-medium text-default-500"}>Subtotal: $<span
-                    className={"text-default-800"}>{editedExpense?.ExpenseEntries?.reduce((acc, entry) => acc + entry.unitCost * entry.quantity, 0)}</span></span>
+                    className={"text-default-800"}>{editedExpense?.ExpenseEntries?.reduce((acc, entry) => acc + entry.unitPrice * entry.quantity, 0)}</span></span>
                   <span className={"text-sm font-medium text-default-500"}>Tax: $<span
-                    className={"text-default-800"}>{(editedExpense?.ExpenseEntries?.reduce((acc, entry) => acc + entry.unitCost * entry.quantity, 0) * (editedExpense?.taxRate || 0) / 100).toFixed(2)}</span></span>
+                    className={"text-default-800"}>{(editedExpense?.ExpenseEntries?.reduce((acc, entry) => acc + entry.unitPrice * entry.quantity, 0) * (editedExpense?.taxRate || 0) / 100).toFixed(2)}</span></span>
                   <span className={"text-medium font-medium text-default-500"}>Total: $<span
-                    className={"text-default-800"}>{(editedExpense?.ExpenseEntries?.reduce((acc, entry) => acc + entry.unitCost * entry.quantity, 0) * (1 + (editedExpense?.taxRate || 0) / 100)).toFixed(2)}</span></span>
+                    className={"text-default-800"}>{(editedExpense?.ExpenseEntries?.reduce((acc, entry) => acc + entry.unitPrice * entry.quantity, 0) * (1 + (editedExpense?.taxRate || 0) / 100)).toFixed(2)}</span></span>
 
                 </div>
               </div>

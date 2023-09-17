@@ -2,8 +2,8 @@ const {
     createSuccessResponse,
     createErrorResponse,
 } = require('../../../../utils/response')
-const { Contract, Comment, sequelize } = require('../../../../../db')
-const { isValidUUID } = require('../../../../utils/isValidUUID')
+const prisma = require('../../../../prisma')
+const s3 = require('../../../../utils/s3')
 
 // Deletes a comment
 module.exports = async (req, res) => {
@@ -12,46 +12,32 @@ module.exports = async (req, res) => {
         const contractId = req.params.contract_id
         const orgId = req.params.org_id
 
-        if (!commentId || !isValidUUID(commentId)) {
+        if (!commentId) {
             return res
                 .status(400)
                 .json(createErrorResponse('Invalid comment id.'))
         }
 
-        if (!contractId || !isValidUUID(contractId)) {
-            return res
-                .status(400)
-                .json(createErrorResponse('Invalid contract id.'))
-        }
-
-        if (!orgId || !isValidUUID(orgId)) {
-            return res.status(400).json(createErrorResponse('Invalid org id.'))
-        }
-
-        await sequelize.transaction(async (transaction) => {
-            // make sure the contract belongs to the org
-            const contract = await Contract.findOne({
-                where: { id: contractId, OrganizationId: orgId },
-                transaction,
-            })
-            if (!contract) {
-                return res
-                    .status(400)
-                    .json(createErrorResponse('Contract not found.'))
-            }
-
-            // Delete the comment
-            const comment = await Comment.destroy({
-                where: {
-                    id: commentId,
-                    ContractId: contractId,
-                    OrganizationId: orgId,
-                },
-                transaction,
-            })
-
-            return res.status(200).json(createSuccessResponse(comment))
+        // Delete the comment
+        const comment = await prisma.comment.delete({
+            where: {
+                id: commentId,
+                contractId: contractId,
+                organizationId: orgId,
+            },
+            include: {
+                Attachments: true,
+            },
         })
+
+        // Delete the attachments in one promise
+        await Promise.all(
+            comment.Attachments.map((attachment) => {
+                return s3.delete(attachment.id)
+            })
+        )
+
+        return res.status(200).json(createSuccessResponse(comment))
     } catch (err) {
         return res
             .status(400)

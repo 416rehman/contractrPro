@@ -88,7 +88,7 @@ module.exports = async (req, res) => {
                         name: req.auth.username,
                         OrganizationId: invite.OrganizationId,
                         UserId: req.auth.id,
-                        UpdatedByUserId: req.auth.id,
+                        updatedByUserId: req.auth.id,
                     },
                     { transaction }
                 )

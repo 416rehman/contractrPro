@@ -61,7 +61,7 @@ describe('Get expense entry', () => {
         expect(data.name).toBe(entry.name)
         expect(data.description).toBe(entry.description)
         expect(data.quantity).toBe(entry.quantity)
-        expect(data.unitCost).toBe(entry.unitCost)
+        expect(data.unitPrice).toBe(entry.unitPrice)
         expect(data.ExpenseId).toBe(expenseId)
     })
 

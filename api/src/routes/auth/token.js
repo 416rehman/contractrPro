@@ -34,7 +34,6 @@ module.exports = async (req, res) => {
             return res.status(400).json(createErrorResponse('User not found'))
         }
 
-
         const token = await signJWT(
             {
                 id: user.id,
@@ -46,21 +45,24 @@ module.exports = async (req, res) => {
                 createdAt: user.createdAt,
                 updatedAt: user.updatedAt,
             },
-            process.env.JWT_SECRET,
+            process.env.JWT_SECRET
         )
+        const isProduction =
+            process.env.NODE_ENV !== 'development' &&
+            process.env.NODE_ENV !== 'test'
 
         return res
             .status(200)
             .cookie('accessToken', token, {
                 httpOnly: false,
                 sameSite: 'none',
-                secure: true,
+                secure: isProduction,
                 maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
             })
             .cookie('refreshToken', refreshToken, {
                 httpOnly: false,
                 sameSite: 'none',
-                secure: true,
+                secure: isProduction,
                 maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
             })
             .json(createSuccessResponse({ token }))

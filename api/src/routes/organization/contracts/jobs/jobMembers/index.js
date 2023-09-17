@@ -26,9 +26,4 @@ routes.post('/', require('./createJobMember'))
  */
 routes.delete('/:member_id', require('./deleteJobMember'))
 
-/**
- * @api {put} /organizations/:org_id/contracts/:contract_id/jobs/:job_id/members/:member_id Update organization contract job member
- */
-routes.put('/:member_id', require('./updateJobMember'))
-
 module.exports = routes

@@ -44,7 +44,7 @@ describe('Get all organization invoices', () => {
         expect(invoiceEntry).toHaveProperty('name')
         expect(invoiceEntry).toHaveProperty('description')
         expect(invoiceEntry).toHaveProperty('quantity')
-        expect(invoiceEntry).toHaveProperty('unitCost')
+        expect(invoiceEntry).toHaveProperty('unitPrice')
         expect(invoiceEntry).toHaveProperty('createdAt')
         expect(invoiceEntry).toHaveProperty('updatedAt')
         expect(invoiceEntry).toHaveProperty('InvoiceId', invoice.id)

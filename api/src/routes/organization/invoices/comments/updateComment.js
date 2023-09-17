@@ -2,11 +2,10 @@ const {
     createSuccessResponse,
     createErrorResponse,
 } = require('../../../../utils/response')
-const UUID = require('uuid')
-const { pick } = require('../../../../utils')
-const { Invoice, Comment, Attachment, sequelize } = require('../../../../../db')
-const { isValidUUID } = require('../../../../utils/isValidUUID')
+const prisma = require('../../../../prisma')
 const s3 = require('../../../../utils/s3')
+const { zComment } = require('../../../../validators/comment.zod')
+const cuid2 = require('@paralleldrive/cuid2')
 
 module.exports = async (req, res) => {
     try {
@@ -14,122 +13,97 @@ module.exports = async (req, res) => {
         const orgId = req.params.org_id
         const commentId = req.params.comment_id
 
-        if (!invoiceId || !isValidUUID(invoiceId)) {
-            return res
-                .status(400)
-                .json(createErrorResponse('Invalid invoice id.'))
-        }
+        if (!invoiceId) throw new Error('invoice id is required.')
+        if (!orgId) throw new Error('Org id is required.')
+        if (!commentId) throw new Error('Comment id is required.')
 
-        if (!orgId || !isValidUUID(orgId)) {
-            return res.status(400).json(createErrorResponse('Invalid org id.'))
-        }
+        const data = zComment.partial().parse(req.body)
+        const include = {}
+        data.updatedByUserId = req.auth.id
 
-        if (!commentId || !isValidUUID(commentId)) {
-            return res
-                .status(400)
-                .json(createErrorResponse('Invalid comment id.'))
-        }
-
-        const body = {
-            ...pick(req.body, ['content']),
-            UpdatedByUserId: req.auth.id,
-        }
-
-        await sequelize.transaction(async (transaction) => {
-            // make sure the invoice belongs to the org
-            const invoice = await Invoice.findOne({
-                where: { id: invoiceId, OrganizationId: orgId },
-                transaction,
-            })
-            if (!invoice) {
-                return res
-                    .status(400)
-                    .json(createErrorResponse('Invoice not found.'))
-            }
-
-            // check if the comment currently has attachments
-            const currentAttachments = await Attachment.count({
-                where: { CommentId: commentId },
-                transaction,
-            })
-
-            if (
-                (!req.files || req.files.length > 0) &&
-                (!body.content || body.content.length === 0)
-            ) {
-                if (!currentAttachments) {
-                    return res
-                        .status(400)
-                        .json(
-                            createErrorResponse(
-                                'Content cannot be empty if there are no attachments.'
-                            )
-                        )
-                }
-            }
-
-            // Update the comment
-            const comment = await Comment.update(body, {
-                where: {
-                    id: commentId,
-                    OrganizationId: orgId,
-                    InvoiceId: invoiceId,
-                },
-                transaction,
-            })
-
-            if (!comment) {
-                return res
-                    .status(400)
-                    .json(createErrorResponse('Failed to update comment.'))
-            }
-
-            let attachments = null
-            // Check if there are any new attachments
-            if (req.files && req.files.length > 0) {
-                // Process attachments
-                const attachmentsData = req.files.map((file) => {
-                    file.key = UUID.v4(
-                        Date.now().toString() + file.originalname
-                    )
-
-                    // https://[bucket-name].s3.[region-code].amazonaws.com/[key-name]
-                    const accessUrl = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_S3_REGION}.amazonaws.com/${file.key}`
-
-                    return {
-                        id: file.key,
-                        name: file.originalname,
-                        type: file.mimetype,
-                        size: file.size,
-                        accessUrl,
-                        CommentId: commentId,
-                    }
-                })
-
-                // Store the attachments metadata in the database
-                attachments = await Attachment.bulkCreate(attachmentsData, {
-                    transaction,
-                })
-                if (!attachments) {
-                    return res
-                        .status(400)
-                        .json(
-                            createErrorResponse('Failed to create attachments.')
-                        )
-                }
-
-                // upload the attachments to s3Invoice
-                for (const file of req.files) {
-                    await s3.upload(file, file.key)
-                }
-            }
-
-            return res.json(createSuccessResponse(comment))
+        // check if the comment currently has attachments
+        const comment = await prisma.comment.findUnique({
+            where: { id: commentId },
+            include: { Attachments: true },
         })
+
+        // if new content is empty and there are no attachments, delete the comment
+        if (
+            !data.content &&
+            (!comment.Attachments || comment.Attachments.length === 0)
+        ) {
+            await prisma.comment.delete({
+                where: { id: commentId },
+            })
+
+            await Promise.all(
+                comment.Attachments.map(async (attachment) => {
+                    await s3.delete(attachment.id)
+                })
+            )
+
+            return res.json(createSuccessResponse('Comment deleted.'))
+        }
+
+        let metadatas = null
+        // Check if there are any new attachments
+        if (req.files && req.files.length > 0) {
+            // Process attachments
+            metadatas = req.files.map((file) => {
+                file.key = cuid2.createId()
+
+                // https://[bucket-name].s3.[region-code].amazonaws.com/[key-name]
+                const accessUrl = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_S3_REGION}.amazonaws.com/${file.key}`
+
+                return {
+                    id: file.key,
+                    name: file.originalname,
+                    type: file.mimetype,
+                    size: file.size,
+                    accessUrl,
+                    CommentId: commentId,
+                }
+            })
+        }
+
+        // if there are new attachments, add them
+        if (metadatas && metadatas.length > 0) {
+            data.Attachments = {
+                create: metadatas,
+            }
+            include.Attachments = true
+        }
+
+        // Update the comment
+        const updatedComment = await prisma.comment.update({
+            where: { id: commentId, invoiceId, organizationId: orgId },
+            data,
+            include,
+        })
+
+        // upload the attachments to s3
+        if (req.files && req.files.length > 0) {
+            try {
+                await Promise.all(
+                    req.files.map((file) => s3.upload(file, file.key))
+                )
+            } catch (error) {
+                // delete the comment
+                await prisma.comment.delete({
+                    where: {
+                        id: comment.id,
+                        organizationId: orgId,
+                    },
+                })
+
+                await Promise.all(req.files.map((file) => s3.delete(file.key)))
+
+                throw error
+            }
+        }
+
+        return res.json(createSuccessResponse(updatedComment))
     } catch (error) {
-        console.log(error)
-        return res
-            .status(400)
-            .json(createErrorResponse('An error occurred.', error))
+        return res.json(createErrorResponse(error))
     }
 }

@@ -1,9 +1,9 @@
-const zod = require('zod')
-module.exports.zOrganization = zod.object({
-    name: zod.string().min(1).max(255),
-    description: zod.string().max(512).optional(),
-    email: zod.string().max(255).email().optional(),
-    phone: zod.string().max(25).optional(),
-    website: zod.string().max(255).optional(),
-    logoUrl: zod.string().max(255).optional(),
+const { z } = require('zod')
+module.exports.zOrganization = z.object({
+    name: z.string().min(1).max(255),
+    description: z.string().max(512).optional(),
+    email: z.string().max(255).email().optional(),
+    phone: z.string().max(25).optional(),
+    website: z.string().max(255).optional(),
+    logoUrl: z.string().max(255).optional(),
 })

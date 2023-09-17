@@ -61,7 +61,7 @@ describe('Update expense entry', () => {
         expect(data.id).toBe(entryId)
         expect(data.name).toBe(requestBody.name)
         expect(data.description).toBe(requestBody.description)
-        expect(data.unitCost).toBe(requestBody.unitCost)
+        expect(data.unitPrice).toBe(requestBody.unitPrice)
         expect(data.quantity).toBe(requestBody.quantity)
         expect(data.ExpenseId).toBe(expenseId)
         expect(data.updatedAt).toBeDefined()

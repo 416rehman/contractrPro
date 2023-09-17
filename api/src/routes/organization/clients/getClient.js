@@ -1,38 +1,27 @@
-const { Client } = require('../../../../db')
+const prisma = require('../../../prisma')
 const {
-    createErrorResponse,
     createSuccessResponse,
+    createErrorResponse,
 } = require('../../../utils/response')
-const { isValidUUID } = require('../../../utils/isValidUUID')
 
-// Get organization client
+// Get an organization's client by ID
 module.exports = async (req, res) => {
     try {
         const orgId = req.params.org_id
         const clientId = req.params.client_id
-        if (!orgId || !isValidUUID(orgId)) {
-            return res
-                .status(400)
-                .json(createErrorResponse('Organization ID is required'))
-        }
-        if (!clientId || !isValidUUID(clientId)) {
-            return res
-                .status(400)
-                .json(createErrorResponse('Client ID is required'))
-        }
 
-        const client = await Client.findOne({
+        if (!clientId) throw new Error('Client ID is required')
+
+        const client = await prisma.client.findUnique({
             where: {
-                OrganizationId: orgId,
                 id: clientId,
+                organizationId: orgId,
             },
         })
 
-        if (!client) {
-            return res.status(400).json(createErrorResponse('Client not found'))
-        }
+        if (!client) throw new Error('Client not found')
 
-        res.status(200).json(createSuccessResponse(client))
+        return res.status(200).json(createSuccessResponse(client))
     } catch (error) {
         res.status(400).json(createErrorResponse('', error))
     }

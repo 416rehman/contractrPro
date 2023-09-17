@@ -140,7 +140,7 @@ export type InvoiceEntry = {
   name: string,
   description: string,
   quantity: number,
-  unitCost: number,
+  unitPrice: number,
   InvoiceId?: string,
 } & any;
 
@@ -150,7 +150,7 @@ export type ExpenseEntry = {
   name: string,
   description: string,
   quantity: number,
-  unitCost: number,
+  unitPrice: number,
   ExpenseId?: string,
 } & any;
 
@@ -189,7 +189,7 @@ interface Job {
 interface JobMember {
   id?: string,
   JobId?: string,
-  OrganizationMemberId?: string,
+  organizationMemberId?: string,
 }
 
 type Attachment = {

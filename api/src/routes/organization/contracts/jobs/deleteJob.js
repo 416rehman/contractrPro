@@ -1,64 +1,49 @@
-const { sequelize, Contract, Job } = require('../../../../../db')
+const prisma = require('../../../../prisma')
 const {
     createSuccessResponse,
     createErrorResponse,
 } = require('../../../../utils/response')
-const { isValidUUID } = require('../../../../utils/isValidUUID')
+const s3 = require('../../../../utils/s3')
 
-// delete job
 module.exports = async (req, res) => {
     try {
-        const orgID = req.params.org_id
-        const contractID = req.params.contract_id
         const jobId = req.params.job_id
+        const orgId = req.params.org_id
 
-        if (!orgID || !isValidUUID(orgID)) {
-            return res
-                .status(400)
-                .json(createErrorResponse('Organization ID required'))
-        }
+        if (!jobId) throw new Error('Job ID is required')
 
-        if (!contractID || !isValidUUID(contractID)) {
-            return res
-                .status(400)
-                .json(createErrorResponse('Contract ID required'))
-        }
-
-        if (!jobId || !isValidUUID(jobId)) {
-            return res.status(400).json(createErrorResponse('Job ID required'))
-        }
-
-        await sequelize.transaction(async (transaction) => {
-            // Find contract where contractID and orgID are the same as the params
-            const job = await Job.findOne({
-                where: {
-                    id: jobId,
-                    ContractId: contractID,
-                },
-                include: [
-                    {
-                        model: Contract,
-                        where: {
-                            id: contractID,
-                            OrganizationId: orgID,
-                        },
-                        required: true,
+        const deleted = await prisma.job.delete({
+            where: {
+                id: jobId,
+                organizationId: orgId,
+            },
+            // Includes so we can delete all attachments from S3
+            include: {
+                Comments: {
+                    include: {
+                        Attachments: true,
                     },
-                ],
-                transaction,
-            })
-
-            if (!job) {
-                return res
-                    .status(400)
-                    .json(createErrorResponse('Job not found'))
-            }
-
-            await job.destroy({ transaction })
-
-            return res.status(200).json(createSuccessResponse(1))
+                },
+            },
         })
-    } catch (error) {
-        return res.status(500).json(createErrorResponse('', error))
+
+        if (!deleted) {
+            throw new Error('job not found.')
+        }
+
+        // Delete all comment attachments
+        const commentAttachments = deleted.Comments.map((comment) => {
+            return comment.Attachments
+        }).flat()
+
+        await Promise.all(
+            commentAttachments.map(async (attachment) => {
+                return s3.delete(attachment.id)
+            })
+        )
+
+        res.status(200).json(createSuccessResponse(deleted))
+    } catch (err) {
+        return res.status(400).json(createErrorResponse('', err))
     }
 }

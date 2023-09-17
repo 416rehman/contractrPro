@@ -1,6 +1,5 @@
 const jwt = require('jsonwebtoken')
 const { createErrorResponse } = require('../utils/response')
-const { User, Organization } = require('../../db')
 const prisma = require('../prisma')
 
 /**
@@ -29,9 +28,9 @@ if (process.env.NODE_ENV === 'test') {
                 OrganizationMembers: {
                     some: {
                         UserId: req.auth.id,
-                    }
-                }
-            }
+                    },
+                },
+            },
         })
         if (!userData) {
             return res
@@ -70,69 +69,48 @@ if (process.env.NODE_ENV === 'test') {
                 process.env.JWT_SECRET,
                 {},
                 async function (err, decoded) {
-                    if (err) {
-                        return res
-                            .status(401)
-                            .send(
-                                createErrorResponse('Access token is invalid')
-                            )
-                    }
-
-                    req.auth = decoded
-
-                    // const userData = await User.findOne({
-                    //     attributes: {
-                    //         exclude: [
-                    //             'phoneCountry',
-                    //             'phoneNumber',
-                    //             'password',
-                    //             'refreshToken',
-                    //             'deletedAt',
-                    //             'UpdatedByUserId',
-                    //         ],
-                    //     },
-                    //     where: {
-                    //         id: req.auth.id,
-                    //     },
-                    //     include: {
-                    //         model: Organization,
-                    //     },
-                    // })
-
-                    const userData = await prisma.user.findUnique({
-                        where: {
-                            id: req.auth.id,
-                        },
-                        include: {
-                            OrganizationMembers: {
-                                include: {
-                                    Organization: true,
-                                }
-                            }
-                        }
-                    })
-
-                    if (!userData) {
-                        return res
-                            .status(401)
-                            .send(
-                                createErrorResponse('The user does not exist')
-                            )
-                    }
-
-                    req.auth = userData?.toJSON()
-
-                    if (req.auth.flags['NA_BANNED'] === true) {
-                        return res
-                            .status(403)
-                            .send(
-                                createErrorResponse(
-                                    'You are banned from this service.'
+                    try {
+                        if (err) {
+                            return res
+                                .status(401)
+                                .send(
+                                    createErrorResponse(
+                                        'Access token is invalid'
+                                    )
                                 )
-                            )
-                    }
+                        }
 
-                    return next()
+                        req.auth = decoded
+
+                        const userData = await prisma.user.findUnique({
+                            where: {
+                                id: req.auth.id,
+                            },
+                            include: {
+                                OrganizationMemberships: {
+                                    include: {
+                                        Organization: true,
+                                    },
+                                },
+                            },
+                        })
+
+                        if (!userData) {
+                            throw new Error('Invalid username or password')
+                        }
+
+                        req.auth = userData
+
+                        if (req.auth?.flags?.['NA_BANNED'] === true) {
+                            throw new Error('Account banned - Contact support')
+                        }
+
+                        return next()
+                    } catch (err) {
+                        return res
+                            .status(401)
+                            .send(createErrorResponse(err.message, err))
+                    }
                 }
             )
         } catch (err) {

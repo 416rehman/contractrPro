@@ -9,7 +9,7 @@ const columns = [
   { name: "NAME", uid: "name" },
   { name: "DESC", uid: "description" },
   { name: "QTY", uid: "quantity" },
-  { name: "COST", uid: "unitCost" },
+  { name: "COST", uid: "unitPrice" },
   { name: "TOTAL", uid: "total" }
 ];
 
@@ -56,7 +56,7 @@ export default function InvoiceEntriesTable({ invoiceEntries, isEditing, onEntry
                       size={"sm"}
                       isReadOnly={!editMode}
                       onChange={(e) => onEntryChanged(columnKey, e.target.value, invoiceEntry.id)} />;
-      case "unitCost":
+      case "unitPrice":
         return <Input aria-label={"Unit Cost"}
                       key={invoiceEntry.id} value={cellValue} type="number" placeholder="Unit Cost"
                       className={"font-medium"}
@@ -71,9 +71,9 @@ export default function InvoiceEntriesTable({ invoiceEntries, isEditing, onEntry
                       onChange={(e) => onEntryChanged(columnKey, e.target.value, invoiceEntry.id)} />;
       case "total":
         const qtyValueAsNumber = Number(invoiceEntry["quantity"]);
-        const costValue = Number(invoiceEntry["unitCost"]);
+        const costValue = Number(invoiceEntry["unitPrice"]);
         const totalValue = qtyValueAsNumber * costValue;
-        const isTouched = invoiceEntry["name"] || invoiceEntry["description"] || invoiceEntry["quantity"] || invoiceEntry["unitCost"];
+        const isTouched = invoiceEntry["name"] || invoiceEntry["description"] || invoiceEntry["quantity"] || invoiceEntry["unitPrice"];
 
         return <div className="relative flex justify-end items-center gap-2">
           {!isNaN(totalValue) && <span className={"flex-grow font-medium text-tiny"}><span

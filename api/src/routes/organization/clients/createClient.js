@@ -1,37 +1,31 @@
 // Add client to organization
-const { Client, sequelize } = require('../../../../db')
+const prisma = require('../../../prisma')
 const {
     createErrorResponse,
     createSuccessResponse,
 } = require('../../../utils/response')
-const { isValidUUID } = require('../../../utils/isValidUUID')
-const { pick } = require('../../../utils')
+const { zClient } = require('../../../validators/client.zod')
 
 module.exports = async (req, res) => {
     try {
         const orgId = req.params.org_id
-        if (!orgId || !isValidUUID(orgId)) {
-            return res
-                .status(400)
-                .json(createErrorResponse('Organization ID is required'))
+        const data = zClient.parse(req.body)
+        const include = {}
+        if (req.body.Address) {
+            data.Address = {
+                create: req.body.Address,
+            }
+            include.Address = true
         }
 
-        const body = {
-            ...pick(req.body, [
-                'name',
-                'email',
-                'phone',
-                'website',
-                'description',
-            ]),
-            OrganizationId: orgId,
-            UpdatedByUserId: req.auth.id,
-        }
+        data.organizationId = orgId
+        data.updatedByUserId = req.auth.id
 
-        await sequelize.transaction(async (transaction) => {
-            const client = await Client.create(body, { transaction })
-            return res.status(201).json(createSuccessResponse(client))
+        const client = await prisma.client.create({
+            data,
+            include,
         })
+        return res.status(201).json(createSuccessResponse(client))
     } catch (error) {
         res.status(400).json(createErrorResponse('', error))
     }

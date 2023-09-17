@@ -46,8 +46,8 @@ describe('Create expense', () => {
             expenseData.ExpenseEntries[0].quantity
         )
         expect(ExpenseEntries[0]).toHaveProperty(
-            'unitCost',
-            expenseData.ExpenseEntries[0].unitCost
+            'unitPrice',
+            expenseData.ExpenseEntries[0].unitPrice
         )
         expect(ExpenseEntries[0]).toHaveProperty('ExpenseId', id)
     })

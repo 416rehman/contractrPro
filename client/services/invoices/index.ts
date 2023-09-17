@@ -50,7 +50,7 @@ export const updateInvoiceAndPersist = async (invoice: Invoice, currentOrganizat
     if (currentOrganizationId) {
 
       // Remove empty invoice entries
-      invoice.InvoiceEntries = invoice?.InvoiceEntries.filter((entry) => entry.name || entry.unitCost || entry.quantity || entry.description) || [];
+      invoice.InvoiceEntries = invoice?.InvoiceEntries.filter((entry) => entry.name || entry.unitPrice || entry.quantity || entry.description) || [];
 
       if (invoice?.id) {
         await requestUpdateInvoice(invoice, currentOrganizationId);

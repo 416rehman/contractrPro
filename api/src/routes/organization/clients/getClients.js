@@ -1,30 +1,21 @@
-const { Client, Address } = require('../../../../db')
+const prisma = require('../../../prisma')
 const {
-    createErrorResponse,
     createSuccessResponse,
+    createErrorResponse,
 } = require('../../../utils/response')
-const { isValidUUID } = require('../../../utils/isValidUUID')
 
-// Get organization clients
+// Gets all of the organization's clients
 module.exports = async (req, res) => {
     try {
         const orgId = req.params.org_id
-        if (!orgId || !isValidUUID(orgId)) {
-            return res
-                .status(400)
-                .json(createErrorResponse('Organization ID is required'))
-        }
 
-        const clients = await Client.findAll({
+        const clients = await prisma.vendor.findMany({
             where: {
-                OrganizationId: orgId,
-            },
-            include: {
-                model: Address,
+                organizationId: orgId,
             },
         })
 
-        res.status(200).json(createSuccessResponse(clients))
+        return res.status(200).json(createSuccessResponse(clients))
     } catch (error) {
         res.status(400).json(createErrorResponse('', error))
     }

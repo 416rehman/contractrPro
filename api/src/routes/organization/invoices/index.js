@@ -31,11 +31,6 @@ routes.put('/:invoice_id', require('./updateInvoice'))
 routes.delete('/:invoice_id', require('./deleteInvoice'))
 
 /**
- * @api {use} /organizations/:org_id/invoices/:invoice_id/entries Invoice entries
- */
-routes.use('/:invoice_id/entries', require('./invoiceEntries'))
-
-/**
  * @api {use} /organizations/:org_id/invoices/:invoice_id/comments Invoice comments
  */
 routes.use('/:invoice_id/comments', require('./comments'))

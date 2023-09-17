@@ -1,10 +1,8 @@
-const { Contract, Job, OrganizationMember } = require('../../../../../../db')
+const prisma = require('../../../../../prisma')
 const {
     createSuccessResponse,
     createErrorResponse,
 } = require('../../../../../utils/response')
-const { isValidUUID } = require('../../../../../utils/isValidUUID')
-const { pick } = require('../../../../../utils')
 
 // Post jobMember
 module.exports = async (req, res) => {
@@ -12,80 +10,31 @@ module.exports = async (req, res) => {
         const jobId = req.params.job_id
         const contractId = req.params.contract_id
         const orgId = req.params.org_id
-        const memberId = req.body.OrganizationMemberId
+        const memberId = req.body.organizationMemberId
 
-        if (!jobId || !isValidUUID(jobId)) {
-            return res.status(400).json(createErrorResponse('Invalid job id.'))
-        }
+        if (!jobId) throw new Error('Job ID is required.')
+        if (!memberId) throw new Error('OrganizationMember ID is required.')
 
-        if (!contractId || !isValidUUID(contractId)) {
-            return res
-                .status(400)
-                .json(createErrorResponse('Invalid contract id.'))
-        }
-
-        if (!orgId || !isValidUUID(orgId)) {
-            return res.status(400).json(createErrorResponse('Invalid org id.'))
-        }
-
-        if (!memberId || !isValidUUID(memberId)) {
-            return res
-                .status(400)
-                .json(createErrorResponse('Invalid orgMember id.'))
-        }
-
-        const body = {
-            ...pick(req.body, ['permissionOverwrites']),
-            UpdatedByUserId: req.auth.id,
-        }
-
-        // Get the orgMember
-        const orgMember = await OrganizationMember.findOne({
-            where: {
-                id: memberId,
-                OrganizationId: orgId,
-            },
-        })
-
-        if (!orgMember) {
-            return res
-                .status(400)
-                .json(createErrorResponse('Failed to find orgMember.'))
-        }
-
-        const job = await Job.findOne({
+        // check that the job belongs to the contract
+        const job = await prisma.job.findFirst({
             where: {
                 id: jobId,
-                ContractId: contractId,
-            },
-            include: [
-                {
-                    model: Contract,
-                    where: {
-                        id: contractId,
-                        OrganizationId: orgId,
-                    },
-                    required: true,
+                Contract: {
+                    id: contractId,
+                    organizationId: orgId,
                 },
-            ],
+            },
         })
+        if (!job) throw new Error('Job does not exist.')
 
-        if (!job) {
-            return res
-                .status(400)
-                .json(createErrorResponse('Failed to find job.'))
-        }
+        const data = {}
+        data.updatedByUserId = req.auth.id
+        data.jobId = jobId
+        data.organizationMemberId = memberId
 
-        // Check if the orgMember is already a member of the job
-        const result = await job.addOrganizationMember(orgMember, {
-            through: body,
+        const result = await prisma.jobMember.create({
+            data,
         })
-
-        // // Add the orgMember to the job
-        // const jobMember = await JobMember.create({
-        //     JobId: jobId,
-        //     OrganizationMemberId: orgMemberId,
-        // })
 
         return res.status(200).json(createSuccessResponse(result))
     } catch (err) {

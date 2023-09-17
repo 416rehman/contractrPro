@@ -13,11 +13,6 @@ module.exports.generateRandomCode = function (length = 8) {
     return crypto.randomBytes(length / 2).toString('hex')
 }
 
-// Checks if a string is an 8 character alphanumeric string
-module.exports.isValidInviteCode = function (inviteCode) {
-    return /^[a-z0-9]{8}$/i.test(inviteCode)
-}
-
 /**
  * @param {object} payload
  * @param {string} secret

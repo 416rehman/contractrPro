@@ -2,8 +2,8 @@ const {
     createSuccessResponse,
     createErrorResponse,
 } = require('../../../../../utils/response')
-const { Comment, Attachment, sequelize } = require('../../../../../../db')
-const { isValidUUID } = require('../../../../../utils/isValidUUID')
+const s3 = require('../../../../../utils/s3')
+const prisma = require('../../../../../prisma')
 
 // delete attachment
 module.exports = async (req, res) => {
@@ -13,71 +13,58 @@ module.exports = async (req, res) => {
         const orgId = req.params.org_id
         const attachmentId = req.params.attachment_id
 
-        if (!commentId || !isValidUUID(commentId)) {
+        if (!commentId) {
             return res
                 .status(400)
                 .json(createErrorResponse('Invalid comment id.'))
         }
 
-        if (!expenseId || !isValidUUID(expenseId)) {
-            return res
-                .status(400)
-                .json(createErrorResponse('Invalid expense id.'))
-        }
-
-        if (!orgId || !isValidUUID(orgId)) {
-            return res.status(400).json(createErrorResponse('Invalid org id.'))
-        }
-
-        if (!attachmentId || !isValidUUID(attachmentId)) {
+        if (!attachmentId) {
             return res
                 .status(400)
                 .json(createErrorResponse('Invalid attachment id.'))
         }
 
-        await sequelize.transaction(async (transaction) => {
-            // Make sure the Comment belongs to the Expense
-            const comment = await Comment.findOne({
+        const comment = await prisma.comment.findFirst({
+            where: {
+                id: commentId,
+                expenseId,
+                organizationId: orgId,
+            },
+            include: {
+                Attachments: true,
+            },
+        })
+
+        if (!comment) {
+            return res
+                .status(404)
+                .json(createErrorResponse('Comment not found.'))
+        }
+
+        // if the comment has no content and this is the last attachment, delete the entire comment
+        if (
+            (!comment.content || comment.content === '') &&
+            comment.Attachments.length === 1
+        ) {
+            prisma.comment.delete({
                 where: {
                     id: commentId,
-                    OrganizationId: orgId,
-                    ExpenseId: expenseId,
+                    expenseId,
+                    organizationId: orgId,
                 },
             })
-            if (!comment) {
-                return res
-                    .status(400)
-                    .json(createErrorResponse('Attachment not found.'))
-            }
-
-            // Find all attachments for the comment
-            const attachments = await Attachment.findAll({
+        } else {
+            await prisma.attachment.delete({
                 where: {
-                    CommentId: commentId,
+                    id: attachmentId,
                 },
-                transaction,
             })
+        }
 
-            let rowsDeleted = 0
+        await s3.delete(attachmentId)
 
-            // if the comment has no content and this is the last attachment, delete the comment
-            if (
-                (!comment.content || comment.content === '') &&
-                attachments.length === 1
-            ) {
-                rowsDeleted = await comment.destroy({ transaction })
-                rowsDeleted += 1 // add 1 for the attachment
-            } else {
-                for (const attachment of attachments) {
-                    if (attachment.id === attachmentId) {
-                        rowsDeleted = await attachment.destroy({ transaction })
-                        break
-                    }
-                }
-            }
-
-            return res.status(200).json(createSuccessResponse(rowsDeleted))
-        })
+        return res.status(200).json(createSuccessResponse())
     } catch (err) {
         return res
             .status(400)

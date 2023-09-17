@@ -267,7 +267,7 @@ export default function InvoiceForm({ id, className }: Props) {
   }
 
   const printView = () => {
-    const subtotal = invoice?.InvoiceEntries?.reduce((prev, current) => prev + (current?.quantity * current?.unitCost), 0);
+    const subtotal = invoice?.InvoiceEntries?.reduce((prev, current) => prev + (current?.quantity * current?.unitPrice), 0);
     const tax = subtotal * (invoice?.taxRate / 100);
     const total = subtotal + tax;
     return <div className={"flex-col w-full gap-10 tracking-wide hidden print:flex"}>
@@ -338,9 +338,9 @@ export default function InvoiceForm({ id, className }: Props) {
               </td>
               <td className={"text-left text-small px-2 py-1 border-b-1 border-default"}>{entry.quantity}</td>
               <td
-                className={"text-left text-small px-2 py-1 border-b-1 border-default"}>{currentOrg?.OrganizationSetting?.currencySymbol || "$"}{entry?.unitCost}</td>
+                className={"text-left text-small px-2 py-1 border-b-1 border-default"}>{currentOrg?.OrganizationSetting?.currencySymbol || "$"}{entry?.unitPrice}</td>
               <td
-                className={"text-left text-small px-2 py-1 border-b-1 border-default"}>{currentOrg?.OrganizationSetting?.currencySymbol || "$"}{entry?.unitCost * entry?.quantity}</td>
+                className={"text-left text-small px-2 py-1 border-b-1 border-default"}>{currentOrg?.OrganizationSetting?.currencySymbol || "$"}{entry?.unitPrice * entry?.quantity}</td>
             </tr>
           ))}
           <tr>
@@ -559,11 +559,11 @@ export default function InvoiceForm({ id, className }: Props) {
                          variant={isEditing ? "flat" : "bordered"} labelPlacement={"outside"} />
                   <div className={"flex flex-col gap-2 items-end"}>
                   <span className={"text-sm font-medium text-default-500"}>Subtotal: $<span
-                    className={"text-default-800"}>{editedInvoice?.InvoiceEntries?.reduce((acc, entry) => acc + entry.unitCost * entry.quantity, 0)}</span></span>
+                    className={"text-default-800"}>{editedInvoice?.InvoiceEntries?.reduce((acc, entry) => acc + entry.unitPrice * entry.quantity, 0)}</span></span>
                     <span className={"text-sm font-medium text-default-500"}>Tax: $<span
-                      className={"text-default-800"}>{(editedInvoice?.InvoiceEntries?.reduce((acc, entry) => acc + entry.unitCost * entry.quantity, 0) * (editedInvoice?.taxRate || 0) / 100).toFixed(2)}</span></span>
+                      className={"text-default-800"}>{(editedInvoice?.InvoiceEntries?.reduce((acc, entry) => acc + entry.unitPrice * entry.quantity, 0) * (editedInvoice?.taxRate || 0) / 100).toFixed(2)}</span></span>
                     <span className={"text-medium font-medium text-default-500"}>Total: $<span
-                      className={"text-default-800"}>{(editedInvoice?.InvoiceEntries?.reduce((acc, entry) => acc + entry.unitCost * entry.quantity, 0) * (1 + (editedInvoice?.taxRate || 0) / 100)).toFixed(2)}</span></span>
+                      className={"text-default-800"}>{(editedInvoice?.InvoiceEntries?.reduce((acc, entry) => acc + entry.unitPrice * entry.quantity, 0) * (1 + (editedInvoice?.taxRate || 0) / 100)).toFixed(2)}</span></span>
 
                   </div>
                 </div>

@@ -1,9 +1,8 @@
-const { Job, OrganizationMember } = require('../../../../../../db')
+const prisma = require('../../../../../prisma')
 const {
     createSuccessResponse,
     createErrorResponse,
 } = require('../../../../../utils/response')
-const { isValidUUID } = require('../../../../../utils/isValidUUID')
 
 // Get jobMember
 module.exports = async (req, res) => {
@@ -13,50 +12,25 @@ module.exports = async (req, res) => {
         const orgId = req.params.org_id
         const orgMemberId = req.params.member_id
 
-        if (!jobId || !isValidUUID(jobId)) {
-            return res.status(400).json(createErrorResponse('Invalid job id.'))
-        }
+        if (!jobId) throw new Error('Job ID is required.')
+        if (!orgMemberId) throw new Error('OrganizationMember ID is required.')
 
-        if (!contractId || !isValidUUID(contractId)) {
-            return res
-                .status(400)
-                .json(createErrorResponse('Invalid contract id.'))
-        }
-
-        if (!orgId || !isValidUUID(orgId)) {
-            return res.status(400).json(createErrorResponse('Invalid org id.'))
-        }
-
-        if (!orgMemberId || !isValidUUID(orgMemberId)) {
-            return res
-                .status(400)
-                .json(createErrorResponse('Invalid jobMember id.'))
-        }
-
-        // Find jobMember for the job
-        const jobMember = await OrganizationMember.findOne({
+        const jobMember = await prisma.jobMember.findFirst({
             where: {
-                id: orgMemberId,
-                OrganizationId: orgId,
-            },
-            include: [
-                {
-                    model: Job,
-                    where: {
-                        id: jobId,
-                        ContractId: contractId,
+                organizationMemberId: orgMemberId,
+                Job: {
+                    id: jobId,
+                    Contract: {
+                        id: contractId,
+                        organizationId: orgId,
                     },
-                    required: true,
-                    // attributes: [], //excludes all attributes
                 },
-            ],
+            },
+            include: {
+                OrganizationMember: true,
+                Job: true,
+            },
         })
-
-        if (!jobMember) {
-            return res
-                .status(404)
-                .json(createErrorResponse('JobMember not found.'))
-        }
 
         return res.status(200).json(createSuccessResponse(jobMember))
     } catch (err) {

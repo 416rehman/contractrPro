@@ -11,17 +11,23 @@ routes.use((req, res, next) => {
 })
 
 const authorizeOrg = async (req, res, next) => {
-    const organizationId = req.params.org_id
-    // Checks the req.auth.Organizations array for the organizationId
-    const organization = req.auth.Organizations.find(
-        (org) => org.id === organizationId
-    )
-    if (!organization) {
+    try {
+        const organizationId = req.params.org_id
+        // Checks the req.auth.OrganizationMemberships array for the organizationId field
+        const organization = req.auth.OrganizationMemberships.find(
+            (membership) => membership.organizationId === organizationId
+        )
+        if (!organization) {
+            return res
+                .status(403)
+                .json(createErrorResponse('Access token is missing or invalid')) // Ambiguous error message to prevent leaking information
+        } else {
+            return next()
+        }
+    } catch (error) {
         return res
             .status(403)
-            .json(createErrorResponse('Access token is missing or invalid')) // Ambiguous error message to prevent leaking information
-    } else {
-        return next()
+            .json(createErrorResponse('Access token is missing or invalid'))
     }
 }
 

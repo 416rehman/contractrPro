@@ -1,43 +1,47 @@
-const { Client, sequelize } = require('../../../../db')
+const prisma = require('../../../prisma')
 const {
-    createErrorResponse,
     createSuccessResponse,
+    createErrorResponse,
 } = require('../../../utils/response')
-const { isValidUUID } = require('../../../utils/isValidUUID')
+const s3 = require('../../../utils/s3')
 
-// Delete organization client
 module.exports = async (req, res) => {
     try {
-        const orgId = req.params.org_id
         const clientId = req.params.client_id
-        if (!orgId || !isValidUUID(orgId)) {
-            return res
-                .status(400)
-                .json(createErrorResponse('Organization ID is required'))
-        }
-        if (!clientId || !isValidUUID(clientId)) {
-            return res
-                .status(400)
-                .json(createErrorResponse('Client ID is required'))
-        }
+        const orgId = req.params.org_id
 
-        await sequelize.transaction(async (transaction) => {
-            const rowsDeleted = await Client.destroy({
-                where: {
-                    OrganizationId: orgId,
-                    id: clientId,
+        const deleted = await prisma.client.delete({
+            where: {
+                id: clientId,
+                organizationId: orgId,
+            },
+            // Includes so we can delete all attachments from S3
+            include: {
+                Comments: {
+                    include: {
+                        Attachments: true,
+                    },
                 },
-                transaction,
-            })
-            if (!rowsDeleted) {
-                return res
-                    .status(400)
-                    .json(createErrorResponse('Client not found'))
-            }
-
-            res.status(200).json(createSuccessResponse(rowsDeleted))
+            },
         })
-    } catch (error) {
-        res.status(400).json(createErrorResponse('', error))
+
+        if (!deleted) {
+            throw new Error('client not found.')
+        }
+
+        // Delete all comment attachments
+        const commentAttachments = deleted.Comments.map((comment) => {
+            return comment.Attachments
+        }).flat()
+
+        await Promise.all(
+            commentAttachments.map(async (attachment) => {
+                return s3.delete(attachment.id)
+            })
+        )
+
+        res.status(200).json(createSuccessResponse(deleted))
+    } catch (err) {
+        return res.status(400).json(createErrorResponse('', err))
     }
 }

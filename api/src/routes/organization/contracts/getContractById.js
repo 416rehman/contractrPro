@@ -1,5 +1,4 @@
-const { sequelize, Contract } = require('../../../../db')
-const { isValidUUID } = require('../../../utils/isValidUUID')
+const prisma = require('../../../prisma')
 
 const {
     createSuccessResponse,
@@ -13,36 +12,18 @@ module.exports = async (req, res) => {
 
         const contractID = req.params.contract_id
 
-        if (!orgID || !isValidUUID(orgID)) {
-            return res
-                .status(400)
-                .json(createErrorResponse('Organization ID required'))
-        } else if (!contractID || !isValidUUID(contractID)) {
-            return res
-                .status(400)
-                .json(createErrorResponse('Contract ID required'))
-        }
+        if (!contractID) throw new Error('Contract ID is required')
 
-        await sequelize.transaction(async (transaction) => {
-            const organizationContract = await Contract.findOne({
-                attributes: {
-                    exclude: ['organization_id'],
-                },
-                where: {
-                    id: contractID,
-                    OrganizationId: orgID,
-                },
-                transaction,
-            })
-
-            if (!organizationContract) {
-                return res.status(400).json(createErrorResponse('Not found'))
-            }
-
-            return res
-                .status(200)
-                .json(createSuccessResponse(organizationContract))
+        const contract = await prisma.contract.findUnique({
+            where: {
+                id: contractID,
+                organizationId: orgID,
+            },
         })
+
+        if (!contract) throw new Error('Contract not found')
+
+        return res.status(200).json(createSuccessResponse(contract))
     } catch (error) {
         res.status(500).json(createErrorResponse('', error))
     }

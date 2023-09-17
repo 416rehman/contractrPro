@@ -9,7 +9,7 @@ CREATE TABLE "Address" (
     "addressLine2" VARCHAR(128),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "UpdatedByUserId" TEXT,
+    "updatedByUserId" TEXT,
     "ClientId" TEXT,
     "OrganizationId" TEXT,
     "UserId" TEXT,
@@ -42,7 +42,7 @@ CREATE TABLE "Client" (
     "description" VARCHAR(1024),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "UpdatedByUserId" TEXT,
+    "updatedByUserId" TEXT,
     "OrganizationId" TEXT NOT NULL,
 
     CONSTRAINT "Client_pkey" PRIMARY KEY ("id")
@@ -61,7 +61,7 @@ CREATE TABLE "Comment" (
     "InvoiceId" TEXT,
     "VendorId" TEXT,
     "AuthorId" TEXT,
-    "UpdatedByUserId" TEXT,
+    "updatedByUserId" TEXT,
     "JobId" TEXT,
 
     CONSTRAINT "Comment_pkey" PRIMARY KEY ("id")
@@ -74,8 +74,8 @@ CREATE TABLE "ContractMember" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "ContractId" TEXT,
-    "OrganizationMemberId" TEXT,
-    "UpdatedByUserId" TEXT,
+    "organizationMemberId" TEXT,
+    "updatedByUserId" TEXT,
 
     CONSTRAINT "ContractMember_pkey" PRIMARY KEY ("id")
 );
@@ -93,7 +93,7 @@ CREATE TABLE "Contract" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "ClientId" TEXT NOT NULL,
     "OrganizationId" TEXT NOT NULL,
-    "UpdatedByUserId" TEXT,
+    "updatedByUserId" TEXT,
 
     CONSTRAINT "Contract_pkey" PRIMARY KEY ("id")
 );
@@ -105,7 +105,7 @@ CREATE TABLE "ExpenseEntry" (
     "description" VARCHAR(512),
     "quantity" DOUBLE PRECISION NOT NULL,
     "unit" VARCHAR(255) NOT NULL DEFAULT 'ea',
-    "unitCost" DOUBLE PRECISION NOT NULL,
+    "unitPrice" DOUBLE PRECISION NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "ExpenseId" TEXT,
@@ -126,7 +126,7 @@ CREATE TABLE "Expense" (
     "OrganizationId" TEXT NOT NULL,
     "JobId" TEXT,
     "VendorId" TEXT,
-    "UpdatedByUserId" TEXT,
+    "updatedByUserId" TEXT,
 
     CONSTRAINT "Expense_pkey" PRIMARY KEY ("id")
 );
@@ -140,7 +140,7 @@ CREATE TABLE "Invite" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "OrganizationId" TEXT NOT NULL,
     "ForOrganizationMemberId" TEXT,
-    "UpdatedByUserId" TEXT,
+    "updatedByUserId" TEXT,
 
     CONSTRAINT "Invite_pkey" PRIMARY KEY ("id")
 );
@@ -152,7 +152,7 @@ CREATE TABLE "InvoiceEntry" (
     "description" VARCHAR(512),
     "quantity" DOUBLE PRECISION NOT NULL,
     "unit" VARCHAR(255) NOT NULL DEFAULT 'ea',
-    "unitCost" DOUBLE PRECISION NOT NULL,
+    "unitPrice" DOUBLE PRECISION NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "InvoiceId" TEXT,
@@ -176,7 +176,7 @@ CREATE TABLE "Invoice" (
     "OrganizationId" TEXT NOT NULL,
     "JobId" TEXT,
     "BillToClientId" TEXT,
-    "UpdatedByUserId" TEXT,
+    "updatedByUserId" TEXT,
 
     CONSTRAINT "Invoice_pkey" PRIMARY KEY ("id")
 );
@@ -188,8 +188,8 @@ CREATE TABLE "JobMember" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "JobId" TEXT,
-    "OrganizationMemberId" TEXT,
-    "UpdatedByUserId" TEXT,
+    "organizationMemberId" TEXT,
+    "updatedByUserId" TEXT,
 
     CONSTRAINT "JobMember_pkey" PRIMARY KEY ("id")
 );
@@ -208,7 +208,7 @@ CREATE TABLE "Job" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "ContractId" TEXT NOT NULL,
-    "UpdatedByUserId" TEXT,
+    "updatedByUserId" TEXT,
 
     CONSTRAINT "Job_pkey" PRIMARY KEY ("id")
 );
@@ -222,7 +222,7 @@ CREATE TABLE "OrganizationMember" (
     "permissions" INTEGER NOT NULL DEFAULT 1,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "UpdatedByUserId" TEXT,
+    "updatedByUserId" TEXT,
     "OrganizationId" TEXT,
     "UserId" TEXT,
 
@@ -260,7 +260,7 @@ CREATE TABLE "Organization" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "OwnerId" TEXT NOT NULL,
-    "UpdatedByUserId" TEXT,
+    "updatedByUserId" TEXT,
 
     CONSTRAINT "Organization_pkey" PRIMARY KEY ("id")
 );
@@ -293,7 +293,7 @@ CREATE TABLE "User" (
     "flags" SMALLINT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "UpdatedByUserId" TEXT,
+    "updatedByUserId" TEXT,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -309,7 +309,7 @@ CREATE TABLE "Vendor" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "OrganizationId" TEXT NOT NULL,
-    "UpdatedByUserId" TEXT,
+    "updatedByUserId" TEXT,
 
     CONSTRAINT "Vendor_pkey" PRIMARY KEY ("id")
 );
@@ -324,7 +324,7 @@ CREATE UNIQUE INDEX "clients__organization_id_email" ON "Client"("OrganizationId
 CREATE UNIQUE INDEX "clients__organization_id_phone" ON "Client"("OrganizationId", "phone");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "ContractMember_ContractId_OrganizationMemberId_key" ON "ContractMember"("ContractId", "OrganizationMemberId");
+CREATE UNIQUE INDEX "ContractMember_ContractId_OrganizationMemberId_key" ON "ContractMember"("ContractId", "organizationMemberId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "expenses_expense_number__organization_id" ON "Expense"("expenseNumber", "OrganizationId");
@@ -333,7 +333,7 @@ CREATE UNIQUE INDEX "expenses_expense_number__organization_id" ON "Expense"("exp
 CREATE UNIQUE INDEX "invoices__organization_id_invoice_number" ON "Invoice"("OrganizationId", "invoiceNumber");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "JobMember_JobId_OrganizationMemberId_key" ON "JobMember"("JobId", "OrganizationMemberId");
+CREATE UNIQUE INDEX "JobMember_JobId_OrganizationMemberId_key" ON "JobMember"("JobId", "organizationMemberId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "OrganizationMember_OrganizationId_UserId_key" ON "OrganizationMember"("OrganizationId", "UserId");
@@ -381,7 +381,7 @@ ALTER TABLE "Address" ADD CONSTRAINT "Address_ClientId_fkey" FOREIGN KEY ("Clien
 ALTER TABLE "Address" ADD CONSTRAINT "Address_OrganizationId_fkey" FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Address" ADD CONSTRAINT "Address_UpdatedByUserId_fkey" FOREIGN KEY ("UpdatedByUserId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Address" ADD CONSTRAINT "Address_updatedByUserId_fkey" FOREIGN KEY ("updatedByUserId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Address" ADD CONSTRAINT "Address_UserId_fkey" FOREIGN KEY ("UserId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
@@ -396,7 +396,7 @@ ALTER TABLE "Attachment" ADD CONSTRAINT "Attachment_CommentId_fkey" FOREIGN KEY 
 ALTER TABLE "Client" ADD CONSTRAINT "Client_OrganizationId_fkey" FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Client" ADD CONSTRAINT "Client_UpdatedByUserId_fkey" FOREIGN KEY ("UpdatedByUserId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Client" ADD CONSTRAINT "Client_updatedByUserId_fkey" FOREIGN KEY ("updatedByUserId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Comment" ADD CONSTRAINT "Comment_AuthorId_fkey" FOREIGN KEY ("AuthorId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
@@ -420,7 +420,7 @@ ALTER TABLE "Comment" ADD CONSTRAINT "Comment_JobId_fkey" FOREIGN KEY ("JobId") 
 ALTER TABLE "Comment" ADD CONSTRAINT "Comment_OrganizationId_fkey" FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Comment" ADD CONSTRAINT "Comment_UpdatedByUserId_fkey" FOREIGN KEY ("UpdatedByUserId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Comment" ADD CONSTRAINT "Comment_updatedByUserId_fkey" FOREIGN KEY ("updatedByUserId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Comment" ADD CONSTRAINT "Comment_VendorId_fkey" FOREIGN KEY ("VendorId") REFERENCES "Vendor"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -429,10 +429,10 @@ ALTER TABLE "Comment" ADD CONSTRAINT "Comment_VendorId_fkey" FOREIGN KEY ("Vendo
 ALTER TABLE "ContractMember" ADD CONSTRAINT "ContractMember_ContractId_fkey" FOREIGN KEY ("ContractId") REFERENCES "Contract"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "ContractMember" ADD CONSTRAINT "ContractMember_OrganizationMemberId_fkey" FOREIGN KEY ("OrganizationMemberId") REFERENCES "OrganizationMember"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "ContractMember" ADD CONSTRAINT "ContractMember_OrganizationMemberId_fkey" FOREIGN KEY ("organizationMemberId") REFERENCES "OrganizationMember"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "ContractMember" ADD CONSTRAINT "ContractMember_UpdatedByUserId_fkey" FOREIGN KEY ("UpdatedByUserId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "ContractMember" ADD CONSTRAINT "ContractMember_updatedByUserId_fkey" FOREIGN KEY ("updatedByUserId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Contract" ADD CONSTRAINT "Contract_ClientId_fkey" FOREIGN KEY ("ClientId") REFERENCES "Client"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -441,7 +441,7 @@ ALTER TABLE "Contract" ADD CONSTRAINT "Contract_ClientId_fkey" FOREIGN KEY ("Cli
 ALTER TABLE "Contract" ADD CONSTRAINT "Contract_OrganizationId_fkey" FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Contract" ADD CONSTRAINT "Contract_UpdatedByUserId_fkey" FOREIGN KEY ("UpdatedByUserId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Contract" ADD CONSTRAINT "Contract_updatedByUserId_fkey" FOREIGN KEY ("updatedByUserId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "ExpenseEntry" ADD CONSTRAINT "ExpenseEntry_ExpenseId_fkey" FOREIGN KEY ("ExpenseId") REFERENCES "Expense"("id") ON DELETE SET NULL ON UPDATE CASCADE;
@@ -456,7 +456,7 @@ ALTER TABLE "Expense" ADD CONSTRAINT "Expense_JobId_fkey" FOREIGN KEY ("JobId") 
 ALTER TABLE "Expense" ADD CONSTRAINT "Expense_OrganizationId_fkey" FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Expense" ADD CONSTRAINT "Expense_UpdatedByUserId_fkey" FOREIGN KEY ("UpdatedByUserId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Expense" ADD CONSTRAINT "Expense_updatedByUserId_fkey" FOREIGN KEY ("updatedByUserId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Expense" ADD CONSTRAINT "Expense_VendorId_fkey" FOREIGN KEY ("VendorId") REFERENCES "Vendor"("id") ON DELETE SET NULL ON UPDATE CASCADE;
@@ -468,7 +468,7 @@ ALTER TABLE "Invite" ADD CONSTRAINT "Invite_ForOrganizationMemberId_fkey" FOREIG
 ALTER TABLE "Invite" ADD CONSTRAINT "Invite_OrganizationId_fkey" FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("id") ON DELETE NO ACTION ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Invite" ADD CONSTRAINT "Invite_UpdatedByUserId_fkey" FOREIGN KEY ("UpdatedByUserId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Invite" ADD CONSTRAINT "Invite_updatedByUserId_fkey" FOREIGN KEY ("updatedByUserId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "InvoiceEntry" ADD CONSTRAINT "InvoiceEntry_InvoiceId_fkey" FOREIGN KEY ("InvoiceId") REFERENCES "Invoice"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -486,28 +486,28 @@ ALTER TABLE "Invoice" ADD CONSTRAINT "Invoice_JobId_fkey" FOREIGN KEY ("JobId") 
 ALTER TABLE "Invoice" ADD CONSTRAINT "Invoice_OrganizationId_fkey" FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Invoice" ADD CONSTRAINT "Invoice_UpdatedByUserId_fkey" FOREIGN KEY ("UpdatedByUserId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Invoice" ADD CONSTRAINT "Invoice_updatedByUserId_fkey" FOREIGN KEY ("updatedByUserId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "JobMember" ADD CONSTRAINT "JobMember_JobId_fkey" FOREIGN KEY ("JobId") REFERENCES "Job"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "JobMember" ADD CONSTRAINT "JobMember_OrganizationMemberId_fkey" FOREIGN KEY ("OrganizationMemberId") REFERENCES "OrganizationMember"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "JobMember" ADD CONSTRAINT "JobMember_OrganizationMemberId_fkey" FOREIGN KEY ("organizationMemberId") REFERENCES "OrganizationMember"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "JobMember" ADD CONSTRAINT "JobMember_UpdatedByUserId_fkey" FOREIGN KEY ("UpdatedByUserId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "JobMember" ADD CONSTRAINT "JobMember_updatedByUserId_fkey" FOREIGN KEY ("updatedByUserId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Job" ADD CONSTRAINT "Job_ContractId_fkey" FOREIGN KEY ("ContractId") REFERENCES "Contract"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Job" ADD CONSTRAINT "Job_UpdatedByUserId_fkey" FOREIGN KEY ("UpdatedByUserId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Job" ADD CONSTRAINT "Job_updatedByUserId_fkey" FOREIGN KEY ("updatedByUserId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "OrganizationMember" ADD CONSTRAINT "OrganizationMember_OrganizationId_fkey" FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "OrganizationMember" ADD CONSTRAINT "OrganizationMember_UpdatedByUserId_fkey" FOREIGN KEY ("UpdatedByUserId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "OrganizationMember" ADD CONSTRAINT "OrganizationMember_updatedByUserId_fkey" FOREIGN KEY ("updatedByUserId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "OrganizationMember" ADD CONSTRAINT "OrganizationMember_UserId_fkey" FOREIGN KEY ("UserId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
@@ -519,16 +519,16 @@ ALTER TABLE "OrganizationConfig" ADD CONSTRAINT "OrganizationConfig_Organization
 ALTER TABLE "Organization" ADD CONSTRAINT "Organization_OwnerId_fkey" FOREIGN KEY ("OwnerId") REFERENCES "User"("id") ON DELETE NO ACTION ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Organization" ADD CONSTRAINT "Organization_UpdatedByUserId_fkey" FOREIGN KEY ("UpdatedByUserId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Organization" ADD CONSTRAINT "Organization_updatedByUserId_fkey" FOREIGN KEY ("updatedByUserId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Token" ADD CONSTRAINT "Token_UserId_fkey" FOREIGN KEY ("UserId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "User" ADD CONSTRAINT "User_UpdatedByUserId_fkey" FOREIGN KEY ("UpdatedByUserId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "User" ADD CONSTRAINT "User_updatedByUserId_fkey" FOREIGN KEY ("updatedByUserId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Vendor" ADD CONSTRAINT "Vendor_OrganizationId_fkey" FOREIGN KEY ("OrganizationId") REFERENCES "Organization"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Vendor" ADD CONSTRAINT "Vendor_UpdatedByUserId_fkey" FOREIGN KEY ("UpdatedByUserId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Vendor" ADD CONSTRAINT "Vendor_updatedByUserId_fkey" FOREIGN KEY ("updatedByUserId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;

@@ -24,7 +24,7 @@ module.exports.define = (sequelize, DataTypes) => {
             allowNull: false,
             defaultValue: 'ea',
         },
-        unitCost: {
+        unitPrice: {
             type: DataTypes.FLOAT(),
             allowNull: false,
         },

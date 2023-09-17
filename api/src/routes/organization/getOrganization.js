@@ -1,4 +1,4 @@
-const { Organization } = require('../../../db')
+const prisma = require('../../prisma')
 const {
     createSuccessResponse,
     createErrorResponse,
@@ -16,17 +16,18 @@ module.exports = async (req, res) => {
                 .json(createErrorResponse('Organization id is required'))
         }
 
-        //since organization has unique ids, it only return 1 organization object
-        const organizations = await Organization.findAll({
+        const organization = await prisma.organization.findUnique({
             where: { id: orgId },
         })
 
         //if no organization in record, error-not found
-        if (!organizations) {
-            return res.status(404).json(createErrorResponse('User not found'))
+        if (!organization) {
+            return res
+                .status(404)
+                .json(createErrorResponse('Invalid Organization Id'))
         }
 
-        return res.status(200).json(createSuccessResponse(organizations))
+        return res.status(200).json(createSuccessResponse(organization))
     } catch (err) {
         return res.status(400).json(createErrorResponse('', err))
     }

@@ -44,7 +44,7 @@ describe('Get all organization expenses', () => {
         expect(expenseEntry).toHaveProperty('name')
         expect(expenseEntry).toHaveProperty('description')
         expect(expenseEntry).toHaveProperty('quantity')
-        expect(expenseEntry).toHaveProperty('unitCost')
+        expect(expenseEntry).toHaveProperty('unitPrice')
         expect(expenseEntry).toHaveProperty('createdAt')
         expect(expenseEntry).toHaveProperty('updatedAt')
         expect(expenseEntry).toHaveProperty('ExpenseId', expense.id)

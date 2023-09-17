@@ -2,49 +2,37 @@ const {
     createSuccessResponse,
     createErrorResponse,
 } = require('../../../utils/response')
-const { isValidUUID } = require('../../../utils/isValidUUID')
-const { pick } = require('../../../utils')
-const { sequelize, OrganizationMember } = require('../../../../db')
+const prisma = require('../../../prisma')
+const {
+    zOrganizationMember,
+} = require('../../../validators/organizationMember.zod')
 module.exports = async (req, res) => {
     try {
         const orgId = req.params.org_id
         const memberId = req.params.member_id
-        if (!orgId || !isValidUUID(orgId)) {
-            return res
-                .status(400)
-                .json(createErrorResponse('Organization ID is required'))
-        }
-        if (!memberId || !isValidUUID(memberId)) {
-            return res
-                .status(400)
-                .json(createErrorResponse('Member ID is required'))
-        }
-        const body = {
-            ...pick(req.body, [
-                'name',
-                'email',
-                'phone',
-                'website',
-                'description',
-            ]),
-            OrganizationId: orgId,
-            UpdatedByUserId: req.auth.id,
-        }
-        await sequelize.transaction(async (transaction) => {
-            const queryResult = await OrganizationMember.update(body, {
-                where: {
-                    OrganizationId: orgId,
-                    id: memberId,
-                },
-                transaction,
-                returning: true,
+
+        if (!memberId) throw new Error('Member ID is required')
+
+        const data = zOrganizationMember
+            .pick({
+                name: true,
+                email: true,
+                phone: true,
             })
-            if (!queryResult[0]) {
-                throw new Error('Member not found')
-            }
-            const updatedMember = queryResult[1][0]
-            return res.status(200).json(createSuccessResponse(updatedMember))
+            .parse(req.body)
+        data.organizationId = orgId
+        data.updatedByUserId = req.auth.id
+
+        const member = await prisma.organizationMember.update({
+            where: {
+                id: memberId,
+                organizationId: orgId,
+            },
+            data,
         })
+        if (!member) throw new Error('Member not found')
+
+        return res.status(200).json(createSuccessResponse(member))
     } catch (error) {
         return res.status(400).json(createErrorResponse('', error))
     }

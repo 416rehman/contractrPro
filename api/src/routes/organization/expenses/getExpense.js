@@ -1,47 +1,30 @@
-const { sequelize, Expense, ExpenseEntry } = require('../../../../db')
+const prisma = require('../../../prisma')
 const {
     createSuccessResponse,
     createErrorResponse,
 } = require('../../../utils/response')
-const { isValidUUID } = require('../../../utils/isValidUUID')
 
-// get org expense
+// get expense
 module.exports = async (req, res) => {
     try {
-        const expenseId = req.params.expense_id
         const orgId = req.params.org_id
+        const expenseId = req.params.expense_id
 
-        if (!orgId || !isValidUUID(orgId)) {
-            return res
-                .status(400)
-                .json(createErrorResponse('Invalid organization_id'))
-        }
-        if (!expenseId || !isValidUUID(expenseId)) {
-            return res
-                .status(400)
-                .json(createErrorResponse('Invalid expense_id'))
-        }
+        if (!expenseId) throw new Error('Expense ID is required')
 
-        await sequelize.transaction(async (transaction) => {
-            const expense = await Expense.findOne({
-                where: {
-                    OrganizationId: orgId,
-                    id: expenseId,
-                },
-                transaction,
-                include: {
-                    model: ExpenseEntry,
-                },
-            })
-
-            if (!expense) {
-                return res
-                    .status(400)
-                    .json(createErrorResponse('Expense not found'))
-            }
-
-            res.status(200).json(createSuccessResponse(expense))
+        const expense = await prisma.expense.findUnique({
+            where: {
+                id: expenseId,
+                organizationId: orgId,
+            },
+            include: {
+                ExpenseEntries: true,
+            },
         })
+
+        if (!expense) throw new Error('Expense not found')
+
+        res.status(200).json(createSuccessResponse(expense))
     } catch (err) {
         return res.status(400).json(createErrorResponse('', err))
     }
