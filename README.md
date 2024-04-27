@@ -20,19 +20,19 @@ Once installed, open the start menu and search for Docker Desktop. Open the appl
 
 1. Install the NPM packages for client and API. 
 ```bash
-cd ./api && npm install && cd ../client && npm install && cd ..
+cd ./api; npm install; cd ../client; npm install; cd ..
 ```
 2. Start the database (might take a minute or two to start up)
 ```bash
-cd ./db && docker compose up -d && cd ..
+cd ./db; docker compose up -d; cd ..
 ```
 3. Start the API
 ```bash
-cd ./api && docker compose up -d && cd ..
+cd ./api; docker compose up -d; cd ..
 ```
 4. Start the client
 ```bash
-cd ./client && npm start
+cd ./client; npm run dev
 ```
 
 Access the client in your browser at [http://localhost:3000](http://localhost:3000). <br>
