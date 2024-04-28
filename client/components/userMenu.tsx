@@ -53,6 +53,7 @@ export default function UserMenu(props: tUser) {
         break;
       case "logout":
         await logout();
+        router.push("/login");
         break;
       case "theme":
         theme === "dark" ? setTheme("light") : setTheme("dark");

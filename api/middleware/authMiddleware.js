@@ -9,10 +9,11 @@ const { User, Organization } = require('../db')
  * @param next
  * @returns {*}
  */
-if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
+if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test' && process.env.SKIP_AUTH === 'true') {
     // default export
     module.exports = async function (req, res, next) {
         // add a fake auth object to the request to indicate that the user is authenticated in development mode
+        // Makes all requests appear to be authenticated
         req.auth = {
             id: process.env.DEV_USER_UUID,
             username: process.env.DEV_USER_USERNAME,
