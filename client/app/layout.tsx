@@ -22,10 +22,8 @@ export const metadata = {
 
 // The user is populated on the server via getUserViaCookies and used by other components such as AuthRedirectServer etc
 // It is used to check if the user is authenticated on the server side. On client side we use the auth and user services
-// @ts-ignore
-export let user = null;
 
-const getUserViaCookies = async (accessTokenCookieName = "accessToken", refreshTokenCookieName = "refreshToken") => {
+export async function getUserViaCookies (accessTokenCookieName = "accessToken", refreshTokenCookieName = "refreshToken") {
   const tokenCookie = cookies().get(accessTokenCookieName || "token");
 
   let accessToken = tokenCookie?.value || null;
@@ -56,6 +54,7 @@ const getUserViaCookies = async (accessTokenCookieName = "accessToken", refreshT
 };
 
 export default async function RootLayout({ children }: { children: ReactNode; }) {
+  let user = null;
   try {
     user = await getUserViaCookies();
   } catch (err) {
@@ -80,7 +79,7 @@ export default async function RootLayout({ children }: { children: ReactNode; })
       <div className="relative flex flex-col flex-grow w-full h-full">
         <Topbar className={"print:hidden"} />
         <div className="flex flex-row gap-x-0 gap-y-0 flex-grow w-full h-full overflow-y-auto">
-          <AuthFallback fallbackIf={"logged-in"}
+          <AuthFallback fallbackIf={"logged-in"} user={user}
                         to={<Sidebar
                           className={"hidden md:flex md:print:hidden md:flex-col px-2 py-4 items-center gap-8"} />} />
 

@@ -21,9 +21,46 @@ module.exports.createErrorResponse = (message, err) => {
             const entity = err?.message?.split('"')?.[3]
             hint = `Make sure "${column}" is not null for "${entity}"`
         }
+        // if err class is a sequelize error
+        else if (err?.name?.includes('Sequelize')) {
+            // Provide client-facing error messages for common errors
+            if (err?.name === 'SequelizeUniqueConstraintError') {
+                return {
+                    status: 'error',
+                    message: 'This record already exists',
+                    data: err?.errors,
+                }
+            }
+
+            if (err?.name === 'SequelizeValidationError') {
+                return {
+                    status: 'error',
+                    message: err?.errors?.[0]?.message || 'Validation error',
+                    data: err?.errors,
+                }
+            }
+
+            if (err?.name === 'SequelizeDatabaseError') {
+                return {
+                    status: 'error',
+                    message: 'Database error',
+                    data: err?.errors,
+                }
+            }
+
+            // else if it has err?.errors, return the first error message
+            if (err?.errors) {
+                return {
+                    status: 'error',
+                    message: err?.errors?.[0]?.message || 'Something went wrong',
+                    data: err?.errors,
+                }
+            }
+        }
     } catch (e) {
         console.log(e)
     }
+    
 
     return {
         status: 'error',

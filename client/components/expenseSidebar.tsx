@@ -1,100 +1,51 @@
 "use client";
-import { Card, CardBody, CardHeader } from "@nextui-org/card";
-import { CardFooter, Input } from "@nextui-org/react";
-import { Button } from "@nextui-org/button";
+import {useEffect, useState} from "react";
+import {loadExpenses, useExpensesStore} from "@/services/expenses";
+import {useUserStore} from "@/services/user";
+import {useParams} from "next/navigation";
+import SubSidebar from "@/components/subSidebar";
+import {Button} from "@nextui-org/button";
 import NextLink from "next/link";
-import clsx from "clsx";
-import { IconChevronDown, IconDevicesDollar, IconListSearch } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
-import { loadExpenses, useExpensesStore } from "@/services/expenses";
-import { useUserStore } from "@/services/user";
-import { useParams } from "next/navigation";
-import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/popover";
+import {IconDevicesDollar, IconReceipt2} from "@tabler/icons-react";
 
 type Props = {
-  className?: string;
+    className?: string;
 }
 
 /**
  * This is the sidebar for the expenses page. It displays a list of expenses and should allow the user to filter them.
  * It handles communication with the API and updates the local state via the expense service.
  * This is used in tandem with the expenseForm component to edit/create expenses.
- * TODO: Implement filtering
  */
-export default function ExpenseSidebar({ className }: Props) {
-  const [currentOrg] = useUserStore(state => [state.currentOrganization]);
-  const [expenses] = useExpensesStore(state => [state.expenses]);
-  const [filter, setFilter] = useState("");
-  const [expensesToDisplay, setFilteredExpenses] = useState(expenses);
-  const params = useParams();
+export default function ExpenseSidebar({className}: Props) {
+    const [currentOrg] = useUserStore(state => [state.currentOrganization]);
+    const [expenses] = useExpensesStore(state => [state.expenses]);
+    const [filter, setFilter] = useState("");
+    const [filteredExpenses, setFilteredExpenses] = useState([]);
+    const params = useParams();
 
-  useEffect(() => {
-    loadExpenses(currentOrg?.id);
-  }, [currentOrg?.id]);
+    useEffect(() => {
+        loadExpenses(currentOrg?.id);
+    }, [currentOrg?.id]);
 
-  useEffect(() => {
-    // filter
-    const expensesToDisplay = expenses.filter((item: any) => item.expenseNumber.toLowerCase().includes(filter.toLowerCase()));
-    setFilteredExpenses(expensesToDisplay);
-  }, [filter, expenses]);
+    useEffect(() => {
+        // filter
+        const filteredItems = expenses.filter((item: any) => item.expenseNumber.toLowerCase().includes(filter.toLowerCase()));
+        setFilteredExpenses(filteredItems || []);
+    }, [filter, expenses]);
 
-  const sidebar = <Card shadow={"none"} isBlurred={true}
-                        className={clsx("border-none rounded-none", className)}>
-    <CardHeader className={"flex flex-col gap-2"}>
-      <h1 className={"text-2xl font-bold"}>Expenses</h1>
-      {/*  Search bar*/}
-      <Input aria-label={"Filter expenses"}
-             placeholder={"Filter"} size={"sm"} startContent={<IconListSearch className={"text-default-400"} />}
-             variant={"underlined"}
-             onChange={(e) => setFilter(e.target.value)}
-             onClear={() => setFilter("")}
-             value={filter}
-             isClearable={true}
-      />
-
-    </CardHeader>
-    <CardBody className={"p-2"}>
-      <ul className={"flex flex-col w-full"}>
-        {expensesToDisplay && expensesToDisplay.map((expense) => (
-          <li key={expense.id}>
-            <Button
-              className={"w-full justify-start text-default-600 font-medium"}
-              as={NextLink}
-              href={"/expenses/" + expense?.id}
-              startContent={<IconDevicesDollar className={"text-default-300"} size={"20"} />}
-              variant={params.id === expense?.id ? "flat" : "light"}
-              size={"sm"}>
-              <span className={"truncate"}>{expense?.expenseNumber}</span>
-            </Button>
-          </li>
-        ))}
-      </ul>
-    </CardBody>
-    <CardFooter>
-      <Button variant={"ghost"} className={"flex-grow"} href={"/expenses/new"} as={NextLink}>
-        Create New Expense
-      </Button>
-    </CardFooter>
-  </Card>;
-
-  // for mobile version have a dropdown
-  const dropdown = <Popover>
-    <PopoverTrigger className={clsx("w-full flex md:hidden", className)}>
-      <Button variant={"ghost"} className={""} endContent={<IconChevronDown />}>
-        Expenses
-      </Button>
-    </PopoverTrigger>
-    <PopoverContent className={"rounded-md !w-[94vw] !h-[85vh] p-1"}>
-      {sidebar}
-    </PopoverContent>
-  </Popover>;
-
-  return <>
-    <div className={"hidden md:flex md:flex-col md:gap-2 md:w-1/4"}>
-      {sidebar}
-    </div>
-    <div className={"flex md:hidden"}>
-      {dropdown}
-    </div>
-  </>;
+    return <SubSidebar className={className} items={
+        filteredExpenses?.map((expense: any) => {
+            return <li key={expense.id}>
+                <Button
+                    className={"w-full justify-start text-default-600 font-medium"}
+                    as={NextLink}
+                    href={"/expenses/" + expense?.id}
+                    startContent={<IconDevicesDollar className={"text-default-400"} size={"20"}/>}
+                    variant={params.id === expense?.id ? "flat" : "light"}
+                    size={"sm"}>
+                    <span className={"truncate"}>{expense?.expenseNumber}</span>
+                </Button>
+            </li>
+        })} title={"Expense"} setFilter={setFilter} filter={filter} newItemUrl={"/expenses/new"}/>;
 }

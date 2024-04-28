@@ -1,28 +1,28 @@
 "use client";
 
 import {
-  Navbar,
-  NavbarBrand,
-  NavbarContent,
-  NavbarItem,
-  NavbarMenu,
-  NavbarMenuItem,
-  NavbarMenuToggle
+    Navbar,
+    NavbarBrand,
+    NavbarContent,
+    NavbarItem,
+    NavbarMenu,
+    NavbarMenuItem,
+    NavbarMenuToggle
 } from "@nextui-org/navbar";
 import NextLink from "next/link";
-import { Button } from "@nextui-org/button";
+import {Button} from "@nextui-org/button";
 import UserMenu from "@/components/userMenu";
-import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
+import {useEffect, useState} from "react";
+import {usePathname} from "next/navigation";
 import AuthFallback from "@/components/authFallback";
-import { VisitorMenu } from "@/components/visitorMenu";
-import { useUserStore } from "@/services/user/";
+import {VisitorMenu} from "@/components/visitorMenu";
+import {useUserStore} from "@/services/user/";
 import OrganizationSelector from "@/components/organizationSelector";
-import { Divider } from "@nextui-org/divider";
-import { sidebarItems } from "@/components/sidebar";
+import {Divider} from "@nextui-org/divider";
+import {sidebarItems} from "@/components/sidebar";
 import clsx from "clsx";
 import SearchBox from "@/components/searchBox";
-import { IconAlertTriangle } from "@tabler/icons-react";
+import {IconAlertTriangle} from "@tabler/icons-react";
 
 /**
  * The main navigation component of the app. It is shown at the top of the screen.
@@ -32,74 +32,70 @@ import { IconAlertTriangle } from "@tabler/icons-react";
  * - In mobile, it shows a hamburger menu that shows its content in a vertical navbar.
  * - In mobile, it also shows the sidebar items in a vertical navbar.
  */
-export default function Topbar({ className }: { className?: string }) {
-  const user = useUserStore(state => state.user);
-  const currentOrganization = useUserStore(state => state.currentOrganization);
+export default function Topbar({className}: { className?: string }) {
+    const user = useUserStore(state => state.user);
+    const currentOrganization = useUserStore(state => state.currentOrganization);
 
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const pathname = usePathname();
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const pathname = usePathname();
 
-  useEffect(() => {
-    // if the menu is open, close it when the pathname changes
-    if (isMenuOpen) {
-      setIsMenuOpen(false);
-    }
-  }, [isMenuOpen, pathname]);
-  return (
-    <Navbar position="sticky" className={clsx("justify-between flex flex-row gap-2 w-full", className)}
-            maxWidth={"full"}
-            onMenuOpenChange={setIsMenuOpen}>
-      <NavbarContent>
-        {user?.id && (
-          <>
-            <NavbarMenuToggle className={"flex md:hidden"} />
-            <NavbarBrand className={"hidden md:flex"}>
-              <OrganizationSelector className={"hidden md:flex"} />
-            </NavbarBrand>
-          </>
-        )}
+    return (
+        <Navbar position="sticky" className={clsx("justify-between flex flex-row gap-2 w-full", className)}
+                maxWidth={"full"} isMenuOpen={isMenuOpen} onMenuOpenChange={setIsMenuOpen}>
+            <NavbarContent>
+                {user?.id && (
+                    <>
+                        <NavbarMenuToggle className={"flex md:hidden"}/>
+                        <NavbarBrand className={"hidden md:flex"}>
+                            <OrganizationSelector className={"hidden md:flex"}/>
+                        </NavbarBrand>
+                    </>
+                )}
 
-      </NavbarContent>
-      <NavbarContent justify="center" className="gap-4 flex-grow">
-        <AuthFallback fallbackIf={"logged-in"} to={
-          <NavbarItem className={"flex-grow max-w-lg"}>
-            {currentOrganization?.id ? <SearchBox /> :
-              <div className={"text-danger flex flex-row justify-center items-center gap-2 font-medium text-sm"}>
-                <IconAlertTriangle size={20} />Select or create an organization</div>}
-          </NavbarItem>
-        } />
-      </NavbarContent>
-      <NavbarContent justify="end">
-        {user ?
-          <NavbarItem>
-            <UserMenu {...user} />
-          </NavbarItem>
-          :
-          <VisitorMenu />
-        }
-      </NavbarContent>
-      {user?.id && <NavbarMenu className={"flex flex-col gap-5 w-full p-0"}>
-        <OrganizationSelector className={"w-full justify-start align-middle"} />
-        <Divider />
-        <div className={"w-full"}>
-          {sidebarItems.map((item) => (
-            <NavbarMenuItem key={item.href} className={"w-full"}>
-              <Button
-                className={"justify-start w-full"}
-                key={item.href}
-                as={NextLink}
-                href={item.href}
-                variant={pathname === item.href ? "flat" : "light"}
-                color={pathname === item.href ? "primary" : "default"}
-                size={"lg"}>
-                {<item.icon stroke={1.5} />}
-                {item.label}
-              </Button>
-            </NavbarMenuItem>
-          ))}
-        </div>
-      </NavbarMenu>}
+            </NavbarContent>
+            <NavbarContent justify="center" className="gap-4 flex-grow">
+                <AuthFallback fallbackIf={"logged-in"} to={
+                    <NavbarItem className={"flex-grow max-w-lg"}>
+                        {currentOrganization?.id ? <SearchBox/> :
+                            <div
+                                className={"text-danger flex flex-row justify-center items-center gap-2 font-medium text-sm"}>
+                                <IconAlertTriangle size={20}/>Select or create an organization</div>}
+                    </NavbarItem>
+                }/>
+            </NavbarContent>
+            <NavbarContent justify="end">
+                {user ?
+                    <NavbarItem>
+                        <UserMenu {...user} />
+                    </NavbarItem>
+                    :
+                    <VisitorMenu/>
+                }
+            </NavbarContent>
+            {user?.id && <NavbarMenu className={"flex flex-col gap-5 w-full p-0"}>
+                <OrganizationSelector className={"w-full justify-start align-middle"}/>
+                <Divider/>
+                <div className={"w-full"}>
+                    {sidebarItems.map((item) => (
+                        <NavbarMenuItem key={item.href} className={"w-full"}>
+                            <Button
+                                className={"justify-start w-full"}
+                                key={item.href}
+                                as={NextLink}
+                                href={item.href}
+                                variant={pathname === item.href ? "flat" : "light"}
+                                color={pathname === item.href ? "primary" : "default"}
+                                size={"lg"}
+                                onClick={() => setIsMenuOpen(false)}
+                            >
+                                {<item.icon stroke={1.5}/>}
+                                {item.label}
+                            </Button>
+                        </NavbarMenuItem>
+                    ))}
+                </div>
+            </NavbarMenu>}
 
-    </Navbar>
-  );
+        </Navbar>
+    );
 };

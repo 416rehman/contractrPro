@@ -3,9 +3,9 @@
  */
 
 import { ReactNode } from "react";
-import { user } from "@/app/layout";
 import { redirect } from "next/navigation";
 import AuthRedirect from "@/components/authRedirect";
+import {getUserViaCookies} from "@/app/layout";
 
 type AuthSwitchProps = {
   // Redirect if logged in or logged out
@@ -26,6 +26,7 @@ type AuthSwitchProps = {
  */
 export default async function AuthRedirectServer({ to, children, redirectIf }: AuthSwitchProps) {
   try {
+    const user = await getUserViaCookies();
     if (redirectIf == "logged-in" && user?.id) {
       redirect(to);
     } else if (redirectIf == "logged-out" && !user) {
