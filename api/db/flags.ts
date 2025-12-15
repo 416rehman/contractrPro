@@ -2,6 +2,7 @@ export const tokenFlags = {
     USER_EMAIL_VERIFY_TOKEN: 1,
     USER_PHONE_VERIFY_TOKEN: 2,
     USER_PASSWORD_RESET_TOKEN: 4,
+    ORG_DELETE_TOKEN: 8,
 };
 
 export const UserFlags = {

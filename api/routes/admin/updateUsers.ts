@@ -1,44 +1,59 @@
 import { db, users } from '../../db';
-import {
-    createSuccessResponse,
-    createErrorResponse,
-} from '../../utils/response';
+import { createSuccessResponse, createErrorResponse } from '../../utils/response';
+import { ErrorCode } from '../../utils/errorCodes';
 import { inArray } from 'drizzle-orm';
 
+/**
+ * @openapi
+ * /admin/users:
+ *   patch:
+ *     summary: Bulk update user fields (admin only)
+ *     tags: [Admin]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               userIds:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *               column:
+ *                 type: string
+ *               value:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Users updated
+ *       400:
+ *         description: Validation error
+ */
 export default async (req, res) => {
     const { userIds, column, value } = req.body
 
     if (!userIds || userIds.length < 1) {
-        return res
-            .status(400)
-            .json(
-                createErrorResponse(
-                    'Missing user IDs. It should be an array of user IDs.'
-                )
-            )
+        return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_FIELD_REQUIRED))
     }
 
     if (!column || column.length < 1) {
-        return res.status(400).json(createErrorResponse('Missing column name.'))
+        return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_FIELD_REQUIRED))
     }
 
     if (!value || value.length < 1) {
-        return res.status(400).json(createErrorResponse('Missing value.'))
+        return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_FIELD_REQUIRED))
     }
 
     try {
         await db.transaction(async (tx) => {
-            // Update the user's column with the new value where the user ID is in the array of user IDs
-            // Potentially unsafe if column is not validated, but matching legacy behavior.
-            // TS might complain about dynamic key.
             await tx.update(users)
-                .set({
-                    [column]: value
-                })
+                .set({ [column]: value })
                 .where(inArray(users.id, userIds));
         })
-        return res.json(createSuccessResponse('Users updated successfully'))
+        return res.json(createSuccessResponse(null))
     } catch (error) {
-        return res.status(400).json(createErrorResponse('', error))
+        return res.status(400).json(createErrorResponse(ErrorCode.INTERNAL_ERROR, error))
     }
 }
+

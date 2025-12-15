@@ -1,12 +1,19 @@
 import { db, organizationMembers, jobMembers, jobs } from '../../../../../db';
-import {
-    createSuccessResponse,
-    createErrorResponse,
-} from '../../../../../utils/response';
+import { createSuccessResponse, createErrorResponse } from '../../../../../utils/response';
+import { ErrorCode } from '../../../../../utils/errorCodes';
 import { isValidUUID } from '../../../../../utils/isValidUUID';
 import { eq, and } from 'drizzle-orm';
 
-// Get jobMember
+/**
+ * @openapi
+ * /organizations/{org_id}/contracts/{contract_id}/jobs/{job_id}/members/{member_id}:
+ *   get:
+ *     summary: Get a single job member
+ *     tags: [JobMembers]
+ *     responses:
+ *       200:
+ *         description: Job member details
+ */
 export default async (req, res) => {
     try {
         const jobId = req.params.job_id
@@ -15,30 +22,18 @@ export default async (req, res) => {
         const orgMemberId = req.params.member_id
 
         if (!jobId || !isValidUUID(jobId)) {
-            return res.status(400).json(createErrorResponse('Invalid job id.'))
+            return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_INVALID_UUID))
         }
-
         if (!contractId || !isValidUUID(contractId)) {
-            return res
-                .status(400)
-                .json(createErrorResponse('Invalid contract id.'))
+            return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_INVALID_UUID))
         }
-
         if (!orgId || !isValidUUID(orgId)) {
-            return res.status(400).json(createErrorResponse('Invalid org id.'))
+            return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_ORG_ID_REQUIRED))
         }
-
         if (!orgMemberId || !isValidUUID(orgMemberId)) {
-            return res
-                .status(400)
-                .json(createErrorResponse('Invalid jobMember id.'))
+            return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_INVALID_UUID))
         }
 
-        // Find jobMember for the job
-        // Legacy: Returns `OrganizationMember` with nested `Job` info.
-        // Meaning it returns the OrganizationMember profile IF they are in the job.
-
-        // Drizzle: Query organizationMembers where id = orgMemberId AND exists relationship.
         const member = await db.query.organizationMembers.findFirst({
             where: and(
                 eq(organizationMembers.id, orgMemberId),
@@ -47,27 +42,10 @@ export default async (req, res) => {
             with: {
                 jobMembers: {
                     where: eq(jobMembers.jobId, jobId),
-                    with: {
-                        job: {
-                            // verify contractId? 
-                            // The `where` on jobMembers connects to job. 
-                            // I can't easily filter `job.contractId` inside the `with` unless I use extra logic.
-                            // But I can trust that if they asked for `jobId`, we check if `jobId` belongs to `contractId` separately or assume validity if DB is consistent.
-                            // Legacy: `include Job where id=jobId, ContractId=contractId`.
-                            // So it enforces job validity.
-                        }
-                    }
+                    with: { job: true }
                 }
             }
         });
-
-        // Manual validation of job context:
-        // Check if `member.jobMembers` has any entry that links to local jobId (which is filtered in `with`).
-        // But need to ensure that `job` actually belongs to `contractId`.
-        // The above query fetches `jobMembers` for `jobId`.
-        // I should also verify `jobId` belongs to `contractId` and `orgId`.
-        // I'll do a quick separate check or assume if record exists it's valid?
-        // Safer to check.
 
         const jobValid = await db.query.jobs.findFirst({
             where: and(
@@ -78,19 +56,16 @@ export default async (req, res) => {
         });
 
         if (!jobValid) {
-            // Legacy returned "JobMember not found" if ANY part required failed (inner join).
-            // Basically 404.
-            return res.status(404).json(createErrorResponse('JobMember not found (Job context invalid).'))
+            return res.status(404).json(createErrorResponse(ErrorCode.RESOURCE_NOT_FOUND))
         }
 
         if (!member || !member.jobMembers || member.jobMembers.length === 0) {
-            return res
-                .status(404)
-                .json(createErrorResponse('JobMember not found.'))
+            return res.status(404).json(createErrorResponse(ErrorCode.RESOURCE_NOT_FOUND))
         }
 
         return res.status(200).json(createSuccessResponse(member))
     } catch (err) {
-        return res.status(500).json(createErrorResponse('', err))
+        return res.status(500).json(createErrorResponse(ErrorCode.INTERNAL_ERROR, err))
     }
 }
+

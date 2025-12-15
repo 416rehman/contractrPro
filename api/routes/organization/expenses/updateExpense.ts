@@ -1,37 +1,36 @@
 import { db, expenses, expenseEntries } from '../../../db';
-import {
-    createSuccessResponse,
-    createErrorResponse,
-} from '../../../utils/response';
+import { createSuccessResponse, createErrorResponse } from '../../../utils/response';
+import { ErrorCode } from '../../../utils/errorCodes';
 import { isValidUUID } from '../../../utils/isValidUUID';
 import { pick } from '../../../utils/index';
 import { eq, and } from 'drizzle-orm';
 
+/**
+ * @openapi
+ * /organizations/{org_id}/expenses/{expense_id}:
+ *   patch:
+ *     summary: Update an expense
+ *     tags: [Expenses]
+ *     responses:
+ *       200:
+ *         description: Expense updated
+ */
 export default async (req, res) => {
     try {
         const { org_id, expense_id } = req.params
-        if (!org_id || !isValidUUID(org_id)) return res.status(400).json(createErrorResponse('Invalid org_id'))
-        if (!expense_id || !isValidUUID(expense_id)) return res.status(400).json(createErrorResponse('Invalid expense_id'))
+        if (!org_id || !isValidUUID(org_id)) return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_ORG_ID_REQUIRED))
+        if (!expense_id || !isValidUUID(expense_id)) return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_INVALID_UUID))
 
-        const entriesData =
-            req.body?.ExpenseEntries?.map((entry: any) =>
-                pick(entry, ['description', 'quantity', 'unitCost', 'name'])
-            ) || []
+        const entriesData = req.body?.ExpenseEntries?.map((entry: any) =>
+            pick(entry, ['description', 'quantity', 'unitCost', 'name'])
+        ) || []
 
         if (entriesData.length === 0) {
-            return res.status(400).json(createErrorResponse('ExpenseEntries is required.'))
+            return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_FIELD_REQUIRED))
         }
 
         const body = {
-            ...pick(req.body, [
-                'description',
-                'date',
-                'taxRate',
-                'VendorId',
-                'ContractId',
-                'JobId',
-            ]),
-            // Map keys
+            ...pick(req.body, ['description', 'date', 'taxRate', 'VendorId', 'ContractId', 'JobId']),
             vendorId: req.body.VendorId,
             contractId: req.body.ContractId,
             jobId: req.body.JobId,
@@ -40,10 +39,8 @@ export default async (req, res) => {
             amount: '0'
         }
 
-        // Clean
         Object.keys(body).forEach(key => body[key] === undefined && delete body[key]);
 
-        // Calculate amount
         const totalAmount = entriesData.reduce((sum: number, entry: any) => {
             return sum + (Number(entry.quantity || 0) * Number(entry.unitCost || 0));
         }, 0);
@@ -54,7 +51,7 @@ export default async (req, res) => {
                 where: and(eq(expenses.id, expense_id), eq(expenses.organizationId, org_id))
             });
 
-            if (!expense) throw new Error('Expense not found');
+            if (!expense) return res.status(400).json(createErrorResponse(ErrorCode.RESOURCE_NOT_FOUND));
 
             await tx.update(expenses).set(body).where(eq(expenses.id, expense.id));
 
@@ -73,14 +70,13 @@ export default async (req, res) => {
 
             const updated = await tx.query.expenses.findFirst({
                 where: eq(expenses.id, expense.id),
-                with: {
-                    expenseEntries: true
-                }
+                with: { expenseEntries: true }
             });
 
             return res.status(200).json(createSuccessResponse(updated))
         });
     } catch (e: any) {
-        return res.status(400).json(createErrorResponse(e.message || 'Error'))
+        return res.status(400).json(createErrorResponse(ErrorCode.INTERNAL_ERROR, e))
     }
 }
+

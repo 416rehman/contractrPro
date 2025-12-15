@@ -1,71 +1,46 @@
-import {
-    createSuccessResponse,
-    createErrorResponse,
-} from '../../../../../../utils/response';
-import { db, comments, attachments } from '../../../../../../db';
+import { createSuccessResponse, createErrorResponse } from '../../../../../../utils/response';
+import { ErrorCode } from '../../../../../../utils/errorCodes';
+import { db, jobs, comments, attachments } from '../../../../../../db';
 import { isValidUUID } from '../../../../../../utils/isValidUUID';
 import { eq, and } from 'drizzle-orm';
 
-// delete attachment
+/**
+ * @openapi
+ * /organizations/{org_id}/contracts/{contract_id}/jobs/{job_id}/comments/{comment_id}/attachments/{attachment_id}:
+ *   delete:
+ *     summary: Delete an attachment from a job comment
+ *     tags: [JobComments]
+ *     responses:
+ *       200:
+ *         description: Attachment deleted
+ */
 export default async (req, res) => {
     try {
+        const attachmentId = req.params.attachment_id
         const commentId = req.params.comment_id
         const jobId = req.params.job_id
         const orgId = req.params.org_id
-        const attachmentId = req.params.attachment_id
 
-        if (!commentId || !isValidUUID(commentId)) return res.status(400).json(createErrorResponse('Invalid comment id.'))
-        if (!jobId || !isValidUUID(jobId)) return res.status(400).json(createErrorResponse('Invalid job id.'))
-        if (!orgId || !isValidUUID(orgId)) return res.status(400).json(createErrorResponse('Invalid org id.'))
-        if (!attachmentId || !isValidUUID(attachmentId)) return res.status(400).json(createErrorResponse('Invalid attachment id.'))
+        if (!attachmentId || !isValidUUID(attachmentId)) return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_INVALID_UUID))
+        if (!commentId || !isValidUUID(commentId)) return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_INVALID_UUID))
+        if (!jobId || !isValidUUID(jobId)) return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_INVALID_UUID))
+        if (!orgId || !isValidUUID(orgId)) return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_ORG_ID_REQUIRED))
 
         await db.transaction(async (tx) => {
-            // Make sure the Comment belongs to the Job
-            const comment = await tx.query.comments.findFirst({
-                where: and(
-                    eq(comments.id, commentId),
-                    eq(comments.organizationId, orgId),
-                    eq(comments.jobId, jobId)
-                )
-            });
+            const job = await tx.query.jobs.findFirst({ where: and(eq(jobs.id, jobId), eq(jobs.organizationId, orgId)) })
+            if (!job) return res.status(400).json(createErrorResponse(ErrorCode.RESOURCE_NOT_FOUND))
 
-            if (!comment) {
-                return res.status(400).json(createErrorResponse('Comment/Attachment not found (comment).'))
+            const deleted = await tx.delete(attachments).where(and(eq(attachments.id, attachmentId), eq(attachments.commentId, commentId))).returning();
+
+            if (deleted.length > 0) {
+                const comment = await tx.query.comments.findFirst({ where: eq(comments.id, commentId), with: { attachments: true } });
+                if (comment && (!comment.content || comment.content.trim() === '') && comment.attachments.length === 0) {
+                    await tx.delete(comments).where(eq(comments.id, commentId));
+                }
             }
-
-            // Find all attachments for the comment
-            const allAttachments = await tx.query.attachments.findMany({
-                where: eq(attachments.commentId, commentId)
-            });
-
-            // Ensure the attachment exists in the list
-            const attachmentToDelete = allAttachments.find(a => a.id === attachmentId);
-            if (!attachmentToDelete) {
-                return res.status(400).json(createErrorResponse('Attachment not found.'))
-            }
-
-            let rowsDeleted = 0
-
-            // if the comment has no content and this is the last attachment, delete the comment
-            if (
-                (!comment.content || comment.content === '') &&
-                allAttachments.length === 1
-            ) {
-                const deletedComments = await tx.delete(comments)
-                    .where(eq(comments.id, commentId))
-                    .returning();
-                rowsDeleted = deletedComments.length > 0 ? 1 : 0;
-                rowsDeleted += 1 // add 1 for the attachment implicitly
-            } else {
-                const deletedAttachments = await tx.delete(attachments)
-                    .where(eq(attachments.id, attachmentId))
-                    .returning();
-                rowsDeleted = deletedAttachments.length;
-            }
-
-            return res.status(200).json(createSuccessResponse(rowsDeleted))
+            return res.json(createSuccessResponse(null))
         })
-    } catch (err) {
-        return res.status(400).json(createErrorResponse('Failed to delete attachment.', err))
+    } catch (error) {
+        return res.status(400).json(createErrorResponse(ErrorCode.INTERNAL_ERROR, error))
     }
 }

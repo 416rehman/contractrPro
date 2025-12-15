@@ -1,6 +1,7 @@
 import postOrganization from './postOrganization';
 import getOrganization from './getOrganization';
 import deleteOrganization from './deleteOrganization';
+import requestDelete from './requestDelete';
 import putOrganization from './putOrganization';
 import search from './search';
 import blob from './blob';
@@ -14,7 +15,8 @@ const routes = Router({ mergeParams: true })
 import contract_router from './contracts';
 import member_router from './members';
 import invite_router from './invites';
-import { createErrorResponse  } from '../../utils/response';
+import { createErrorResponse } from '../../utils/response';
+import { ErrorCode } from '../../utils/errorCodes';
 
 routes.use((req, res, next) => {
     const path = __filename.split('/').slice(-1)[0].split('\\').slice(-1)[0]
@@ -31,7 +33,7 @@ const authorizeOrg = async (req, res, next) => {
     if (!organization) {
         return res
             .status(403)
-            .json(createErrorResponse('Access token is missing or invalid')) // Ambiguous error message to prevent leaking information
+            .json(createErrorResponse(ErrorCode.AUTH_ACCESS_TOKEN_INVALID)) // Ambiguous error message to prevent leaking information
     } else {
         return next()
     }
@@ -46,6 +48,11 @@ routes.post('/', postOrganization)
  * @api {get} /organizations/:org_id Get organization by id
  */
 routes.get('/:org_id', authorizeOrg, getOrganization)
+
+/**
+ * @api {post} /organizations/:org_id/request-delete Request delete token
+ */
+routes.post('/:org_id/request-delete', authorizeOrg, requestDelete)
 
 /**
  * @api {delete} /organizations/:org_id Delete organization

@@ -7,4 +7,5 @@ node_modules
 jest.env
 dump/
 api/db/dump/
+api/.pnpm-store
 docs/index.md

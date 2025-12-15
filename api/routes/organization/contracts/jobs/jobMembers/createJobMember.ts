@@ -1,13 +1,20 @@
 import { db, jobs, organizations, organizationMembers, jobMembers } from '../../../../../db';
-import {
-    createSuccessResponse,
-    createErrorResponse,
-} from '../../../../../utils/response';
+import { createSuccessResponse, createErrorResponse } from '../../../../../utils/response';
+import { ErrorCode } from '../../../../../utils/errorCodes';
 import { isValidUUID } from '../../../../../utils/isValidUUID';
 import { pick } from '../../../../../utils';
 import { eq, and } from 'drizzle-orm';
 
-// Post jobMember
+/**
+ * @openapi
+ * /organizations/{org_id}/contracts/{contract_id}/jobs/{job_id}/members:
+ *   post:
+ *     summary: Add a member to a job
+ *     tags: [JobMembers]
+ *     responses:
+ *       200:
+ *         description: Job member added
+ */
 export default async (req, res) => {
     try {
         const jobId = req.params.job_id
@@ -16,23 +23,16 @@ export default async (req, res) => {
         const memberId = req.body.OrganizationMemberId
 
         if (!jobId || !isValidUUID(jobId)) {
-            return res.status(400).json(createErrorResponse('Invalid job id.'))
+            return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_INVALID_UUID))
         }
-
         if (!contractId || !isValidUUID(contractId)) {
-            return res
-                .status(400)
-                .json(createErrorResponse('Invalid contract id.'))
+            return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_INVALID_UUID))
         }
-
         if (!orgId || !isValidUUID(orgId)) {
-            return res.status(400).json(createErrorResponse('Invalid org id.'))
+            return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_ORG_ID_REQUIRED))
         }
-
         if (!memberId || !isValidUUID(memberId)) {
-            return res
-                .status(400)
-                .json(createErrorResponse('Invalid orgMember id.'))
+            return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_INVALID_UUID))
         }
 
         const body = {
@@ -46,12 +46,9 @@ export default async (req, res) => {
         ));
 
         if (!orgMember) {
-            return res
-                .status(400)
-                .json(createErrorResponse('Failed to find orgMember.'))
+            return res.status(400).json(createErrorResponse(ErrorCode.RESOURCE_NOT_FOUND))
         }
 
-        // Verify job exists and belongs to contract/org
         const job = await db.query.jobs.findFirst({
             where: and(
                 eq(jobs.id, jobId),
@@ -61,22 +58,9 @@ export default async (req, res) => {
         });
 
         if (!job) {
-            return res
-                .status(400)
-                .json(createErrorResponse('Failed to find job.'))
+            return res.status(400).json(createErrorResponse(ErrorCode.RESOURCE_NOT_FOUND))
         }
 
-        // Check/Insert jobMember
-        // Legacy used `addOrganizationMember` which likely upserts or ignores if exists?
-        // Legacy comment: "Check if the orgMember is already a member of the job"
-        // Then `addOrganizationMember`.
-        // I will use upsert or just insert (if duplicate, constraints might fail or ignore).
-        // Since schema likely has unique constraint on jobId+orgMemberId?
-        // I'll check schema later but standard is composite PK or unique.
-        // I'll try insert. If it fails, maybe check existence first?
-        // Or simple insert.
-
-        // Check existence first to prevent error
         const existing = await db.query.jobMembers.findFirst({
             where: and(
                 eq(jobMembers.jobId, jobId),
@@ -85,11 +69,7 @@ export default async (req, res) => {
         });
 
         if (existing) {
-            // Update if exists? Legacy passed `through: body`. 
-            // `permissionOverwrites` might need updating.
-            await db.update(jobMembers)
-                .set(body)
-                .where(eq(jobMembers.id, existing.id));
+            await db.update(jobMembers).set(body).where(eq(jobMembers.id, existing.id));
             return res.status(200).json(createSuccessResponse(existing));
         }
 
@@ -101,6 +81,7 @@ export default async (req, res) => {
 
         return res.status(200).json(createSuccessResponse(newMembership))
     } catch (err) {
-        return res.status(500).json(createErrorResponse('', err))
+        return res.status(500).json(createErrorResponse(ErrorCode.INTERNAL_ERROR, err))
     }
 }
+

@@ -11,13 +11,10 @@ import { Button } from "@heroui/button";
 import { useToastsStore } from "@/services/toast";
 import { Link } from "@heroui/link";
 import { Card, CardBody } from "@heroui/card";
+import { useTranslation } from "@/utils/useTranslation";
 
-/**
- * This is the login form component. It is used to login to the application.
- * It shows a form with a username and password field. Though the user can login with either their username or email.
- * It also has links to the signup page and the forgot password page.
- */
 export default function LoginForm(props: any) {
+  const { t, tError } = useTranslation();
   const addToast = useToastsStore((state) => state.addToast);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -32,15 +29,17 @@ export default function LoginForm(props: any) {
     login(email, password).then(() => {
       addToast({
         id: "login",
-        title: "Logged in",
-        message: "You have been logged in successfully",
+        title: t("auth.logged_in_title"),
+        message: t("auth.logged_in_message"),
         type: "success"
       });
     }).catch((err) => {
+      // err.code comes from API, translate it
+      const errorCode = err?.response?.data?.code || err?.code;
       addToast({
         id: "login",
-        title: "Error",
-        message: err.message || err || "An error occurred while logging in",
+        title: t("common.error"),
+        message: errorCode ? tError(errorCode) : (err.message || t("errors.error.internal")),
         type: "error"
       });
     }).finally(() => {
@@ -53,34 +52,34 @@ export default function LoginForm(props: any) {
       <CardBody>
         <form onSubmit={onSubmit} className={"flex flex-col gap-2 w-full"}>
           <div className="flex flex-col w-full flex-wrap gap-4">
-            <h1 className={"text-2xl font-bold"}>Login</h1>
-            <p className={"text-sm"}>Enter your credentials to login to your account</p>
-            <Input label="Username / Email" placeholder="Enter your email or username"
-                   endContent={<div className={"flex flex-row text-default-400"}><IconAt />/<IconMailFilled /></div>}
-                   onChange={(e: any) => setEmail(e.target.value)} />
-            <Input label="Password" placeholder="Enter your password"
-                   onChange={(e: any) => setPassword(e.target.value)}
-                   endContent={
-                     <button className="focus:outline-none" type="button" onClick={toggleVisibility}>
-                       {isVisible ? (
-                         <IconEye className="text-2xl text-default-400 pointer-events-none" />
-                       ) : (
-                         <IconEyeClosed className="text-2xl text-default-400 pointer-events-none" />
-                       )}
-                     </button>
-                   }
-                   type={isVisible ? "text" : "password"}
+            <h1 className={"text-2xl font-bold"}>{t("auth.login_title")}</h1>
+            <p className={"text-sm"}>{t("auth.login_subtitle")}</p>
+            <Input label={t("auth.username_email_label")} placeholder={t("auth.username_email_placeholder")}
+              endContent={<div className={"flex flex-row text-default-400"}><IconAt /><IconMailFilled /></div>}
+              onChange={(e: any) => setEmail(e.target.value)} />
+            <Input label={t("auth.password_label")} placeholder={t("auth.password_placeholder")}
+              onChange={(e: any) => setPassword(e.target.value)}
+              endContent={
+                <button className="focus:outline-none" type="button" onClick={toggleVisibility}>
+                  {isVisible ? (
+                    <IconEye className="text-2xl text-default-400 pointer-events-none" />
+                  ) : (
+                    <IconEyeClosed className="text-2xl text-default-400 pointer-events-none" />
+                  )}
+                </button>
+              }
+              type={isVisible ? "text" : "password"}
             />
-            <Link href={"/forgot-password"} className={"text-sm"}>Forgot password?</Link>
+            <Link href={"/forgot-password"} className={"text-sm"}>{t("auth.forgot_password")}</Link>
           </div>
           <Button type="submit" isLoading={isLoading} className={"font-medium"}
-                  startContent={<IconLogin className={"text-foreground-500"} />}>Login</Button>
+            startContent={<IconLogin className={"text-foreground-500"} />}>{t("common.login")}</Button>
         </form>
       </CardBody>
       <Divider />
       <CardFooter>
         <p className={"text-sm "}>
-          Don{"'"}t have an account? <Link href={"/signup"} className={"text-sm"}>Register</Link> now!
+          {t("auth.no_account")} <Link href={"/signup"} className={"text-sm"}>{t("auth.register_now")}</Link>
         </p>
       </CardFooter>
     </Card>

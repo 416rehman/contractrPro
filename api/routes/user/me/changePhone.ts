@@ -1,64 +1,52 @@
-import {
-    createSuccessResponse,
-    createErrorResponse,
-} from '../../../utils/response';
-
+import { createSuccessResponse, createErrorResponse } from '../../../utils/response';
+import { ErrorCode } from '../../../utils/errorCodes';
 import { db, users, tokens } from '../../../db';
 import { tokenFlags } from '../../../db/flags';
 import { eq, and } from 'drizzle-orm';
 
-// When the body includes a phone, it creates a new token with the USER_PHONE_VERIFY_TOKEN flag and sends it to the user's phone
+/**
+ * @openapi
+ * /users/me/phone:
+ *   patch:
+ *     summary: Request phone change
+ *     tags: [Users]
+ *     responses:
+ *       200:
+ *         description: Verification SMS sent
+ */
 export default async (req, res) => {
     try {
         const phoneCountry = req.body?.phoneCountry?.trim()
         const phoneNumber = req.body?.phoneNumber?.trim()
-
         const UserId = req.auth.id
 
         if (!phoneCountry || phoneCountry.length < 1) {
-            return res
-                .status(400)
-                .json(createErrorResponse('Missing phoneCountry'))
+            return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_FIELD_REQUIRED))
         }
 
         if (!phoneNumber || phoneNumber.length < 1) {
-            return res
-                .status(400)
-                .json(createErrorResponse('Missing phoneNumber'))
+            return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_FIELD_REQUIRED))
         }
 
-        // Make sure the phoneCountry is digits only and not more than 5 digits
         if (!/^\d+$/.test(phoneCountry) || phoneCountry.length > 5) {
-            return res
-                .status(400)
-                .json(createErrorResponse('Invalid phoneCountry'))
+            return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_FIELD_REQUIRED))
         }
 
-        // Make sure the phoneNumber is digits only and not more than 20 digits
         if (!/^\d+$/.test(phoneNumber) || phoneNumber.length > 20) {
-            return res
-                .status(400)
-                .json(createErrorResponse('Invalid phoneNumber'))
+            return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_FIELD_REQUIRED))
         }
 
         const user = await db.query.users.findFirst({ where: eq(users.id, UserId) });
         if (!user) {
-            return res.status(400).json(createErrorResponse('User not found'))
+            return res.status(400).json(createErrorResponse(ErrorCode.AUTH_USER_NOT_FOUND))
         }
 
-        // if the user's phone is the same as the phone in the request body, don't do anything
-        if (
-            user.phoneCountry === phoneCountry &&
-            user.phoneNumber === phoneNumber
-        ) {
-            return res
-                .status(200)
-                .json(createErrorResponse('Phone already in use'))
+        if (user.phoneCountry === phoneCountry && user.phoneNumber === phoneNumber) {
+            return res.status(200).json(createSuccessResponse(null))
         }
 
         await db.transaction(async (tx) => {
-            // const body = Token.phoneVerifyTokenTemplate(UserId, phoneCountry, phoneNumber)
-            const tokenValue = Math.floor(100000 + Math.random() * 900000).toString(); // 6 digit code for phones usually
+            const tokenValue = Math.floor(100000 + Math.random() * 900000).toString();
             const tokenBody = {
                 type: 'phone_verify',
                 value: tokenValue,
@@ -80,13 +68,10 @@ export default async (req, res) => {
                 await tx.insert(tokens).values(tokenBody);
             }
 
-            return res.json(
-                createSuccessResponse(
-                    'A text message with further instructions has been sent to the provided phone number'
-                )
-            )
+            return res.json(createSuccessResponse(null))
         })
     } catch (error) {
-        return res.status(400).json(createErrorResponse('', error))
+        return res.status(400).json(createErrorResponse(ErrorCode.INTERNAL_ERROR, error))
     }
 }
+

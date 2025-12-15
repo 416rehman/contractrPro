@@ -1,7 +1,5 @@
-import {
-    createSuccessResponse,
-    createErrorResponse,
-} from '../../../../utils/response';
+import { createSuccessResponse, createErrorResponse } from '../../../../utils/response';
+import { ErrorCode } from '../../../../utils/errorCodes';
 import UUID from 'uuid';
 import { pick } from '../../../../utils';
 import { db, expenses, comments, attachments } from '../../../../db';
@@ -9,81 +7,50 @@ import { isValidUUID } from '../../../../utils/isValidUUID';
 import s3 from '../../../../utils/s3';
 import { eq, and } from 'drizzle-orm';
 
+/**
+ * @openapi
+ * /organizations/{org_id}/expenses/{expense_id}/comments:
+ *   post:
+ *     summary: Create a comment on an expense
+ *     tags: [ExpenseComments]
+ *     responses:
+ *       200:
+ *         description: Comment created
+ */
 export default async (req, res) => {
     try {
         const expenseId = req.params.expense_id
         const orgId = req.params.org_id
 
-        if (!expenseId || !isValidUUID(expenseId)) return res.status(400).json(createErrorResponse('Invalid expense id.'))
-        if (!orgId || !isValidUUID(orgId)) return res.status(400).json(createErrorResponse('Invalid org id.'))
+        if (!expenseId || !isValidUUID(expenseId)) return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_INVALID_UUID))
+        if (!orgId || !isValidUUID(orgId)) return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_ORG_ID_REQUIRED))
 
-        const body = {
-            ...pick(req.body, ['content']),
-            expenseId: expenseId,
-            authorId: req.auth.id,
-            organizationId: orgId,
-        }
+        const body = { ...pick(req.body, ['content']), expenseId: expenseId, authorId: req.auth.id, organizationId: orgId }
 
         await db.transaction(async (tx) => {
-            // make sure the expense belongs to the org
-            const expense = await tx.query.expenses.findFirst({
-                where: and(eq(expenses.id, expenseId), eq(expenses.organizationId, orgId))
-            })
-            if (!expense) {
-                return res.status(400).json(createErrorResponse('Expense not found.'))
-            }
+            const expense = await tx.query.expenses.findFirst({ where: and(eq(expenses.id, expenseId), eq(expenses.organizationId, orgId)) })
+            if (!expense) return res.status(400).json(createErrorResponse(ErrorCode.RESOURCE_NOT_FOUND))
 
             const files = (req as any).files;
-            if (
-                (!files || files.length <= 0) &&
-                (!body.content || body.content.length === 0)
-            ) {
-                return res.status(400).json(createErrorResponse('Content cannot be empty if there are no attachments.'))
-            }
+            if ((!files || files.length <= 0) && (!body.content || body.content.length === 0)) return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_FIELD_REQUIRED))
 
-            // Create the comment
             const [comment] = await tx.insert(comments).values(body).returning();
-            if (!comment) {
-                return res.status(400).json(createErrorResponse('Failed to create comment.'))
-            }
+            if (!comment) return res.status(400).json(createErrorResponse(ErrorCode.INTERNAL_ERROR))
 
             let createdAttachments = null
-            // Check if there are any attachments
             if (files && files.length > 0) {
-                // Process attachments
                 const attachmentsData = files.map((file: any) => {
                     file.key = UUID.v4();
-
-                    // https://[bucket-name].s3.[region-code].amazonaws.com/[key-name]
                     const accessUrl = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_S3_REGION}.amazonaws.com/${file.key}`
-
-                    return {
-                        id: file.key,
-                        name: file.originalname,
-                        type: file.mimetype,
-                        size: file.size,
-                        accessUrl,
-                        commentId: comment.id,
-                    }
+                    return { id: file.key, name: file.originalname, type: file.mimetype, size: file.size, accessUrl, commentId: comment.id }
                 })
-
-                // Store the attachments metadata in the database
                 createdAttachments = await tx.insert(attachments).values(attachmentsData).returning();
-                if (!createdAttachments) {
-                    return res.status(400).json(createErrorResponse('Failed to create attachments.'))
-                }
-
-                // upload the attachments to s3Expense
-                for (const file of files) {
-                    await s3.upload(file, file.key)
-                }
+                for (const file of files) { await s3.upload(file, file.key) }
             }
-
             (comment as any).Attachments = createdAttachments
-
             return res.json(createSuccessResponse(comment))
         })
     } catch (error) {
-        return res.status(400).json(createErrorResponse('An error occurred.', error))
+        return res.status(400).json(createErrorResponse(ErrorCode.INTERNAL_ERROR, error))
     }
 }

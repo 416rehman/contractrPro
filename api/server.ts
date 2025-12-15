@@ -9,8 +9,10 @@ import cookieParser from 'cookie-parser';
 import compression from 'compression';
 import logger from './utils/logger';
 import { createErrorResponse } from './utils/response';
+import { ErrorCode } from './utils/errorCodes';
 import routes from './routes';
 import pinoHttp from 'pino-http';
+import { swaggerSpec, swaggerUi } from './swagger';
 
 const app: Application = express();
 
@@ -36,6 +38,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(helmet());
 app.disable('x-powered-by');
 
+// swagger docs at /docs
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 // if development.
 if (process.env.NODE_ENV === 'development') {
     // middleware to see the router path in the "Router" header for debugging
@@ -49,7 +54,8 @@ if (process.env.NODE_ENV === 'development') {
 app.use('/', routes);
 
 app.use((req: Request, res: Response) => {
-    return res.status(404).json(createErrorResponse('Cannot find this route'));
+    return res.status(404).json(createErrorResponse(ErrorCode.ROUTE_NOT_FOUND));
 });
 
 export default app;
+

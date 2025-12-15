@@ -1,11 +1,29 @@
 import { db, organizations } from '../../db';
-import {
-    createSuccessResponse,
-    createErrorResponse,
-} from '../../utils/response';
+import { createSuccessResponse, createErrorResponse } from '../../utils/response';
+import { ErrorCode } from '../../utils/errorCodes';
 import { count } from 'drizzle-orm';
 
-// Retrieves all organizations with pagination
+/**
+ * @openapi
+ * /admin/organizations:
+ *   get:
+ *     summary: Get all organizations (admin only)
+ *     tags: [Admin]
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *     responses:
+ *       200:
+ *         description: Paginated list of organizations
+ */
 export default async (req, res) => {
     try {
         const { page = 1, limit = 10 } = req.query
@@ -31,6 +49,7 @@ export default async (req, res) => {
 
         return res.status(200).json(createSuccessResponse(response))
     } catch (err) {
-        return res.status(400).json(createErrorResponse('', err))
+        return res.status(400).json(createErrorResponse(ErrorCode.INTERNAL_ERROR, err))
     }
 }
+

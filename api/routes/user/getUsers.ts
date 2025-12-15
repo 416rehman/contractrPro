@@ -3,6 +3,7 @@ import {
     createSuccessResponse,
     createErrorResponse,
 } from '../../utils/response';
+import { ErrorCode } from '../../utils/errorCodes';
 import { count } from 'drizzle-orm';
 
 // Retrieves all users with pagination
@@ -36,6 +37,6 @@ export default async (req, res) => {
 
         return res.status(200).json(createSuccessResponse(response))
     } catch (err) {
-        return res.status(400).json(createErrorResponse('', err))
+        return res.status(400).json(createErrorResponse(ErrorCode.INTERNAL_ERROR, err))
     }
 }

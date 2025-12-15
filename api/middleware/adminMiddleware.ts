@@ -1,7 +1,8 @@
 import { createErrorResponse } from '../utils/response';
+import { ErrorCode } from '../utils/errorCodes';
 
 const devAdmin = function (req: any, res: any, next: any) {
-    // pretend the user is admin in development mode, no need to do anything
+    // pretend user is admin in dev
     return next();
 };
 
@@ -10,10 +11,10 @@ const prodAdmin = function (req: any, res: any, next: any) {
         return next();
     }
 
-    // Ambiguous error message to prevent leaking information
+    // ambiguous error to prevent info leak
     return res
         .status(403)
-        .send(createErrorResponse('Access token is missing or invalid'));
+        .send(createErrorResponse(ErrorCode.AUTH_ACCESS_TOKEN_INVALID));
 };
 
 let adminMiddleware: any;
@@ -24,3 +25,4 @@ if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
 }
 
 export default adminMiddleware;
+

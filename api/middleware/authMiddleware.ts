@@ -1,13 +1,11 @@
 import jwt from 'jsonwebtoken';
 import { createErrorResponse } from '../utils/response';
+import { ErrorCode } from '../utils/errorCodes';
 import { db, users } from '../db';
 import { eq } from 'drizzle-orm';
 
-/**
- * Checks the token and if it is valid, sets the auth field on the request object.
- */
+// dev mode: fake auth for testing
 const devAuthMiddleware = async (req: any, res: any, next: any) => {
-    // add a fake auth object to the request to indicate that the user is authenticated in development mode
     req.auth = {
         id: process.env.DEV_USER_UUID,
         username: process.env.DEV_USER_USERNAME,
@@ -25,30 +23,26 @@ const devAuthMiddleware = async (req: any, res: any, next: any) => {
     });
 
     if (!userData) {
-        return res.status(401).send(createErrorResponse('The user does not exist'));
+        return res.status(401).send(createErrorResponse(ErrorCode.AUTH_USER_NOT_FOUND));
     }
 
     req.auth = userData;
-
     return next();
 };
 
+// prod mode: verify JWT
 const prodAuthMiddleware = (req: any, res: any, next: any) => {
     let token =
         req.headers['authorization'] ||
         req.body.token ||
         req.query.token ||
         req.headers['x-access-token'] ||
-        req.cookies.accessToken; // If no token is provided, check for a cookie
+        req.cookies.accessToken;
 
     if (!token) {
         return res
             .status(403)
-            .send(
-                createErrorResponse(
-                    'Access token is missing - Use Authorization header or token in body or query'
-                )
-            );
+            .send(createErrorResponse(ErrorCode.AUTH_ACCESS_TOKEN_MISSING));
     }
     try {
         token = token.replace('Bearer ', '');
@@ -60,7 +54,7 @@ const prodAuthMiddleware = (req: any, res: any, next: any) => {
                 if (err) {
                     return res
                         .status(401)
-                        .send(createErrorResponse('Access token is invalid'));
+                        .send(createErrorResponse(ErrorCode.AUTH_ACCESS_TOKEN_INVALID));
                 }
 
                 req.auth = decoded;
@@ -79,25 +73,21 @@ const prodAuthMiddleware = (req: any, res: any, next: any) => {
                 if (!userData) {
                     return res
                         .status(401)
-                        .send(createErrorResponse('The user does not exist'));
+                        .send(createErrorResponse(ErrorCode.AUTH_USER_NOT_FOUND));
                 }
 
                 req.auth = userData;
 
-                if (req.auth.flags && (req.auth.flags & 2) === 2) { // Assuming 'NA_BANNED' flag maps to a bitmask, using generic check or raw value for now if flags is int.
-                    // Original code: req.auth.flags['NA_BANNED'] === true.
-                    // Schema defines flags as integer.
-                    // If flags was JSONB in legacy, I need to check how it was used.
-                    // In schema.ts I defined it as integer.
-                    // I'll leave a TODO or assume it's a bitmask.
-                    // return res.status(403).send(createErrorResponse('You are banned from this service.'));
-                }
+                // TODO: check banned flag if needed
+                // if (req.auth.flags & 2) {
+                //     return res.status(403).send(createErrorResponse(ErrorCode.AUTH_USER_BANNED));
+                // }
 
                 return next();
             }
         );
     } catch (err: any) {
-        return res.status(401).send(createErrorResponse(err.message, err));
+        return res.status(401).send(createErrorResponse(ErrorCode.AUTH_ACCESS_TOKEN_INVALID, err));
     }
 };
 
@@ -109,3 +99,4 @@ if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
 }
 
 export default authMiddleware;
+
