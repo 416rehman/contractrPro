@@ -11,6 +11,7 @@ export enum ErrorCode {
     AUTH_EMAIL_REQUIRED = 'auth.email_required',
     AUTH_USER_BANNED = 'auth.user_banned',
     AUTH_UNAUTHORIZED = 'auth.unauthorized',
+    AUTH_INVALID_TOKEN = 'auth.invalid_token',
 
     // validation
     VALIDATION_ORG_ID_REQUIRED = 'validation.org_id_required',
@@ -21,6 +22,7 @@ export enum ErrorCode {
     VALIDATION_FIELD_REQUIRED = 'validation.field_required',
     VALIDATION_FOREIGN_KEY = 'validation.invalid_reference',
     VALIDATION_NOT_NULL = 'validation.field_not_null',
+    VALIDATION_INVALID_VALUE = 'validation.invalid_value',
 
     // invite
     INVITE_NOT_FOUND = 'invite.not_found',

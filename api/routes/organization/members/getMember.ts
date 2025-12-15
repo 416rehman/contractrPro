@@ -3,6 +3,8 @@ import { createSuccessResponse, createErrorResponse } from '../../../utils/respo
 import { ErrorCode } from '../../../utils/errorCodes';
 import { isValidUUID } from '../../../utils/isValidUUID';
 import { eq, and } from 'drizzle-orm';
+import { getRolePermissions } from '../../../utils/permissions';
+import { OrgRole } from '../../../db/enums';
 
 /**
  * @openapi
@@ -26,6 +28,8 @@ import { eq, and } from 'drizzle-orm';
  *         description: Member details
  *       400:
  *         description: Invalid ID or not found
+ *       403:
+ *         description: Unauthorized
  */
 export default async (req, res) => {
     try {
@@ -48,7 +52,12 @@ export default async (req, res) => {
             return res.status(400).json(createErrorResponse(ErrorCode.RESOURCE_NOT_FOUND))
         }
 
-        return res.status(200).json(createSuccessResponse(organizationMember))
+        const permissions = getRolePermissions(organizationMember.role as OrgRole);
+
+        return res.status(200).json(createSuccessResponse({
+            ...organizationMember,
+            permissions: permissions.toString()
+        }))
     } catch (error) {
         res.status(400).json(createErrorResponse(ErrorCode.INTERNAL_ERROR, error))
     }

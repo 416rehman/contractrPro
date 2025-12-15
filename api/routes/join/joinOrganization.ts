@@ -56,10 +56,10 @@ export default async (req, res) => {
                 return res.status(400).json(createErrorResponse(ErrorCode.INVITE_MAX_USES))
             }
 
-            if (invite.forOrganizationMemberId) {
+            if (invite.reservedMemberId) {
                 const member = await tx.query.organizationMembers.findFirst({
                     where: and(
-                        eq(organizationMembers.id, invite.forOrganizationMemberId),
+                        eq(organizationMembers.id, invite.reservedMemberId),
                         eq(organizationMembers.organizationId, invite.organizationId)
                     )
                 })

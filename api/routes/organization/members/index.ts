@@ -4,6 +4,9 @@ import createMember from './createMember';
 import updateMember from './updateMember';
 import deleteMember from './deleteMember';
 import { Router } from 'express';
+import { authorizeOrg } from '../../../middleware/permissions';
+import { OrgPermissions } from '../../../db/flags';
+
 const routes = Router({ mergeParams: true })
 routes.use((req, res, next) => {
     const path = __filename.split('/').slice(-1)[0].split('\\').slice(-1)[0]
@@ -24,16 +27,16 @@ routes.get('/:member_id', getMember)
 /**
  * @api {post} /organizations/:org_id/members Add to organization
  */
-routes.post('/', createMember)
+routes.post('/', authorizeOrg(OrgPermissions.MANAGE_MEMBERS), createMember)
 
 /**
  * @api {put} /organizations/:org_id/members/:member_id Update organization member
  */
-routes.put('/:member_id', updateMember)
+routes.put('/:member_id', authorizeOrg(OrgPermissions.MANAGE_MEMBERS), updateMember)
 
 /**
  * @api {delete} /organizations/:org_id/members/:member_id Remove from organization
  */
-routes.delete('/:member_id', deleteMember)
+routes.delete('/:member_id', authorizeOrg(OrgPermissions.MANAGE_MEMBERS), deleteMember)
 
 export default routes

@@ -6,6 +6,9 @@ import deleteInvoice from './deleteInvoice';
 import invoiceEntries from './invoiceEntries';
 import comments from './comments';
 import { Router } from 'express';
+import { authorizeOrg } from '../../../middleware/permissions';
+import { OrgPermissions } from '../../../db/flags';
+
 const routes = Router({ mergeParams: true })
 routes.use((req, res, next) => {
     const path = __filename.split('/').slice(-1)[0].split('\\').slice(-1)[0]
@@ -26,17 +29,17 @@ routes.get('/:invoice_id', getInvoice)
 /**
  * @api {post} /organizations/:org_id/invoices Add to organization
  */
-routes.post('/', createInvoice)
+routes.post('/', authorizeOrg(OrgPermissions.MANAGE_FINANCES), createInvoice)
 
 /**
  * @api {put} /organizations/:org_id/invoices/:invoice_id Update organization invoice
  */
-routes.put('/:invoice_id', updateInvoice)
+routes.put('/:invoice_id', authorizeOrg(OrgPermissions.MANAGE_FINANCES), updateInvoice)
 
 /**
  * @api {delete} /organizations/:org_id/invoices/:invoice_id Remove from organization
  */
-routes.delete('/:invoice_id', deleteInvoice)
+routes.delete('/:invoice_id', authorizeOrg(OrgPermissions.MANAGE_FINANCES), deleteInvoice)
 
 /**
  * @api {use} /organizations/:org_id/invoices/:invoice_id/entries Invoice entries

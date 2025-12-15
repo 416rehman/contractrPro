@@ -12,6 +12,12 @@ import { eq } from 'drizzle-orm';
  * /auth/token:
  *   post:
  *     summary: Exchange refresh token for access token
+ *     description: |
+ *       Regenerates an access token using a valid refresh token.
+ *       The refresh token can be provided via cookie (preferred) or request body.
+ *       
+ *       **Rate Limit**: 30 requests per 15 minutes.
+ *       
  *     tags: [Auth]
  *     security: []
  *     requestBody:
@@ -24,13 +30,38 @@ import { eq } from 'drizzle-orm';
  *                 type: string
  *     responses:
  *       200:
- *         description: Access token returned and set as cookie
+ *         description: Access token refreshed successfully
+ *         headers: 
+ *           Set-Cookie:
+ *             schema: 
+ *               type: string
+ *               example: accessToken=...; Path=/; HttpOnly; Secure
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     token:
+ *                       type: string
+ *                       description: The refreshed access token.
  *       400:
- *         description: Invalid refresh token
+ *         description: Invalid or missing refresh token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  */
 export default async (req, res) => {
     try {
-        const refreshToken = req.query.refreshToken || req.body.refreshToken
+        // Prefer cookie, then body, then query
+        const refreshToken = req.cookies?.refreshToken || req.body?.refreshToken || req.query?.refreshToken;
+
         if (!refreshToken || refreshToken.length < 1) {
             return res
                 .status(400)
@@ -60,20 +91,20 @@ export default async (req, res) => {
         return res
             .status(200)
             .cookie('accessToken', token, {
-                httpOnly: false,
+                httpOnly: true,
                 sameSite: 'none',
-                secure: true,
+                secure: process.env.NODE_ENV === 'production',
                 maxAge: 1000 * 60 * 60 * 24 * 7,
             })
             .cookie('refreshToken', refreshToken, {
-                httpOnly: false,
+                httpOnly: true,
                 sameSite: 'none',
-                secure: true,
+                secure: process.env.NODE_ENV === 'production',
                 maxAge: 1000 * 60 * 60 * 24 * 7,
             })
             .json(createSuccessResponse({ token }))
     } catch (error) {
-        return res.status(400).json(createErrorResponse(ErrorCode.INTERNAL_ERROR, error))
+        return res.status(500).json(createErrorResponse(ErrorCode.INTERNAL_ERROR, error))
     }
 }
 

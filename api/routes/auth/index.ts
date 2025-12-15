@@ -1,15 +1,13 @@
+import { validate } from '../../middleware/validation';
 import postLogin from './postLogin';
 import token from './token';
-import postAccount from './postAccount';
-import deleteAccount from './deleteAccount';
 import logout from './logout';
 import forgot from './forgot';
-import { ValidationErrorsHandler,
- } from '../../middleware/validationMiddleware';
-import checkAuth from '../../middleware/authMiddleware';
-import { GetAccountTokenValidator,
-    RegisterAccountValidator,
- } from '../../validators/auth-validator';
+import resetPassword from './resetPassword';
+import verifyEmail from './verifyEmail';
+import verifyPhone from './verifyPhone';
+import account from './account';
+import { authLimiter, tokenLimiter } from '../../middleware/rateLimit';
 import { Router } from 'express';
 const routes = Router();
 
@@ -25,43 +23,72 @@ routes.use((req, res, next) => {
  */
 routes.post(
     '/login',
-    GetAccountTokenValidator,
-    ValidationErrorsHandler,
-    postLogin
+    authLimiter,
+    validate(postLogin.schema),
+    postLogin.handler
 )
 
 /**
  * @api {post} /auth/ Use refresh token to get new access token
  * @apiName GetAccountToken
  */
-routes.post('/token', token)
+routes.post('/token', tokenLimiter, token)
 
 /**
- * @api {post} /auth/account Register new account
- * @apiName RegisterAccount
+ * @api {post} /auth/reset-password Reset password
+ * @apiName ResetPassword
  */
 routes.post(
-    '/account',
-    RegisterAccountValidator,
-    ValidationErrorsHandler,
-    postAccount
+    '/reset-password',
+    authLimiter,
+    validate(resetPassword.schema),
+    resetPassword.handler
 )
 
 /**
- * @api {delete} /auth/account Delete account
- * @apiName DeleteAccount
+ * @api {post} /auth/verify/email Verify Email
+ * @apiName VerifyEmail
  */
-routes.delete('/account', checkAuth, deleteAccount)
+routes.post(
+    '/verify/email',
+    authLimiter,
+    validate(verifyEmail.schema),
+    verifyEmail.handler
+)
 
 /**
- * @api {get} /auth/logout Logout - Clears the cookie if it exists
+ * @api {post} /auth/verify/phone Verify Phone
+ * @apiName VerifyPhone
+ */
+routes.post(
+    '/verify/phone',
+    authLimiter,
+    validate(verifyPhone.schema),
+    verifyPhone.handler
+)
+
+/**
+ * @api {post} /auth/logout Logout - Clears the cookie if it exists
  * @apiName Logout
  */
-routes.get('/logout', logout)
+routes.post('/logout', logout)
 
 /**
  * @api {post} /auth/forgot Sends a password reset token to the signedInUser's email
  */
-routes.post('/forgot', forgot)
+routes.post(
+    '/forgot',
+    authLimiter,
+    validate(forgot.schema),
+    forgot.handler
+)
+
+/**
+ * @api {use} /auth/account Uses the account router
+ */
+routes.use(
+    '/account',
+    account
+)
 
 export default routes

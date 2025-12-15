@@ -3,6 +3,8 @@ import { createErrorResponse, createSuccessResponse } from '../../../utils/respo
 import { ErrorCode } from '../../../utils/errorCodes';
 import { pick } from '../../../utils';
 import { isValidUUID } from '../../../utils/isValidUUID';
+import { OrgRole } from '../../../db/enums';
+import { canAssignRole } from '../../../utils/permissions';
 
 /**
  * @openapi
@@ -16,9 +18,29 @@ import { isValidUUID } from '../../../utils/isValidUUID';
  *         required: true
  *         schema:
  *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               phone:
+ *                 type: string
+ *               role:
+ *                 type: string
+ *                 enum: [owner, manager, supervisor, worker, subcontractor]
  *     responses:
  *       201:
  *         description: Member created
+ *       400:
+ *         description: Validation error
+ *       403:
+ *         description: Insufficient permissions
  */
 export default async (req, res) => {
     try {
@@ -27,10 +49,21 @@ export default async (req, res) => {
             return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_ORG_ID_REQUIRED))
         }
 
+        const role = req.body.role || OrgRole.Worker;
+        if (!Object.values(OrgRole).includes(role)) {
+            return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_INVALID_VALUE, "Invalid role"));
+        }
+
+        const requesterRole = (req as any).orgMember.role as OrgRole;
+        if (!canAssignRole(requesterRole, role)) {
+            return res.status(403).json(createErrorResponse(ErrorCode.AUTH_UNAUTHORIZED, "Insufficient permissions to assign this role"));
+        }
+
         const body = {
             ...pick(req.body, ['name', 'email', 'phone', 'permissions', 'UserId']),
             organizationId: orgId,
             updatedByUserId: req.auth.id,
+            role: role
         }
 
         if (body.UserId) {

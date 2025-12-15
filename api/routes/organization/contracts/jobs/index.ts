@@ -6,6 +6,9 @@ import deleteJob from './deleteJob';
 import jobMembers from './jobMembers';
 import comments from './comments';
 import { Router } from 'express';
+import { authorizeOrg } from '../../../../middleware/permissions';
+import { OrgPermissions } from '../../../../db/flags';
+
 const routes = Router({ mergeParams: true })
 
 routes.use((req, res, next) => {
@@ -27,17 +30,17 @@ routes.get('/:job_id', getJob)
 /**
  * @api {post} /organizations/:org_id/contracts/:contract_id/jobs Create organization contract job
  */
-routes.post('/', postJob)
+routes.post('/', authorizeOrg(OrgPermissions.MANAGE_JOBS), postJob)
 
 /**
  * @api {put} /organizations/:org_id/contracts/:contract_id/jobs/:job_id Update organization contract job
  */
-routes.put('/:job_id', updateJob)
+routes.put('/:job_id', authorizeOrg(OrgPermissions.MANAGE_JOBS), updateJob)
 
 /**
  * @api {delete} /organizations/:org_id/contracts/:contract_id/jobs/:job_id Delete organization contract job
  */
-routes.delete('/:job_id', deleteJob)
+routes.delete('/:job_id', authorizeOrg(OrgPermissions.MANAGE_JOBS), deleteJob)
 
 /**
  * @api {use} /organizations/:org_id/contracts/:contract_id/jobs/:job_id/members Job members

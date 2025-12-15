@@ -2,35 +2,48 @@ import { createSuccessResponse, createErrorResponse } from '../../utils/response
 import { ErrorCode } from '../../utils/errorCodes';
 import { db, tokens, users } from '../../db';
 import { tokenFlags, UserFlags } from '../../db/flags';
-import { isFlagSet } from '../../utils/flags';
 import { eq, and } from 'drizzle-orm';
+import { z } from 'zod';
+
+const schema = z.object({
+    body: z.object({
+        token: z.string().min(1, "Token is required"),
+    }),
+});
 
 /**
  * @openapi
- * /auth/verify-phone:
+ * /auth/verify/phone:
  *   post:
- *     summary: Verify phone number using a token
+ *     summary: Verify phone number
+ *     description: |
+ *       Verifies the user's phone number using the token received via SMS.
+ *       Updates the user's phone number and verification status.
+ *       
+ *       **Rate Limit**: 5 requests per 15 minutes.
+ *       
  *     tags: [Auth]
  *     security: []
- *     parameters:
- *       - in: query
- *         name: token
- *         required: true
- *         schema:
- *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               token:
+ *                 type: string
+ *                 description: The phone verification token received via SMS.
+ *             required: [token]
  *     responses:
  *       200:
- *         description: Phone verified
+ *         description: Phone number verified successfully. User account flagged as verified.
  *       400:
- *         description: Invalid or expired token
+ *         description: Invalid, expired, or malformed token.
  */
-export default async (req, res) => {
+const handler = async (req, res) => {
     try {
-        const { token } = req.query;
-
-        if (!token || typeof token !== 'string' || token.length < 1) {
-            return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_MISSING_TOKEN));
-        }
+        const { token } = req.body;
 
         await db.transaction(async (tx) => {
             const tokenInstance = await tx.query.tokens.findFirst({
@@ -66,11 +79,15 @@ export default async (req, res) => {
                 .where(eq(users.id, user.id));
 
             await tx.delete(tokens).where(eq(tokens.id, tokenInstance.id));
+
+            return res.json(createSuccessResponse(null));
         });
 
-        return res.json(createSuccessResponse(null));
-
     } catch (error) {
-        return res.status(400).json(createErrorResponse(ErrorCode.INTERNAL_ERROR, error));
+        if (!res.headersSent) {
+            return res.status(500).json(createErrorResponse(ErrorCode.INTERNAL_ERROR, error));
+        }
     }
 }
+
+export default { schema, handler };

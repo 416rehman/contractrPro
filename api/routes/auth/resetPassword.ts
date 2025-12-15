@@ -4,12 +4,25 @@ import { db, tokens, users } from '../../db';
 import { tokenFlags } from '../../db/flags';
 import { eq, and } from 'drizzle-orm';
 import bcrypt from 'bcrypt';
+import { z } from 'zod';
+
+const schema = z.object({
+    body: z.object({
+        token: z.string(),
+        password: z.string().min(8, "Password must be at least 8 characters"),
+    }),
+});
 
 /**
  * @openapi
  * /auth/reset-password:
  *   post:
- *     summary: Reset password using a valid token
+ *     summary: Reset password
+ *     description: |
+ *       Resets the user's password using a valid reset token obtained via email.
+ *       
+ *       **Rate Limit**: 5 requests per 15 minutes.
+ *       
  *     tags: [Auth]
  *     security: []
  *     requestBody:
@@ -21,27 +34,21 @@ import bcrypt from 'bcrypt';
  *             properties:
  *               token:
  *                 type: string
+ *                 description: The password reset token received via email from the `/auth/forgot` endpoint
  *               password:
  *                 type: string
  *                 minLength: 8
+ *                 description: The new password for the user. Must be at least 8 characters.
  *             required: [token, password]
  *     responses:
  *       200:
- *         description: Password successfully updated
+ *         description: Password successfully updated. User can now login with the new password.
  *       400:
- *         description: Invalid token or weak password
+ *         description: Invalid token or weak password provided.
  */
-export default async (req, res) => {
+const handler = async (req, res) => {
     try {
         const { token, password } = req.body;
-
-        if (!token || typeof token !== 'string') {
-            return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_MISSING_TOKEN));
-        }
-
-        if (!password || typeof password !== 'string' || password.length < 8) {
-            return res.status(400).json(createErrorResponse(ErrorCode.AUTH_PASSWORD_TOO_SHORT));
-        }
 
         await db.transaction(async (tx) => {
             const tokenInstance = await tx.query.tokens.findFirst({
@@ -71,17 +78,15 @@ export default async (req, res) => {
 
             // Consume the token
             await tx.delete(tokens).where(eq(tokens.id, tokenInstance.id));
+
+            return res.json(createSuccessResponse(null));
         });
-
-        // Outside transaction to ensure we don't leak logic if response fails, 
-        // but if transaction fails validation errors will be caught.
-        // Returning success here means password was changed.
-        return res.json(createSuccessResponse(null));
-
     } catch (error) {
-        // If the error was thrown from within the transaction callback (e.g. invalid token custom throw or db error), handle it.
-        // Ideally we shouldn't throw 400s as errors but return them. 
-        // The check `if (!tokenInstance)` above handles the logic flow correctly via return.
-        return res.status(400).json(createErrorResponse(ErrorCode.INTERNAL_ERROR, error));
+        // If headers already sent (e.g. from inside transaction logic if it failed subtly?), avoid crashing.
+        if (!res.headersSent) {
+            return res.status(500).json(createErrorResponse(ErrorCode.INTERNAL_ERROR, error));
+        }
     }
 }
+
+export default { schema, handler };

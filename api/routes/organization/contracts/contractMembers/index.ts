@@ -4,6 +4,9 @@ import createContractMember from './createContractMember';
 import updateContractMember from './updateContractMember';
 import deleteContractMember from './deleteContractMember';
 import { Router } from 'express';
+import { authorizeOrg } from '../../../../middleware/permissions';
+import { OrgPermissions } from '../../../../db/flags';
+
 const routes = Router({ mergeParams: true })
 
 /**
@@ -19,16 +22,16 @@ routes.get('/:member_id', getContractMember)
 /**
  * @api {post} /organizations/:org_id/contracts/:contract_id/members Create contract member
  */
-routes.post('/', createContractMember)
+routes.post('/', authorizeOrg(OrgPermissions.MANAGE_CONTRACTS), createContractMember)
 
 /**
  * @api {put} /organizations/:org_id/contracts/:contract_id/members/:member_id Update contract member
  */
-routes.put('/:member_id', updateContractMember)
+routes.put('/:member_id', authorizeOrg(OrgPermissions.MANAGE_CONTRACTS), updateContractMember)
 
 /**
  * @api {delete} /organizations/:org_id/contracts/:contract_id/members/:member_id Delete contract member
  */
-routes.delete('/:member_id', deleteContractMember)
+routes.delete('/:member_id', authorizeOrg(OrgPermissions.MANAGE_CONTRACTS), deleteContractMember)
 
 export default routes

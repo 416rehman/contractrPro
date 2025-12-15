@@ -250,7 +250,7 @@ export const invites = pgTable('invites', {
     role: text('role').default('member'),
     maxUses: integer('max_uses').default(1),
     uses: integer('uses').default(0).notNull(),
-    forOrganizationMemberId: uuid('for_organization_member_id').references(() => organizationMembers.id),
+    reservedMemberId: uuid('reserved_member_id').references(() => organizationMembers.id),
     organizationId: uuid('organization_id').references(() => organizations.id, { onDelete: 'cascade' }).notNull(),
     inviterId: uuid('inviter_id').references(() => users.id),
     accepted: boolean('accepted').default(false),
