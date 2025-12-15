@@ -2,8 +2,8 @@ import SearchableDropdown from "@/components/searchableDropdown";
 import { loadClients, useClientsStore } from "@/services/clients";
 import { useEffect, useState } from "react";
 import { useUserStore } from "@/services/user";
-import { DropdownItem } from "@nextui-org/dropdown";
-import { User } from "@nextui-org/user";
+import { DropdownItem } from "@heroui/dropdown";
+import { User } from "@heroui/user";
 import { Client } from "@/types";
 
 type Props = {
@@ -22,7 +22,7 @@ export default function ClientSelector({ onClientChange, selectedClientIds, labe
   const clients = useClientsStore((state) => state.clients);
   const currentOrg = useUserStore((state) => state.currentOrganization);
   const [query, setQuery] = useState("");
-  const [filteredClients, setFilteredClients] = useState([]);
+  const [filteredClients, setFilteredClients] = useState<Client[]>([]);
 
   useEffect(() => {
     if (!currentOrg) return;
@@ -49,26 +49,26 @@ export default function ClientSelector({ onClientChange, selectedClientIds, labe
   };
 
   return <SearchableDropdown {...props}
-                             isReadOnly={isDisabled}
-                             items={
-                               filteredClients.map((client) => <DropdownItem key={client.id} textValue={client.id}>
-                                 <User name={client.name}
-                                       description={client.description || client.email || client.phone || client.website || ""} />
-                               </DropdownItem>)}
-                             selectionMode={"single"}
-                             onSelectionChange={onSelectionChangedHandler}
-                             onQueryChange={setQuery}
-                             label={label}
-                             trigger={selectedClientIds?.[0] ?
-                               <div className={"flex"}>
-                                 {
-                                   clients.filter((client) => selectedClientIds.includes(client.id))
-                                     .map((client) => <User key={client.id} name={client.name}
-                                                            description={client.description || client.email || client.phone || client.website || ""} />)
-                                 }
-                               </div>
-                               :
-                               <span>Select Client</span>
-                             }
+    isReadOnly={isDisabled}
+    items={
+      filteredClients.map((client) => <DropdownItem key={client.id} textValue={client.id}>
+        <User name={client.name}
+          description={client.description || client.email || client.phone || client.website || ""} />
+      </DropdownItem>)}
+    selectionMode={"single"}
+    onSelectionChange={onSelectionChangedHandler}
+    onQueryChange={setQuery}
+    label={label}
+    trigger={selectedClientIds?.[0] ?
+      <div className={"flex"}>
+        {
+          clients.filter((client) => selectedClientIds.includes(client.id))
+            .map((client) => <User key={client.id} name={client.name}
+              description={client.description || client.email || client.phone || client.website || ""} />)
+        }
+      </div>
+      :
+      <span>Select Client</span>
+    }
   />;
 }

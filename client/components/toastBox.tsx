@@ -13,7 +13,7 @@ export default function ToastBox(props: any) {
   const toastStore = useToastsStore(state => state);
 
   return <div id={"toasts"} {...props}>
-    {toastStore.toasts.map(toast =>
+    {toastStore.toasts?.map(toast =>
       <Toast key={toast.id} {...toast} onClose={() => {
         toastStore.removeToast(toast.id);
       }} showDuration={true} durationInSecs={5} />

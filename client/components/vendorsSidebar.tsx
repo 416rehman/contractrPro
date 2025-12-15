@@ -1,7 +1,7 @@
 "use client";
-import { Card, CardBody, CardHeader } from "@nextui-org/card";
-import { CardFooter, Input } from "@nextui-org/react";
-import { Button } from "@nextui-org/button";
+import { Card, CardBody, CardHeader } from "@heroui/card";
+import { CardFooter, Input } from "@heroui/react";
+import { Button } from "@heroui/button";
 import NextLink from "next/link";
 import clsx from "clsx";
 import { IconBuilding, IconChevronDown, IconCirclePlus, IconListSearch } from "@tabler/icons-react";
@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import { loadVendors, useVendorsStore } from "@/services/vendors";
 import { useUserStore } from "@/services/user";
 import { useParams } from "next/navigation";
-import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@heroui/popover";
 
 type Props = {
   className?: string;
@@ -21,7 +21,7 @@ type Props = {
  * This is used in tandem with the VendorForm component to edit/create vendors.
  */
 export default function VendorsSidebar({ className }: Props) {
-  const [currentOrg] = useUserStore(state => [state.currentOrganization]);
+  const currentOrg = useUserStore(state => state.currentOrganization);
   const [vendors] = useVendorsStore(state => [state.vendors]);
   const [vendorsToDisplay, setVendorsToDisplay] = useState(vendors);
   const [filter, setFilter] = useState("");
@@ -41,20 +41,20 @@ export default function VendorsSidebar({ className }: Props) {
 
   const sidebar = (
     <Card shadow={"none"} isBlurred={true}
-          className={clsx("border-none rounded-none", className)}>
+      className={clsx("border-none rounded-none", className)}>
       <CardHeader className={"flex flex-col gap-2"}>
         <h1 className={"text-2xl font-bold"}>Vendors</h1>
         {/*  Search bar*/}
         <Input aria-label={"Filter vendors"} placeholder={"Filter"} size={"sm"}
-               startContent={<IconListSearch className={"text-default-400"} />}
-               variant={"underlined"}
-               isClearable={true}
-               onClear={() => setFilter("")}
-               onChange={(e) => setFilter(e.target.value)} />
+          startContent={<IconListSearch className={"text-default-400"} />}
+          variant={"underlined"}
+          isClearable={true}
+          onClear={() => setFilter("")}
+          onChange={(e) => setFilter(e.target.value)} />
       </CardHeader>
       <CardBody className={"p-2"}>
         <ul className={"flex flex-col w-full"}>
-          {vendorsToDisplay && vendorsToDisplay.map((vendor) => (
+          {vendorsToDisplay && vendorsToDisplay.map((vendor: any) => (
             <li key={vendor.id}>
               <Button
                 className={"w-full justify-start text-default-600 font-medium"}
@@ -71,7 +71,7 @@ export default function VendorsSidebar({ className }: Props) {
       </CardBody>
       <CardFooter>
         <Button variant={"light"} className={"flex-grow"} href={"/vendors/new"} as={NextLink}
-                startContent={<IconCirclePlus className={"text-default-500"} />}>
+          startContent={<IconCirclePlus className={"text-default-500"} />}>
           New Vendor
         </Button>
       </CardFooter>

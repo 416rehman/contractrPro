@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Card } from "@nextui-org/card";
+import { Card } from "@heroui/card";
 import {
   IconBuilding,
   IconBuildingStore,
@@ -111,7 +111,7 @@ export default function SearchItem({ type, query, item, onClick }: SearchItemPro
       const key = Object.keys(item).find((key) =>
         typeof item[key] === "string" && // Ensure the value is a string
         key !== "id" && // Ensure the key is not the id
-        item[key]?.toLowerCase().includes(query.toLowerCase())
+        item[key]?.toLowerCase().includes((query || "").toLowerCase())
       );
       if (key) {
         setFieldName(key);
@@ -132,11 +132,11 @@ export default function SearchItem({ type, query, item, onClick }: SearchItemPro
 
   return (
     <Card shadow={"none"}
-          className={"p-2 flex flex-row gap-2 items-center rounded-md border-1 border-default-200 bg-content2 hover:bg-content3 truncate"}
-          isPressable={true} onPress={() => {
-      router.push(getLink(type, item) + "#:~:text=" + query);
-      onClick?.();
-    }}>
+      className={"p-2 flex flex-row gap-2 items-center rounded-md border-1 border-default-200 bg-content2 hover:bg-content3 truncate"}
+      isPressable={true} onPress={() => {
+        router.push(getLink(type, item) + "#:~:text=" + query);
+        onClick?.();
+      }}>
       <div className={"text-default-500"}>{getIcon(type)}</div>
       <div className={"flex flex-col w-full truncate items-start"}>
         <div className={"flex flex-row items-center justify-between truncate w-full"}>

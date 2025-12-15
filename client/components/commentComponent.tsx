@@ -1,16 +1,16 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { CardFooter, Textarea } from "@nextui-org/react";
-import { Card, CardBody, CardHeader } from "@nextui-org/card";
+import { CardFooter, Textarea } from "@heroui/react";
+import { Card, CardBody, CardHeader } from "@heroui/card";
 import clsx from "clsx";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/button";
 import Attachment from "@/components/attachment";
 import { IconDotsVertical, IconEdit, IconPaperclip } from "@tabler/icons-react";
 import { useDropzone } from "react-dropzone";
 import { Comment } from "@/types";
-import { Link } from "@nextui-org/link";
+import { Link } from "@heroui/link";
 import { loadMembers, useMembersStore } from "@/services/members";
-import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/dropdown";
-import moment from "moment";
+import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@heroui/dropdown";
+import { formatDistanceToNow } from "date-fns";
 
 type CommentProps = {
   comment: Comment
@@ -31,13 +31,13 @@ export default function CommentComponent({ comment, onSave, onDelete }: CommentP
     setEditedComment(comment);
   }, [comment]);
 
-  const onDrop = useCallback(acceptedFiles => {
+  const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles) {
       // add files to the attachments array, if it doesn't exist, create it
       if (!editedComment?.Attachments) {
         setEditedComment({ ...editedComment, Attachments: [] });
       }
-      setEditedComment({ ...editedComment, Attachments: [...editedComment?.Attachments, ...acceptedFiles] });
+      setEditedComment({ ...editedComment!, Attachments: [...(editedComment?.Attachments || []), ...acceptedFiles] });
     }
   }, [editedComment]);
 
@@ -45,7 +45,7 @@ export default function CommentComponent({ comment, onSave, onDelete }: CommentP
   useEffect(() => {
     // if there are no members, load them
     if (!members || members.length === 0 && comment?.OrganizationId) {
-      loadMembers(comment?.OrganizationId);
+      loadMembers(comment?.OrganizationId!);
     }
   }, [comment?.OrganizationId, members]);
 
@@ -65,7 +65,7 @@ export default function CommentComponent({ comment, onSave, onDelete }: CommentP
       if (!editedComment?.Attachments) {
         setEditedComment({ ...editedComment, Attachments: [] });
       }
-      setEditedComment({ ...editedComment, Attachments: [...editedComment?.Attachments, ...newFiles] });
+      setEditedComment({ ...editedComment!, Attachments: [...(editedComment?.Attachments || []), ...newFiles] });
     }
   };
 
@@ -79,7 +79,7 @@ export default function CommentComponent({ comment, onSave, onDelete }: CommentP
 
   const saveHandler = async () => {
     setIsSaving(true);
-    await onSave?.(editedComment);
+    await onSave?.(editedComment!);
 
     setIsEditing(false);
     setIsSaving(false);
@@ -91,7 +91,7 @@ export default function CommentComponent({ comment, onSave, onDelete }: CommentP
     }
   }, [comment, isEditing]);
 
-  const onAction = async (action: string) => {
+  const onAction = async (action: React.Key) => {
     switch (action) {
       case "edit":
         setIsEditing(true);
@@ -104,19 +104,19 @@ export default function CommentComponent({ comment, onSave, onDelete }: CommentP
 
   return (
     <div className={"flex flex-col gap-2"}>
-      <Card {...(isEditing ? getRootProps() : {})} isPressable={false}
-            className={clsx("flex flex-col border border-default-200 rounded-md", { "border-primary-100": isDragActive })}
-            shadow={"none"}>
+      <Card {...(isEditing ? getRootProps() as any : {})} isPressable={false} onClick={isEditing ? undefined : getRootProps().onClick as any}
+        className={clsx("flex flex-col border border-default-200 rounded-md", { "border-primary-100": isDragActive })}
+        shadow={"none"}>
         {editedComment?.id &&
           <CardHeader className={"px-2 py-1 justify-between bg-content2 rounded-t-md"}>
             <div className={"flex gap-1"}>
               <Link href={author?.id ? `/members/${author?.id}` : "#"}
-                    className={"text-sm bg-primary-100 rounded-md px-1 py-0"}>
+                className={"text-sm bg-primary-100 rounded-md px-1 py-0"}>
                 {author?.name || "❔Anonymous"}
               </Link>
               <span className={"text-sm text-gray-500"}>
                 commented
-                <span className={"font-medium"}> {moment(editedComment?.createdAt).fromNow()}</span>
+                <span className={"font-medium"}> {formatDistanceToNow(new Date(editedComment?.createdAt || 0), { addSuffix: true })}</span>
               </span>
             </div>
             {!isEditing &&
@@ -128,11 +128,11 @@ export default function CommentComponent({ comment, onSave, onDelete }: CommentP
                 </DropdownTrigger>
                 <DropdownMenu onAction={onAction}>
                   <DropdownItem key="edit" startContent={<IconEdit size={18} className={"text-gray-500"} />}
-                                description={"Edit this comment"}>
+                    description={"Edit this comment"}>
                     Edit
                   </DropdownItem>
                   <DropdownItem key="delete" startContent={<IconEdit size={18} />}
-                                description={"Delete this comment"} className="text-danger" color="danger">
+                    description={"Delete this comment"} className="text-danger" color="danger">
                     Delete
                   </DropdownItem>
                 </DropdownMenu>
@@ -140,20 +140,20 @@ export default function CommentComponent({ comment, onSave, onDelete }: CommentP
           </CardHeader>}
         <CardBody className={clsx("flex-grow flex p-0 ", { "resize-y min-h-[100px]": isEditing })}>
           <Textarea variant={"underlined"} placeholder={"Write a comment"} value={editedComment?.content}
-                    isReadOnly={!isEditing}
-                    onChange={(event) => setEditedComment({ ...editedComment, content: event.target.value })}
-                    classNames={{
-                      input: "h-full flex-grow p-2",
-                      base: "h-full flex-grow",
-                      inputWrapper: "h-full flex-grow"
-                    }} />
+            isReadOnly={!isEditing}
+            onChange={(event) => setEditedComment({ ...editedComment, content: event.target.value })}
+            classNames={{
+              input: "h-full flex-grow p-2",
+              base: "h-full flex-grow",
+              inputWrapper: "h-full flex-grow"
+            }} />
         </CardBody>
         <CardFooter className={"flex flex-col items-start p-0 rounded-none border-none"}>
           <input className={"hidden"} type={"file"} accept={"*/*"} multiple={true}
-                 {...getInputProps()} ref={fileInputRef}
-                 onChange={OnChangeFileInput} />
+            {...getInputProps()} ref={fileInputRef}
+            onChange={OnChangeFileInput} />
           <Card
-            className={clsx("w-full h-full p-0 gap-2 rounded-none bg-default-100", (comment?.Attachments?.length > 0 || isEditing) && "p-2")}
+            className={clsx("w-full h-full p-0 gap-2 rounded-none bg-default-100", ((comment?.Attachments?.length || 0) > 0 || isEditing) && "p-2")}
             disableAnimation={true}
             isPressable={isEditing} onPress={OnClickAddAttachment}>
             {isEditing ? (
@@ -164,37 +164,37 @@ export default function CommentComponent({ comment, onSave, onDelete }: CommentP
                 <IconPaperclip size={15} className={"text-gray-500"} />
               </div>
             ) : (
-              editedComment?.Attachments?.length > 0 &&
+              (editedComment?.Attachments?.length || 0) > 0 &&
               <div className={"flex flex-row gap-1"}>
                 <IconPaperclip size={15} className={"text-gray-500"} />
-                <span className={"text-xs text-gray-500"}>{editedComment?.Attachments?.length} file(s) attached</span>
+                <span className={"text-xs text-gray-500"}>{editedComment?.Attachments?.length || 0} file(s) attached</span>
               </div>
             )}
             <div className={"flex gap-2 flex-wrap"}>
               {editedComment?.Attachments?.map((attachment, index) => {
-                  const url = attachment.id ? `${process.env.NEXT_PUBLIC_API_URL}/organizations/${editedComment?.OrganizationId}/blob/${attachment.id}` : URL.createObjectURL(attachment);
-                  const downloadUrl = attachment.id ? `${url}?download=true` : url;
-                  return <Attachment key={attachment.id || attachment.name}
-                                     isNew={!attachment.id}
-                                     name={attachment.name}
-                                     size={attachment.size}
-                                     type={attachment.type}
-                                     isEditing={isEditing}
-                                     openUrl={url}
-                                     downloadUrl={downloadUrl}
-                                     markedForDeletion={attachment.markedForDeletion || false}
-                                     onRemove={() => {
-                                       if (attachment.id) editedComment.Attachments[index].markedForDeletion = true;
-                                       else {
-                                         editedComment.Attachments.splice(index, 1);
-                                         setEditedComment({ ...editedComment });
-                                       }
-                                     }}
-                                     onRestore={() => {
-                                       if (attachment.id) editedComment.Attachments[index].markedForDeletion = false;
-                                     }}
-                  />;
-                }
+                const url = attachment.id ? `${process.env.NEXT_PUBLIC_API_URL}/organizations/${editedComment?.OrganizationId}/blob/${attachment.id}` : URL.createObjectURL(attachment);
+                const downloadUrl = attachment.id ? `${url}?download=true` : url;
+                return <Attachment key={attachment.id || attachment.name}
+                  isNew={!attachment.id}
+                  name={attachment.name}
+                  size={attachment.size}
+                  type={attachment.type}
+                  isEditing={isEditing}
+                  openUrl={url}
+                  downloadUrl={downloadUrl}
+                  markedForDeletion={attachment.markedForDeletion || false}
+                  onRemove={() => {
+                    if (attachment.id) editedComment!.Attachments![index].markedForDeletion = true;
+                    else {
+                      editedComment!.Attachments!.splice(index, 1);
+                      setEditedComment({ ...editedComment });
+                    }
+                  }}
+                  onRestore={() => {
+                    if (attachment.id) editedComment!.Attachments![index].markedForDeletion = false;
+                  }}
+                />;
+              }
               )}
             </div>
           </Card>
@@ -204,11 +204,11 @@ export default function CommentComponent({ comment, onSave, onDelete }: CommentP
       <div className={"flex gap-5 w-full justify-end"}>
         {comment?.id ? isEditing && <>
           <Button size={"sm"} variant={"light"} className={"font-medium"} color={"danger"}
-                  onPress={() => setIsEditing(false)}>Cancel</Button>
+            onPress={() => setIsEditing(false)}>Cancel</Button>
           <Button size={"sm"} variant={"flat"} color={"success"} onPress={saveHandler} isLoading={isSaving}
-                  className={"font-medium"}>{"Update"}</Button>
+            className={"font-medium"}>{"Update"}</Button>
         </> : <Button size={"sm"} variant={"flat"} color={"success"} onPress={saveHandler} isLoading={isSaving}
-                      className={"font-medium"}>{"Comment"}</Button>
+          className={"font-medium"}>{"Comment"}</Button>
         }
       </div>
     </div>

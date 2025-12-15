@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
-import { Input, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@nextui-org/react";
+import { Input, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@heroui/react";
 import { Job } from "@/types";
-import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/dropdown";
-import { Button } from "@nextui-org/button";
+import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@heroui/dropdown";
+import { Button } from "@heroui/button";
 import { IconCurrencyDollar, IconDotsVertical, IconTrash } from "@tabler/icons-react";
 import JobStatusSelector from "@/components/jobStatusSelector";
 import MemberSelector from "@/components/OrgMemberSelector";
@@ -37,59 +37,59 @@ export default function ContractJobsTable({ jobs, isEditing, onEntryChanged, onE
     setJobsData(jobs);
   }, [jobs]);
 
-  const renderCell = (job: Job, columnKey: React.Key, editMode) => {
+  const renderCell = (job: Job, columnKey: React.Key, editMode: boolean) => {
     const cellValue = job[columnKey as keyof Job];
 
     switch (columnKey) {
       case "name":
         return <Input aria-label={"Name"}
-                      key={job.id} value={cellValue}
-                      placeholder="Name" variant={"underlined"}
-                      isReadOnly={!editMode}
-                      size={"sm"}
-                      classNames={{
-                        inputWrapper: ["rounded-none"]
-                      }}
-                      onChange={(e) => onEntryChanged(columnKey, e.target.value, job.id)} />;
+          key={job.id} value={cellValue}
+          placeholder="Name" variant={"underlined"}
+          isReadOnly={!editMode}
+          size={"sm"}
+          classNames={{
+            inputWrapper: ["rounded-none"]
+          }}
+          onChange={(e) => onEntryChanged(columnKey, e.target.value, job.id)} />;
       case "description":
         return <Input aria-label={"Description"}
-                      key={job.id} value={cellValue} placeholder="Description"
-                      variant={"underlined"}
-                      size={"sm"}
-                      isReadOnly={!editMode}
-                      onChange={(e) => onEntryChanged(columnKey, e.target.value, job.id)} />;
+          key={job.id} value={cellValue} placeholder="Description"
+          variant={"underlined"}
+          size={"sm"}
+          isReadOnly={!editMode}
+          onChange={(e) => onEntryChanged(columnKey, e.target.value, job.id)} />;
       case "startDate": {
         // if its a string, convert it to a date
         const asDate = typeof cellValue === "string" && new Date(cellValue).toISOString().slice(0, -1);
         return <Input aria-label={"Start Date"}
-                      key={job.id} value={asDate || ""} type="datetime-local"
-                      placeholder="2017-06-01T08:30"
-                      variant={"underlined"}
-                      size={"sm"}
-                      isReadOnly={!editMode}
-                      onChange={(e) => onEntryChanged(columnKey, e.target.value, job.id)} />;
+          key={job.id} value={asDate || ""} type="datetime-local"
+          placeholder="2017-06-01T08:30"
+          variant={"underlined"}
+          size={"sm"}
+          isReadOnly={!editMode}
+          onChange={(e) => onEntryChanged(columnKey, e.target.value, job.id)} />;
       }
 
       case "dueDate": {
         // if its a string, convert it to a date
         const asDate = typeof cellValue === "string" && new Date(cellValue).toISOString().slice(0, -1);
         return <Input aria-label={"Due Date"}
-                      key={job.id} value={asDate || ""} type="datetime-local"
-                      placeholder="2017-06-01T08:30"
-                      variant={"underlined"}
-                      size={"sm"}
-                      isReadOnly={!editMode}
-                      onChange={(e) => onEntryChanged(columnKey, e.target.value, job.id)} />;
+          key={job.id} value={asDate || ""} type="datetime-local"
+          placeholder="2017-06-01T08:30"
+          variant={"underlined"}
+          size={"sm"}
+          isReadOnly={!editMode}
+          onChange={(e) => onEntryChanged(columnKey, e.target.value, job.id)} />;
       }
 
       case "payout":
         return <Input aria-label={"Payout"}
-                      key={job.id} value={cellValue} type="number" placeholder="Quantity"
-                      variant={"underlined"}
-                      size={"sm"}
-                      isReadOnly={!editMode}
-                      startContent={<IconCurrencyDollar />}
-                      onChange={(e) => onEntryChanged(columnKey, e.target.value, job.id)} />;
+          key={job.id} value={cellValue} type="number" placeholder="Quantity"
+          variant={"underlined"}
+          size={"sm"}
+          isReadOnly={!editMode}
+          startContent={<IconCurrencyDollar />}
+          onChange={(e) => onEntryChanged(columnKey, e.target.value, job.id)} />;
       case "assignedTo":
         return <MemberSelector
           className={"px-2"}
@@ -105,7 +105,7 @@ export default function ContractJobsTable({ jobs, isEditing, onEntryChanged, onE
         />;
       case "status":
         const isTouched = columns.some((column) => {
-          return !!job[column.uid];
+          return !!job[column.uid as keyof Job];
         });
 
         return <div className="relative flex justify-end items-center gap-2">
@@ -122,7 +122,7 @@ export default function ContractJobsTable({ jobs, isEditing, onEntryChanged, onE
               }
             }}>
               <DropdownItem startContent={<IconTrash className={"text-default-500"} />}
-                            key={"delete"}>Delete</DropdownItem>
+                key={"delete"}>Delete</DropdownItem>
             </DropdownMenu>
           </Dropdown>}
         </div>;
@@ -144,11 +144,8 @@ export default function ContractJobsTable({ jobs, isEditing, onEntryChanged, onE
           )}
         </TableHeader>
         <TableBody>
-          {items.map((item) => {
-            // if its the last item and we are not editing, don't render it
-            if (item.id === items[items.length - 1].id && !isEditing) {
-              return null;
-            } else return <TableRow key={item?.id} className={"p-0"}>
+          {items.filter(item => isEditing || item.id !== items[items.length - 1].id).map((item) => {
+            return <TableRow key={item?.id} className={"p-0"}>
               {(columnKey) => <TableCell className={"p-0"}>{renderCell(item, columnKey, isEditing)}</TableCell>}
             </TableRow>;
           })}

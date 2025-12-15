@@ -22,7 +22,7 @@ import {
   IconPhoto
 } from "@tabler/icons-react";
 
-const mimeIcons = {
+const mimeIcons: Record<string, any> = {
   "application/pdf": <IconFileTypePdf />,
   "application/msword": <IconFileTypeDoc />,
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document": <IconFileTypeDocx />,

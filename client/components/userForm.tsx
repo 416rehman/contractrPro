@@ -6,12 +6,12 @@ import {
   changePhone,
   useUserStore
 } from "@/services/user";
-import { Card, CardBody } from "@nextui-org/card";
+import { Card, CardBody } from "@heroui/card";
 import { IconAt, IconCheck, IconMail, IconPencil, IconPencilOff, IconPhone, IconPhoto } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
-import { Input } from "@nextui-org/react";
-import { Tooltip } from "@nextui-org/tooltip";
-import { Button } from "@nextui-org/button";
+import { Input } from "@heroui/react";
+import { Tooltip } from "@heroui/tooltip";
+import { Button } from "@heroui/button";
 import { useToastsStore } from "@/services/toast";
 
 /**

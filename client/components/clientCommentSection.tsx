@@ -7,7 +7,7 @@ import {
 } from "@/services/clients/comments";
 import { useEffect, useState } from "react";
 import { useToastsStore } from "@/services/toast";
-import { Card, CardBody, CardHeader } from "@nextui-org/card";
+import { Card, CardBody, CardHeader } from "@heroui/card";
 import CommentComponent from "@/components/commentComponent";
 
 type Props = {
@@ -41,7 +41,7 @@ export default function ClientCommentSection({ client }: Props) {
 
   const [newComment, setNewComment] = useState<Comment>(emptyComment);
 
-  const commentSaveHandler = async (editedComment) => {
+  const commentSaveHandler = async (editedComment: Comment) => {
     try {
       if (!editedComment?.id) {
         // if the comment doesnt exist and has no content or attachments, dont save it
@@ -57,20 +57,20 @@ export default function ClientCommentSection({ client }: Props) {
       useToastsStore.getState().addToast({
         id: "comment-save-error",
         title: "Error",
-        message: e.message || "An error occurred while saving the comment",
+        message: (e as any).message || "An error occurred while saving the comment",
         type: "error"
       });
     }
   };
 
-  const commentDeleteHandler = async (comment) => {
+  const commentDeleteHandler = async (comment: Comment) => {
     try {
       await deleteClientComment(client?.id, comment);
     } catch (e) {
       useToastsStore.getState().addToast({
         id: "comment-delete-error",
         title: "Error",
-        message: e.message || "An error occurred while deleting the comment",
+        message: (e as any).message || "An error occurred while deleting the comment",
         type: "error"
       });
     }
@@ -89,7 +89,7 @@ export default function ClientCommentSection({ client }: Props) {
     const clientComments = clientCommentsMap[client?.id];
     if (!clientComments) return;
     if (!clientComments.comments) clientComments.comments = [];
-    clientComments.comments.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    clientComments.comments.sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
     setCurrentClientComments(clientComments);
   }, [clientCommentsMap, client]);
 
@@ -101,10 +101,10 @@ export default function ClientCommentSection({ client }: Props) {
       </CardHeader>
       <CardBody className={"flex flex-col gap-5"}>
         {currentClientComments?.comments?.length > 0 &&
-          currentClientComments?.comments?.map((comment) => (
+          currentClientComments?.comments?.map((comment: Comment) => (
             <CommentComponent key={comment.id} comment={comment}
-                              onSave={commentSaveHandler}
-                              onDelete={() => commentDeleteHandler(comment)} />))
+              onSave={commentSaveHandler}
+              onDelete={() => commentDeleteHandler(comment)} />))
         }
         <CommentComponent comment={newComment} onSave={commentSaveHandler} />
       </CardBody>

@@ -2,8 +2,8 @@ import SearchableDropdown from "@/components/searchableDropdown";
 import { loadVendors, useVendorsStore } from "@/services/vendors";
 import { useEffect, useState } from "react";
 import { useUserStore } from "@/services/user";
-import { DropdownItem } from "@nextui-org/dropdown";
-import { User } from "@nextui-org/user";
+import { DropdownItem } from "@heroui/dropdown";
+import { User } from "@heroui/user";
 import { Vendor } from "@/types";
 
 type Props = {
@@ -22,7 +22,7 @@ export default function VendorSelector({ onVendorChange, selectedVendorIds, labe
   const vendors = useVendorsStore((state) => state.vendors);
   const currentOrg = useUserStore((state) => state.currentOrganization);
   const [query, setQuery] = useState("");
-  const [filteredVendors, setFilteredVendors] = useState([]);
+  const [filteredVendors, setFilteredVendors] = useState<Vendor[]>([]);
 
   useEffect(() => {
     if (!currentOrg) return;
@@ -49,26 +49,26 @@ export default function VendorSelector({ onVendorChange, selectedVendorIds, labe
   };
 
   return <SearchableDropdown {...props}
-                             isReadOnly={isDisabled}
-                             items={
-                               filteredVendors.map((vendor) => <DropdownItem key={vendor.id} textValue={vendor.id}>
-                                 <User name={vendor.name}
-                                       description={vendor.description || vendor.email || vendor.phone || vendor.website || ""} />
-                               </DropdownItem>)}
-                             selectionMode={"single"}
-                             onSelectionChange={onSelectionChangedHandler}
-                             onQueryChange={setQuery}
-                             label={label}
-                             trigger={selectedVendorIds?.[0] ?
-                               <div>
-                                 {
-                                   vendors.filter((vendor) => selectedVendorIds.includes(vendor.id))
-                                     .map((vendor) => <User key={vendor.id} name={vendor.name}
-                                                            description={vendor.description || vendor.email || vendor.phone || vendor.website || ""} />)
-                                 }
-                               </div>
-                               :
-                               <span>Select Vendor</span>
-                             }
+    isReadOnly={isDisabled}
+    items={
+      filteredVendors.map((vendor) => <DropdownItem key={vendor.id} textValue={vendor.id}>
+        <User name={vendor.name}
+          description={vendor.description || vendor.email || vendor.phone || vendor.website || ""} />
+      </DropdownItem>)}
+    selectionMode={"single"}
+    onSelectionChange={onSelectionChangedHandler}
+    onQueryChange={setQuery}
+    label={label}
+    trigger={selectedVendorIds?.[0] ?
+      <div>
+        {
+          vendors.filter((vendor) => selectedVendorIds.includes(vendor.id))
+            .map((vendor) => <User key={vendor.id} name={vendor.name}
+              description={vendor.description || vendor.email || vendor.phone || vendor.website || ""} />)
+        }
+      </div>
+      :
+      <span>Select Vendor</span>
+    }
   />;
 }

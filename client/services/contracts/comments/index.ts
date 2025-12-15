@@ -88,8 +88,8 @@ export const useContractCommentsStore = create((set: any) => ({
 export const loadContractComments = async (contract: Contract) => {
   try {
     console.log("Loading comments for contract", contract.id);
-    const comments = await requestComments(contract.OrganizationId, contract.id);
-    useContractCommentsStore.getState().setContractComments(contract.id, comments);
+    const comments = await requestComments(contract.OrganizationId || "", contract.id || "");
+    useContractCommentsStore.getState().setContractComments(contract.id || "", comments);
   } catch (err) {
     console.log(err);
   }
@@ -99,22 +99,22 @@ export const updateAndPersistContractComment = async (contractId: string, commen
   try {
     if (comment.id) {
       // first check if any attachments were marked for deletion. If so, remove them from the comment
-      const attachmentsToDelete = comment.Attachments.filter((a: any) => a.markedForDeletion);
+      const attachmentsToDelete = comment.Attachments?.filter((a: any) => a.markedForDeletion) || [];
       if (attachmentsToDelete.length > 0) {
         for (const a of attachmentsToDelete) {
-          await requestDeleteAttachments(comment.OrganizationId, comment.ContractId, comment.id, a.id);
+          await requestDeleteAttachments(comment.OrganizationId || "", comment.ContractId || "", comment.id, a.id);
         }
       }
 
       // then update the comment
-      comment.Attachments = comment.Attachments.filter((a: any) => !a.markedForDeletion);
-      await requestUpdateComment(comment.OrganizationId, comment.ContractId, comment);
-      comment.Attachments.map((a: any) => a.id = a.id || "new");
+      comment.Attachments = comment.Attachments?.filter((a: any) => !a.markedForDeletion);
+      await requestUpdateComment(comment.OrganizationId || "", comment.ContractId || "", comment);
+      comment.Attachments?.map((a: any) => a.id = a.id || "new");
       useContractCommentsStore.getState().updateContractComment(contractId, comment);
     } else {
       console.log("CREATE");
       // create a new comment
-      const newComment = await requestCreateComment(comment.OrganizationId, comment.ContractId, comment);
+      const newComment = await requestCreateComment(comment.OrganizationId || "", comment.ContractId || "", comment);
       useContractCommentsStore.getState().addContractComment(contractId, newComment);
     }
   } catch (err) {
@@ -124,8 +124,8 @@ export const updateAndPersistContractComment = async (contractId: string, commen
 
 export const deleteContractComment = async (contractId: string, comment: Comment) => {
   try {
-    await requestDeleteComment(comment?.OrganizationId, comment?.ContractId, comment.id);
-    useContractCommentsStore.getState().removeContractComment(contractId, comment.id);
+    await requestDeleteComment(comment?.OrganizationId || "", comment?.ContractId || "", comment.id || "");
+    useContractCommentsStore.getState().removeContractComment(contractId, comment.id || "");
   } catch (err) {
     console.log(err);
   }

@@ -1,14 +1,17 @@
-FROM node:18-alpine
+FROM node:24-alpine
 
 #for macbook, with windows remove this line
 RUN apk add --no-cache python3 make g++ 
 WORKDIR /home/node/app
 
-COPY package.json .
-COPY package-lock.json .
+# install pnpm globally
+RUN npm install -g pnpm
 
-RUN npm install
+COPY package.json .
+COPY pnpm-lock.yaml .
+
+RUN pnpm install --frozen-lockfile
 
 COPY . .
 
-ENTRYPOINT ["npm", "run", "start"]
+ENTRYPOINT ["pnpm", "run", "start"]

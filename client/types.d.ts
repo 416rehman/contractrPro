@@ -51,7 +51,7 @@ export type Client = {
 } & any;
 
 
-type Vendor = {
+export type Vendor = {
   id?: string,
   name: string,
   phone: string,
@@ -64,7 +64,7 @@ type Vendor = {
   OrganizationId?: string,
 } & any;
 
-type Member = {
+export type Member = {
   id?: string,
   name: string,
   email: string,
@@ -135,7 +135,7 @@ export type ExpenseEntry = {
   ExpenseId?: string,
 } & any;
 
-type Contract = {
+export type Contract = {
   id?: string,
   name: string,
   description: string,
@@ -173,7 +173,7 @@ interface JobMember {
   OrganizationMemberId?: string,
 }
 
-type Attachment = {
+export type Attachment = {
   "id"?: string
   "name"?: string
   "type"?: string
@@ -185,7 +185,7 @@ type Attachment = {
   "markedForDeletion"?: boolean
 }
 
-type Comment = {
+export type Comment = {
   "id"?: string,
   "content"?: string,
   "createdAt"?: string,

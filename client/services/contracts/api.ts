@@ -13,7 +13,7 @@ export async function requestAllOrganizationContracts(OrganizationId: string) {
 
     return Promise.resolve(data);
 
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
     return Promise.reject(err?.message || err);
   }
@@ -29,7 +29,7 @@ export async function requestUpdateContract(contract: Contract, OrganizationId: 
     });
 
     return Promise.resolve(data);
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
     return Promise.reject(err?.message || err);
   }
@@ -44,7 +44,7 @@ export async function requestDeleteContract(contract: Contract, OrganizationId: 
     });
 
     return Promise.resolve(data);
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
     return Promise.reject(err?.message || err);
   }
@@ -60,7 +60,7 @@ export async function requestCreateContract(contract: Contract, OrganizationId: 
     });
 
     return Promise.resolve(data);
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
     return Promise.reject(err?.message || err);
   }

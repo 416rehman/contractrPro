@@ -19,11 +19,12 @@ export const useVendorsStore = create((set: any) => ({
 }));
 
 export const loadVendors = async (OrganizationId: string) => {
-  if (!useVendorsStore.getState().lastRequestedOn) {
+  const { lastRequestedOn } = useVendorsStore.getState();
+  if (!lastRequestedOn) {
     useVendorsStore.getState().lastRequestedOn = new Date();
   } else {
     const now = new Date();
-    const diff = now.getTime() - useVendorsStore.getState().lastRequestedOn.getTime();
+    const diff = now.getTime() - lastRequestedOn.getTime();
     // if the last request was less than 5 seconds ago, don't make another request
     if (diff < 5000) {
       return;
@@ -35,10 +36,10 @@ export const loadVendors = async (OrganizationId: string) => {
     const orgVendors = await requestOrganizationVendors(OrganizationId);
 
     // if the new vendors are different from the current vendors, update the store
-    if (orgVendors.length !== currentVendors.length || orgVendors.some((vendor, i) => vendor.id !== currentVendors[i].id)) {
+    if (orgVendors.length !== currentVendors.length || orgVendors.some((vendor: any, i: number) => vendor.id !== currentVendors[i].id)) {
       useVendorsStore.getState().setVendors(orgVendors);
     }
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
   }
 };
@@ -59,7 +60,7 @@ export const updateVendor = async (vendor: Vendor, currentOrganizationId: string
       }
     }
 
-  } catch (err) {
+  } catch (err: any) {
     useToastsStore.getState().addToast({ id: "update-vendor-error", type: "error", message: err?.message || err });
   }
 };
@@ -72,7 +73,7 @@ export const deleteVendor = async (vendor: Vendor, currentOrganizationId: string
     useVendorsStore.getState().removeVendor(vendor);
     useToastsStore.getState().addToast({ id: "delete-vendor", type: "success", message: "Vendor deleted" });
 
-  } catch (err) {
+  } catch (err: any) {
     useToastsStore.getState().addToast({ id: "delete-vendor-error", type: "error", message: err?.message || err });
   }
 };

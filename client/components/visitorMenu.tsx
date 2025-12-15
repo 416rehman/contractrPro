@@ -1,11 +1,11 @@
 "use client";
 
-import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/dropdown";
+import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@heroui/dropdown";
 import { useTheme } from "next-themes";
 import { IconAsterisk, IconLogin, IconMenu2, IconMoonFilled, IconSunFilled } from "@tabler/icons-react";
-import { NavbarContent, NavbarItem } from "@nextui-org/navbar";
-import { Tooltip } from "@nextui-org/tooltip";
-import { Button } from "@nextui-org/button";
+import { NavbarContent, NavbarItem } from "@heroui/navbar";
+import { Tooltip } from "@heroui/tooltip";
+import { Button } from "@heroui/button";
 import NextLink from "next/link";
 import { useRouter } from "next/navigation";
 import ThemeSwitch from "@/components/theme-switch";
@@ -63,7 +63,7 @@ export const VisitorMenu = () => {
     }
   ];
 
-  const onAction = async (key: string) => {
+  const onAction = async (key: any) => {
     const action = visitorItems[parseInt(key)]?.onAction;
     if (action) await action();
   };
@@ -106,14 +106,15 @@ export const VisitorMenu = () => {
               selectionMode="single"
               onAction={onAction}
             >
-              {visitorItems.map((item, index) => (
-                index > 0 &&
-                item.display !== "navbar" &&
-                <DropdownItem key={index} value={item.href} description={item.description} startContent={item.icon}
-                              shortcut={item?.shortcut || ""}>
-                  {item.content}
-                </DropdownItem>
-              ))}
+              {visitorItems
+                .map((item, index) => ({ item, index }))
+                .filter(({ item, index }) => index > 0 && item.display !== "navbar")
+                .map(({ item, index }) => (
+                  <DropdownItem key={index} value={item.href} description={item.description} startContent={item.icon}
+                    shortcut={item?.shortcut || ""}>
+                    {item.content}
+                  </DropdownItem>
+                ))}
             </DropdownMenu>
           </Dropdown>
         </NavbarItem>

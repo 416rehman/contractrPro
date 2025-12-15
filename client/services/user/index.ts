@@ -31,11 +31,12 @@ export const useUserStore = create((set: any) => ({
 }));
 
 export const loadUserWithOrganizations = async () => {
-  if (!useUserStore.getState().lastRequestedOn) {
+  const { lastRequestedOn } = useUserStore.getState();
+  if (!lastRequestedOn) {
     useUserStore.getState().lastRequestedOn = new Date();
   } else {
     const now = new Date();
-    const diff = now.getTime() - useUserStore.getState().lastRequestedOn.getTime();
+    const diff = now.getTime() - lastRequestedOn.getTime();
     // if the last request was less than 5 seconds ago, don't make another request
     if (diff < 5000) {
       return;
@@ -53,7 +54,7 @@ export const loadUserWithOrganizations = async () => {
         setCurrentOrganization(currentOrg);
       }
     }
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
   }
 };
@@ -80,7 +81,7 @@ export const updateOrganizationAndPersist = async (organization: Organization) =
       const updatedOrg = await requestUpdateOrganization(organization);
       useUserStore.getState().setUser({
         ...useUserStore.getState().user,
-        Organizations: useUserStore.getState().user?.Organizations.map((org) => {
+        Organizations: useUserStore.getState().user?.Organizations.map((org: any) => {
           if (org.id === organization.id) {
             return updatedOrg;
           }
@@ -98,27 +99,27 @@ export const updateOrganizationAndPersist = async (organization: Organization) =
       });
     }
     return createdOrg;
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
   }
 };
 
 export const deleteOrganizationAndPersist = async (organizationId: string) => {
   try {
-    const result = requestDeleteOrganization(organizationId);
+    const result = await requestDeleteOrganization(organizationId);
     if (result) {
       const currentOrg = useUserStore.getState().currentOrganization;
 
       useUserStore.getState().setUser({
         ...useUserStore.getState().user,
-        Organizations: useUserStore.getState().user?.Organizations.filter((org) => org.id !== organizationId)
+        Organizations: useUserStore.getState().user?.Organizations.filter((org: any) => org.id !== organizationId)
       });
 
       if (currentOrg?.id === organizationId) {
         setCurrentOrganization(null);
       }
     }
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
   }
 };
@@ -135,7 +136,7 @@ export const changeAndPersistAvatarUrl = async (avatarUrl: string) => {
         useUserStore.getState().setUser({ ...user, avatarUrl });
       }
     }
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
   }
 };
@@ -152,7 +153,7 @@ export const changeAndPersistName = async (name: string) => {
         useUserStore.getState().setUser({ ...user, name });
       }
     }
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
   }
 };
@@ -169,7 +170,7 @@ export const changeEmail = async (email: string) => {
         return response;
       }
     }
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
   }
 };
@@ -194,7 +195,7 @@ export const changePhone = async (phoneCountry: string, phoneNumber: string) => 
         return response;
       }
     }
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
   }
 };

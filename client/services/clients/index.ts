@@ -19,11 +19,12 @@ export const useClientsStore = create((set: any) => ({
 }));
 
 export const loadClients = async (OrganizationId: string) => {
-  if (!useClientsStore.getState().lastRequestedOn) {
+  const { lastRequestedOn } = useClientsStore.getState();
+  if (!lastRequestedOn) {
     useClientsStore.getState().lastRequestedOn = new Date();
   } else {
     const now = new Date();
-    const diff = now.getTime() - useClientsStore.getState().lastRequestedOn.getTime();
+    const diff = now.getTime() - lastRequestedOn.getTime();
     // if the last request was less than 5 seconds ago, don't make another request
     if (diff < 5000) {
       return;
@@ -35,10 +36,10 @@ export const loadClients = async (OrganizationId: string) => {
     const orgClients = await requestOrganizationClients(OrganizationId);
 
     // if the new clients are different from the current clients, update the store
-    if (orgClients.length !== currentClients.length || orgClients.some((client, i) => client.id !== currentClients[i].id)) {
+    if (orgClients.length !== currentClients.length || orgClients.some((client: any, i: number) => client.id !== currentClients[i].id)) {
       useClientsStore.getState().setClients(orgClients);
     }
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
   }
 };
@@ -59,7 +60,7 @@ export const updateClient = async (client: Client, currentOrganizationId: string
       }
     }
 
-  } catch (err) {
+  } catch (err: any) {
     useToastsStore.getState().addToast({ id: "update-client-error", type: "error", message: err?.message || err });
   }
 };
@@ -72,7 +73,7 @@ export const deleteClient = async (client: Client, currentOrganizationId: string
     useClientsStore.getState().removeClient(client);
     useToastsStore.getState().addToast({ id: "delete-client", type: "success", message: "Client deleted" });
 
-  } catch (err) {
+  } catch (err: any) {
     useToastsStore.getState().addToast({ id: "delete-client-error", type: "error", message: err?.message || err });
   }
 };

@@ -1,11 +1,11 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@config "./tailwind.config.js";
 
 @layer components {
+
     /*    A links whose role="link" should have a tiny narrow underline, on hover the underline should be wider and darker    */
     a[role="link"] {
-        @apply border-b-2 border-transparent hover:border-default-400;
+        @apply border-b-2 border-transparent hover:border-gray-400;
     }
 
     input {
@@ -34,11 +34,12 @@
     }
 
     .label {
-        @apply block text-small font-medium text-foreground after:ml-0.5 will-change-auto origin-top-left transition-all !duration-200 !ease-[cubic-bezier(0,0,0.2,1)] motion-reduce:transition-none;
+        @apply block text-small font-medium text-foreground after:ml-0.5 will-change-auto origin-top-left transition-all !duration-200 !ease-out motion-reduce:transition-none;
     }
 }
 
 @media print and (min-device-width: 800px) {
+
     /*Light mode for printing*/
     html {
         @apply !light;
@@ -51,6 +52,7 @@
 }
 
 @media print {
+
     /*Light mode for printing*/
     html {
         @apply !light;

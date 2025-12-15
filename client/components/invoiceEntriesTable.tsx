@@ -1,8 +1,8 @@
 import React from "react";
-import { Input, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@nextui-org/react";
+import { Input, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@heroui/react";
 import { InvoiceEntry } from "@/types";
-import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/dropdown";
-import { Button } from "@nextui-org/button";
+import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@heroui/dropdown";
+import { Button } from "@heroui/button";
 import { IconDotsVertical, IconTrash } from "@tabler/icons-react";
 
 const columns = [
@@ -28,47 +28,47 @@ type Props = {
  * The empty row and actions are hidden in edit mode
  */
 export default function InvoiceEntriesTable({ invoiceEntries, isEditing, onEntryChanged, onEntryDeleted }: Props) {
-  const renderCell = (invoiceEntry: InvoiceEntry, columnKey: React.Key, editMode) => {
+  const renderCell = (invoiceEntry: InvoiceEntry, columnKey: React.Key, editMode: boolean) => {
     const cellValue = invoiceEntry[columnKey as keyof InvoiceEntry];
 
     switch (columnKey) {
       case "name":
         return <Input aria-label={"Name"}
-                      key={invoiceEntry.id} value={cellValue}
-                      placeholder="Name" variant={"underlined"}
-                      isReadOnly={!editMode}
-                      size={"sm"}
-                      classNames={{
-                        inputWrapper: ["rounded-none"]
-                      }}
-                      onChange={(e) => onEntryChanged(columnKey, e.target.value, invoiceEntry.id)} />;
+          key={invoiceEntry.id} value={cellValue}
+          placeholder="Name" variant={"underlined"}
+          isReadOnly={!editMode}
+          size={"sm"}
+          classNames={{
+            inputWrapper: ["rounded-none"]
+          }}
+          onChange={(e) => onEntryChanged(columnKey, e.target.value, invoiceEntry.id)} />;
       case "description":
         return <Input aria-label={"Description"}
-                      key={invoiceEntry.id} value={cellValue} placeholder="Description"
-                      variant={"underlined"}
-                      size={"sm"}
-                      isReadOnly={!editMode}
-                      onChange={(e) => onEntryChanged(columnKey, e.target.value, invoiceEntry.id)} />;
+          key={invoiceEntry.id} value={cellValue} placeholder="Description"
+          variant={"underlined"}
+          size={"sm"}
+          isReadOnly={!editMode}
+          onChange={(e) => onEntryChanged(columnKey, e.target.value, invoiceEntry.id)} />;
       case "quantity":
         return <Input aria-label={"Quantity"}
-                      key={invoiceEntry.id} value={cellValue} type="number" placeholder="Quantity"
-                      variant={"underlined"}
-                      size={"sm"}
-                      isReadOnly={!editMode}
-                      onChange={(e) => onEntryChanged(columnKey, e.target.value, invoiceEntry.id)} />;
+          key={invoiceEntry.id} value={cellValue} type="number" placeholder="Quantity"
+          variant={"underlined"}
+          size={"sm"}
+          isReadOnly={!editMode}
+          onChange={(e) => onEntryChanged(columnKey, e.target.value, invoiceEntry.id)} />;
       case "unitCost":
         return <Input aria-label={"Unit Cost"}
-                      key={invoiceEntry.id} value={cellValue} type="number" placeholder="Unit Cost"
-                      className={"font-medium"}
-                      variant={"underlined"}
-                      size={"sm"}
-                      isReadOnly={!editMode}
-                      startContent={
-                        <div className="pointer-events-none flex items-center">
-                          <span className="text-default-400 text-small">$</span>
-                        </div>
-                      }
-                      onChange={(e) => onEntryChanged(columnKey, e.target.value, invoiceEntry.id)} />;
+          key={invoiceEntry.id} value={cellValue} type="number" placeholder="Unit Cost"
+          className={"font-medium"}
+          variant={"underlined"}
+          size={"sm"}
+          isReadOnly={!editMode}
+          startContent={
+            <div className="pointer-events-none flex items-center">
+              <span className="text-default-400 text-small">$</span>
+            </div>
+          }
+          onChange={(e) => onEntryChanged(columnKey, e.target.value, invoiceEntry.id)} />;
       case "total":
         const qtyValueAsNumber = Number(invoiceEntry["quantity"]);
         const costValue = Number(invoiceEntry["unitCost"]);
@@ -90,7 +90,7 @@ export default function InvoiceEntriesTable({ invoiceEntries, isEditing, onEntry
               }
             }}>
               <DropdownItem startContent={<IconTrash className={"text-default-500"} />}
-                            key={"delete"}>Delete</DropdownItem>
+                key={"delete"}>Delete</DropdownItem>
             </DropdownMenu>
           </Dropdown>}
         </div>;
@@ -109,11 +109,8 @@ export default function InvoiceEntriesTable({ invoiceEntries, isEditing, onEntry
           )}
         </TableHeader>
         <TableBody>
-          {items.map((item) => {
-            // if its the last item and we are not editing, don't render it
-            if (item.id === items[items.length - 1].id && !isEditing) {
-              return null;
-            } else return <TableRow key={item?.id} className={"p-0"}>
+          {items.filter(item => isEditing || item.id !== items[items.length - 1].id).map((item) => {
+            return <TableRow key={item?.id} className={"p-0"}>
               {(columnKey) => <TableCell className={"p-0"}>{renderCell(item, columnKey, isEditing)}</TableCell>}
             </TableRow>;
           })}

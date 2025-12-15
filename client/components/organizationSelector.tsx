@@ -1,10 +1,11 @@
 "use client";
-import { Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger } from "@nextui-org/dropdown";
-import { User } from "@nextui-org/user";
+import { Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger } from "@heroui/dropdown";
+import { Organization } from "@/types";
+import { User } from "@heroui/user";
 import { useEffect, useState } from "react";
 import { IconBuildingSkyscraper, IconCirclePlus } from "@tabler/icons-react";
 import JoinOrganizationModal from "@/components/joinOrganizationModal";
-import { useDisclosure } from "@nextui-org/react";
+import { useDisclosure } from "@heroui/react";
 import clsx from "clsx";
 import OrganizationModal from "@/components/organizationModal";
 import { loadUserWithOrganizations, setCurrentOrganization, useUserStore } from "@/services/user";
@@ -16,7 +17,7 @@ type Props = {
   defaultSubtitle?: string;
 }
 
-const OrgItem = ({ logoUrl, description, name }) => {
+const OrgItem = ({ logoUrl, description, name }: { logoUrl?: string; description?: string; name?: string }) => {
   return <User
     as="button"
     avatarProps={{
@@ -38,19 +39,20 @@ const OrgItem = ({ logoUrl, description, name }) => {
  * For more, see the **`JoinOrganizationModal`** and **`CreateOrganizationModal`** components.
  */
 export default function OrganizationSelector({
-                                               className,
-                                               hideActions,
-                                               defaultTitle = "Select an Organization",
-                                               defaultSubtitle
-                                             }: Props) {
+  className,
+  hideActions,
+  defaultTitle = "Select an Organization",
+  defaultSubtitle
+}: Props) {
   // disclosure for the join organization modal
   const { isOpen: isJoinOpen, onOpen: onJoinOpen, onOpenChange: onJoinOpenChange } = useDisclosure();
   // another disclosure for the create organization modal
   const { isOpen: isCreateOpen, onOpen: onCreateOpen, onOpenChange: onCreateOpenChange } = useDisclosure();
 
-  const [userData, currentOrg] = useUserStore(state => [state.user, state.currentOrganization]);
+  const userData = useUserStore(state => state.user);
+  const currentOrg = useUserStore(state => state.currentOrganization);
 
-  const [selectedOrganization, setSelectedOrganization] = useState(null);
+  const [selectedOrganization, setSelectedOrganization] = useState<Organization | null>(null);
 
   useEffect(() => {
     if (!userData?.Organizations || userData?.Organizations.length === 0) {
@@ -62,7 +64,7 @@ export default function OrganizationSelector({
     }
   }, [userData?.Organizations, currentOrg]);
 
-  const onActionHandler = (id) => {
+  const onActionHandler = (id: any) => {
     if (id.startsWith("action_")) {
       switch (id) {
         case "action_create":
@@ -79,7 +81,7 @@ export default function OrganizationSelector({
       if (currentOrg?.id === id) {
         return;
       }
-      setCurrentOrganization(userData?.Organizations?.find(org => org.id === id));
+      setCurrentOrganization(userData?.Organizations?.find((org: Organization) => org.id === id));
     }
   };
 
@@ -91,36 +93,36 @@ export default function OrganizationSelector({
     <OrganizationModal isOpen={isCreateOpen} onOpenChange={onCreateOpenChange} />
 
     <Dropdown placement="bottom-start" backdrop={"opaque"} isOpen={dropdownOpenTime > 0}
-              onClose={() => Date.now() - dropdownOpenTime < 50 ? null : setDropdownOpenTime(0)}
-              onOpenChange={(open) => open && setDropdownOpenTime(Date.now())}
-              className={clsx("select-none", className)}
-              showArrow={true}
-              aria-label="User Organizations">
+      onClose={() => Date.now() - dropdownOpenTime < 50 ? null : setDropdownOpenTime(0)}
+      onOpenChange={(open) => open && setDropdownOpenTime(Date.now())}
+      className={clsx("select-none", className)}
+      showArrow={true}
+      aria-label="User Organizations">
       <DropdownTrigger>
         <div className={"w-fit"}>
           <OrgItem name={selectedOrganization?.name || defaultTitle}
-                   description={selectedOrganization?.website || selectedOrganization?.phone || defaultSubtitle}
-                   logoUrl={selectedOrganization?.logoUrl} />
+            description={selectedOrganization?.website || selectedOrganization?.phone || defaultSubtitle}
+            logoUrl={selectedOrganization?.logoUrl} />
         </div>
       </DropdownTrigger>
       <DropdownMenu aria-label="User Organizations" variant="faded" onAction={onActionHandler}>
         <DropdownSection title={"Your Organizations"}>
-          {userData?.Organizations?.map((org) => (
+          {userData?.Organizations?.map((org: Organization) => (
             <DropdownItem key={org.id} textValue={org.name} className={clsx("flex flex-row items-center", {
               "bg-default-100 text-primary": currentOrg?.id === org.id
             })}>
               <OrgItem name={org.name} description={org.description} logoUrl={org.logoUrl} />
             </DropdownItem>
-          )) || <DropdownItem textValue={"No organizations found"} />}
+          )) || <DropdownItem key="no-orgs" textValue={"No organizations found"} />}
         </DropdownSection>
-        {!hideActions &&
+        {hideActions ? null :
           <DropdownSection title={"Actions"}>
             <DropdownItem key="action_create" shortcut="⌘C" description="Create a new organization"
-                          startContent={<IconBuildingSkyscraper />}>
+              startContent={<IconBuildingSkyscraper />}>
               Create
             </DropdownItem>
             <DropdownItem key="action_join" shortcut="⌘J" description="Join an existing organization"
-                          startContent={<IconCirclePlus />}>
+              startContent={<IconCirclePlus />}>
               Join
             </DropdownItem>
           </DropdownSection>

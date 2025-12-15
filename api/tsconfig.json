@@ -1,0 +1,71 @@
+{
+    "compilerOptions": {
+        "target": "ES2022",
+        "module": "commonjs",
+        "rootDir": "./",
+        "moduleResolution": "node",
+        "outDir": "./dist",
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "strict": false,
+        "noImplicitAny": false,
+        "skipLibCheck": true,
+        "resolveJsonModule": true,
+        "noImplicitThis": false,
+        "types": [
+            "node",
+            "express",
+            "body-parser",
+            "compression",
+            "cookie-parser",
+            "cors",
+            "helmet",
+            "jsonwebtoken",
+            "multer",
+            "multer-s3",
+            "uuid",
+            "bcrypt"
+        ],
+        "baseUrl": ".",
+        "paths": {
+            "pg-protocol": [
+                "utils/empty.ts"
+            ],
+            "http-errors": [
+                "utils/empty.ts"
+            ],
+            "qs": [
+                "utils/empty.ts"
+            ],
+            "range-parser": [
+                "utils/empty.ts"
+            ],
+            "send": [
+                "utils/empty.ts"
+            ],
+            "cookiejar": [
+                "utils/empty.ts"
+            ],
+            "validator": [
+                "utils/empty.ts"
+            ],
+            "punycode": [
+                "utils/empty.ts"
+            ]
+        }
+    },
+    "include": [
+        "index.ts",
+        "server.ts",
+        "db/**/*.ts",
+        "middleware/**/*.ts",
+        "routes/**/*.ts",
+        "utils/**/*.ts",
+        "validators/**/*.ts"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist",
+        "tests"
+    ]
+}

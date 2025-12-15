@@ -99,22 +99,22 @@ export const updateAndPersistInvoiceComment = async (invoiceId: string, comment:
   try {
     if (comment.id) {
       // first check if any attachments were marked for deletion. If so, remove them from the comment
-      const attachmentsToDelete = comment.Attachments.filter((a: any) => a.markedForDeletion);
+      const attachmentsToDelete = comment.Attachments?.filter((a: any) => a.markedForDeletion) || [];
       if (attachmentsToDelete.length > 0) {
         for (const a of attachmentsToDelete) {
-          await requestDeleteAttachments(comment.OrganizationId, comment.InvoiceId, comment.id, a.id);
+          await requestDeleteAttachments(comment.OrganizationId || "", comment.InvoiceId || "", comment.id, a.id);
         }
       }
 
       // then update the comment
-      comment.Attachments = comment.Attachments.filter((a: any) => !a.markedForDeletion);
-      await requestUpdateComment(comment.OrganizationId, comment.InvoiceId, comment);
-      comment.Attachments.map((a: any) => a.id = a.id || "new");
+      comment.Attachments = comment.Attachments?.filter((a: any) => !a.markedForDeletion);
+      await requestUpdateComment(comment.OrganizationId || "", comment.InvoiceId || "", comment);
+      comment.Attachments?.map((a: any) => a.id = a.id || "new");
       useInvoiceCommentsStore.getState().updateInvoiceComment(invoiceId, comment);
     } else {
       console.log("CREATE");
       // create a new comment
-      const newComment = await requestCreateComment(comment.OrganizationId, comment.InvoiceId, comment);
+      const newComment = await requestCreateComment(comment.OrganizationId || "", comment.InvoiceId || "", comment);
       useInvoiceCommentsStore.getState().addInvoiceComment(invoiceId, newComment);
     }
   } catch (err) {
@@ -124,8 +124,8 @@ export const updateAndPersistInvoiceComment = async (invoiceId: string, comment:
 
 export const deleteInvoiceComment = async (invoiceId: string, comment: Comment) => {
   try {
-    await requestDeleteComment(comment?.OrganizationId, comment?.InvoiceId, comment.id);
-    useInvoiceCommentsStore.getState().removeInvoiceComment(invoiceId, comment.id);
+    await requestDeleteComment(comment?.OrganizationId || "", comment?.InvoiceId || "", comment.id || "");
+    useInvoiceCommentsStore.getState().removeInvoiceComment(invoiceId, comment.id || "");
   } catch (err) {
     console.log(err);
   }

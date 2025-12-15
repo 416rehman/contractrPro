@@ -1,5 +1,5 @@
 import getCookieValue from "@/utils/getCookieValue";
-import jwtDecode from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import { getNewAccessToken } from "@/services/auth";
 
 type AuthOptions = {
@@ -33,7 +33,7 @@ export async function request(url: string, options: AuthOptions = { credentials:
 
   try {
     if (defaults) { // Set default options
-      if (!options?.headers?.["Content-Type"]) {
+      if (!(options?.headers as any)?.["Content-Type"]) {
         options.headers = {
           ...options.headers,
           "Content-Type": "application/json"

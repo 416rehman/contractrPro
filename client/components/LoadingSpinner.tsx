@@ -1,7 +1,7 @@
 "use client";
 
-import { Spinner } from "@nextui-org/spinner";
-import { Divider } from "@nextui-org/divider";
+import { Spinner } from "@heroui/spinner";
+import { Divider } from "@heroui/divider";
 import * as React from "react";
 
 type Props = {

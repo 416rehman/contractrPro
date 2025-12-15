@@ -11,14 +11,15 @@ interface ToastState {
 export const useToastsStore = create<ToastState>((set) => ({
   toasts: [] as Toast[] | null,
   addToast: (toast: Toast) => set((state) => {
-    if (!state.toasts) {
+    const toasts = state.toasts;
+    if (!toasts) {
       return { toasts: [toast] };
     }
     // remove any existing toasts with the same id
-    const newToasts = state.toasts.filter((t) => t.id !== toast.id);
+    const newToasts = toasts.filter((t) => t.id !== toast.id);
     newToasts.push(toast);
     return { toasts: newToasts };
   }),
-  removeToast: (id: string) => set((state) => ({ toasts: state.toasts.filter((t) => t.id !== id) })),
+  removeToast: (id: string) => set((state) => ({ toasts: state.toasts ? state.toasts.filter((t) => t.id !== id) : [] })),
   removeAllToasts: () => set({ toasts: [] })
 }));

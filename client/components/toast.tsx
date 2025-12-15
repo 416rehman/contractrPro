@@ -1,9 +1,9 @@
 "use client";
 
 import { ReactNode, useEffect, useState } from "react";
-import { Card, CardBody } from "@nextui-org/card";
-import { Progress } from "@nextui-org/progress";
-import { Spacer } from "@nextui-org/spacer";
+import { Card, CardBody } from "@heroui/card";
+import { Progress } from "@heroui/progress";
+import { Spacer } from "@heroui/spacer";
 import {
   IconAlertTriangleFilled,
   IconBug,
@@ -11,7 +11,7 @@ import {
   IconInfoCircleFilled,
   IconX
 } from "@tabler/icons-react";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/button";
 
 export interface Toast {
   id: string;
@@ -47,17 +47,17 @@ export interface Toast {
  * - The **startContent** is shown at the start (left side) of the toast.
  */
 export default function Toast({
-                                title,
-                                type,
-                                durationInSecs,
-                                message,
-                                body,
-                                showDuration,
-                                hideCloseButton,
-                                onClose,
-                                isPressable,
-                                onPress
-                              }: Toast) {
+  title,
+  type,
+  durationInSecs,
+  message,
+  body,
+  showDuration,
+  hideCloseButton,
+  onClose,
+  isPressable,
+  onPress
+}: Toast) {
   const [currentProgress, setCurrentProgress] = useState(0);
   const [paused, setPaused] = useState(false);
 
@@ -65,7 +65,7 @@ export default function Toast({
     const smoothingFactor = 10;
     const interval = setInterval(() => {
       if (!paused) {
-        setCurrentProgress((prev) => prev + (100 / (durationInSecs * smoothingFactor)));
+        setCurrentProgress((prev) => prev + (100 / ((durationInSecs || 5) * smoothingFactor)));
       }
     }, 1000 / smoothingFactor);
 
@@ -95,14 +95,14 @@ export default function Toast({
 
   return (
     <Card isPressable={isPressable} onPress={onPress} onMouseEnter={() => setPaused(true)}
-          onMouseLeave={() => setPaused(false)}
-          shadow={"sm"}
-          className={"px-5 py-3 rounded-md w-fit min-w-1/4 max-w-1/2 backdrop-blur-md " +
-            (type === "success" ? " bg-mygreen-50 text-mygreen-500 " :
-              type === "info" ? " bg-myblue-50 text-myblue-500" :
-                type === "error" ? " bg-myred-50 text-myred-500" :
-                  type === "warning" ? " bg-myorange-50 text-myorange-500" :
-                    " bg-foreground-200 text-foreground-900")}
+      onMouseLeave={() => setPaused(false)}
+      shadow={"sm"}
+      className={"px-5 py-3 rounded-md w-fit min-w-1/4 max-w-1/2 backdrop-blur-md " +
+        (type === "success" ? " bg-mygreen-50 text-mygreen-500 " :
+          type === "info" ? " bg-myblue-50 text-myblue-500" :
+            type === "error" ? " bg-myred-50 text-myred-500" :
+              type === "warning" ? " bg-myorange-50 text-myorange-500" :
+                " bg-foreground-200 text-foreground-900")}
     >
       <CardBody className={"flex flex-row p-0 gap-4 w-full"}>
         {icon()}
@@ -122,12 +122,12 @@ export default function Toast({
         <>
           <Spacer y={1} />
           <Progress value={currentProgress} size={"sm"} color={"default"}
-                    className={"w-full"} />
+            className={"w-full"} />
         </>
       )}
       {!hideCloseButton && (
         <Button isIconOnly className={"absolute top-1 right-1 p-0 m-0 text-foreground-500"} size={"sm"}
-                variant={"light"} onPress={onClose}>
+          variant={"light"} onPress={onClose}>
           <IconX stroke={3} size={"12"} />
         </Button>
       )}

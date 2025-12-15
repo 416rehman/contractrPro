@@ -35,7 +35,7 @@ export default async function AuthRedirectServer({ to, children, redirectIf }: A
     console.log("To redirect", to);
     console.log("Redirect if", redirectIf);
     console.log("Children", children);
-    console.log(err.message || "Error getting loggedInUser", err);
+    console.log((err as any).message || "Error getting loggedInUser", err);
   }
 
   return <AuthRedirect redirectIf={redirectIf} to={to}>{children}</AuthRedirect>;

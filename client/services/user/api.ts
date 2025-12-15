@@ -12,7 +12,7 @@ export async function requestUserWithOrganizations(UserId = "me") {
     });
 
     return Promise.resolve(data);
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
     return Promise.reject(err?.message || err);
   }
@@ -27,7 +27,7 @@ export async function requestCreateOrganization(organization: Organization) {
     });
 
     return Promise.resolve(data);
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
     return Promise.reject(err?.message || err);
   }
@@ -42,7 +42,7 @@ export async function requestUpdateOrganization(organization: Organization) {
     });
 
     return Promise.resolve(data);
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
     return Promise.reject(err?.message || err);
   }
@@ -56,13 +56,13 @@ export async function requestDeleteOrganization(organizationId: string) {
     });
 
     return Promise.resolve(data);
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
     return Promise.reject(err?.message || err);
   }
 }
 
-export async function requestAvatarChange(avatarUrl, UserId = "me") {
+export async function requestAvatarChange(avatarUrl: any, UserId = "me") {
   try {
     const data = await request(`${apiUrl}/users/${UserId}/avatar`, {
       method: "POST",
@@ -71,13 +71,13 @@ export async function requestAvatarChange(avatarUrl, UserId = "me") {
     });
 
     return Promise.resolve(data);
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
     return Promise.reject(err?.message || err);
   }
 }
 
-export async function requestNameChange(name, UserId = "me") {
+export async function requestNameChange(name: any, UserId = "me") {
   try {
     const data = await request(`${apiUrl}/users/${UserId}/name`, {
       method: "POST",
@@ -86,13 +86,13 @@ export async function requestNameChange(name, UserId = "me") {
     });
 
     return Promise.resolve(data);
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
     return Promise.reject(err?.message || err);
   }
 }
 
-export async function requestEmailChange(email, UserId = "me") {
+export async function requestEmailChange(email: any, UserId = "me") {
   try {
     const data = await request(`${apiUrl}/users/${UserId}/email`, {
       method: "POST",
@@ -101,13 +101,13 @@ export async function requestEmailChange(email, UserId = "me") {
     });
 
     return Promise.resolve(data);
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
     return Promise.reject(err?.message || err);
   }
 }
 
-export async function requestPhoneChange(phoneCountry, phoneNumber, UserId = "me") {
+export async function requestPhoneChange(phoneCountry: any, phoneNumber: any, UserId = "me") {
   try {
     const data = await request(`${apiUrl}/users/${UserId}/phone`, {
       method: "POST",
@@ -116,13 +116,13 @@ export async function requestPhoneChange(phoneCountry, phoneNumber, UserId = "me
     });
 
     return Promise.resolve(data);
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
     return Promise.reject(err?.message || err);
   }
 }
 
-export async function getOrganizationSummary(organizationId) {
+export async function getOrganizationSummary(organizationId: any) {
   try {
     const data = await request(`${apiUrl}/organizations/${organizationId}/summary`, {
       method: "GET",
@@ -130,7 +130,7 @@ export async function getOrganizationSummary(organizationId) {
     });
 
     return Promise.resolve(data);
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
     return Promise.reject(err?.message || err);
   }

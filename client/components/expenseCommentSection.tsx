@@ -7,7 +7,7 @@ import {
 } from "@/services/expenses/comments";
 import { useEffect, useState } from "react";
 import { useToastsStore } from "@/services/toast";
-import { Card, CardBody, CardHeader } from "@nextui-org/card";
+import { Card, CardBody, CardHeader } from "@heroui/card";
 import CommentComponent from "@/components/commentComponent";
 
 type Props = {
@@ -41,7 +41,7 @@ export default function ExpenseCommentSection({ expense }: Props) {
 
   const [newComment, setNewComment] = useState<Comment>(emptyComment);
 
-  const commentSaveHandler = async (editedComment) => {
+  const commentSaveHandler = async (editedComment: Comment) => {
     try {
       if (!editedComment?.id) {
         // if the comment doesnt exist and has no content or attachments, dont save it
@@ -52,25 +52,25 @@ export default function ExpenseCommentSection({ expense }: Props) {
         editedComment.OrganizationId = expense?.OrganizationId;
       }
 
-      await updateAndPersistExpenseComment(expense?.id, editedComment);
+      await updateAndPersistExpenseComment(expense?.id!, editedComment);
     } catch (e) {
       useToastsStore.getState().addToast({
         id: "comment-save-error",
         title: "Error",
-        message: e.message || "An error occurred while saving the comment",
+        message: (e as any).message || "An error occurred while saving the comment",
         type: "error"
       });
     }
   };
 
-  const commentDeleteHandler = async (comment) => {
+  const commentDeleteHandler = async (comment: Comment) => {
     try {
-      await deleteExpenseComment(expense?.id, comment);
+      await deleteExpenseComment(expense?.id!, comment);
     } catch (e) {
       useToastsStore.getState().addToast({
         id: "comment-delete-error",
         title: "Error",
-        message: e.message || "An error occurred while deleting the comment",
+        message: (e as any).message || "An error occurred while deleting the comment",
         type: "error"
       });
     }
@@ -86,10 +86,11 @@ export default function ExpenseCommentSection({ expense }: Props) {
 
   useEffect(() => {
     setNewComment((prev) => ({ ...emptyComment }));
-    const expenseComments = expenseCommentsMap[expense?.id];
+    if (!expense?.id) return;
+    const expenseComments = expenseCommentsMap[expense.id];
     if (!expenseComments) return;
     if (!expenseComments.comments) expenseComments.comments = [];
-    expenseComments.comments.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    expenseComments.comments.sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
     setCurrentExpenseComments(expenseComments);
   }, [expenseCommentsMap, expense]);
 
@@ -97,14 +98,14 @@ export default function ExpenseCommentSection({ expense }: Props) {
     <Card shadow={"none"} className={"border border-default-100 rounded-md print:hidden"}>
       <CardHeader>
         <span
-          className={"font-medium text-default-500"}>{expenseCommentsMap[expense?.id]?.comments?.length ? expenseCommentsMap[expense?.id]?.comments?.length + " Comments" : "Be the first to comment"}</span>
+          className={"font-medium text-default-500"}>{currentExpenseComments?.comments?.length ? currentExpenseComments?.comments?.length + " Comments" : "Be the first to comment"}</span>
       </CardHeader>
       <CardBody className={"flex flex-col gap-5"}>
         {currentExpenseComments?.comments?.length > 0 &&
-          currentExpenseComments?.comments?.map((comment) => (
+          currentExpenseComments?.comments?.map((comment: Comment) => (
             <CommentComponent key={comment.id} comment={comment}
-                              onSave={commentSaveHandler}
-                              onDelete={() => commentDeleteHandler(comment)} />))
+              onSave={commentSaveHandler}
+              onDelete={() => commentDeleteHandler(comment)} />))
         }
         <CommentComponent comment={newComment} onSave={commentSaveHandler} />
       </CardBody>

@@ -1,10 +1,10 @@
-import { Accordion, AccordionItem, Button, Card, CardBody, CardFooter, Image, Input } from "@nextui-org/react";
+import { Accordion, AccordionItem, Button, Card, CardBody, CardFooter, Image, Input } from "@heroui/react";
 import { IconChevronLeft, IconHash } from "@tabler/icons-react";
 import { setCurrentOrganization, updateOrganizationAndPersist, useUserStore } from "@/services/user";
 import { useToastsStore } from "@/services/toast";
 import { useEffect, useState } from "react";
 import { Organization } from "@/types";
-import moment from "moment/moment";
+import { formatDistanceToNow } from "date-fns";
 
 const emptyOrg = {
   id: "",
@@ -82,18 +82,18 @@ export default function OrganizationForm({ onSave, organization, editing = true 
     <div className={"flex flex-col gap-4 items-end"}>
       <div>
         <Input label="Name"
-               isReadOnly={!editing}
-               autoFocus
-               isRequired={true}
-               startContent={
-                 <IconHash
-                   className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
-               }
-               placeholder={(user?.name || "John Doe") + "'s Awesome Organization"}
-               variant={editing ? "flat" : "underlined"}
-               value={organizationData?.name}
-               onChange={(e) => setOrganization({ ...organizationData, name: e.target.value })}
-               description={"This will be displayed on your invoices and estimates, and cannot be changed later."} />
+          isReadOnly={!editing}
+          autoFocus
+          isRequired={true}
+          startContent={
+            <IconHash
+              className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
+          }
+          placeholder={(user?.name || "John Doe") + "'s Awesome Organization"}
+          variant={editing ? "flat" : "underlined"}
+          value={organizationData?.name}
+          onChange={(e) => setOrganization({ ...organizationData, name: e.target.value })}
+          description={"This will be displayed on your invoices and estimates, and cannot be changed later."} />
         <Accordion
           showDivider={true}
           variant="splitted"
@@ -101,108 +101,108 @@ export default function OrganizationForm({ onSave, organization, editing = true 
           itemClasses={{ base: "bg-default-700" }}
         >
           <AccordionItem key="about" aria-label="about" title="About"
-                         indicator={<IconChevronLeft />}
-                         className={"py-2 px-2"}
-                         subtitle={"Tell us about your organization. This information will be displayed on your invoices and estimates."}>
+            indicator={<IconChevronLeft />}
+            className={"py-2 px-2"}
+            subtitle={"Tell us about your organization. This information will be displayed on your invoices and estimates."}>
             <div className={"border-none flex flex-col gap-4"}>
               <Input label="Description" placeholder="This is my awesome organization"
-                     variant={editing ? "flat" : "underlined"}
-                     isReadOnly={!editing}
-                     value={organizationData.description}
-                     onChange={(e) => setOrganization({
-                       ...organizationData,
-                       description: e.target.value
-                     })} />
+                variant={editing ? "flat" : "underlined"}
+                isReadOnly={!editing}
+                value={organizationData.description}
+                onChange={(e) => setOrganization({
+                  ...organizationData,
+                  description: e.target.value
+                })} />
               <Input label="Email" placeholder="contact@cool.org" variant={editing ? "flat" : "underlined"}
-                     value={organizationData.email}
-                     isReadOnly={!editing}
-                     onChange={(e) => setOrganization({
-                       ...organizationData,
-                       email: e.target.value
-                     })}
-                     description={"This is how other's can contact your organization (optional)"} />
+                value={organizationData.email}
+                isReadOnly={!editing}
+                onChange={(e) => setOrganization({
+                  ...organizationData,
+                  email: e.target.value
+                })}
+                description={"This is how other's can contact your organization (optional)"} />
               <Input label="Phone" placeholder="(123) 456-7890" variant={editing ? "flat" : "underlined"}
-                     value={organizationData.phone}
-                     isReadOnly={!editing}
-                     onChange={(e) => setOrganization({
-                       ...organizationData,
-                       phone: e.target.value
-                     })}
-                     description={"A phone number for your organization (optional)"} />
+                value={organizationData.phone}
+                isReadOnly={!editing}
+                onChange={(e) => setOrganization({
+                  ...organizationData,
+                  phone: e.target.value
+                })}
+                description={"A phone number for your organization (optional)"} />
             </div>
           </AccordionItem>
           <AccordionItem key="address" aria-label="address" title="Address"
-                         indicator={<IconChevronLeft />}
-                         subtitle={"Your company's public physical address."}>
+            indicator={<IconChevronLeft />}
+            subtitle={"Your company's public physical address."}>
             <div className={"border-none flex flex-col gap-2"}>
               <Input label="Address Line 1" placeholder="123 Main St" variant={editing ? "flat" : "underlined"}
-                     value={organizationData.Address.addressLine1}
-                     isReadOnly={!editing}
-                     onChange={(e) => setOrganization({
-                       ...organizationData,
-                       Address: {
-                         ...organizationData.Address,
-                         addressLine1: e.target.value
-                       }
-                     })} />
+                value={organizationData.Address.addressLine1}
+                isReadOnly={!editing}
+                onChange={(e) => setOrganization({
+                  ...organizationData,
+                  Address: {
+                    ...organizationData.Address,
+                    addressLine1: e.target.value
+                  }
+                })} />
               <Input label="Address Line 2" placeholder="Unit 123" variant={editing ? "flat" : "underlined"}
-                     value={organizationData.Address.addressLine2}
-                     isReadOnly={!editing}
-                     onChange={(e) => setOrganization({
-                       ...organizationData,
-                       Address: {
-                         ...organizationData.Address,
-                         addressLine2: e.target.value
-                       }
-                     })} />
+                value={organizationData.Address.addressLine2}
+                isReadOnly={!editing}
+                onChange={(e) => setOrganization({
+                  ...organizationData,
+                  Address: {
+                    ...organizationData.Address,
+                    addressLine2: e.target.value
+                  }
+                })} />
               <Input label="City" placeholder="Toronto" variant={editing ? "flat" : "underlined"}
-                     value={organizationData.Address.city}
-                     isReadOnly={!editing}
-                     onChange={(e) => setOrganization({
-                       ...organizationData,
-                       Address: { ...organizationData.Address, city: e.target.value }
-                     })} />
+                value={organizationData.Address.city}
+                isReadOnly={!editing}
+                onChange={(e) => setOrganization({
+                  ...organizationData,
+                  Address: { ...organizationData.Address, city: e.target.value }
+                })} />
               <div className={"flex flex-row gap-2"}>
                 <Input label="Province" placeholder="Ontario" variant={editing ? "flat" : "underlined"}
-                       value={organizationData.Address.province}
-                       isReadOnly={!editing}
-                       onChange={(e) => setOrganization({
-                         ...organizationData,
-                         Address: {
-                           ...organizationData.Address,
-                           province: e.target.value
-                         }
-                       })} />
+                  value={organizationData.Address.province}
+                  isReadOnly={!editing}
+                  onChange={(e) => setOrganization({
+                    ...organizationData,
+                    Address: {
+                      ...organizationData.Address,
+                      province: e.target.value
+                    }
+                  })} />
 
                 <Input label="Postal Code" placeholder="A1B 2C3" variant={editing ? "flat" : "underlined"}
-                       value={organizationData.Address.postalCode}
-                       isReadOnly={!editing}
-                       onChange={(e) => setOrganization({
-                         ...organizationData,
-                         Address: {
-                           ...organizationData.Address,
-                           postalCode: e.target.value
-                         }
-                       })} />
+                  value={organizationData.Address.postalCode}
+                  isReadOnly={!editing}
+                  onChange={(e) => setOrganization({
+                    ...organizationData,
+                    Address: {
+                      ...organizationData.Address,
+                      postalCode: e.target.value
+                    }
+                  })} />
               </div>
 
               <Input label="Country" placeholder="Canada" variant={editing ? "flat" : "underlined"}
-                     value={organizationData.Address.country}
-                     isReadOnly={!editing}
-                     onChange={(e) => setOrganization({
-                       ...organizationData,
-                       Address: { ...organizationData.Address, country: e.target.value }
-                     })} />
+                value={organizationData.Address.country}
+                isReadOnly={!editing}
+                onChange={(e) => setOrganization({
+                  ...organizationData,
+                  Address: { ...organizationData.Address, country: e.target.value }
+                })} />
             </div>
 
           </AccordionItem>
         </Accordion>
         <Input label="Logo URL" placeholder="https://cool.org/logo.png" variant={editing ? "flat" : "underlined"}
-               value={organizationData.logoUrl}
-               isReadOnly={!editing}
-               onChange={(e) => setOrganization({ ...organizationData, logoUrl: e.target.value })}
-               errorMessage={errors["logoUrl"]}
-               description={"A URL to your organization's logo (optional)"} />
+          value={organizationData.logoUrl}
+          isReadOnly={!editing}
+          onChange={(e) => setOrganization({ ...organizationData, logoUrl: e.target.value })}
+          errorMessage={errors["logoUrl"]}
+          description={"A URL to your organization's logo (optional)"} />
         {organizationData.logoUrl && (
           <div className={"flex flex-row gap-2 justify-center"}>
             <Card className={"w-1/2"}>
@@ -230,8 +230,8 @@ export default function OrganizationForm({ onSave, organization, editing = true 
       <div className={"flex flex-row justify-between w-full items-center"}>
         {organization?.createdAt && (
           <div className={"flex flex-col"}>
-            <span className={"text-default-500 text-xs"}>Created {moment(organization?.createdAt).fromNow()}</span>
-            <span className={"text-default-500 text-xs"}>Updated {moment(organization?.updatedAt).fromNow()}</span>
+            <span className={"text-default-500 text-xs"}>Created {formatDistanceToNow(new Date(organization?.createdAt), { addSuffix: true })}</span>
+            <span className={"text-default-500 text-xs"}>Updated {formatDistanceToNow(new Date(organization?.updatedAt), { addSuffix: true })}</span>
           </div>
         )}
         {editing && (

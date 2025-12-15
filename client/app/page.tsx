@@ -1,7 +1,6 @@
 import { Metadata } from "next";
 import { siteConfig } from "@/site";
 import HomeCTA from "@/components/homeCTA";
-import React from "react";
 import AuthSwitchServer from "@/components/server/authSwitchServer";
 import Dashboard from "@/components/dashboard";
 
@@ -29,8 +28,8 @@ export default function Home() {
       contentIfLoggedIn={
         <Dashboard />
       } contentIfLoggedOut={
-      <HomeCTA />
-    } />
+        <HomeCTA />
+      } />
     </section>
   );
 }

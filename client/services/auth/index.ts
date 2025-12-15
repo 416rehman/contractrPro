@@ -1,5 +1,5 @@
 import { requestAccessToken, requestCreateAccount, requestLogout, requestRefreshToken } from "@/services/auth/api";
-import jwtDecode from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import { useUserStore } from "@/services/user";
 import { removeLocalStorageItem, setLocalStorageItem } from "@/utils/safeLocalStorage";
 

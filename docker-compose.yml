@@ -1,0 +1,56 @@
+services:
+    # postgres for local dev
+    db:
+        image: postgres:alpine
+        environment:
+            POSTGRES_DB: contractrpro
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+        ports:
+            - "5432:5432"
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U postgres"]
+            interval: 5s
+            timeout: 5s
+            retries: 5
+
+    # api with nodemon hot reload
+    api:
+        build:
+            context: ./api
+            dockerfile: Dockerfile.dev
+        ports:
+            - "4000:4000"
+        environment:
+            - DATABASE_URL=postgresql://postgres:postgres@db:5432/contractrpro
+            - NODE_ENV=development
+            - LOG_LEVEL=debug
+        volumes:
+            - ./api:/app
+            - api_node_modules:/app/node_modules
+        depends_on:
+            db:
+                condition: service_healthy
+
+    # next.js client with hot reload
+    client:
+        build:
+            context: ./client
+            dockerfile: Dockerfile.dev
+        ports:
+            - "3000:3000"
+        environment:
+            - NODE_ENV=development
+            - WATCHPACK_POLLING=true
+        volumes:
+            - ./client:/app
+            - client_node_modules:/app/node_modules
+            - client_next:/app/.next
+
+volumes:
+    postgres_data:
+    api_node_modules:
+    client_node_modules:
+    client_next:

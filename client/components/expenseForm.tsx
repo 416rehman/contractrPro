@@ -10,10 +10,10 @@ import {
   ModalHeader,
   Textarea,
   useDisclosure
-} from "@nextui-org/react";
-import { Card, CardBody, CardHeader } from "@nextui-org/card";
+} from "@heroui/react";
+import { Card, CardBody, CardHeader } from "@heroui/card";
 import React, { useEffect, useState } from "react";
-import { Button, ButtonGroup } from "@nextui-org/button";
+import { Button, ButtonGroup } from "@heroui/button";
 import {
   Icon123,
   IconCalendarStar,
@@ -26,14 +26,15 @@ import {
 } from "@tabler/icons-react";
 import clsx from "clsx";
 import { useUserStore } from "@/services/user";
-import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/dropdown";
+import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@heroui/dropdown";
 import OrganizationSelector from "@/components/organizationSelector";
 import { Expense } from "@/types";
 import ExpenseEntriesTable from "@/components/expenseEntriesTable";
-import { Divider } from "@nextui-org/divider";
+
+import { Divider } from "@heroui/divider";
 import VendorSelector from "@/components/vendorSelector";
-import { Tooltip } from "@nextui-org/tooltip";
-import moment from "moment";
+import { Tooltip } from "@heroui/tooltip";
+import { formatDistanceToNow } from "date-fns";
 import ExpenseCommentSection from "@/components/expenseCommentSection";
 
 type Props = {
@@ -64,42 +65,51 @@ export default function Expenseform({ id, className }: Props) {
   }, [expense]);
 
   const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEditedExpense({ ...editedExpense, [e.target.name]: e.target.value });
+    setEditedExpense({ ...editedExpense!, [e.target.name]: e.target.value } as Expense);
   };
 
   const onEntryChangedHandler = (name: string, value: any, id: string) => {
     if (!id) return;
 
     // if an entry with the given id does not exist, create a new entry
-    if (!editedExpense?.ExpenseEntries?.find((entry) => entry.id === id)) {
-      setEditedExpense((prev) => ({
-        ...prev,
-        ExpenseEntries: [...(prev?.ExpenseEntries || []), { id, [name]: value }]
-      }));
+    if (!editedExpense?.ExpenseEntries?.find((entry: any) => entry.id === id)) {
+      setEditedExpense((prev: Expense | null | undefined) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          ExpenseEntries: [...(prev?.ExpenseEntries || []), { id, [name]: value }]
+        } as Expense
+      });
     }
     // otherwise, update the entry with the given id
     else {
-      setEditedExpense((prev) => ({
-        ...prev,
-        ExpenseEntries: prev?.ExpenseEntries?.map((entry) => entry.id === id ? { ...entry, [name]: value } : entry)
-      }));
+      setEditedExpense((prev: Expense | null | undefined) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          ExpenseEntries: prev?.ExpenseEntries?.map((entry: any) => entry.id === id ? { ...entry, [name]: value } : entry)
+        } as Expense
+      });
     }
   };
 
   const onEntryDeleteHandler = (id: string) => {
     if (!id) return;
 
-    setEditedExpense((prev) => ({
-      ...prev,
-      ExpenseEntries: prev?.ExpenseEntries?.filter((entry) => entry.id !== id)
-    }));
+    setEditedExpense((prev: Expense | null | undefined) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        ExpenseEntries: prev?.ExpenseEntries?.filter((entry: any) => entry.id !== id)
+      } as Expense
+    });
   };
 
   const onSaveHandler = async () => {
     // Save the edited ExpenseEntries here
     setIsSaving(true);
 
-    await updateExpenses(editedExpense, currentOrg?.id);
+    await updateExpenses(editedExpense!, currentOrg?.id);
 
     setIsEditing(!editedExpense?.id);
     if (!editedExpense?.id) {
@@ -120,7 +130,7 @@ export default function Expenseform({ id, className }: Props) {
     // Delete the ExpenseEntries here
     setIsSaving(true);
     setIsEditing(false);
-    await deleteExpense(editedExpense, currentOrg?.id);
+    await deleteExpense(editedExpense!, currentOrg?.id);
     setIsSaving(false);
   };
 
@@ -172,8 +182,8 @@ export default function Expenseform({ id, className }: Props) {
               {expense?.id && (
                 <ButtonGroup variant="flat" size={"sm"} color={"default"} className={"print:hidden"}>
                   <Button startContent={<IconEdit />}
-                          onPress={() => setIsEditing(true)}
-                          isDisabled={isEditing}>
+                    onPress={() => setIsEditing(true)}
+                    isDisabled={isEditing}>
                     Edit
                   </Button>
                   <Dropdown placement="bottom-start">
@@ -186,12 +196,12 @@ export default function Expenseform({ id, className }: Props) {
                       <DropdownItem key={"print"} description={"Print this ExpenseEntries"} onPress={() => {
                         window.print();
                       }}
-                                    startContent={<IconPrinter className={"text-default-500"} />} shortcut={"P"}>
+                        startContent={<IconPrinter className={"text-default-500"} />} shortcut={"P"}>
                         Print
                       </DropdownItem>
                       <DropdownItem key={"delete"} description={"Delete this ExpenseEntries"} onPress={onOpen}
-                                    className={"text-danger-500"}
-                                    startContent={<IconTrash className={"text-default-500"} />} shortcut={"D"}>
+                        className={"text-danger-500"}
+                        startContent={<IconTrash className={"text-default-500"} />} shortcut={"D"}>
                         Delete
                       </DropdownItem>
                     </DropdownMenu>
@@ -208,49 +218,52 @@ export default function Expenseform({ id, className }: Props) {
                 label={"Purchase from vendor"}
                 onVendorChange={(changedVendors) => {
                   if (changedVendors.length > 0 && changedVendors[0]?.id) {
-                    setEditedExpense((prev) => ({ ...prev, VendorId: changedVendors[0]?.id }));
+                    setEditedExpense((prev: Expense | null | undefined) => {
+                      if (!prev) return prev;
+                      return { ...prev, VendorId: changedVendors[0]?.id } as Expense
+                    });
                   }
                 }}
-                selectedVendorIds={[editedExpense?.VendorId]}
+                selectedVendorIds={editedExpense?.VendorId ? [editedExpense.VendorId] : []}
               />
 
               <div className={"flex flex-row gap-4"}>
                 <Input label={"Expense #"} placeholder={"Expense number"} value={editedExpense?.expenseNumber}
-                       startContent={<Icon123 className={"text-default-400"} size={"20"} />}
-                       isReadOnly={!isEditing} name={"expenseNumber"} onChange={onChangeHandler}
-                       isRequired={true}
-                       variant={isEditing ? "flat" : "bordered"} labelPlacement={"outside"} />
+                  startContent={<Icon123 className={"text-default-400"} size={"20"} />}
+                  isReadOnly={!isEditing} name={"expenseNumber"} onChange={onChangeHandler}
+                  isRequired={true}
+                  variant={isEditing ? "flat" : "bordered"} labelPlacement={"outside"} />
 
                 <Input label={"Date purchased"} placeholder={"31-12-2023"}
-                       value={editedExpense?.date && new Date(editedExpense?.date).toISOString().slice(0, -1)}
-                       isReadOnly={!isEditing}
-                       type={"datetime-local"} name={"date"} onChange={onChangeHandler}
-                       startContent={<IconCalendarStar className={"text-default-400"} size={"20"} />}
-                       isRequired={true}
-                       variant={isEditing ? "flat" : "bordered"} labelPlacement={"outside"} />
+                  value={editedExpense?.date && new Date(editedExpense?.date).toISOString().slice(0, -1)}
+                  isReadOnly={!isEditing}
+                  type={"datetime-local"} name={"date"} onChange={onChangeHandler}
+                  startContent={<IconCalendarStar className={"text-default-400"} size={"20"} />}
+                  isRequired={true}
+                  variant={isEditing ? "flat" : "bordered"} labelPlacement={"outside"} />
               </div>
               <div className={"flex flex-row gap-4"}>
                 <Textarea label={"Description"} placeholder={"Description"} value={editedExpense?.description}
-                          isReadOnly={!isEditing} name={"description"} onChange={onChangeHandler}
-                          variant={isEditing ? "flat" : "underlined"} labelPlacement={"outside"} />
+                  isReadOnly={!isEditing} name={"description"} onChange={onChangeHandler}
+                  variant={isEditing ? "flat" : "underlined"} labelPlacement={"outside"} />
               </div>
-              <ExpenseEntriesTable expenseEntries={editedExpense?.ExpenseEntries} isEditing={isEditing}
-                                   onEntryDeleted={onEntryDeleteHandler}
-                                   onEntryChanged={onEntryChangedHandler} />
+              <ExpenseEntriesTable expenseEntries={editedExpense?.ExpenseEntries || []} isEditing={isEditing}
+                onEntryDeleted={onEntryDeleteHandler}
+                onEntryChanged={onEntryChangedHandler} />
               <div className={"flex flex-row gap-4 justify-between"}>
                 <Input label={"Tax Rate"} placeholder={"13"} value={editedExpense?.taxRate} className={"w-1/4"}
-                       size={"sm"}
-                       isReadOnly={!isEditing}
-                       startContent={<IconPercentage className={"text-default-400"} size={"20"} />}
-                       type={"number"} name={"taxRate"} onChange={onChangeHandler}
-                       variant={isEditing ? "flat" : "bordered"} labelPlacement={"outside"} />
+                  size={"sm"}
+                  isReadOnly={!isEditing}
+                  startContent={<IconPercentage className={"text-default-400"} size={"20"} />}
+                  type={"number"} name={"taxRate"} onChange={onChangeHandler}
+                  variant={isEditing ? "flat" : "bordered"} labelPlacement={"outside"} />
                 <div className={"flex flex-col gap-2 items-end"}>
                   <span className={"text-sm font-medium text-default-500"}>Subtotal: $<span
-                    className={"text-default-800"}>{editedExpense?.ExpenseEntries?.reduce((acc, entry) => acc + entry.unitCost * entry.quantity, 0)}</span></span>
+                    className={"text-default-800"}>{editedExpense?.ExpenseEntries?.reduce((acc: number, entry: any) => acc + entry.unitCost * entry.quantity, 0)}</span></span>
                   <span className={"text-sm font-medium text-default-500"}>Tax: $<span
-                    className={"text-default-800"}>{(editedExpense?.ExpenseEntries?.reduce((acc, entry) => acc + entry.unitCost * entry.quantity, 0) * (editedExpense?.taxRate || 0) / 100).toFixed(2)}</span></span>
+                    className={"text-default-800"}>{(editedExpense?.ExpenseEntries?.reduce((acc: number, entry: any) => acc + entry.unitCost * entry.quantity, 0) * (editedExpense?.taxRate || 0) / 100).toFixed(2)}</span></span>
                   <span className={"text-medium font-medium text-default-500"}>Total: $<span
-                    className={"text-default-800"}>{(editedExpense?.ExpenseEntries?.reduce((acc, entry) => acc + entry.unitCost * entry.quantity, 0) * (1 + (editedExpense?.taxRate || 0) / 100)).toFixed(2)}</span></span>
+                    className={"text-default-800"}>{(editedExpense?.ExpenseEntries?.reduce((acc: number, entry: any) => acc + entry.unitCost * entry.quantity, 0) * (1 + (editedExpense?.taxRate || 0) / 100)).toFixed(2)}</span></span>
 
                 </div>
               </div>
@@ -261,12 +274,12 @@ export default function Expenseform({ id, className }: Props) {
             <div className={"flex flex-col gap-1 items-start"}>
               {expense?.updatedAt &&
                 <Tooltip content={expense?.updatedAt}>
-                  <span className={"text-xs text-default-500"}>Updated {moment(expense?.updatedAt).fromNow()}</span>
+                  <span className={"text-xs text-default-500"}>Updated {formatDistanceToNow(new Date(expense?.updatedAt), { addSuffix: true })}</span>
                 </Tooltip>
               }
               {expense?.createdAt && (
                 <Tooltip content={expense?.createdAt}>
-                  <span className={"text-xs text-default-500"}>Created {moment(expense?.createdAt).fromNow()}</span>
+                  <span className={"text-xs text-default-500"}>Created {formatDistanceToNow(new Date(expense?.createdAt), { addSuffix: true })}</span>
                 </Tooltip>
               )}
             </div>
@@ -274,12 +287,12 @@ export default function Expenseform({ id, className }: Props) {
               {isEditing && expense?.id ? (
                 <>
                   <Button variant={"light"} onPress={onCancelHandler} color={"danger"}
-                          className={"font-medium hover:bg-danger-200"}>
+                    className={"font-medium hover:bg-danger-200"}>
                     Cancel
                   </Button>
                   <Button variant={"flat"} onPress={onSaveHandler} isLoading={isSaving}
-                          className={"text-default-800 font-medium hover:bg-primary-200"}
-                          startContent={<IconDeviceFloppy />}>
+                    className={"text-default-800 font-medium hover:bg-primary-200"}
+                    startContent={<IconDeviceFloppy />}>
                     Save
                   </Button>
                 </>
@@ -287,8 +300,8 @@ export default function Expenseform({ id, className }: Props) {
               {/*  if no ExpenseEntries Id this is a new ExpenseEntries */}
               {!expense?.id && (
                 <Button variant={"flat"} onPress={onSaveHandler} isLoading={isSaving}
-                        className={"text-default-800 font-medium hover:bg-primary-200"}
-                        startContent={<IconDeviceFloppy />}>
+                  className={"text-default-800 font-medium hover:bg-primary-200"}
+                  startContent={<IconDeviceFloppy />}>
                   Save
                 </Button>
               )}

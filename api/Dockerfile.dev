@@ -1,0 +1,21 @@
+# dev mode dockefile - hot reload via nodemon
+FROM node:24-alpine
+
+# some native deps need python
+RUN apk add --no-cache python3 make g++
+
+WORKDIR /app
+
+RUN npm install -g pnpm
+
+# copy lock files first for layer caching
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install
+
+# src gets mounted at runtime, but we copy anyway for initial setup
+COPY . .
+
+EXPOSE 4000
+
+# nodemon watches for changes
+CMD ["pnpm", "run", "dev"]

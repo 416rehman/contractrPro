@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/react";
+import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@heroui/react";
 
 export enum EJobStatus {
   OPEN,
@@ -8,7 +8,7 @@ export enum EJobStatus {
   CANCELLED
 }
 
-const colorClasses = {
+const colorClasses: Record<number, string> = {
   [EJobStatus.OPEN]: "text-blue-500",
   [EJobStatus.IN_PROGRESS]: "text-yellow-500",
   [EJobStatus.COMPLETED]: "text-green-500",
@@ -25,7 +25,7 @@ type Props = {
  * Shows colored text depending on the status
  */
 export default function JobStatusSelector({ value, onChange }: Props) {
-  const [selectedKeys, setSelectedKeys] = React.useState(new Set([]));
+  const [selectedKeys, setSelectedKeys] = React.useState(new Set<number>([]));
 
   const selectedValue = React.useMemo(
     () => EJobStatus[Array.from(selectedKeys)[0]],
@@ -38,7 +38,7 @@ export default function JobStatusSelector({ value, onChange }: Props) {
 
   // onChange is called when the user selects a new value
   const onSelectionChange = React.useCallback(
-    (keys) => {
+    (keys: any) => {
       const key = [...keys][0];
       onChange(key);
       setSelectedKeys(keys);
@@ -65,8 +65,8 @@ export default function JobStatusSelector({ value, onChange }: Props) {
       >
         {
           Object.values(EJobStatus).filter(status => !isNaN(Number(status))).map(status => <DropdownItem
-            className={`${colorClasses[status]}`}
-            key={status}>{EJobStatus[status].replace("_", " ")}</DropdownItem>)
+            className={`${colorClasses[status as number]}`}
+            key={status}>{EJobStatus[status as number].replace("_", " ")}</DropdownItem>)
         }
       </DropdownMenu>
     </Dropdown>

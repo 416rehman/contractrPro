@@ -99,22 +99,22 @@ export const updateAndPersistVendorComment = async (vendorId: string, comment: C
   try {
     if (comment.id) {
       // first check if any attachments were marked for deletion. If so, remove them from the comment
-      const attachmentsToDelete = comment.Attachments.filter((a: any) => a.markedForDeletion);
+      const attachmentsToDelete = comment.Attachments?.filter((a: any) => a.markedForDeletion) || [];
       if (attachmentsToDelete.length > 0) {
         for (const a of attachmentsToDelete) {
-          await requestDeleteAttachments(comment.OrganizationId, comment.VendorId, comment.id, a.id);
+          await requestDeleteAttachments(comment.OrganizationId || "", comment.VendorId || "", comment.id, a.id);
         }
       }
 
       // then update the comment
-      comment.Attachments = comment.Attachments.filter((a: any) => !a.markedForDeletion);
-      await requestUpdateComment(comment.OrganizationId, comment.VendorId, comment);
-      comment.Attachments.map((a: any) => a.id = a.id || "new");
+      comment.Attachments = comment.Attachments?.filter((a: any) => !a.markedForDeletion);
+      await requestUpdateComment(comment.OrganizationId || "", comment.VendorId || "", comment);
+      comment.Attachments?.map((a: any) => a.id = a.id || "new");
       useVendorCommentsStore.getState().updateVendorComment(vendorId, comment);
     } else {
       console.log("CREATE");
       // create a new comment
-      const newComment = await requestCreateComment(comment.OrganizationId, comment.VendorId, comment);
+      const newComment = await requestCreateComment(comment.OrganizationId || "", comment.VendorId || "", comment);
       useVendorCommentsStore.getState().addVendorComment(vendorId, newComment);
     }
   } catch (err) {
@@ -124,8 +124,8 @@ export const updateAndPersistVendorComment = async (vendorId: string, comment: C
 
 export const deleteVendorComment = async (vendorId: string, comment: Comment) => {
   try {
-    await requestDeleteComment(comment?.OrganizationId, comment?.VendorId, comment.id);
-    useVendorCommentsStore.getState().removeVendorComment(vendorId, comment.id);
+    await requestDeleteComment(comment?.OrganizationId || "", comment?.VendorId || "", comment.id || "");
+    useVendorCommentsStore.getState().removeVendorComment(vendorId, comment.id || "");
   } catch (err) {
     console.log(err);
   }

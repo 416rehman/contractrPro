@@ -1,14 +1,14 @@
 "use client";
 
 import { subtitle, title } from "@/components/primitives";
-import { Spacer } from "@nextui-org/spacer";
+import { Spacer } from "@heroui/spacer";
 import OrganizationSelector from "@/components/organizationSelector";
 import NextLink from "next/link";
 import React, { useEffect, useState } from "react";
 import { deleteOrganizationAndPersist, useUserStore } from "@/services/user";
 import OrganizationForm from "@/components/organizationForm";
-import { Divider } from "@nextui-org/divider";
-import { Button, ButtonGroup } from "@nextui-org/button";
+import { Divider } from "@heroui/divider";
+import { Button, ButtonGroup } from "@heroui/button";
 import {
   IconBuildingStore,
   IconChartTreemap,
@@ -20,9 +20,9 @@ import {
   IconTrash,
   IconUsers
 } from "@tabler/icons-react";
-import { Tooltip } from "@nextui-org/tooltip";
-import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/dropdown";
-import { Contract, Organization } from "@/types";
+import { Tooltip } from "@heroui/tooltip";
+import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@heroui/dropdown";
+import { Contract, Organization, OrganizationSummary } from "@/types";
 import {
   Card,
   CardBody,
@@ -35,7 +35,7 @@ import {
   ModalFooter,
   ModalHeader,
   useDisclosure
-} from "@nextui-org/react";
+} from "@heroui/react";
 import ExpensesTotalCard from "@/components/expensesTotalCard";
 import InvoicesTotalCard from "@/components/invoicesTotalCard";
 import SummaryCard from "@/components/summaryCard";
@@ -50,7 +50,7 @@ import { getOrganizationSummary } from "@/services/user/api";
 export default function Dashboard() {
   const currentOrganization = useUserStore(state => state.currentOrganization);
   const [currentOrganizationContracts] = useContractsStore(state => [state.contracts]);
-  const [currentOrganizationSummary, setCurrentOrganizationSummary] = useState(null);
+  const [currentOrganizationSummary, setCurrentOrganizationSummary] = useState<OrganizationSummary | null>(null);
 
   useEffect(() => {
     if (!currentOrganization?.id) return;
@@ -80,22 +80,22 @@ export default function Dashboard() {
     return (
       <>
         <ExpensesTotalCard
-          expensesTotal={currentOrganizationSummary?.expensesTotal}
-          changeSinceLastMonth={currentOrganizationSummary?.expensesTotalChangeSinceLastMonth} />
-        <InvoicesTotalCard invoicesTotal={currentOrganizationSummary?.invoicesTotal}
-                           changeSinceLastMonth={currentOrganizationSummary?.invoicesTotalChangeSinceLastMonth} />
-        <SummaryCard value={currentOrganizationSummary?.numOfInvoices}
-                     icon={<IconReceipt2 className={"text-default-500"} size={"20"} />} title={"Invoices"}
-                     link={"/invoices"} linkText={"View Invoices"} />
-        <SummaryCard value={currentOrganizationSummary?.numOfExpenses}
-                     icon={<IconDevicesDollar className={"text-default-500"} size={"20"} />} title={"Expenses"}
-                     link={"/expenses"} linkText={"View Expenses"} />
-        <SummaryCard value={currentOrganizationSummary?.numOfMembers}
-                     icon={<IconUsers className={"text-default-500"} size={"20"} />} title={"Members"}
-                     link={"/members"} linkText={"View Members"} />
-        <SummaryCard value={currentOrganizationSummary?.numOfVendors}
-                     icon={<IconBuildingStore className={"text-default-500"} size={"20"} />} title={"Vendors"}
-                     link={"/vendors"} linkText={"View Vendors"} />
+          expensesTotal={currentOrganizationSummary?.expensesTotal || 0}
+          changeSinceLastMonth={currentOrganizationSummary?.expensesTotalChangeSinceLastMonth || 0} />
+        <InvoicesTotalCard invoicesTotal={currentOrganizationSummary?.invoicesTotal || 0}
+          changeSinceLastMonth={currentOrganizationSummary?.invoicesTotalChangeSinceLastMonth || 0} />
+        <SummaryCard value={currentOrganizationSummary?.numOfInvoices || 0}
+          icon={<IconReceipt2 className={"text-default-500"} size={"20"} />} title={"Invoices"}
+          link={"/invoices"} linkText={"View Invoices"} />
+        <SummaryCard value={currentOrganizationSummary?.numOfExpenses || 0}
+          icon={<IconDevicesDollar className={"text-default-500"} size={"20"} />} title={"Expenses"}
+          link={"/expenses"} linkText={"View Expenses"} />
+        <SummaryCard value={currentOrganizationSummary?.numOfMembers || 0}
+          icon={<IconUsers className={"text-default-500"} size={"20"} />} title={"Members"}
+          link={"/members"} linkText={"View Members"} />
+        <SummaryCard value={currentOrganizationSummary?.numOfVendors || 0}
+          icon={<IconBuildingStore className={"text-default-500"} size={"20"} />} title={"Vendors"}
+          link={"/vendors"} linkText={"View Vendors"} />
       </>
     );
   };
@@ -109,7 +109,7 @@ export default function Dashboard() {
           <h1 className={"text-3xl font-bold"}>Overview</h1>
           <div className="flex flex-row gap-4 flex-wrap">
             <DashboardOrganizationContractsDue currentOrganization={currentOrganization}
-                                               currentOrganizationContracts={currentOrganizationContracts} />
+              currentOrganizationContracts={currentOrganizationContracts} />
             {currentOrganizationSummary && cards()}
           </div>
         </div>
@@ -160,12 +160,12 @@ export const DashboardOrganizationForm = ({ currentOrganization }: DashboardOrga
                 <Divider />
                 <p className={"text-xs text-default-500"}>To confirm, type the name of the organization below:</p>
                 <Input type={"text"} className={"w-full"} value={confirmDeleteInput} isRequired={true}
-                       label={"Organization Name"}
-                       onChange={(e) => setConfirmDeleteInput(e.target.value)} placeholder={currentOrganization.name} />
+                  label={"Organization Name"}
+                  onChange={(e) => setConfirmDeleteInput(e.target.value)} placeholder={currentOrganization.name} />
               </ModalBody>
               <ModalFooter>
                 <Button color="danger" onClick={deleteHandler}
-                        isDisabled={confirmDeleteInput !== currentOrganization.name}>Delete</Button>
+                  isDisabled={confirmDeleteInput !== currentOrganization.name}>Delete</Button>
               </ModalFooter>
             </>
           )}
@@ -194,7 +194,7 @@ export const DashboardOrganizationForm = ({ currentOrganization }: DashboardOrga
             </DropdownTrigger>
             <DropdownMenu onAction={(key) => key === "delete" && onOpen()}>
               <DropdownItem startContent={<IconTrash />} color={"danger"} description={"Delete this organization."}
-                            key={"delete"}>
+                key={"delete"}>
                 Delete
               </DropdownItem>
             </DropdownMenu>
@@ -207,9 +207,9 @@ export const DashboardOrganizationForm = ({ currentOrganization }: DashboardOrga
 };
 
 export const DashboardOrganizationContractsDue = ({
-                                                    currentOrganization,
-                                                    currentOrganizationContracts
-                                                  }: DashboardOrganizationContractsDueProps) => {
+  currentOrganization,
+  currentOrganizationContracts
+}: DashboardOrganizationContractsDueProps) => {
 
   const [isHovered, setIsHovered] = useState(false);
 
@@ -242,10 +242,10 @@ export const DashboardOrganizationContractsDue = ({
             {sortedContractsWithDueDate.map((contract) => (
               <li key={contract.id}>
                 <Button onMouseOver={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}
-                        variant={isHovered ? "flat" : "solid"} className={"text-center text-xs mb-5 w-full"}
-                        startContent={<IconChartTreemap
-                          className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />} as={NextLink}
-                        href={"/contracts/" + contract?.id}>
+                  variant={isHovered ? "flat" : "solid"} className={"text-center text-xs mb-5 w-full"}
+                  startContent={<IconChartTreemap
+                    className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />} as={NextLink}
+                  href={"/contracts/" + contract?.id}>
                   <div>
                     {contract?.name && contract.name.charAt(0).toUpperCase() + contract.name.slice(1)}
                     <br />

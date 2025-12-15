@@ -10,19 +10,20 @@ import {
   ModalHeader,
   Textarea,
   useDisclosure
-} from "@nextui-org/react";
-import { Card, CardBody, CardHeader } from "@nextui-org/card";
+} from "@heroui/react";
+import { Card, CardBody, CardHeader } from "@heroui/card";
 import React, { useEffect, useState } from "react";
-import { Button, ButtonGroup } from "@nextui-org/button";
+import { Button, ButtonGroup } from "@heroui/button";
 import { IconChevronDown, IconDeviceFloppy, IconEdit, IconTrash } from "@tabler/icons-react";
 import clsx from "clsx";
 import { useUserStore } from "@/services/user";
-import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/dropdown";
+import { Vendor } from "@/types";
+import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@heroui/dropdown";
 import OrganizationSelector from "@/components/organizationSelector";
-import { Tooltip } from "@nextui-org/tooltip";
-import moment from "moment";
+import { Tooltip } from "@heroui/tooltip";
+import { formatDistanceToNow } from "date-fns";
 import VendorCommentSection from "@/components/vendorCommentSection";
-import { Spacer } from "@nextui-org/spacer";
+import { Spacer } from "@heroui/spacer";
 import { useRouter } from "next/navigation";
 
 type Props = {
@@ -52,14 +53,14 @@ export default function VendorForm({ id, className }: Props) {
   }, [vendor]);
 
   const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEditedVendor({ ...editedVendor, [e.target.name]: e.target.value });
+    setEditedVendor({ ...editedVendor!, [e.target.name]: e.target.value } as Vendor);
   };
 
   const onSaveHandler = async () => {
     // Save the edited vendor here
     setIsSaving(true);
 
-    const newVendor = await updateVendor(editedVendor, currentOrg?.id);
+    const newVendor = await updateVendor(editedVendor!, currentOrg?.id);
 
     setIsEditing(!editedVendor?.id);
     if (!editedVendor?.id) {
@@ -75,7 +76,7 @@ export default function VendorForm({ id, className }: Props) {
     // Delete the vendor here
     setIsSaving(true);
     setIsEditing(false);
-    await deleteVendor(editedVendor, currentOrg?.id);
+    await deleteVendor(editedVendor!, currentOrg?.id);
     setIsSaving(false);
   };
 
@@ -127,8 +128,8 @@ export default function VendorForm({ id, className }: Props) {
               {vendor?.id && (
                 <ButtonGroup variant="flat" size={"sm"} color={"default"}>
                   <Button endContent={<IconEdit />}
-                          onPress={() => setIsEditing(true)}
-                          isDisabled={isEditing}>
+                    onPress={() => setIsEditing(true)}
+                    isDisabled={isEditing}>
                     Edit
                   </Button>
                   <Dropdown placement="bottom-start">
@@ -139,7 +140,7 @@ export default function VendorForm({ id, className }: Props) {
                     </DropdownTrigger>
                     <DropdownMenu>
                       <DropdownItem key={"delete"} description={"Delete this vendor"} onPress={onOpen}
-                                    startContent={<IconTrash className={"text-default-500"} />} shortcut={"D"}>
+                        startContent={<IconTrash className={"text-default-500"} />} shortcut={"D"}>
                         Delete
                       </DropdownItem>
                     </DropdownMenu>
@@ -151,31 +152,31 @@ export default function VendorForm({ id, className }: Props) {
           <CardBody className={"flex flex-col gap-4"}>
             <form className={clsx("flex flex-col gap-4", { "pointer-events-none": !isEditing })}>
               <Input label={"Name"} placeholder={"Name"} value={editedVendor?.name} isReadOnly={!isEditing}
-                     type={"text"}
-                     name={"name"} onChange={onChangeHandler}
-                     variant={isEditing ? "flat" : "underlined"} labelPlacement={"outside"} />
+                type={"text"}
+                name={"name"} onChange={onChangeHandler}
+                variant={isEditing ? "flat" : "underlined"} labelPlacement={"outside"} />
               <Input label={"Phone"} placeholder={"Phone"} value={editedVendor?.phone} isReadOnly={!isEditing}
-                     type={"text"} name={"phone"} onChange={onChangeHandler}
-                     variant={isEditing ? "flat" : "underlined"} labelPlacement={"outside"} />
+                type={"text"} name={"phone"} onChange={onChangeHandler}
+                variant={isEditing ? "flat" : "underlined"} labelPlacement={"outside"} />
               <Input label={"Email"} placeholder={"Email"} value={editedVendor?.email} isReadOnly={!isEditing}
-                     type={"email"} name={"email"} onChange={onChangeHandler}
-                     variant={isEditing ? "flat" : "underlined"} labelPlacement={"outside"} />
+                type={"email"} name={"email"} onChange={onChangeHandler}
+                variant={isEditing ? "flat" : "underlined"} labelPlacement={"outside"} />
               <Input label={"Website"} placeholder={"Website"} value={editedVendor?.website} isReadOnly={!isEditing}
-                     type={"text"} name={"website"} onChange={onChangeHandler}
-                     variant={isEditing ? "flat" : "underlined"} labelPlacement={"outside"} />
+                type={"text"} name={"website"} onChange={onChangeHandler}
+                variant={isEditing ? "flat" : "underlined"} labelPlacement={"outside"} />
               <Textarea label={"Description"} placeholder={"Description"} value={editedVendor?.description}
-                        isReadOnly={!isEditing} name={"description"} onChange={onChangeHandler}
-                        variant={isEditing ? "flat" : "underlined"} labelPlacement={"outside"} />
+                isReadOnly={!isEditing} name={"description"} onChange={onChangeHandler}
+                variant={isEditing ? "flat" : "underlined"} labelPlacement={"outside"} />
             </form>
             <div className={"flex flex-col gap-1 items-start"}>
               {vendor?.updatedAt &&
                 <Tooltip content={vendor?.updatedAt}>
-                  <span className={"text-xs text-default-500"}>Updated {moment(vendor?.updatedAt).fromNow()}</span>
+                  <span className={"text-xs text-default-500"}>Updated {formatDistanceToNow(new Date(vendor?.updatedAt), { addSuffix: true })}</span>
                 </Tooltip>
               }
               {vendor?.createdAt && (
                 <Tooltip content={vendor?.createdAt}>
-                  <span className={"text-xs text-default-500"}>Created {moment(vendor?.createdAt).fromNow()}</span>
+                  <span className={"text-xs text-default-500"}>Created {formatDistanceToNow(new Date(vendor?.createdAt), { addSuffix: true })}</span>
                 </Tooltip>
               )}
             </div>
@@ -185,12 +186,12 @@ export default function VendorForm({ id, className }: Props) {
               {isEditing && vendor?.id ? (
                 <>
                   <Button variant={"light"} onPress={() => setIsEditing(false)} color={"danger"}
-                          className={"font-medium hover:bg-danger-200"}>
+                    className={"font-medium hover:bg-danger-200"}>
                     Cancel
                   </Button>
                   <Button variant={"flat"} onPress={onSaveHandler} isLoading={isSaving}
-                          className={"text-default-800 font-medium hover:bg-primary-200"}
-                          endContent={<IconDeviceFloppy />}>
+                    className={"text-default-800 font-medium hover:bg-primary-200"}
+                    endContent={<IconDeviceFloppy />}>
                     Save
                   </Button>
                 </>
@@ -198,8 +199,8 @@ export default function VendorForm({ id, className }: Props) {
               {/*  if no vendor Id this is a new vendor */}
               {!vendor?.id && (
                 <Button variant={"flat"} onPress={onSaveHandler} isLoading={isSaving}
-                        className={"text-default-800 font-medium hover:bg-primary-200"}
-                        endContent={<IconDeviceFloppy />}>
+                  className={"text-default-800 font-medium hover:bg-primary-200"}
+                  endContent={<IconDeviceFloppy />}>
                   Save
                 </Button>
               )}

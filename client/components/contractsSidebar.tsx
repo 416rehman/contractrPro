@@ -1,7 +1,7 @@
 "use client";
-import { Card, CardBody, CardHeader } from "@nextui-org/card";
-import { CardFooter, Input } from "@nextui-org/react";
-import { Button } from "@nextui-org/button";
+import { Card, CardBody, CardHeader } from "@heroui/card";
+import { CardFooter, Input } from "@heroui/react";
+import { Button } from "@heroui/button";
 import NextLink from "next/link";
 import clsx from "clsx";
 import { IconChartTreemap, IconChevronDown, IconCirclePlus, IconListSearch } from "@tabler/icons-react";
@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import { loadContracts, useContractsStore } from "@/services/contracts";
 import { useUserStore } from "@/services/user";
 import { useParams } from "next/navigation";
-import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@heroui/popover";
 
 type Props = {
   className?: string;
@@ -21,7 +21,7 @@ type Props = {
  * This is used in tandem with the ContractForm component to edit/create contracts.
  */
 export default function ContractsSidebar({ className }: Props) {
-  const [currentOrg] = useUserStore(state => [state.currentOrganization]);
+  const currentOrg = useUserStore(state => state.currentOrganization);
   const [contracts] = useContractsStore(state => [state.contracts]);
   const [contractsToDisplay, setContractsToDisplay] = useState(contracts);
   const [filter, setFilter] = useState("");
@@ -39,20 +39,20 @@ export default function ContractsSidebar({ className }: Props) {
   }, [filter, contracts]);
 
   const sidebar = <Card shadow={"none"} isBlurred={true}
-                        className={clsx("border-none rounded-none", className)}>
+    className={clsx("border-none rounded-none", className)}>
     <CardHeader className={"flex flex-col gap-2"}>
       <h1 className={"text-2xl font-bold"}>Contracts</h1>
       {/*  Search bar*/}
       <Input aria-label={"Filter Contracts"} placeholder={"Filter"} size={"sm"}
-             startContent={<IconListSearch className={"text-default-400"} />}
-             variant={"underlined"}
-             isClearable={true}
-             onClear={() => setFilter("")}
-             onChange={(e) => setFilter(e.target.value)} />
+        startContent={<IconListSearch className={"text-default-400"} />}
+        variant={"underlined"}
+        isClearable={true}
+        onClear={() => setFilter("")}
+        onChange={(e) => setFilter(e.target.value)} />
     </CardHeader>
     <CardBody className={"p-2"}>
       <ul className={"flex flex-col w-full"}>
-        {contractsToDisplay && contractsToDisplay.map((contract) => (
+        {contractsToDisplay && contractsToDisplay.map((contract: any) => (
           <li key={contract.id}>
             <Button
               className={"w-full justify-start text-default-600 font-medium"}
@@ -69,7 +69,7 @@ export default function ContractsSidebar({ className }: Props) {
     </CardBody>
     <CardFooter>
       <Button variant={"light"} className={"flex-grow"} href={"/contracts/new"} as={NextLink}
-              startContent={<IconCirclePlus className={"text-default-500"} />}>
+        startContent={<IconCirclePlus className={"text-default-500"} />}>
         New Contract
       </Button>
     </CardFooter>

@@ -99,22 +99,22 @@ export const updateAndPersistExpenseComment = async (expenseId: string, comment:
   try {
     if (comment.id) {
       // first check if any attachments were marked for deletion. If so, remove them from the comment
-      const attachmentsToDelete = comment.Attachments.filter((a: any) => a.markedForDeletion);
+      const attachmentsToDelete = comment.Attachments?.filter((a: any) => a.markedForDeletion) || [];
       if (attachmentsToDelete.length > 0) {
         for (const a of attachmentsToDelete) {
-          await requestDeleteAttachments(comment.OrganizationId, comment.ExpenseId, comment.id, a.id);
+          await requestDeleteAttachments(comment.OrganizationId || "", comment.ExpenseId || "", comment.id, a.id);
         }
       }
 
       // then update the comment
-      comment.Attachments = comment.Attachments.filter((a: any) => !a.markedForDeletion);
-      await requestUpdateComment(comment.OrganizationId, comment.ExpenseId, comment);
-      comment.Attachments.map((a: any) => a.id = a.id || "new");
+      comment.Attachments = comment.Attachments?.filter((a: any) => !a.markedForDeletion);
+      await requestUpdateComment(comment.OrganizationId || "", comment.ExpenseId || "", comment);
+      comment.Attachments?.map((a: any) => a.id = a.id || "new");
       useExpenseCommentsStore.getState().updateExpenseComment(expenseId, comment);
     } else {
       console.log("CREATE");
       // create a new comment
-      const newComment = await requestCreateComment(comment.OrganizationId, comment.ExpenseId, comment);
+      const newComment = await requestCreateComment(comment.OrganizationId || "", comment.ExpenseId || "", comment);
       useExpenseCommentsStore.getState().addExpenseComment(expenseId, newComment);
     }
   } catch (err) {
@@ -124,8 +124,8 @@ export const updateAndPersistExpenseComment = async (expenseId: string, comment:
 
 export const deleteExpenseComment = async (expenseId: string, comment: Comment) => {
   try {
-    await requestDeleteComment(comment?.OrganizationId, comment?.ExpenseId, comment.id);
-    useExpenseCommentsStore.getState().removeExpenseComment(expenseId, comment.id);
+    await requestDeleteComment(comment?.OrganizationId || "", comment?.ExpenseId || "", comment.id || "");
+    useExpenseCommentsStore.getState().removeExpenseComment(expenseId, comment.id || "");
   } catch (err) {
     console.log(err);
   }

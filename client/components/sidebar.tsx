@@ -1,8 +1,8 @@
 "use client";
 
 import NextLink from "next/link";
-import { Button } from "@nextui-org/button";
-import { Tooltip } from "@nextui-org/tooltip";
+import { Button } from "@heroui/button";
+import { Tooltip } from "@heroui/tooltip";
 import { usePathname } from "next/navigation";
 import React, { HTMLAttributes, useState } from "react";
 import {
@@ -79,14 +79,14 @@ export default function Sidebar(props: HTMLAttributes<HTMLDivElement>) {
   const ExtendSidebarButton = () => (
     <Tooltip content={isExtended ? "Collapse" : "Expand"} placement={"right"} showArrow={true}>
       <Button isIconOnly={!isExtended} onPress={() => setIsExtended(!isExtended)} variant={"light"} size={"sm"}
-              className={"min-w-full"}>
+        className={"min-w-full"}>
         {isExtended ? <IconLayoutSidebarLeftCollapse size={"20"} /> : <IconLayoutSidebarLeftExpand size={"20"} />}
         {isExtended ? "Collapse" : null}
       </Button>
     </Tooltip>
   );
 
-  const isActivePage = (href) => {
+  const isActivePage = (href: string) => {
     if (href === "/") {
       return pathname === href;
     } else {

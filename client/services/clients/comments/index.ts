@@ -99,22 +99,22 @@ export const updateAndPersistClientComment = async (clientId: string, comment: C
   try {
     if (comment.id) {
       // first check if any attachments were marked for deletion. If so, remove them from the comment
-      const attachmentsToDelete = comment.Attachments.filter((a: any) => a.markedForDeletion);
+      const attachmentsToDelete = comment.Attachments?.filter((a: any) => a.markedForDeletion) || [];
       if (attachmentsToDelete.length > 0) {
         for (const a of attachmentsToDelete) {
-          await requestDeleteAttachments(comment.OrganizationId, comment.ClientId, comment.id, a.id);
+          await requestDeleteAttachments(comment.OrganizationId || "", comment.ClientId || "", comment.id, a.id);
         }
       }
 
       // then update the comment
-      comment.Attachments = comment.Attachments.filter((a: any) => !a.markedForDeletion);
-      await requestUpdateComment(comment.OrganizationId, comment.ClientId, comment);
-      comment.Attachments.map((a: any) => a.id = a.id || "new");
+      comment.Attachments = comment.Attachments?.filter((a: any) => !a.markedForDeletion);
+      await requestUpdateComment(comment.OrganizationId || "", comment.ClientId || "", comment);
+      comment.Attachments?.map((a: any) => a.id = a.id || "new");
       useClientCommentsStore.getState().updateClientComment(clientId, comment);
     } else {
       console.log("CREATE");
       // create a new comment
-      const newComment = await requestCreateComment(comment.OrganizationId, comment.ClientId, comment);
+      const newComment = await requestCreateComment(comment.OrganizationId || "", comment.ClientId || "", comment);
       useClientCommentsStore.getState().addClientComment(clientId, newComment);
     }
   } catch (err) {
@@ -124,8 +124,8 @@ export const updateAndPersistClientComment = async (clientId: string, comment: C
 
 export const deleteClientComment = async (clientId: string, comment: Comment) => {
   try {
-    await requestDeleteComment(comment?.OrganizationId, comment?.ClientId, comment.id);
-    useClientCommentsStore.getState().removeClientComment(clientId, comment.id);
+    await requestDeleteComment(comment?.OrganizationId || "", comment?.ClientId || "", comment.id || "");
+    useClientCommentsStore.getState().removeClientComment(clientId, comment.id || "");
   } catch (err) {
     console.log(err);
   }

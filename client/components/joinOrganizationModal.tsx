@@ -1,7 +1,7 @@
-import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@nextui-org/react";
+import { Button, Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from "@heroui/react";
 import { IconHash } from "@tabler/icons-react";
-import { Divider } from "@nextui-org/divider";
-import { Spacer } from "@nextui-org/spacer";
+import { Divider } from "@heroui/divider";
+import { Spacer } from "@heroui/spacer";
 import { useState } from "react";
 import { useToastsStore } from "@/services/toast";
 

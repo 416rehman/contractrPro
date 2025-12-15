@@ -21,11 +21,12 @@ export const useInvoicesStore = create((set: any) => ({
 }));
 
 export const loadInvoices = async (currentOrganizationId: string) => {
-  if (!useInvoicesStore.getState().lastRequestedOn) {
+  const { lastRequestedOn } = useInvoicesStore.getState();
+  if (!lastRequestedOn) {
     useInvoicesStore.getState().lastRequestedOn = new Date();
   } else {
     const now = new Date();
-    const diff = now.getTime() - useInvoicesStore.getState().lastRequestedOn.getTime();
+    const diff = now.getTime() - lastRequestedOn.getTime();
     // if the last request was less than 5 seconds ago, don't make another request
     if (diff < 5000) {
       return;
@@ -37,10 +38,10 @@ export const loadInvoices = async (currentOrganizationId: string) => {
     const orgInvoices = await requestAllOrganizationInvoices(currentOrganizationId);
 
     // if the new invoices are different from the current invoices, update the store
-    if (orgInvoices.length !== currentInvoices.length || orgInvoices.some((invoice, i) => invoice.id !== currentInvoices[i].id)) {
+    if (orgInvoices.length !== currentInvoices.length || orgInvoices.some((invoice: any, i: number) => invoice.id !== currentInvoices[i].id)) {
       useInvoicesStore.getState().setInvoices(orgInvoices);
     }
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
   }
 };
@@ -50,7 +51,7 @@ export const updateInvoiceAndPersist = async (invoice: Invoice, currentOrganizat
     if (currentOrganizationId) {
 
       // Remove empty invoice entries
-      invoice.InvoiceEntries = invoice?.InvoiceEntries.filter((entry) => entry.name || entry.unitCost || entry.quantity || entry.description) || [];
+      invoice.InvoiceEntries = invoice?.InvoiceEntries.filter((entry: any) => entry.name || entry.unitCost || entry.quantity || entry.description) || [];
 
       if (invoice?.id) {
         await requestUpdateInvoice(invoice, currentOrganizationId);
@@ -69,7 +70,7 @@ export const updateInvoiceAndPersist = async (invoice: Invoice, currentOrganizat
       }
     }
 
-  } catch (err) {
+  } catch (err: any) {
     useToastsStore.getState().addToast({
       id: "update-invoiceEntries-error",
       type: "error",
@@ -86,7 +87,7 @@ export const deleteInvoiceAndPersist = async (invoice: Invoice, currentOrganizat
     useInvoicesStore.getState().removeInvoice(invoice);
     useToastsStore.getState().addToast({ id: "delete-invoiceEntries", type: "success", message: "Invoice deleted" });
 
-  } catch (err) {
+  } catch (err: any) {
     useToastsStore.getState().addToast({
       id: "delete-invoiceEntries-error",
       type: "error",

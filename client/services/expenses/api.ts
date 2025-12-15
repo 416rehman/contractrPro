@@ -13,7 +13,7 @@ export async function requestOrganizationExpenses(OrganizationId: string) {
 
     return Promise.resolve(data);
 
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
     return Promise.reject(err?.message || err);
   }
@@ -29,7 +29,7 @@ export async function requestUpdateExpense(expense: Expense, OrganizationId: str
     });
 
     return Promise.resolve(data);
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
     return Promise.reject(err?.message || err);
   }
@@ -44,7 +44,7 @@ export async function requestDeleteExpense(expense: Expense, OrganizationId: str
     });
 
     return Promise.resolve(data);
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
     return Promise.reject(err?.message || err);
   }
@@ -60,7 +60,7 @@ export async function requestCreateExpense(expense: Expense, OrganizationId: str
     });
 
     return Promise.resolve(data);
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
     return Promise.reject(err?.message || err);
   }

@@ -1,15 +1,15 @@
 "use client";
 
-import { CardFooter, Input } from "@nextui-org/react";
+import { CardFooter, Input } from "@heroui/react";
 import { signup } from "@/services/auth";
 import { useState } from "react";
-import { Divider } from "@nextui-org/divider";
+import { Divider } from "@heroui/divider";
 import clsx from "clsx";
 import { IconAt, IconEye, IconEyeClosed, IconLogin, IconMailFilled } from "@tabler/icons-react";
-import { Button } from "@nextui-org/button";
-import { Link } from "@nextui-org/link";
+import { Button } from "@heroui/button";
+import { Link } from "@heroui/link";
 import { useToastsStore } from "@/services/toast";
-import { Card, CardBody } from "@nextui-org/card";
+import { Card, CardBody } from "@heroui/card";
 
 /**
  * The default signup form component. It is used to create a new account.

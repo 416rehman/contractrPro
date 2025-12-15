@@ -5,7 +5,7 @@ const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000");
 /**
  * Calls the search endpoint on the server and returns the results
  */
-export const requestSearch = async (organizationId: string, query: string, type: string = null) => {
+export const requestSearch = async (organizationId: string, query: string, type: string | null = null) => {
   try {
     const results = await request(`${apiUrl}/organizations/${organizationId}/search?q=${query}&type=${type}`, {
       method: "GET",

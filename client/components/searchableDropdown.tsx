@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Dropdown, DropdownItem, DropdownItemProps, DropdownMenu, DropdownTrigger } from "@nextui-org/dropdown";
-import { Card, Input } from "@nextui-org/react";
+import { Dropdown, DropdownItem, DropdownItemProps, DropdownMenu, DropdownTrigger } from "@heroui/dropdown";
+import { Card, Input } from "@heroui/react";
 import clsx from "clsx";
 
 type Props = {
@@ -27,17 +27,17 @@ type Props = {
  * The items are passed as an array of DropdownItem elements.
  */
 export default function SearchableDropdown({
-                                             items,
-                                             selectionMode,
-                                             onSelectionChange,
-                                             className,
-                                             trigger,
-                                             showLabel = true,
-                                             onQueryChange,
-                                             selectedKeys,
-                                             label,
-                                             isReadOnly
-                                           }: Props) {
+  items,
+  selectionMode,
+  onSelectionChange,
+  className,
+  trigger,
+  showLabel = true,
+  onQueryChange,
+  selectedKeys,
+  label,
+  isReadOnly
+}: Props) {
   const [query, setQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
 
@@ -53,20 +53,20 @@ export default function SearchableDropdown({
     }
   }, [onQueryChange, query]);
 
-  const inputRef = useRef(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const list = [
     <DropdownItem key="search" closeOnSelect={false} onClick={() => {
-      inputRef.current.focus();
+      inputRef.current?.focus();
     }} textValue={"search"}>
       <Input aria-label="Search"
-             placeholder="Search" onChange={(e) => setQuery(e.target.value)} ref={inputRef} size={"sm"}
-             className={"w-full rounded-md WTF"} />
+        placeholder="Search" onChange={(e) => setQuery(e.target.value)} ref={inputRef} size={"sm"}
+        className={"w-full rounded-md WTF"} />
     </DropdownItem>,
     ...items
   ];
 
-  const selectionChangeHandler = (selectedKeys: Set<string>) => {
+  const selectionChangeHandler = (selectedKeys: any) => {
     // dont select the search item
     if (selectedKeys.has("search")) {
       selectedKeys.delete("search");
@@ -88,13 +88,13 @@ export default function SearchableDropdown({
             </label>
             }
             <Card shadow={"none"} isPressable={true} onPress={() => setIsOpen(true)} aria-label={label} id={"trigger"}
-                  className={clsx("w-full bg-default-100 border-2 border-default-200 flex flex-col items-start justify-start py-1 px-2 group-data-[focus=true]:border-foreground", isReadOnly ? "bg-transparent" : "bg-default-100")}>
+              className={clsx("w-full bg-default-100 border-2 border-default-200 flex flex-col items-start justify-start py-1 px-2 group-data-[focus=true]:border-foreground", isReadOnly ? "bg-transparent" : "bg-default-100")}>
               {trigger}
             </Card>
           </div>
         </DropdownTrigger>
         <DropdownMenu onSelectionChange={selectionChangeHandler} selectionMode={selectionMode}
-                      selectedKeys={selectedKeys}>
+          selectedKeys={selectedKeys}>
           {list}
         </DropdownMenu>
       </Dropdown>

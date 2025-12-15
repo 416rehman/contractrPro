@@ -13,7 +13,7 @@ export async function requestAllOrganizationInvoices(OrganizationId: string) {
 
     return Promise.resolve(data);
 
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
     return Promise.reject(err?.message || err);
   }
@@ -29,7 +29,7 @@ export async function requestUpdateInvoice(invoice: Invoice, OrganizationId: str
     });
 
     return Promise.resolve(data);
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
     return Promise.reject(err?.message || err);
   }
@@ -44,7 +44,7 @@ export async function requestDeleteInvoice(invoice: Invoice, OrganizationId: str
     });
 
     return Promise.resolve(data);
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
     return Promise.reject(err?.message || err);
   }
@@ -60,7 +60,7 @@ export async function requestCreateInvoice(invoice: Invoice, OrganizationId: str
     });
 
     return Promise.resolve(data);
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
     return Promise.reject(err?.message || err);
   }

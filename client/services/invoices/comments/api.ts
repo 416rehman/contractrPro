@@ -12,7 +12,7 @@ export async function requestComments(OrganizationId: string, invoiceId: string)
     });
 
     return Promise.resolve(data);
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
     return Promise.reject(err?.message || err);
   }
@@ -26,7 +26,7 @@ export async function requestDeleteAttachments(OrganizationId: string, invoiceId
     });
 
     return Promise.resolve(data);
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
     return Promise.reject(err?.message || err);
   }
@@ -36,11 +36,11 @@ export async function requestCreateComment(OrganizationId: string, invoiceId: st
   try {
     const formData = new FormData();
     for (const key in comment) {
-      formData.append(key, comment[key]);
+      formData.append(key, (comment as any)[key]);
     }
 
     // Get rid of preexisting attachments
-    const attachments = comment?.Attachments.filter((attachment) => !attachment.id);
+    const attachments = comment?.Attachments?.filter((attachment) => !attachment.id);
     if (attachments && attachments.length > 0) {
       for (const attachment of attachments) {
         formData.append("Attachments", attachment);
@@ -54,7 +54,7 @@ export async function requestCreateComment(OrganizationId: string, invoiceId: st
     }, false);
 
     return Promise.resolve(data);
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
     return Promise.reject(err?.message || err);
   }
@@ -64,11 +64,11 @@ export async function requestUpdateComment(OrganizationId: string, invoiceId: st
   try {
     const formData = new FormData();
     for (const key in comment) {
-      formData.append(key, comment[key]);
+      formData.append(key, (comment as any)[key]);
     }
 
     // Get rid of preexisting attachments
-    const attachments = comment?.Attachments.filter((attachment) => !attachment.id);
+    const attachments = comment?.Attachments?.filter((attachment) => !attachment.id);
     if (attachments && attachments.length > 0) {
       for (const attachment of attachments) {
         formData.append("Attachments", attachment);
@@ -82,7 +82,7 @@ export async function requestUpdateComment(OrganizationId: string, invoiceId: st
     }, false);
 
     return Promise.resolve(data);
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
     return Promise.reject(err?.message || err);
   }
@@ -96,7 +96,7 @@ export async function requestDeleteComment(OrganizationId: string, invoiceId: st
     });
 
     return Promise.resolve(data);
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
     return Promise.reject(err?.message || err);
   }

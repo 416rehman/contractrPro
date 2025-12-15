@@ -1,12 +1,12 @@
-import { Kbd } from "@nextui-org/kbd";
+import { Kbd } from "@heroui/kbd";
 import { IconSearch, IconX, IconZoomQuestion } from "@tabler/icons-react";
-import { Input } from "@nextui-org/input";
+import { Input } from "@heroui/input";
 import { useEffect, useRef, useState } from "react";
-import { Card, CardHeader } from "@nextui-org/card";
+import { Card, CardHeader } from "@heroui/card";
 import { useUserStore } from "@/services/user";
 import { search } from "@/services/search";
 import SearchItem from "@/components/searchItem";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/button";
 
 /**
  * Search box component used to search for current organization's resources. It uses the search service to fetch results from the server.

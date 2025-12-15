@@ -1,17 +1,19 @@
 "use client";
 
-import { Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger } from "@nextui-org/dropdown";
-import { Card } from "@nextui-org/card";
+import { ReactNode } from "react";
+
+import { Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger } from "@heroui/dropdown";
+import { Card } from "@heroui/card";
 import clsx from "clsx";
-import { Avatar } from "@nextui-org/avatar";
+import { Avatar } from "@heroui/avatar";
 import { logout } from "@/services/auth";
 import { useTheme } from "next-themes";
 import { tUser } from "@/types";
-import { CollectionChildren } from "@react-types/shared";
+
 import { IconLogout, IconMoonFilled, IconSettings, IconSunFilled } from "@tabler/icons-react";
 import { useRouter } from "next/navigation";
 
-export const UserMenuGeneric = (props: tUser & { children: CollectionChildren<object>; onAction?: any }) => {
+export const UserMenuGeneric = (props: tUser & { children: ReactNode; onAction?: any }) => {
   return (
     <Dropdown>
       <DropdownTrigger>

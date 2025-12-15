@@ -11,10 +11,10 @@ import {
   ModalHeader,
   Textarea,
   useDisclosure
-} from "@nextui-org/react";
-import { Card, CardBody, CardHeader } from "@nextui-org/card";
+} from "@heroui/react";
+import { Card, CardBody, CardHeader } from "@heroui/card";
 import React, { useEffect, useState } from "react";
-import { Button, ButtonGroup } from "@nextui-org/button";
+import { Button, ButtonGroup } from "@heroui/button";
 import {
   Icon123,
   IconCalendar,
@@ -28,15 +28,15 @@ import {
 } from "@tabler/icons-react";
 import clsx from "clsx";
 import { useUserStore } from "@/services/user";
-import { Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger } from "@nextui-org/dropdown";
+import { Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger } from "@heroui/dropdown";
 import OrganizationSelector from "@/components/organizationSelector";
 import { Contract } from "@/types";
-import { Divider } from "@nextui-org/divider";
+import { Divider } from "@heroui/divider";
 import ClientSelector from "@/components/clientSelector";
-import { Tooltip } from "@nextui-org/tooltip";
-import moment from "moment";
+import { Tooltip } from "@heroui/tooltip";
+import { formatDistanceToNow } from "date-fns";
 import ContractJobsTable from "@/components/contractJobsTable";
-import { Spacer } from "@nextui-org/spacer";
+import { Spacer } from "@heroui/spacer";
 import ContractCommentSection from "@/components/contractCommentSection";
 
 type Props = {
@@ -77,14 +77,14 @@ export default function ContractForm({ id, className }: Props) {
   }, [contract]);
 
   const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEditedContract({ ...editedContract, [e.target.name]: e.target.value });
+    setEditedContract({ ...editedContract!, [e.target.name]: e.target.value } as Contract);
   };
 
   const onSaveHandler = async () => {
     // Save the edited contractEntries here
     setIsSaving(true);
 
-    const result = await updateContractAndPersist(editedContract, currentOrg?.id);
+    const result = await updateContractAndPersist(editedContract!, currentOrg?.id);
 
     setIsEditing(!editedContract?.id);
     if (!editedContract?.id) {
@@ -105,7 +105,7 @@ export default function ContractForm({ id, className }: Props) {
     // Delete the contractEntries here
     setIsSaving(true);
     setIsEditing(false);
-    await deleteContractAndPersist(editedContract, currentOrg?.id);
+    await deleteContractAndPersist(editedContract!, currentOrg?.id);
     setIsSaving(false);
   };
 
@@ -127,37 +127,46 @@ export default function ContractForm({ id, className }: Props) {
 
     // if an entry with the given id does not exist, create a new entry
     if (!editedContract?.Jobs?.find((entry) => entry.id === id)) {
-      setEditedContract((prev) => ({
-        ...prev,
-        Jobs: [...(prev?.Jobs || []), { id, [name]: value }]
-      }));
+      setEditedContract((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          Jobs: [...(prev?.Jobs || []), { id: id!, [name]: value } as any] as any
+        } as Contract
+      });
     }
     // otherwise, update the entry with the given id
     else {
-      setEditedContract((prev) => ({
-        ...prev,
-        Jobs: prev?.Jobs?.map((entry) => entry.id === id ? { ...entry, [name]: value } : entry)
-      }));
+      setEditedContract((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          Jobs: prev?.Jobs?.map((entry) => entry.id === id ? { ...entry, [name]: value } : entry)
+        } as Contract
+      });
     }
   };
 
   const onEntryDeleteHandler = (id: string) => {
     if (!id) return;
 
-    setEditedContract((prev) => ({
-      ...prev,
-      Jobs: prev?.Jobs?.filter((entry) => entry.id !== id)
-    }));
+    setEditedContract((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        Jobs: prev?.Jobs?.filter((entry) => entry.id !== id)
+      } as Contract
+    });
   };
 
   const exportAsCSV = () => {
-    if (!editedContract.Jobs) return;
+    if (!editedContract?.Jobs) return;
 
     // Generate comma separated headers
     const headers = "" + Object.keys(editedContract.Jobs[0]).join(",");
 
     // Generate comma separated values
-    const values = editedContract.Jobs.map((job) => Object.values(job).join(",")).join("\n");
+    const values = editedContract.Jobs.map((job: any) => Object.values(job).join(",")).join("\n");
 
     // Create hidden element and click it to download
     const element = document.createElement("a");
@@ -204,8 +213,8 @@ export default function ContractForm({ id, className }: Props) {
               {contract?.id && (
                 <ButtonGroup variant="flat" size={"sm"} color={"default"} className={"print:hidden"}>
                   <Button startContent={<IconEdit />}
-                          onPress={() => setIsEditing(true)}
-                          isDisabled={isEditing}>
+                    onPress={() => setIsEditing(true)}
+                    isDisabled={isEditing}>
                     Edit
                   </Button>
                   <Dropdown placement="bottom-start">
@@ -219,18 +228,18 @@ export default function ContractForm({ id, className }: Props) {
                         <DropdownItem key={"print"} description={"Print this Contract"} onPress={() => {
                           window.print();
                         }}
-                                      startContent={<IconPrinter className={"text-default-500"} />} shortcut={"P"}>
+                          startContent={<IconPrinter className={"text-default-500"} />} shortcut={"P"}>
                           Print
                         </DropdownItem>
                         <DropdownItem key={"export"} description={"Export in CSV file format"}
-                                      onPress={() => exportAsCSV()}
-                                      startContent={<IconFileTypeCsv className={"text-default-500"} />} shortcut={"E"}>
+                          onPress={() => exportAsCSV()}
+                          startContent={<IconFileTypeCsv className={"text-default-500"} />} shortcut={"E"}>
                           Export
                         </DropdownItem>
                       </DropdownSection>
                       <DropdownItem key={"delete"} description={"Delete this Contract"} onPress={onOpen}
-                                    className={"text-danger-500"}
-                                    startContent={<IconTrash className={"text-default-500"} />} shortcut={"D"}>
+                        className={"text-danger-500"}
+                        startContent={<IconTrash className={"text-default-500"} />} shortcut={"D"}>
                         Delete
                       </DropdownItem>
                     </DropdownMenu>
@@ -243,62 +252,65 @@ export default function ContractForm({ id, className }: Props) {
             <form className={clsx("flex flex-col gap-4", { "pointer-events-none": !isEditing })}>
               <div className={"flex flex-row gap-4 flex-wrap"}>
                 <Input label={"Name"} placeholder={"123456"} value={editedContract?.name}
-                       className={"flex-grow w-auto"}
-                       isReadOnly={!isEditing}
-                       type={"text"}
-                       startContent={<Icon123 className={"text-default-400"} size={"20"} />}
-                       isRequired={true}
-                       name={"name"} onChange={onChangeHandler}
-                       variant={isEditing ? "flat" : "bordered"} labelPlacement={"outside"} />
+                  className={"flex-grow w-auto"}
+                  isReadOnly={!isEditing}
+                  type={"text"}
+                  startContent={<Icon123 className={"text-default-400"} size={"20"} />}
+                  isRequired={true}
+                  name={"name"} onChange={onChangeHandler}
+                  variant={isEditing ? "flat" : "bordered"} labelPlacement={"outside"} />
                 <ClientSelector
                   className={"flex-grow"}
                   isDisabled={!isEditing}
                   label={"Client"}
                   onClientChange={(changedClients) => {
                     if (changedClients.length > 0 && changedClients[0]?.id) {
-                      setEditedContract((prev) => ({ ...prev, ClientId: changedClients[0]?.id }));
+                      setEditedContract((prev) => {
+                        if (!prev) return prev;
+                        return { ...prev, ClientId: changedClients[0]?.id } as Contract
+                      });
                     }
                   }}
-                  selectedClientIds={[editedContract?.ClientId]}
+                  selectedClientIds={editedContract?.ClientId ? [editedContract.ClientId] : []}
                 />
               </div>
               <Textarea label={"Description"} placeholder={"This is an awesome contract!"}
-                        className={"flex-grow w-auto"}
-                        value={editedContract?.description}
-                        isReadOnly={!isEditing} name={"description"} onChange={onChangeHandler}
-                        variant={isEditing ? "flat" : "bordered"} labelPlacement={"outside"} />
+                className={"flex-grow w-auto"}
+                value={editedContract?.description}
+                isReadOnly={!isEditing} name={"description"} onChange={onChangeHandler}
+                variant={isEditing ? "flat" : "bordered"} labelPlacement={"outside"} />
               <div className={"flex flex-row gap-4 flex-wrap"}>
                 <Input label={"Date Issued"} placeholder={"31-12-2023"}
-                       className={"flex-grow w-auto"}
-                       value={editedContract?.startDate && new Date(editedContract?.startDate).toISOString().slice(0, -1)}
-                       isReadOnly={!isEditing}
-                       type={"datetime-local"} name={"issueDate"} onChange={onChangeHandler}
-                       startContent={<IconCalendarStar className={"text-default-400"} size={"20"} />}
-                       isRequired={true}
-                       variant={isEditing ? "flat" : "bordered"} labelPlacement={"outside"} />
+                  className={"flex-grow w-auto"}
+                  value={editedContract?.startDate && new Date(editedContract?.startDate).toISOString().slice(0, -1)}
+                  isReadOnly={!isEditing}
+                  type={"datetime-local"} name={"issueDate"} onChange={onChangeHandler}
+                  startContent={<IconCalendarStar className={"text-default-400"} size={"20"} />}
+                  isRequired={true}
+                  variant={isEditing ? "flat" : "bordered"} labelPlacement={"outside"} />
 
                 <Input label={"Due Date"} placeholder={"31-12-2023"}
-                       className={"flex-grow w-auto"}
-                       value={editedContract?.dueDate && new Date(editedContract?.dueDate).toISOString().slice(0, -1)}
-                       isReadOnly={!isEditing}
-                       startContent={<IconCalendar className={"text-default-400"} size={"20"} />}
-                       type={"datetime-local"} name={"dueDate"} onChange={onChangeHandler}
-                       variant={isEditing ? "flat" : "bordered"} labelPlacement={"outside"} />
+                  className={"flex-grow w-auto"}
+                  value={editedContract?.dueDate && new Date(editedContract?.dueDate).toISOString().slice(0, -1)}
+                  isReadOnly={!isEditing}
+                  startContent={<IconCalendar className={"text-default-400"} size={"20"} />}
+                  type={"datetime-local"} name={"dueDate"} onChange={onChangeHandler}
+                  variant={isEditing ? "flat" : "bordered"} labelPlacement={"outside"} />
               </div>
               <Divider />
-              <ContractJobsTable jobs={editedContract?.Jobs} isEditing={isEditing}
-                                 onEntryDeleted={onEntryDeleteHandler}
-                                 onEntryChanged={onEntryChangedHandler} />
+              <ContractJobsTable jobs={editedContract?.Jobs || []} isEditing={isEditing}
+                onEntryDeleted={onEntryDeleteHandler}
+                onEntryChanged={onEntryChangedHandler} />
               <Divider />
               <div className={"flex flex-row gap-1 items-start flex-grow justify-between w-full"}>
                 {contract?.createdAt && (
                   <Tooltip content={contract?.createdAt}>
-                    <span className={"text-xs text-default-500"}>Created {moment(contract?.createdAt).fromNow()}</span>
+                    <span className={"text-xs text-default-500"}>Created {formatDistanceToNow(new Date(contract?.createdAt), { addSuffix: true })}</span>
                   </Tooltip>
                 )}
                 {contract?.updatedAt &&
                   <Tooltip content={contract?.updatedAt}>
-                    <span className={"text-xs text-default-500"}>Updated {moment(contract?.updatedAt).fromNow()}</span>
+                    <span className={"text-xs text-default-500"}>Updated {formatDistanceToNow(new Date(contract?.updatedAt), { addSuffix: true })}</span>
                   </Tooltip>
                 }
               </div>
@@ -309,12 +321,12 @@ export default function ContractForm({ id, className }: Props) {
               {isEditing && contract?.id ? (
                 <>
                   <Button variant={"light"} onPress={onCancelHandler} color={"danger"}
-                          className={"font-medium hover:bg-danger-200"}>
+                    className={"font-medium hover:bg-danger-200"}>
                     Cancel
                   </Button>
                   <Button variant={"flat"} onPress={onSaveHandler} isLoading={isSaving}
-                          className={"text-default-800 font-medium hover:bg-primary-200"}
-                          startContent={<IconDeviceFloppy />}>
+                    className={"text-default-800 font-medium hover:bg-primary-200"}
+                    startContent={<IconDeviceFloppy />}>
                     Save
                   </Button>
                 </>
@@ -322,8 +334,8 @@ export default function ContractForm({ id, className }: Props) {
               {/*  if no contractEntries Id this is a new contractEntries */}
               {!contract?.id && (
                 <Button variant={"flat"} onPress={onSaveHandler} isLoading={isSaving}
-                        className={"text-default-800 font-medium hover:bg-primary-200"}
-                        startContent={<IconDeviceFloppy />}>
+                  className={"text-default-800 font-medium hover:bg-primary-200"}
+                  startContent={<IconDeviceFloppy />}>
                   Save
                 </Button>
               )}

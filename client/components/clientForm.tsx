@@ -10,10 +10,10 @@ import {
   ModalHeader,
   Textarea,
   useDisclosure
-} from "@nextui-org/react";
-import { Card, CardBody, CardHeader } from "@nextui-org/card";
+} from "@heroui/react";
+import { Card, CardBody, CardHeader } from "@heroui/card";
 import React, { useEffect, useState } from "react";
-import { Button, ButtonGroup } from "@nextui-org/button";
+import { Button, ButtonGroup } from "@heroui/button";
 import {
   IconAbc,
   IconAppWindow,
@@ -26,11 +26,12 @@ import {
 } from "@tabler/icons-react";
 import clsx from "clsx";
 import { useUserStore } from "@/services/user";
-import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@nextui-org/dropdown";
+import { Client } from "@/types";
+import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from "@heroui/dropdown";
 import OrganizationSelector from "@/components/organizationSelector";
-import { Tooltip } from "@nextui-org/tooltip";
-import moment from "moment";
-import { Spacer } from "@nextui-org/spacer";
+import { Tooltip } from "@heroui/tooltip";
+import { formatDistanceToNow } from "date-fns";
+import { Spacer } from "@heroui/spacer";
 import ClientCommentSection from "@/components/clientCommentSection";
 import { useRouter } from "next/navigation";
 
@@ -71,14 +72,14 @@ export default function ClientForm({ id, className }: Props) {
   }, [client]);
 
   const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEditedClient({ ...editedClient, [e.target.name]: e.target.value });
+    setEditedClient({ ...editedClient!, [e.target.name]: e.target.value } as Client);
   };
 
   const onSaveHandler = async () => {
     // Save the edited client here
     setIsSaving(true);
 
-    const client = await updateClient(editedClient, currentOrg?.id);
+    const client = await updateClient(editedClient!, currentOrg?.id);
 
     setIsEditing(!editedClient?.id);
     if (!editedClient?.id) {
@@ -92,7 +93,7 @@ export default function ClientForm({ id, className }: Props) {
     // Delete the client here
     setIsSaving(true);
     setIsEditing(false);
-    await deleteClient(editedClient, currentOrg?.id);
+    await deleteClient(editedClient!, currentOrg?.id);
     setIsSaving(false);
   };
 
@@ -144,8 +145,8 @@ export default function ClientForm({ id, className }: Props) {
               {client?.id && (
                 <ButtonGroup variant="flat" size={"sm"} color={"default"}>
                   <Button endContent={<IconEdit />}
-                          onPress={() => setIsEditing(true)}
-                          isDisabled={isEditing}>
+                    onPress={() => setIsEditing(true)}
+                    isDisabled={isEditing}>
                     Edit
                   </Button>
                   <Dropdown placement="bottom-start">
@@ -156,7 +157,7 @@ export default function ClientForm({ id, className }: Props) {
                     </DropdownTrigger>
                     <DropdownMenu>
                       <DropdownItem key={"delete"} description={"Delete this client"} onPress={onOpen}
-                                    startContent={<IconTrash className={"text-default-500"} />} shortcut={"D"}>
+                        startContent={<IconTrash className={"text-default-500"} />} shortcut={"D"}>
                         Delete
                       </DropdownItem>
                     </DropdownMenu>
@@ -168,38 +169,38 @@ export default function ClientForm({ id, className }: Props) {
           <CardBody className={"flex flex-col gap-4"}>
             <form className={clsx("flex flex-col gap-4", { "pointer-events-none": !isEditing })}>
               <Input label={"Name"} placeholder={"Name"} value={editedClient?.name} isReadOnly={!isEditing}
-                     type={"text"}
-                     startContent={<IconAbc className={"text-default-400"} size={"20"} />}
-                     name={"name"} onChange={onChangeHandler}
-                     variant={isEditing ? "flat" : "underlined"} labelPlacement={"outside"} />
+                type={"text"}
+                startContent={<IconAbc className={"text-default-400"} size={"20"} />}
+                name={"name"} onChange={onChangeHandler}
+                variant={isEditing ? "flat" : "underlined"} labelPlacement={"outside"} />
               <Input label={"Phone"} placeholder={"Phone"} value={editedClient?.phone} isReadOnly={!isEditing}
-                     type={"text"}
-                     startContent={<IconPhone className={"text-default-400"} size={"20"} />}
-                     name={"phone"} onChange={onChangeHandler}
-                     variant={isEditing ? "flat" : "underlined"} labelPlacement={"outside"} />
+                type={"text"}
+                startContent={<IconPhone className={"text-default-400"} size={"20"} />}
+                name={"phone"} onChange={onChangeHandler}
+                variant={isEditing ? "flat" : "underlined"} labelPlacement={"outside"} />
               <Input label={"Email"} placeholder={"Email"} value={editedClient?.email} isReadOnly={!isEditing}
-                     type={"email"}
-                     startContent={<IconMail className={"text-default-400"} size={"20"} />}
-                     name={"email"} onChange={onChangeHandler}
-                     variant={isEditing ? "flat" : "underlined"} labelPlacement={"outside"} />
+                type={"email"}
+                startContent={<IconMail className={"text-default-400"} size={"20"} />}
+                name={"email"} onChange={onChangeHandler}
+                variant={isEditing ? "flat" : "underlined"} labelPlacement={"outside"} />
               <Input label={"Website"} placeholder={"Website"} value={editedClient?.website} isReadOnly={!isEditing}
-                     type={"text"}
-                     startContent={<IconAppWindow className={"text-default-400"} size={"20"} />}
-                     name={"website"} onChange={onChangeHandler}
-                     variant={isEditing ? "flat" : "underlined"} labelPlacement={"outside"} />
+                type={"text"}
+                startContent={<IconAppWindow className={"text-default-400"} size={"20"} />}
+                name={"website"} onChange={onChangeHandler}
+                variant={isEditing ? "flat" : "underlined"} labelPlacement={"outside"} />
               <Textarea label={"Description"} placeholder={"Description"} value={editedClient?.description}
-                        isReadOnly={!isEditing} name={"description"} onChange={onChangeHandler}
-                        variant={isEditing ? "flat" : "underlined"} labelPlacement={"outside"} />
+                isReadOnly={!isEditing} name={"description"} onChange={onChangeHandler}
+                variant={isEditing ? "flat" : "underlined"} labelPlacement={"outside"} />
             </form>
             <div className={"flex flex-col gap-1 items-start"}>
               {client?.updatedAt &&
                 <Tooltip content={client?.updatedAt}>
-                  <span className={"text-xs text-default-500"}>Updated {moment(client?.updatedAt).fromNow()}</span>
+                  <span className={"text-xs text-default-500"}>Updated {formatDistanceToNow(new Date(client?.updatedAt), { addSuffix: true })}</span>
                 </Tooltip>
               }
               {client?.createdAt && (
                 <Tooltip content={client?.createdAt}>
-                  <span className={"text-xs text-default-500"}>Created {moment(client?.createdAt).fromNow()}</span>
+                  <span className={"text-xs text-default-500"}>Created {formatDistanceToNow(new Date(client?.createdAt), { addSuffix: true })}</span>
                 </Tooltip>
               )}
             </div>
@@ -209,12 +210,12 @@ export default function ClientForm({ id, className }: Props) {
               {isEditing && client?.id ? (
                 <>
                   <Button variant={"light"} onPress={() => setIsEditing(false)} color={"danger"}
-                          className={"font-medium hover:bg-danger-200"}>
+                    className={"font-medium hover:bg-danger-200"}>
                     Cancel
                   </Button>
                   <Button variant={"flat"} onPress={onSaveHandler} isLoading={isSaving}
-                          className={"text-default-800 font-medium hover:bg-primary-200"}
-                          endContent={<IconDeviceFloppy />}>
+                    className={"text-default-800 font-medium hover:bg-primary-200"}
+                    endContent={<IconDeviceFloppy />}>
                     Save
                   </Button>
                 </>
@@ -222,8 +223,8 @@ export default function ClientForm({ id, className }: Props) {
               {/*  if no client Id this is a new client */}
               {!client?.id && (
                 <Button variant={"flat"} onPress={onSaveHandler} isLoading={isSaving}
-                        className={"text-default-800 font-medium hover:bg-primary-200"}
-                        endContent={<IconDeviceFloppy />}>
+                  className={"text-default-800 font-medium hover:bg-primary-200"}
+                  endContent={<IconDeviceFloppy />}>
                   Save
                 </Button>
               )}

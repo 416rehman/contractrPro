@@ -8,9 +8,9 @@ import {
   NavbarMenu,
   NavbarMenuItem,
   NavbarMenuToggle
-} from "@nextui-org/navbar";
+} from "@heroui/navbar";
 import NextLink from "next/link";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/button";
 import UserMenu from "@/components/userMenu";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
@@ -18,7 +18,7 @@ import AuthFallback from "@/components/authFallback";
 import { VisitorMenu } from "@/components/visitorMenu";
 import { useUserStore } from "@/services/user/";
 import OrganizationSelector from "@/components/organizationSelector";
-import { Divider } from "@nextui-org/divider";
+import { Divider } from "@heroui/divider";
 import { sidebarItems } from "@/components/sidebar";
 import clsx from "clsx";
 import SearchBox from "@/components/searchBox";

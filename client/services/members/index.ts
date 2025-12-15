@@ -13,11 +13,12 @@ export const useMembersStore = create((set: any) => ({
 }));
 
 export const loadMembers = async (currentOrganizationId: string) => {
-  if (!useMembersStore.getState().lastRequestedOn) {
+  const { lastRequestedOn } = useMembersStore.getState();
+  if (!lastRequestedOn) {
     useMembersStore.getState().lastRequestedOn = new Date();
   } else {
     const now = new Date();
-    const diff = now.getTime() - useMembersStore.getState().lastRequestedOn.getTime();
+    const diff = now.getTime() - lastRequestedOn.getTime();
     // if the last request was less than 5 seconds ago, don't make another request
     if (diff < 5000) {
       return;
@@ -29,10 +30,10 @@ export const loadMembers = async (currentOrganizationId: string) => {
     const orgMembers = await requestMembers(currentOrganizationId);
 
     // if the new members are different from the current members, update the store
-    if (orgMembers.length !== currentMembers.length || orgMembers.some((orgMember, i) => orgMember.id !== currentMembers[i].id)) {
+    if (orgMembers.length !== currentMembers.length || orgMembers.some((orgMember: any, i: number) => orgMember.id !== currentMembers[i].id)) {
       useMembersStore.getState().setMembers(orgMembers);
     }
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
   }
 };
@@ -53,7 +54,7 @@ export const updateMemberAndPersist = async (orgMember: Member, currentOrganizat
       }
     }
 
-  } catch (err) {
+  } catch (err: any) {
     useToastsStore.getState().addToast({ id: "update-orgMember-error", type: "error", message: err?.message || err });
   }
 };
@@ -66,7 +67,7 @@ export const deleteMemberAndPersist = async (orgMember: Member, currentOrganizat
     useMembersStore.getState().removeMember(orgMember);
     useToastsStore.getState().addToast({ id: "delete-orgMember", type: "success", message: "Member deleted" });
 
-  } catch (err) {
+  } catch (err: any) {
     useToastsStore.getState().addToast({ id: "delete-orgMember-error", type: "error", message: err?.message || err });
   }
 };

@@ -21,11 +21,12 @@ export const useContractsStore = create((set: any) => ({
 }));
 
 export const loadContracts = async (currentOrganizationId: string) => {
-  if (!useContractsStore.getState().lastRequestedOn) {
+  const { lastRequestedOn } = useContractsStore.getState();
+  if (!lastRequestedOn) {
     useContractsStore.getState().lastRequestedOn = new Date();
   } else {
     const now = new Date();
-    const diff = now.getTime() - useContractsStore.getState().lastRequestedOn.getTime();
+    const diff = now.getTime() - lastRequestedOn.getTime();
     // if the last request was less than 5 seconds ago, don't make another request
     if (diff < 5000) {
       return;
@@ -37,10 +38,10 @@ export const loadContracts = async (currentOrganizationId: string) => {
     const orgContracts = await requestAllOrganizationContracts(currentOrganizationId);
 
     // if the new contracts are different from the current contracts, update the store
-    if (orgContracts.length !== currentContracts.length || orgContracts.some((contract, i) => contract.id !== currentContracts[i].id)) {
+    if (orgContracts.length !== currentContracts.length || orgContracts.some((contract: any, i: number) => contract.id !== currentContracts[i].id)) {
       useContractsStore.getState().setContracts(orgContracts);
     }
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
   }
 };
@@ -66,7 +67,7 @@ export const updateContractAndPersist = async (contract: Contract, currentOrgani
       }
     }
 
-  } catch (err) {
+  } catch (err: any) {
     useToastsStore.getState().addToast({
       id: "update-contractEntries-error",
       type: "error",
@@ -83,7 +84,7 @@ export const deleteContractAndPersist = async (contract: Contract, currentOrgani
     useContractsStore.getState().removeContract(contract);
     useToastsStore.getState().addToast({ id: "delete-contract", type: "success", message: "Contract deleted" });
 
-  } catch (err) {
+  } catch (err: any) {
     useToastsStore.getState().addToast({
       id: "delete-contract-error",
       type: "error",

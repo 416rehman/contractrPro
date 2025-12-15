@@ -1,12 +1,16 @@
-FROM node:18-alpine as build
+FROM node:24-alpine as build
 
 WORKDIR /app
-COPY package.json ./
-RUN npm install
+
+# install pnpm globally
+RUN npm install -g pnpm
+
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
 
 COPY . .
 
 # build the app
-RUN npm run build
+RUN pnpm run build
 
-CMD ["npm", "run", "start"]
+CMD ["pnpm", "run", "start"]

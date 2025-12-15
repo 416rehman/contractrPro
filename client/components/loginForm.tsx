@@ -1,16 +1,16 @@
 "use client";
 
-import { CardFooter, Input } from "@nextui-org/react";
+import { CardFooter, Input } from "@heroui/react";
 import { login } from "@/services/auth";
 import { useState } from "react";
-import { Divider } from "@nextui-org/divider";
+import { Divider } from "@heroui/divider";
 import clsx from "clsx";
 
 import { IconAt, IconEye, IconEyeClosed, IconLogin, IconMailFilled } from "@tabler/icons-react";
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/button";
 import { useToastsStore } from "@/services/toast";
-import { Link } from "@nextui-org/link";
-import { Card, CardBody } from "@nextui-org/card";
+import { Link } from "@heroui/link";
+import { Card, CardBody } from "@heroui/card";
 
 /**
  * This is the login form component. It is used to login to the application.

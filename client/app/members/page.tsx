@@ -1,4 +1,4 @@
-import { Button } from "@nextui-org/button";
+import { Button } from "@heroui/button";
 import { title } from "@/components/primitives";
 import { IconCirclePlus } from "@tabler/icons-react";
 import NextLink from "next/link";

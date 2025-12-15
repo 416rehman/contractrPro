@@ -1,7 +1,7 @@
 "use client";
-import { Card, CardBody, CardHeader } from "@nextui-org/card";
-import { CardFooter, Input } from "@nextui-org/react";
-import { Button } from "@nextui-org/button";
+import { Card, CardBody, CardHeader } from "@heroui/card";
+import { CardFooter, Input } from "@heroui/react";
+import { Button } from "@heroui/button";
 import NextLink from "next/link";
 import clsx from "clsx";
 import { IconChevronDown, IconDevicesDollar, IconListSearch } from "@tabler/icons-react";
@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import { loadExpenses, useExpensesStore } from "@/services/expenses";
 import { useUserStore } from "@/services/user";
 import { useParams } from "next/navigation";
-import { Popover, PopoverContent, PopoverTrigger } from "@nextui-org/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@heroui/popover";
 
 type Props = {
   className?: string;
@@ -22,7 +22,7 @@ type Props = {
  * TODO: Implement filtering
  */
 export default function ExpenseSidebar({ className }: Props) {
-  const [currentOrg] = useUserStore(state => [state.currentOrganization]);
+  const currentOrg = useUserStore(state => state.currentOrganization);
   const [expenses] = useExpensesStore(state => [state.expenses]);
   const [filter, setFilter] = useState("");
   const [expensesToDisplay, setFilteredExpenses] = useState(expenses);
@@ -39,23 +39,23 @@ export default function ExpenseSidebar({ className }: Props) {
   }, [filter, expenses]);
 
   const sidebar = <Card shadow={"none"} isBlurred={true}
-                        className={clsx("border-none rounded-none", className)}>
+    className={clsx("border-none rounded-none", className)}>
     <CardHeader className={"flex flex-col gap-2"}>
       <h1 className={"text-2xl font-bold"}>Expenses</h1>
       {/*  Search bar*/}
       <Input aria-label={"Filter expenses"}
-             placeholder={"Filter"} size={"sm"} startContent={<IconListSearch className={"text-default-400"} />}
-             variant={"underlined"}
-             onChange={(e) => setFilter(e.target.value)}
-             onClear={() => setFilter("")}
-             value={filter}
-             isClearable={true}
+        placeholder={"Filter"} size={"sm"} startContent={<IconListSearch className={"text-default-400"} />}
+        variant={"underlined"}
+        onChange={(e) => setFilter(e.target.value)}
+        onClear={() => setFilter("")}
+        value={filter}
+        isClearable={true}
       />
 
     </CardHeader>
     <CardBody className={"p-2"}>
       <ul className={"flex flex-col w-full"}>
-        {expensesToDisplay && expensesToDisplay.map((expense) => (
+        {expensesToDisplay && expensesToDisplay.map((expense: any) => (
           <li key={expense.id}>
             <Button
               className={"w-full justify-start text-default-600 font-medium"}

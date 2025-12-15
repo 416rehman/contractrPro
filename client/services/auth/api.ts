@@ -9,7 +9,7 @@ export const requestRefreshToken = async (username: string, password: string) =>
     if (!username || !password) {
       return Promise.reject("No username or password provided");
     }
-    const reqBody = { password };
+    const reqBody: any = { password };
 
     //check if username is an email
     if (username.indexOf("@") < username.indexOf(".")) {
@@ -36,7 +36,7 @@ export const requestRefreshToken = async (username: string, password: string) =>
     }
 
     return Promise.resolve(body.data.refreshToken);
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
     return Promise.reject(err);
   }
@@ -70,7 +70,7 @@ export const requestAccessToken = async (refreshToken: string) => {
     }
 
     return Promise.resolve(body.data.token);
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
     return Promise.reject(err);
   }
@@ -96,7 +96,7 @@ export const requestCreateAccount = async (email: string, password: string, user
     }
 
     return Promise.resolve(body.data);
-  } catch (err) {
+  } catch (err: any) {
     return Promise.reject(err.message);
   }
 };
@@ -111,7 +111,7 @@ export const requestLogout = async () => {
     });
 
     return Promise.resolve("Logged out");
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
     return Promise.reject("Error logging out");
   }

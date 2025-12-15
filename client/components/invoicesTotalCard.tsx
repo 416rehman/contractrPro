@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, CardBody, CardHeader } from "@nextui-org/card";
+import { Card, CardBody, CardHeader } from "@heroui/card";
 import { IconReceipt2 } from "@tabler/icons-react";
 import NextLink from "next/link";
 import { useEffect, useState } from "react";

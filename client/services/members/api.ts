@@ -12,7 +12,7 @@ export async function requestMembers(OrganizationId: string) {
     });
 
     return Promise.resolve(data);
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
     return Promise.reject(err?.message || err);
   }
@@ -28,7 +28,7 @@ export async function requestUpdateMember(member: Member, OrganizationId: string
     });
 
     return Promise.resolve(data);
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
     return Promise.reject(err?.message || err);
   }
@@ -43,7 +43,7 @@ export async function requestDeleteMember(member: Member, OrganizationId: string
     });
 
     return Promise.resolve(data);
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
     return Promise.reject(err?.message || err);
   }
@@ -59,7 +59,7 @@ export async function requestCreateMember(member: Member, OrganizationId: string
     });
 
     return Promise.resolve(data);
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
     return Promise.reject(err?.message || err);
   }
