@@ -18,9 +18,9 @@ Okay when you are done with that
     - This will reduce code duplication significantly.
     - Make sure to keep the `@openapi` comments in the route files though, as they are unique per route (tags, etc).
 
-3.  Also EVERY SINGLE ROUTE NEEDS ZOD SPEC. Just like the OPENAPI Spec, the ZOD schema needs to be in the SAME file as each route. And then all validation failures can use a single error code. Also the OpenAPI docs should be VERY detailed so bot developers can rely on them. Docs should not reveal the internals like the blob routes should not say we get the blob from S3... etc OpenAPI docs need to be very detailed, like side effects of each delete, post, put, etc. things the devs should know, eliminate any confusion, etc. What if a route takes files? etc you need to document EVERY SINGLE THING, cookies, etc.
+3.  [x] Use scaler to serve the open-api specs instead of the default UI. More: https://guides.scalar.com/scalar/scalar-api-references/integrations/express
 
-4. Use scaler to serve the open-api specs instead of the default UI. More: https://guides.scalar.com/scalar/scalar-api-references/integrations/express
+4. Also EVERY SINGLE ROUTE NEEDS ZOD SPEC. Just like the OPENAPI Spec, the ZOD schema needs to be in the SAME file as each route. And then all validation failures can use a single error code. Also the OpenAPI docs should be VERY detailed so bot developers can rely on them. Docs should not reveal the internals like the blob routes should not say we get the blob from S3... etc OpenAPI docs need to be very detailed, like side effects of each delete, post, put, etc. things the devs should know, eliminate any confusion, etc. What if a route takes files? etc you need to document EVERY SINGLE THING, cookies, etc.
 
 5. Make sure the APIs make sense, there is no room for vulnerability, data enumeration, or other security concerns (i.e should /users/{user_id} be just public? organizations? etc?) Scrutinize, provide suggestions, and improve them as you see fit. Scrutinize it all under OWASP cheat sheets etc, like also how about masking of PII? Security and compliance is PARAMOUNT.
 

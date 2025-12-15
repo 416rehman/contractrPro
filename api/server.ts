@@ -12,7 +12,8 @@ import { createErrorResponse } from './utils/response';
 import { ErrorCode } from './utils/errorCodes';
 import routes from './routes';
 import pinoHttp from 'pino-http';
-import { swaggerSpec, swaggerUi } from './swagger';
+import { apiReference } from '@scalar/express-api-reference';
+import { swaggerSpec } from './swagger';
 
 const app: Application = express();
 
@@ -35,11 +36,19 @@ app.use(compression());
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(helmet());
 app.disable('x-powered-by');
 
-// swagger docs at /docs
-app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+// scalar docs at /docs - This needs to happen before helmet starts enforcing security headers
+app.use(
+    '/docs',
+    apiReference({
+        spec: {
+            content: swaggerSpec,
+        },
+    })
+);
+
+app.use(helmet());
 
 // if development.
 if (process.env.NODE_ENV === 'development') {

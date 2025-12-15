@@ -1,5 +1,5 @@
 import swaggerJsdoc from 'swagger-jsdoc';
-import swaggerUi from 'swagger-ui-express';
+
 import { ErrorCode } from './utils/errorCodes';
 
 const options: swaggerJsdoc.Options = {
@@ -46,10 +46,43 @@ const options: swaggerJsdoc.Options = {
             },
         },
         security: [{ bearerAuth: [] }],
+        'x-tagGroups': [
+            {
+                name: 'Access Control',
+                tags: ['Auth', 'Users', 'Invites', 'Members'],
+            },
+            {
+                name: 'Organization',
+                tags: ['Organizations', 'Summary', 'Search'],
+            },
+            {
+                name: 'Clients',
+                tags: ['Clients', 'ClientComments'],
+            },
+            {
+                name: 'Contracts',
+                tags: ['Contracts', 'ContractComments'],
+            },
+            {
+                name: 'Jobs',
+                tags: ['Jobs', 'JobComments'],
+            },
+            {
+                name: 'Invoices',
+                tags: ['Invoices', 'InvoiceEntries', 'InvoiceComments'],
+            },
+            {
+                name: 'Expenses',
+                tags: ['Expenses', 'ExpenseEntries', 'ExpenseComments'],
+            },
+            {
+                name: 'Vendors',
+                tags: ['Vendors', 'VendorComments'],
+            },
+        ],
     },
     // scan all route files for @openapi comments
     apis: ['./routes/**/*.ts', './routes/**/*.js'],
 };
 
 export const swaggerSpec = swaggerJsdoc(options);
-export { swaggerUi };
