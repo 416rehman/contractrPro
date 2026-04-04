@@ -8,6 +8,7 @@ import {
     jsonb,
     bigint,
     numeric,
+    unique,
     date,
 } from 'drizzle-orm/pg-core'
 import { relations } from 'drizzle-orm'
@@ -71,12 +72,17 @@ export const organizationMembers = pgTable('organization_members', {
         .references(() => organizations.id, { onDelete: 'cascade' })
         .notNull(),
     userId: uuid('user_id')
-        .references(() => users.id, { onDelete: 'cascade' })
-        .notNull(),
+        .references(() => users.id, { onDelete: 'cascade' }),
     updatedByUserId: uuid('updated_by_user_id').references(() => users.id),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
     flags: integer('flags').default(0),
+}, (table) => {
+    return {
+        orgUserUnique: unique('org_user_unique').on(table.organizationId, table.userId),
+        orgEmailUnique: unique('org_email_unique').on(table.organizationId, table.email),
+        orgPhoneUnique: unique('org_phone_unique').on(table.organizationId, table.phone),
+    }
 })
 
 // --- crm ---

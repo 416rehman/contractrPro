@@ -1,5 +1,5 @@
 const request = require('supertest')
-const app = require('../../../../server')
+const _app = require('../../../../server'); const app = _app.default || _app;
 import { db } from '../../../../db/index'
 import { OrganizationMember, organizations } from '../../../../db/schema'
 import { eq } from 'drizzle-orm'

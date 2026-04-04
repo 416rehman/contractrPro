@@ -14,6 +14,7 @@ export const s3Client = new S3Client({
 })
 
 export const upload = async (file: any, key: string) => {
+    if (process.env.NODE_ENV === 'test') return {}
     const params = {
         Bucket: process.env.AWS_S3_BUCKET_NAME,
         Key: key,
@@ -25,6 +26,7 @@ export const upload = async (file: any, key: string) => {
 }
 
 export const deleteObject = async (key: string) => {
+    if (process.env.NODE_ENV === 'test') return {}
     const params = {
         Bucket: process.env.AWS_S3_BUCKET_NAME,
         Key: key,
@@ -34,6 +36,7 @@ export const deleteObject = async (key: string) => {
 }
 
 export const get = async (key: string) => {
+    if (process.env.NODE_ENV === 'test') return {}
     const params = {
         Bucket: process.env.AWS_S3_BUCKET_NAME,
         Key: key,

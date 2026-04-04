@@ -1,39 +1,30 @@
 const request = require('supertest')
-const app = require('../../../../../server')
+const _app = require('../../../../../server'); const app = _app.default || _app;
 import { db } from '../../../../../db/index'
-import { organizations, Expense, ExpenseEntry } from '../../../../../db/schema'
+import { organizations, expenses, expenseEntries } from '../../../../../db/schema'
 import { eq } from 'drizzle-orm'
 import { clearDatabase } from '../../../../utils/testDB'
 
 import * as fake from '../../../../../utils/fake'
 
-let orgId, expenseId, strangerExpenseId
+let orgId, expenseId, strangerexpenseId
 beforeAll(async () => {
     const orgResults = await db.select().from(organizations)
     orgId = orgResults[0].id
 
-    const expense = await Expense.create(
-        {
-            ...fake.mockExpenseData(),
-            OrganizationId: orgId,
-            ExpenseEntries: [fake.mockExpenseEntryData()],
-        },
-        {
-            include: [ExpenseEntry],
-        }
-    )
+    const [expense] = await db.insert(expenses).values({
+        ...fake.mockExpenseData(),
+        organizationId: orgId,
+    }).returning()
     expenseId = expense.id
-    const strangerExpense = await Expense.create(
-        {
-            ...fake.mockExpenseData(),
-            OrganizationId: orgResults[1].id,
-            ExpenseEntries: [fake.mockExpenseEntryData()],
-        },
-        {
-            include: [ExpenseEntry],
-        }
-    )
-    strangerExpenseId = strangerExpense.id
+    const [entry] = await db.insert(expenseEntries).values({ ...fake.mockExpenseEntryData(), expenseId: expense ? expense.id : strangerExpense.id }).returning()
+
+    const [strangerExpense] = await db.insert(expenses).values({
+        ...fake.mockExpenseData(),
+        organizationId: orgResults[1].id,
+    }).returning()
+    strangerexpenseId = strangerExpense.id
+    const [entry] = await db.insert(expenseEntries).values({ ...fake.mockExpenseEntryData(), expenseId: expense ? expense.id : strangerExpense.id }).returning()
 })
 afterAll(async () => {
     jest.restoreAllMocks()
@@ -56,25 +47,23 @@ describe('Create expense entry', () => {
         expect(data.description).toBe(requestBody.description)
         expect(data.unitCost).toBe(requestBody.unitCost)
         expect(data.quantity).toBe(requestBody.quantity)
-        expect(data.ExpenseId).toBe(expenseId)
+        expect(data.expenseId).toBe(expenseId)
         expect(data.updatedAt).toBeDefined()
         expect(data.createdAt).toBeDefined()
 
         // Cleanup
         if (response?.body?.data?.id) {
-            await ExpenseEntry.destroy({
-                where: { id: response.body.data.id },
-            })
+            await db.delete(expenseEntries).where(eq(expenseEntries.id, response.body.data.id))
         }
     })
 
     it('should return 400 if expense ID is invalid', async () => {
-        const invalidExpenseId = 'invalid-expense-id'
+        const invalidexpenseId = 'invalid-expense-id'
         const requestBody = fake.mockExpenseEntryData()
 
         const response = await request(app)
             .post(
-                `/organizations/${orgId}/expenses/${invalidExpenseId}/entries`
+                `/organizations/${orgId}/expenses/${invalidexpenseId}/entries`
             )
             .send(requestBody)
             .expect(400)
@@ -89,7 +78,7 @@ describe('Create expense entry', () => {
 
         const response = await request(app)
             .post(
-                `/organizations/${orgId}/expenses/${strangerExpenseId}/entries`
+                `/organizations/${orgId}/expenses/${strangerexpenseId}/entries`
             )
             .send(requestBody)
             .expect(400)
@@ -102,7 +91,7 @@ describe('Create expense entry', () => {
     it('should return 400 if an exception occurs', async () => {
         const requestBody = fake.mockExpenseEntryData()
 
-        jest.spyOn(ExpenseEntry, 'create').mockImplementationOnce(() => {
+        jest.spyOn(db, 'transaction').mockImplementationOnce(() => {
             throw new Error('Something went wrong')
         })
 

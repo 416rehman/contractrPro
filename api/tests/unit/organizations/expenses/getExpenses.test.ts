@@ -1,5 +1,5 @@
 const request = require('supertest')
-const app = require('../../../../server')
+const _app = require('../../../../server'); const app = _app.default || _app;
 import { db } from '../../../../db/index'
 import { organizations } from '../../../../db/schema'
 import { eq } from 'drizzle-orm'
@@ -11,6 +11,15 @@ let orgId
 beforeAll(async () => {
     const orgResuts = await db.select().from(organizations)
     orgId = orgResuts[0].id
+
+    const [expense] = await db.insert(expenses).values({
+        ...fake.mockExpenseData(),
+        organizationId: orgId,
+    }).returning()
+    await db.insert(expenseEntries).values({
+        ...fake.mockExpenseEntryData(),
+        expenseId: expense.id,
+    })
 })
 afterAll(async () => {
     jest.restoreAllMocks()
@@ -51,7 +60,7 @@ describe('Get all organization expenses', () => {
         expect(expenseEntry).toHaveProperty('unitCost')
         expect(expenseEntry).toHaveProperty('createdAt')
         expect(expenseEntry).toHaveProperty('updatedAt')
-        expect(expenseEntry).toHaveProperty('ExpenseId', expense.id)
+        expect(expenseEntry).toHaveProperty('expenseId', expense.id)
     })
 
     it('should return all organization expenses without expanded ExpenseEntries', async () => {
@@ -93,7 +102,7 @@ describe('Get all organization expenses', () => {
     })
 
     it('should return 400 if an exception occurs', async () => {
-        jest.spyOn(db, 'transaction').mockImplementationOnce(() => {
+        jest.spyOn(db, 'select').mockImplementationOnce(() => {
             throw new Error('Something went wrong')
         })
 

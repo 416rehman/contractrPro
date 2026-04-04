@@ -1,5 +1,5 @@
 const request = require('supertest')
-const app = require('../../../../../server')
+const _app = require('../../../../../server'); const app = _app.default || _app;
 import { db } from '../../../../../db/index'
 import { organizations, invoices, invoiceEntries } from '../../../../../db/schema'
 import { eq } from 'drizzle-orm'
@@ -9,21 +9,19 @@ import * as fake from '../../../../../utils/fake'
 
 let orgId, invoiceId
 beforeAll(async () => {
-    const organization = await Organization.findAll({ limit: 1 })
+    const organization = await db.select().from(organizations).limit(1)
     orgId = organization[0].id
 
-    const invoice = await db.insert(invoices).values(
-        {
-            OrganizationId: orgId,
-            ...fake.mockInvoiceData().returning().then(r => r[0]),
-            InvoiceEntries: [fake.mockInvoiceEntryData()],
-        },
-        {
-            include: {
-                model: InvoiceEntry,
-            },
-        }
-    )
+    const [invoice] = await db.insert(invoices).values({
+        organizationId: orgId,
+        ...fake.mockInvoiceData()
+    }).returning()
+
+    await db.insert(invoiceEntries).values({
+        ...fake.mockInvoiceEntryData(),
+        invoiceId: invoice.id,
+        organizationId: orgId
+    })
 
     invoiceId = invoice.id
 })
@@ -58,9 +56,9 @@ describe('Get invoice entries', () => {
     })
 
     it('should return 400 if an exception occurs', async () => {
-        jest.spyOn(InvoiceEntry, 'findAll').mockImplementationOnce(() => {
+        jest.spyOn(db, 'select').mockImplementationOnce((() => {
             throw new Error('Something went wrong')
-        })
+        }) as any)
 
         const response = await request(app)
             .get(`/organizations/${orgId}/invoices/${invoiceId}/entries`)

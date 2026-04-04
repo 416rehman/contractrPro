@@ -1,7 +1,7 @@
 const request = require('supertest')
-const app = require('../../../../server')
+const _app = require('../../../../server'); const app = _app.default || _app;
 import { db } from '../../../../db/index'
-import { Expense, organizations, ExpenseEntry } from '../../../../db/schema'
+import { expenses, organizations, expenseEntries } from '../../../../db/schema'
 import { eq } from 'drizzle-orm'
 import { clearDatabase } from '../../../utils/testDB'
 
@@ -12,17 +12,16 @@ let orgId, expenseId
 beforeAll(async () => {
     const orgResults = await db.select().from(organizations)
     orgId = orgResults[0].id
-    const expenseToDelete = await Expense.create(
-        {
-            ...fake.mockExpenseData(),
-            OrganizationId: orgId,
-            ExpenseEntries: [fake.mockExpenseEntryData()],
-        },
-        {
-            include: [ExpenseEntry],
-        }
-    )
+    const [expenseToDelete] = await db.insert(expenses).values({
+        ...fake.mockExpenseData(),
+        organizationId: orgId,
+    }).returning()
     expenseId = expenseToDelete.id
+
+    await db.insert(expenseEntries).values({
+        ...fake.mockExpenseEntryData(),
+        expenseId: expenseId,
+    })
 })
 afterAll(async () => {
     jest.restoreAllMocks()
@@ -52,9 +51,9 @@ describe('Delete expense', () => {
     })
 
     it('should return 400 if expense ID is invalid', async () => {
-        const invalidExpenseId = 'invalid-expense-id'
+        const invalidexpenseId = 'invalid-expense-id'
         const response = await request(app)
-            .delete(`/organizations/${orgId}/expenses/${invalidExpenseId}`)
+            .delete(`/organizations/${orgId}/expenses/${invalidexpenseId}`)
             .expect(400)
 
         const { status } = response.body
@@ -64,7 +63,7 @@ describe('Delete expense', () => {
 
     it('should return 400 if expense is not found', async () => {
         const response = await request(app)
-            .delete(`/organizations/${orgId}/expenses/999999`)
+            .delete(`/organizations/${orgId}/expenses/00000000-0000-0000-0000-000000000000`)
             .expect(400)
 
         const { status } = response.body
@@ -73,7 +72,7 @@ describe('Delete expense', () => {
     })
 
     it('should return 400 if an exception occurs', async () => {
-        jest.spyOn(Expense, 'destroy').mockImplementationOnce(() => {
+        jest.spyOn(db, 'delete').mockImplementationOnce(() => {
             throw new Error('Something went wrong')
         })
 

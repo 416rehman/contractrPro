@@ -1,5 +1,5 @@
 const request = require('supertest')
-const app = require('../../../../../server')
+const _app = require('../../../../../server'); const app = _app.default || _app;
 import { db } from '../../../../../db/index'
 import { comments, organizations, clients, contracts } from '../../../../../db/schema'
 import { eq } from 'drizzle-orm'
@@ -11,26 +11,18 @@ let orgId, contractId, strangerOrganizationId, strangerContractId, clientId
 beforeAll(async () => {
     const org = await db.select().from(organizations)
     orgId = org[0].id
-    strangerOrganizationId = org[1].id
+    const [strangerOrg] = await db.insert(organizations).values(fake.mockOrganizationData()).returning();
+    strangerOrganizationId = strangerOrg.id
 
-    const client = await db.insert(clients).values({
-        ...fake.mockClientData().returning().then(r => r[0]),
-        OrganizationId: orgId,
-    })
+    const [client] = await db.insert(clients).values({ ...fake.mockClientData(), organizationId: orgId, }).returning()
     clientId = client.id
 
-    const contract = await db.insert(contracts).values({
-        ...fake.mockContractData().returning().then(r => r[0]),
-        OrganizationId: orgId,
-        ClientId: clientId,
-    })
+    const [contract] = await db.insert(contracts).values({ ...fake.mockContractData(), organizationId: orgId,
+        clientId: clientId, }).returning()
     contractId = contract.id
 
-    const strangerContract = await db.insert(contracts).values({
-        ...fake.mockContractData().returning().then(r => r[0]),
-        OrganizationId: strangerOrganizationId,
-        ClientId: clientId,
-    })
+    const [strangerContract] = await db.insert(contracts).values({ ...fake.mockContractData(), organizationId: strangerOrganizationId,
+        clientId: clientId, }).returning()
     strangerContractId = strangerContract.id
 })
 
@@ -44,8 +36,8 @@ describe('Delete comment for contract', () => {
         const commentData = fake.mockCommentData()
         const comment = await db.insert(comments).values({
             ...commentData,
-            ContractId: contractId,
-            OrganizationId: orgId,
+            contractId: contractId,
+            organizationId: orgId,
         }).returning().then(r => r[0])
 
         const response = await request(app)
@@ -64,8 +56,8 @@ describe('Delete comment for contract', () => {
         const commentData = fake.mockCommentData()
         const comment = await db.insert(comments).values({
             ...commentData,
-            ContractId: strangerContractId,
-            OrganizationId: strangerOrganizationId,
+            contractId: strangerContractId,
+            organizationId: strangerOrganizationId,
         }).returning().then(r => r[0])
 
         const response = await request(app)

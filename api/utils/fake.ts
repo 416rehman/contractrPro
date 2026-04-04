@@ -57,5 +57,57 @@ export const mockContractData = (overrides = {}) => ({
     ...overrides,
 })
 
-export const faker = fakerJs
+export const mockJobData = (overrides = {}) => ({
+    name: fakerJs.commerce.productName() + ' Job',
+    description: fakerJs.lorem.paragraph(),
+    startDate: new Date(),
+    dueDate: new Date(),
+    ...overrides,
+})
 
+export const mockCommentData = (overrides = {}) => ({
+    content: fakerJs.lorem.sentence(),
+    ...overrides,
+})
+
+export const mockExpenseData = (overrides = {}) => ({
+    amount: fakerJs.finance.amount(),
+    description: fakerJs.lorem.sentence(),
+    date: new Date(),
+    ...overrides,
+})
+
+export const mockInvoiceData = (overrides = {}) => ({
+    status: 'draft',
+    issueDate: new Date(),
+    dueDate: new Date(),
+    note: fakerJs.lorem.sentence(),
+    ...overrides,
+})
+
+export const mockInvoiceEntryData = (overrides = {}) => ({
+    description: fakerJs.lorem.sentence(),
+    quantity: fakerJs.number.int({ min: 1, max: 10 }).toString(),
+    unitCost: fakerJs.finance.amount(),
+    ...overrides,
+})
+
+export const mockExpenseEntryData = (overrides = {}) => ({
+    name: fakerJs.commerce.productName(),
+    description: fakerJs.lorem.sentence(),
+    quantity: fakerJs.number.int({ min: 1, max: 10 }).toString(),
+    unitCost: fakerJs.finance.amount(),
+    ...overrides,
+})
+
+export const mockOrgMemberData = (overrides = {}) => ({
+    name: fakerJs.person.fullName(),
+    email: fakerJs.internet.email().toLowerCase(),
+    phone: fakerJs.phone.number({ style: 'international' }),
+    role: 'worker',
+    status: 'active',
+    permissions: {},
+    ...overrides,
+})
+
+export const faker = fakerJs

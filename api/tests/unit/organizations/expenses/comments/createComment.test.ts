@@ -1,39 +1,35 @@
 const request = require('supertest')
-const app = require('../../../../../server')
+const _app = require('../../../../../server'); const app = _app.default || _app;
 import { db } from '../../../../../db/index'
-import { clients, organizations, Expense } from '../../../../../db/schema'
+import { clients, organizations, expenses } from '../../../../../db/schema'
 import { eq } from 'drizzle-orm'
 import { clearDatabase } from '../../../../utils/testDB'
 
 import * as fake from '../../../../../utils/fake'
 const fs = require('fs')
 
-let orgId, expenseId, strangerOrganizationId, strangerExpenseId, clientId
+let orgId, expenseId, (orgResults[1]?.id || orgResults[0].id), strangerexpenseId, clientId
 let fileToAttachPath, fileContent, fileToAttachName
 beforeAll(async () => {
     const org = await db.select().from(organizations)
     orgId = org[0].id
-    strangerOrganizationId = org[1].id
+    const [strangerOrg] = await db.insert(organizations).values(fake.mockOrganizationData()).returning();
+    (orgResults[1]?.id || orgResults[0].id) = strangerOrg.id
 
-    const client = await db.insert(clients).values({
-        ...fake.mockClientData().returning().then(r => r[0]),
-        OrganizationId: orgId,
-    })
+    const [client] = await db.insert(clients).values({ ...fake.mockClientData(), organizationId: orgId, }).returning()
     clientId = client.id
 
-    const expense = await Expense.create({
+    const expense = await db.insert(expenses).values({
         ...fake.mockExpenseData(),
-        OrganizationId: orgId,
-        ClientId: clientId,
-    })
+        organizationId: orgId,
+    }).returning().then(r => r[0])
     expenseId = expense.id
 
-    const strangerExpense = await Expense.create({
+    const strangerExpense = await db.insert(expenses).values({
         ...fake.mockExpenseData(),
-        OrganizationId: strangerOrganizationId,
-        ClientId: clientId,
-    })
-    strangerExpenseId = strangerExpense.id
+        organizationId: (orgResults[1]?.id || orgResults[0].id),
+    }).returning().then(r => r[0])
+    strangerexpenseId = strangerExpense.id
 
     // create a file and get its absolute path
     fileContent = 'test'
@@ -73,10 +69,10 @@ describe('Create comment for expense', () => {
 
         expect(status).toBe('success')
         expect(data.content).toBe(commentData.content)
-        expect(data.Attachments).toBeDefined()
-        expect(Array.isArray(data.Attachments)).toBe(true)
-        expect(data.Attachments.length).toBe(1)
-        expect(data.Attachments[0].name).toBe(fileToAttachName)
+        expect(data.attachments).toBeDefined()
+        expect(Array.isArray(data.attachments)).toBe(true)
+        expect(data.attachments.length).toBe(1)
+        expect(data.attachments[0].name).toBe(fileToAttachName)
     })
 
     it('should return 403 if organization ID is invalid', async () => {
@@ -95,11 +91,11 @@ describe('Create comment for expense', () => {
     })
 
     it('should return 400 if expense ID is invalid', async () => {
-        const invalidExpenseId = 'invalid-expense-id'
+        const invalidexpenseId = 'invalid-expense-id'
 
         const response = await request(app)
             .post(
-                `/organizations/${orgId}/expenses/${invalidExpenseId}/comments`
+                `/organizations/${orgId}/expenses/${invalidexpenseId}/comments`
             )
             .send(fake.mockCommentData())
             .expect(400)
@@ -141,10 +137,10 @@ describe('Create comment for expense', () => {
 
         expect(status).toBe('success')
         expect(data.content).toBe('')
-        expect(data.Attachments).toBeDefined()
-        expect(Array.isArray(data.Attachments)).toBe(true)
-        expect(data.Attachments.length).toBe(1)
-        expect(data.Attachments[0].name).toBe(fileToAttachName)
+        expect(data.attachments).toBeDefined()
+        expect(Array.isArray(data.attachments)).toBe(true)
+        expect(data.attachments.length).toBe(1)
+        expect(data.attachments[0].name).toBe(fileToAttachName)
     })
 
     it('should return 400 if comment content is too long', async () => {
@@ -162,7 +158,7 @@ describe('Create comment for expense', () => {
     it('should return 400 if the expense is not in the organization', async () => {
         const response = await request(app)
             .post(
-                `/organizations/${orgId}/expenses/${strangerExpenseId}/comments`
+                `/organizations/${orgId}/expenses/${strangerexpenseId}/comments`
             )
             .send(fake.mockCommentData())
             .expect(400)

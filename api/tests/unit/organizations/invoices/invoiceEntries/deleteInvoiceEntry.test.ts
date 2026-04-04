@@ -1,5 +1,5 @@
 const request = require('supertest')
-const app = require('../../../../../server')
+const _app = require('../../../../../server'); const app = _app.default || _app;
 import { db } from '../../../../../db/index'
 import { invoiceEntries, organizations, invoices } from '../../../../../db/schema'
 import { eq } from 'drizzle-orm'
@@ -15,7 +15,7 @@ beforeAll(async () => {
 
     const invoice = await db.insert(invoices).values(
         {
-            OrganizationId: orgId,
+            organizationId: orgId,
             ...fake.mockInvoiceData().returning().then(r => r[0]),
             InvoiceEntries: [fake.mockInvoiceEntryData()],
         },
@@ -28,7 +28,7 @@ beforeAll(async () => {
     invoiceId = invoice.id
     const strangerInvoice = await db.insert(invoices).values(
         {
-            OrganizationId: orgResuts[1].id,
+            organizationId: orgResuts[1].id,
             ...fake.mockInvoiceData().returning().then(r => r[0]),
             InvoiceEntries: [fake.mockInvoiceEntryData()],
         },
@@ -40,10 +40,7 @@ beforeAll(async () => {
     )
     strangerInvoiceId = strangerInvoice.id
 
-    const invoiceEntryToDelete = await db.insert(invoiceEntries).values({
-        ...fake.mockInvoiceEntryData().returning().then(r => r[0]),
-        InvoiceId: invoiceId,
-    })
+    const [invoiceEntryToDelete] = await db.insert(invoiceEntries).values({ ...fake.mockInvoiceEntryData(), invoiceId: invoiceId, }).returning()
     invoiceEntryId = invoiceEntryToDelete.id
 })
 afterAll(async () => {

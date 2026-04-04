@@ -1,7 +1,7 @@
 const request = require('supertest')
-const app = require('../../../../../server')
+const _app = require('../../../../../server'); const app = _app.default || _app;
 import { db } from '../../../../../db/index'
-import { organizations, Expense, ExpenseEntry } from '../../../../../db/schema'
+import { organizations, expenses, expenseEntries } from '../../../../../db/schema'
 import { eq } from 'drizzle-orm'
 import { clearDatabase } from '../../../../utils/testDB'
 
@@ -12,31 +12,11 @@ beforeAll(async () => {
     const orgResults = await db.select().from(organizations)
     orgId = orgResults[0].id
 
-    const expense = await Expense.create(
-        {
-            OrganizationId: orgId,
-            ...fake.mockExpenseData(),
-            ExpenseEntries: [fake.mockExpenseEntryData()],
-        },
-        {
-            include: {
-                model: ExpenseEntry,
-            },
-        }
-    )
-    expenseId = expense.id
-    entry = expense.ExpenseEntries[0]
-
-    const strangerExpense = await Expense.create(
-        {
-            ...fake.mockExpenseData(),
-            OrganizationId: orgResults[1].id,
-            ExpenseEntries: [fake.mockExpenseEntryData()],
-        },
-        {
-            include: [ExpenseEntry],
-        }
-    )
+    const [expense] = await db.insert(expenses).values({
+...fake.mockExpenseData(),
+organizationId: orgId
+}).returning();
+const [entry] = await db.insert(expenseEntries).values({ ...fake.mockExpenseEntryData(), expenseId: expense ? expense.id : strangerExpense.id }).returning()
     strangerEntry = strangerExpense.ExpenseEntries[0]
 })
 afterAll(async () => {
@@ -61,16 +41,16 @@ describe('Get expense entry', () => {
         expect(data.description).toBe(entry.description)
         expect(data.quantity).toBe(entry.quantity)
         expect(data.unitCost).toBe(entry.unitCost)
-        expect(data.ExpenseId).toBe(expenseId)
+        expect(data.expenseId).toBe(expenseId)
     })
 
     it('should return 400 if expense ID is invalid', async () => {
-        const invalidExpenseId = 'invalid-expense-id'
+        const invalidexpenseId = 'invalid-expense-id'
         const entryId = entry.id
 
         const response = await request(app)
             .get(
-                `/organizations/${orgId}/expenses/${invalidExpenseId}/entries/${entryId}`
+                `/organizations/${orgId}/expenses/${invalidexpenseId}/entries/${entryId}`
             )
             .expect(400)
 
@@ -110,7 +90,7 @@ describe('Get expense entry', () => {
     it('should return 400 if an exception occurs', async () => {
         const entryId = entry.id
 
-        jest.spyOn(ExpenseEntry, 'findOne').mockImplementationOnce(() => {
+        jest.spyOn(db, 'transaction').mockImplementationOnce(() => {
             throw new Error('Something went wrong')
         })
 

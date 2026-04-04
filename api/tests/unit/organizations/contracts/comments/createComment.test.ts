@@ -1,5 +1,5 @@
 const request = require('supertest')
-const app = require('../../../../../server')
+const _app = require('../../../../../server'); const app = _app.default || _app;
 import { db } from '../../../../../db/index'
 import { clients, organizations, contracts } from '../../../../../db/schema'
 import { eq } from 'drizzle-orm'
@@ -13,26 +13,18 @@ let fileToAttachPath, fileContent, fileToAttachName
 beforeAll(async () => {
     const org = await db.select().from(organizations)
     orgId = org[0].id
-    strangerOrganizationId = org[1].id
+    const [strangerOrg] = await db.insert(organizations).values(fake.mockOrganizationData()).returning();
+    strangerOrganizationId = strangerOrg.id
 
-    const client = await db.insert(clients).values({
-        ...fake.mockClientData().returning().then(r => r[0]),
-        OrganizationId: orgId,
-    })
+    const [client] = await db.insert(clients).values({ ...fake.mockClientData(), organizationId: orgId, }).returning()
     clientId = client.id
 
-    const contract = await db.insert(contracts).values({
-        ...fake.mockContractData().returning().then(r => r[0]),
-        OrganizationId: orgId,
-        ClientId: clientId,
-    })
+    const [contract] = await db.insert(contracts).values({ ...fake.mockContractData(), organizationId: orgId,
+        clientId: clientId, }).returning()
     contractId = contract.id
 
-    const strangerContract = await db.insert(contracts).values({
-        ...fake.mockContractData().returning().then(r => r[0]),
-        OrganizationId: strangerOrganizationId,
-        ClientId: clientId,
-    })
+    const [strangerContract] = await db.insert(contracts).values({ ...fake.mockContractData(), organizationId: strangerOrganizationId,
+        clientId: clientId, }).returning()
     strangerContractId = strangerContract.id
 
     // create a file and get its absolute path
@@ -73,10 +65,10 @@ describe('Create comment for contract', () => {
 
         expect(status).toBe('success')
         expect(data.content).toBe(commentData.content)
-        expect(data.Attachments).toBeDefined()
-        expect(Array.isArray(data.Attachments)).toBe(true)
-        expect(data.Attachments.length).toBe(1)
-        expect(data.Attachments[0].name).toBe(fileToAttachName)
+        expect(data.attachments).toBeDefined()
+        expect(Array.isArray(data.attachments)).toBe(true)
+        expect(data.attachments.length).toBe(1)
+        expect(data.attachments[0].name).toBe(fileToAttachName)
     })
 
     it('should return 403 if organization ID is invalid', async () => {
@@ -141,10 +133,10 @@ describe('Create comment for contract', () => {
 
         expect(status).toBe('success')
         expect(data.content).toBe('')
-        expect(data.Attachments).toBeDefined()
-        expect(Array.isArray(data.Attachments)).toBe(true)
-        expect(data.Attachments.length).toBe(1)
-        expect(data.Attachments[0].name).toBe(fileToAttachName)
+        expect(data.attachments).toBeDefined()
+        expect(Array.isArray(data.attachments)).toBe(true)
+        expect(data.attachments.length).toBe(1)
+        expect(data.attachments[0].name).toBe(fileToAttachName)
     })
 
     it('should return 400 if comment content is too long', async () => {

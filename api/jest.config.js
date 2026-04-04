@@ -11,9 +11,15 @@ console.log(
 module.exports = {
     verbose: true,
     testTimeout: 15000,
-    globalSetup: '<rootDir>/db/setup.ts',
     openHandlesTimeout: 15000,
+    testEnvironment: 'node',
+    testPathIgnorePatterns: ['/node_modules/', '/dist/'],
+    globalSetup: '<rootDir>/db/setup.ts',
     transform: {
-        '^.+\\.tsx?$': ['ts-jest', {}],
+        '^.+\\.(t|j)sx?$': '@swc/jest',
     },
+    transformIgnorePatterns: [],
+    moduleNameMapper: {
+        '^uuid$': require.resolve('uuid')
+    }
 };

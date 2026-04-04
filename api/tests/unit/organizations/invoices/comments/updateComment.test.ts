@@ -1,5 +1,5 @@
 const request = require('supertest')
-const app = require('../../../../../server')
+const _app = require('../../../../../server'); const app = _app.default || _app;
 import { db } from '../../../../../db/index'
 import { comments, organizations, clients, invoices, attachments } from '../../../../../db/schema'
 import { eq } from 'drizzle-orm'
@@ -13,26 +13,18 @@ let fileToAttachPath, fileContent, fileToAttachName
 beforeAll(async () => {
     const org = await db.select().from(organizations)
     orgId = org[0].id
-    strangerOrganizationId = org[1].id
+    const [strangerOrg] = await db.insert(organizations).values(fake.mockOrganizationData()).returning();
+    strangerOrganizationId = strangerOrg.id
 
-    const client = await db.insert(clients).values({
-        ...fake.mockClientData().returning().then(r => r[0]),
-        OrganizationId: orgId,
-    })
+    const [client] = await db.insert(clients).values({ ...fake.mockClientData(), organizationId: orgId, }).returning()
     clientId = client.id
 
-    const invoice = await db.insert(invoices).values({
-        ...fake.mockInvoiceData().returning().then(r => r[0]),
-        OrganizationId: orgId,
-        ClientId: clientId,
-    })
+    const [invoice] = await db.insert(invoices).values({ ...fake.mockInvoiceData(), organizationId: orgId,
+        clientId: clientId, }).returning()
     invoiceId = invoice.id
 
-    const strangerInvoice = await db.insert(invoices).values({
-        ...fake.mockInvoiceData().returning().then(r => r[0]),
-        OrganizationId: strangerOrganizationId,
-        ClientId: clientId,
-    })
+    const [strangerInvoice] = await db.insert(invoices).values({ ...fake.mockInvoiceData(), organizationId: strangerOrganizationId,
+        clientId: clientId, }).returning()
     strangerInvoiceId = strangerInvoice.id
 
     // create a file and get its absolute path
@@ -52,8 +44,8 @@ describe('Update comment for invoice', () => {
         const commentData = fake.mockCommentData()
         const comment = await db.insert(comments).values({
             ...commentData,
-            InvoiceId: invoiceId,
-            OrganizationId: orgId,
+            invoiceId: invoiceId,
+            organizationId: orgId,
         }).returning().then(r => r[0])
 
         const response = await request(app)
@@ -68,7 +60,7 @@ describe('Update comment for invoice', () => {
         expect(status).toBe('success')
 
         // get the updated comment
-        const updatedComment = await Comment.findByPk(comment.id)
+        const updatedComment = (await db.select().from(comments).where(eq(comments.id, comment.id)))[0]
         expect(updatedComment.content).toBe('new content')
     })
 
@@ -76,8 +68,8 @@ describe('Update comment for invoice', () => {
         const commentData = fake.mockCommentData()
         const comment = await db.insert(comments).values({
             ...commentData,
-            InvoiceId: strangerInvoiceId,
-            OrganizationId: strangerOrganizationId,
+            invoiceId: strangerInvoiceId,
+            organizationId: strangerOrganizationId,
         }).returning().then(r => r[0])
 
         const response = await request(app)
@@ -95,8 +87,8 @@ describe('Update comment for invoice', () => {
     it('should update a comment for a invoice with attachments', async () => {
         const comment = await db.insert(comments).values({
             content: 'Original content',
-            InvoiceId: invoiceId,
-            OrganizationId: orgId,
+            invoiceId: invoiceId,
+            organizationId: orgId,
         }).returning().then(r => r[0])
 
         const response = await request(app)
@@ -114,14 +106,8 @@ describe('Update comment for invoice', () => {
         await new Promise((resolve) => setTimeout(resolve, 2000))
 
         // Get the updated comment
-        const updatedComment = await Comment.findByPk(comment.id, {
-            include: [
-                {
-                    model: Attachment,
-                },
-            ],
-        })
+        const updatedComment = await db.query.comments.findFirst({ where: eq(comments.id, comment.id), with: { attachments: true } })
         expect(updatedComment.content).toBe('new content')
-        expect(updatedComment.Attachments.length).toBe(1)
+        expect(updatedComment.attachments.length).toBe(1)
     })
 })

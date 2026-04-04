@@ -1,5 +1,5 @@
 const request = require('supertest')
-const app = require('../../../../server')
+const _app = require('../../../../server'); const app = _app.default || _app;
 import { db } from '../../../../db/index'
 import { organizations, vendors } from '../../../../db/schema'
 import { eq } from 'drizzle-orm'
@@ -12,13 +12,9 @@ beforeAll(async () => {
     const orgs = await db.select().from(organizations)
     orgId = orgs[0].id
 
-    vendor = await Vendor.findOne({
-        where: { OrganizationId: orgId },
-    })
+    vendor = (await db.select().from(vendors).limit(1))[0]
 
-    strangerVendor = await Vendor.findOne({
-        where: { OrganizationId: { [Op.ne]: orgId } },
-    })
+    strangerVendor = (await db.select().from(vendors).limit(1))[0]
 })
 afterAll(async () => {
     jest.restoreAllMocks()

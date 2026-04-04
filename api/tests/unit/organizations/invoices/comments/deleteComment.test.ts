@@ -1,5 +1,5 @@
 const request = require('supertest')
-const app = require('../../../../../server')
+const _app = require('../../../../../server'); const app = _app.default || _app;
 import { db } from '../../../../../db/index'
 import { comments, organizations, clients, invoices } from '../../../../../db/schema'
 import { eq } from 'drizzle-orm'
@@ -13,26 +13,18 @@ let fileContent, fileToAttachName
 beforeAll(async () => {
     const org = await db.select().from(organizations)
     orgId = org[0].id
-    strangerOrganizationId = org[1].id
+    const [strangerOrg] = await db.insert(organizations).values(fake.mockOrganizationData()).returning();
+    strangerOrganizationId = strangerOrg.id
 
-    const client = await db.insert(clients).values({
-        ...fake.mockClientData().returning().then(r => r[0]),
-        OrganizationId: orgId,
-    })
+    const [client] = await db.insert(clients).values({ ...fake.mockClientData(), organizationId: orgId, }).returning()
     clientId = client.id
 
-    const invoice = await db.insert(invoices).values({
-        ...fake.mockInvoiceData().returning().then(r => r[0]),
-        OrganizationId: orgId,
-        ClientId: clientId,
-    })
+    const [invoice] = await db.insert(invoices).values({ ...fake.mockInvoiceData(), organizationId: orgId,
+        clientId: clientId, }).returning()
     invoiceId = invoice.id
 
-    const strangerInvoice = await db.insert(invoices).values({
-        ...fake.mockInvoiceData().returning().then(r => r[0]),
-        OrganizationId: strangerOrganizationId,
-        ClientId: clientId,
-    })
+    const [strangerInvoice] = await db.insert(invoices).values({ ...fake.mockInvoiceData(), organizationId: strangerOrganizationId,
+        clientId: clientId, }).returning()
     strangerInvoiceId = strangerInvoice.id
 
     // create a file and get its absolute path
@@ -51,8 +43,8 @@ describe('Delete comment for invoice', () => {
         const commentData = fake.mockCommentData()
         const comment = await db.insert(comments).values({
             ...commentData,
-            InvoiceId: invoiceId,
-            OrganizationId: orgId,
+            invoiceId: invoiceId,
+            organizationId: orgId,
         }).returning().then(r => r[0])
 
         const response = await request(app)
@@ -71,8 +63,8 @@ describe('Delete comment for invoice', () => {
         const commentData = fake.mockCommentData()
         const comment = await db.insert(comments).values({
             ...commentData,
-            InvoiceId: strangerInvoiceId,
-            OrganizationId: strangerOrganizationId,
+            invoiceId: strangerInvoiceId,
+            organizationId: strangerOrganizationId,
         }).returning().then(r => r[0])
 
         const response = await request(app)

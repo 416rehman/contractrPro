@@ -1,5 +1,5 @@
 const request = require('supertest')
-const app = require('../../../../server')
+const _app = require('../../../../server'); const app = _app.default || _app;
 import { db } from '../../../../db/index'
 import { organizations, invoices, invoiceEntries } from '../../../../db/schema'
 import { eq } from 'drizzle-orm'
@@ -14,7 +14,7 @@ beforeAll(async () => {
     orgId = orgResuts[0].id
     invoice = await db.insert(invoices).values(
         {
-            OrganizationId: orgId,
+            organizationId: orgId,
             ...fake.mockInvoiceData().returning().then(r => r[0]),
             InvoiceEntries: [fake.mockInvoiceEntryData()],
         },
@@ -27,7 +27,7 @@ beforeAll(async () => {
 
     strangerInvoice = await db.insert(invoices).values(
         {
-            OrganizationId: orgResuts[1].id,
+            organizationId: orgResuts[1].id,
             ...fake.mockInvoiceData().returning().then(r => r[0]),
             InvoiceEntries: [fake.mockInvoiceEntryData()],
         },

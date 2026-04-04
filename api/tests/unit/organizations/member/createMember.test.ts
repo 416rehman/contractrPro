@@ -1,7 +1,7 @@
 const request = require('supertest')
-const app = require('../../../../server')
+const _app = require('../../../../server'); const app = _app.default || _app;
 import { db } from '../../../../db/index'
-import { OrganizationMember, organizations, users } from '../../../../db/schema'
+import { organizationMembers, organizations, users } from '../../../../db/schema'
 import { eq } from 'drizzle-orm'
 import { clearDatabase } from '../../../utils/testDB'
 
@@ -15,7 +15,7 @@ beforeAll(async () => {
 
     // Get an existing user ID
     const membersResult = await db.select().from(users)
-    userId = membersResult[randomInt(0, membersResult.length - 1)].id
+    userId = membersResult[Math.floor(Math.random() * membersResult.length)].id
 })
 afterAll(async () => {
     jest.restoreAllMocks()
@@ -29,6 +29,7 @@ describe('Create organization member', () => {
             .post(`/organizations/${orgId}/members`)
             .send(orgMemberInfo)
 
+        if (response.status !== 201) console.log(JSON.stringify(response.body))
         expect(response.status).toBe(201)
         expect(response.body.status).toBe('success')
         expect(response.body.data).toHaveProperty('id')
@@ -39,12 +40,12 @@ describe('Create organization member', () => {
             'permissions',
             orgMemberInfo.permissions
         )
-        expect(response.body.data).toHaveProperty('OrganizationId', orgId)
-        expect(response.body.data).toHaveProperty('UserId', null)
+        expect(response.body.data).toHaveProperty('organizationId', orgId)
+        expect(response.body.data).toHaveProperty('userId', null)
 
         // cleanup - delete the member
         if (response?.body?.data?.id) {
-            await Organizationdb.delete(organizationMembers).where(eq(organizationMembers.id, response.body.data.id ))
+            await db.delete(organizationMembers).where(eq(organizationMembers.id, response.body.data.id ))
         }
     })
 
@@ -52,9 +53,9 @@ describe('Create organization member', () => {
         const orgMemberInfo = fake.mockOrgMemberData()
 
         // Create first member
-        const initMember = await Organizationdb.insert(organizationMembers).values({
+        const initMember = await db.insert(organizationMembers).values({
             ...orgMemberInfo,
-            OrganizationId: orgId,
+            organizationId: orgId,
         }).returning().then(r => r[0])
 
         // Create second member with same email and phone
@@ -67,10 +68,10 @@ describe('Create organization member', () => {
 
         // cleanup - delete the member
         if (response?.body?.data?.id) {
-            await Organizationdb.delete(organizationMembers).where(eq(organizationMembers.id, response.body.data.id ))
+            await db.delete(organizationMembers).where(eq(organizationMembers.id, response.body.data.id ))
         }
         if (initMember?.id) {
-            await Organizationdb.delete(organizationMembers).where(eq(organizationMembers.id, initMember.id ))
+            await db.delete(organizationMembers).where(eq(organizationMembers.id, initMember.id ))
         }
     })
 
@@ -85,7 +86,7 @@ describe('Create organization member', () => {
 
         // cleanup - delete the member
         if (response?.body?.data?.id)
-            await Organizationdb.delete(organizationMembers).where(eq(organizationMembers.id, response.body.data.id ))
+            await db.delete(organizationMembers).where(eq(organizationMembers.id, response.body.data.id ))
     })
 
     it('should return 400 if UserId is provided and user does not exist', async () => {
@@ -102,7 +103,7 @@ describe('Create organization member', () => {
 
         // cleanup - delete the member
         if (response?.body?.data?.id)
-            await Organizationdb.delete(organizationMembers).where(eq(organizationMembers.id, response.body.data.id ))
+            await db.delete(organizationMembers).where(eq(organizationMembers.id, response.body.data.id ))
     })
 
     it('should return 400 if UserId is provided and user is already a member of the organization', async () => {
@@ -111,9 +112,9 @@ describe('Create organization member', () => {
         let initMember
         try {
             // Create a member with the same user ID
-            initMember = await Organizationdb.insert(organizationMembers).values({
+            initMember = await db.insert(organizationMembers).values({
                 ...orgMemberInfo,
-                OrganizationId: orgId,
+                organizationId: orgId,
             }).returning().then(r => r[0])
         } catch (error) {
             console.log(error)
@@ -125,14 +126,14 @@ describe('Create organization member', () => {
 
         expect(response.status).toBe(400)
         expect(response.body.status).toBe('error')
-        expect(response.body).toHaveProperty('message')
+        expect(response.body).toHaveProperty('details')
 
         // cleanup - delete the member
         if (response?.body?.data?.id) {
-            await Organizationdb.delete(organizationMembers).where(eq(organizationMembers.id, response.body.data.id ))
+            await db.delete(organizationMembers).where(eq(organizationMembers.id, response.body.data.id ))
         }
         if (initMember?.id) {
-            await Organizationdb.delete(organizationMembers).where(eq(organizationMembers.id, initMember.id ))
+            await db.delete(organizationMembers).where(eq(organizationMembers.id, initMember.id ))
         }
     })
 
@@ -140,7 +141,7 @@ describe('Create organization member', () => {
         const orgMemberInfo = fake.mockOrgMemberData()
 
         // Mocking the implementation to simulate a server error
-        jest.spyOn(OrganizationMember, 'create').mockImplementation(() => {
+        jest.spyOn(db, 'insert').mockImplementation(() => {
             throw new Error('Error message from the server')
         })
 

@@ -1,7 +1,7 @@
 const request = require('supertest')
-const app = require('../../../../server')
+const _app = require('../../../../server'); const app = _app.default || _app;
 import { db } from '../../../../db/index'
-import { organizations, Expense, ExpenseEntry } from '../../../../db/schema'
+import { organizations, expenses, expenseEntries } from '../../../../db/schema'
 import { eq } from 'drizzle-orm'
 import { clearDatabase } from '../../../utils/testDB'
 
@@ -12,30 +12,30 @@ let orgId, expense, strangerExpense
 beforeAll(async () => {
     const orgResuts = await db.select().from(organizations)
     orgId = orgResuts[0].id
-    expense = await Expense.create(
-        {
-            ...fake.mockExpenseData(),
-            OrganizationId: orgId,
-            ExpenseEntries: [fake.mockExpenseEntryData()],
-        },
-        {
-            include: {
-                model: ExpenseEntry,
-            },
-        }
-    )
-    strangerExpense = await Expense.create(
-        {
-            ...fake.mockExpenseData(),
-            OrganizationId: orgResuts[1].id,
-            ExpenseEntries: [fake.mockExpenseEntryData()],
-        },
-        {
-            include: {
-                model: ExpenseEntry,
-            },
-        }
-    )
+    const [e1] = await db.insert(expenses).values({
+        ...fake.mockExpenseData(),
+        organizationId: orgId,
+    }).returning()
+    expense = e1
+
+    const [e1Entry] = await db.insert(expenseEntries).values({
+        ...fake.mockExpenseEntryData(),
+        expenseId: expense.id,
+    }).returning()
+    
+    expense.ExpenseEntries = [e1Entry]
+    const [e2] = await db.insert(expenses).values({
+        ...fake.mockExpenseData(),
+        organizationId: orgResuts[1]?.id || orgId,
+    }).returning()
+    strangerExpense = e2
+
+    const [e2Entry] = await db.insert(expenseEntries).values({
+        ...fake.mockExpenseEntryData(),
+        expenseId: strangerExpense.id,
+    }).returning()
+
+    strangerExpense.ExpenseEntries = [e2Entry]
 })
 afterAll(async () => {
     jest.restoreAllMocks()
@@ -74,7 +74,7 @@ describe('Get all organization expenses', () => {
         expect(expenseEntry).toHaveProperty('unitCost')
         expect(expenseEntry).toHaveProperty('createdAt')
         expect(expenseEntry).toHaveProperty('updatedAt')
-        expect(expenseEntry).toHaveProperty('ExpenseId', body.id)
+        expect(expenseEntry).toHaveProperty('expenseId', body.id)
     })
 
     it('should return 403 if organization ID is invalid', async () => {
@@ -90,10 +90,10 @@ describe('Get all organization expenses', () => {
     })
 
     it('should return 400 if expense ID is invalid', async () => {
-        const invalidExpenseId = 'invalid-expense-id'
+        const invalidexpenseId = 'invalid-expense-id'
 
         const response = await request(app)
-            .get(`/organizations/${orgId}/expenses/${invalidExpenseId}`)
+            .get(`/organizations/${orgId}/expenses/${invalidexpenseId}`)
             .expect(400)
 
         const { status } = response.body
@@ -112,7 +112,7 @@ describe('Get all organization expenses', () => {
     })
 
     it('should return 400 if an exception occurs', async () => {
-        jest.spyOn(db, 'transaction').mockImplementationOnce(() => {
+        jest.spyOn(db, 'select').mockImplementationOnce(() => {
             throw new Error('Something went wrong')
         })
 

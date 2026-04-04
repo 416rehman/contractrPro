@@ -1,5 +1,5 @@
 const request = require('supertest')
-const app = require('../../../../../../server')
+const _app = require('../../../../../../server'); const app = _app.default || _app;
 import { db } from '../../../../../../db/index'
 import { comments, organizations, clients, jobs, contracts, attachments } from '../../../../../../db/schema'
 import { eq } from 'drizzle-orm'
@@ -13,41 +13,26 @@ let fileToAttachPath, fileContent, fileToAttachName
 beforeAll(async () => {
     const org = await db.select().from(organizations)
     orgId = org[0].id
-    strangerOrganizationId = org[1].id
+    const [strangerOrg] = await db.insert(organizations).values(fake.mockOrganizationData()).returning();
+    strangerOrganizationId = strangerOrg.id
 
-    const client = await db.insert(clients).values({
-        ...fake.mockClientData().returning().then(r => r[0]),
-        OrganizationId: orgId,
-    })
+    const [client] = await db.insert(clients).values({ ...fake.mockClientData(), organizationId: orgId, }).returning()
     clientId = client.id
 
-    const contract = await db.insert(contracts).values({
-        ...fake.mockContractData().returning().then(r => r[0]),
-        OrganizationId: orgId,
-        ClientId: clientId,
-    })
+    const [contract] = await db.insert(contracts).values({ ...fake.mockContractData(), organizationId: orgId,
+        clientId: clientId, }).returning()
     contractId = contract.id
 
-    const strangerContract = await db.insert(contracts).values({
-        ...fake.mockContractData().returning().then(r => r[0]),
-        OrganizationId: strangerOrganizationId,
-        ClientId: clientId,
-    })
+    const [strangerContract] = await db.insert(contracts).values({ ...fake.mockContractData(), organizationId: strangerOrganizationId,
+        clientId: clientId, }).returning()
 
-    const job = await db.insert(jobs).values({
-        ...fake.mockJobData().returning().then(r => r[0]),
-        ContractId: contractId,
-        OrganizationId: orgId,
-        ClientId: clientId,
-    })
+    const [job] = await db.insert(jobs).values({ ...fake.mockJobData(), contractId: contractId,
+        organizationId: orgId,
+        }).returning()
     jobId = job.id
 
-    const strangerJob = await db.insert(jobs).values({
-        ...fake.mockJobData().returning().then(r => r[0]),
-        OrganizationId: strangerOrganizationId,
-        ClientId: clientId,
-        ContractId: strangerContract.id,
-    })
+    const [strangerJob] = await db.insert(jobs).values({ ...fake.mockJobData(), organizationId: strangerOrganizationId,
+        contractId: strangerContract.id, }).returning()
     strangerJobId = strangerJob.id
 
     // create a file and get its absolute path
@@ -67,8 +52,8 @@ describe('Update comment for job', () => {
         const commentData = fake.mockCommentData()
         const comment = await db.insert(comments).values({
             ...commentData,
-            JobId: jobId,
-            OrganizationId: orgId,
+            jobId: jobId,
+            organizationId: orgId,
         }).returning().then(r => r[0])
 
         const response = await request(app)
@@ -83,7 +68,7 @@ describe('Update comment for job', () => {
         expect(status).toBe('success')
 
         // get the updated comment
-        const updatedComment = await Comment.findByPk(comment.id)
+        const updatedComment = (await db.select().from(comments).where(eq(comments.id, comment.id)))[0]
         expect(updatedComment.content).toBe('new content')
     })
 
@@ -91,8 +76,8 @@ describe('Update comment for job', () => {
         const commentData = fake.mockCommentData()
         const comment = await db.insert(comments).values({
             ...commentData,
-            JobId: strangerJobId,
-            OrganizationId: strangerOrganizationId,
+            jobId: strangerJobId,
+            organizationId: strangerOrganizationId,
         }).returning().then(r => r[0])
 
         const response = await request(app)
@@ -110,8 +95,8 @@ describe('Update comment for job', () => {
     it('should update a comment for a job with attachments', async () => {
         const comment = await db.insert(comments).values({
             content: 'Original content',
-            JobId: jobId,
-            OrganizationId: orgId,
+            jobId: jobId,
+            organizationId: orgId,
         }).returning().then(r => r[0])
 
         const response = await request(app)
@@ -120,7 +105,11 @@ describe('Update comment for job', () => {
             )
             .field('content', 'new content')
             .attach('Attachments', fileToAttachPath) // Pass a single file path
-            .expect(200)
+
+        if (response.status !== 200) {
+            throw new Error(`Update Comment Failed: ${response.status} ${JSON.stringify(response.body)}`)
+        }
+        expect(response.status).toBe(200)
 
         const { status } = response.body
         expect(status).toBe('success')
@@ -129,14 +118,8 @@ describe('Update comment for job', () => {
         await new Promise((resolve) => setTimeout(resolve, 2000))
 
         // Get the updated comment
-        const updatedComment = await Comment.findByPk(comment.id, {
-            include: [
-                {
-                    model: Attachment,
-                },
-            ],
-        })
+        const updatedComment = await db.query.comments.findFirst({ where: eq(comments.id, comment.id), with: { attachments: true } })
         expect(updatedComment.content).toBe('new content')
-        expect(updatedComment.Attachments.length).toBe(1)
+        expect(updatedComment.attachments.length).toBe(1)
     })
 })

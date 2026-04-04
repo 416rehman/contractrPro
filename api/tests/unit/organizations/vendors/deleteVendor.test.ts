@@ -1,5 +1,5 @@
 const request = require('supertest')
-const app = require('../../../../server')
+const _app = require('../../../../server'); const app = _app.default || _app;
 import { db } from '../../../../db/index'
 import { organizations, vendors } from '../../../../db/schema'
 import { eq } from 'drizzle-orm'
@@ -13,16 +13,10 @@ beforeAll(async () => {
     const orgResuts = await db.select().from(organizations)
     orgId = orgResuts[0].id
 
-    const vendorToDelete = await db.insert(vendors).values({
-        ...fake.mockVendorData().returning().then(r => r[0]),
-        OrganizationId: orgId,
-    })
+    const [vendorToDelete] = await db.insert(vendors).values({ ...fake.mockVendorData(), organizationId: orgId, }).returning()
     vendorId = vendorToDelete.id
 
-    const strangerVendor = await db.insert(vendors).values({
-        ...fake.mockVendorData().returning().then(r => r[0]),
-        OrganizationId: orgResuts[1].id,
-    })
+    const [strangerVendor] = await db.insert(vendors).values({ ...fake.mockVendorData(), organizationId: orgResuts[1].id, }).returning()
     strangerVendorId = strangerVendor.id
 })
 afterAll(async () => {

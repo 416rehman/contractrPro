@@ -1,5 +1,5 @@
 const request = require('supertest')
-const app = require('../../../../server')
+const _app = require('../../../../server'); const app = _app.default || _app;
 import { db } from '../../../../db/index'
 import { organizations } from '../../../../db/schema'
 import { eq } from 'drizzle-orm'
@@ -19,10 +19,8 @@ afterAll(async () => {
 })
 describe('Create expense', () => {
     it('should create an expense with entries', async () => {
-        const expenseData = fake.mockExpenseData()
-        expenseData.ExpenseEntries = []
-        expenseData.ExpenseEntries.push(fake.mockExpenseEntryData())
-
+        const expenseData = fake.mockExpenseData() as any
+        expenseData.ExpenseEntries = [fake.mockExpenseEntryData()]
         const response = await request(app)
             .post(`/organizations/${orgId}/expenses`)
             .send(expenseData)
@@ -53,11 +51,11 @@ describe('Create expense', () => {
             'unitCost',
             expenseData.ExpenseEntries[0].unitCost
         )
-        expect(ExpenseEntries[0]).toHaveProperty('ExpenseId', id)
+        expect(ExpenseEntries[0]).toHaveProperty('expenseId', id)
     })
 
     it('should not create an expense without entries', async () => {
-        const expenseData = fake.mockExpenseData()
+        const expenseData = fake.mockExpenseData() as any
         expenseData.ExpenseEntries = []
 
         await request(app)

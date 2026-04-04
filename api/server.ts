@@ -56,5 +56,9 @@ app.use('/', routes)
 app.use((req: Request, res: Response) => {
     return res.status(404).json(createErrorResponse(ErrorCode.ROUTE_NOT_FOUND))
 })
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+    console.error('EXPRESS UNHANDLED ERROR:', err.stack || err);
+    res.status(500).json({ status: 'error', message: err.message, stack: err.stack });
+})
 
 export default app

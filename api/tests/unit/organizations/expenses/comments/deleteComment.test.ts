@@ -1,39 +1,37 @@
 const request = require('supertest')
-const app = require('../../../../../server')
+const _app = require('../../../../../server'); const app = _app.default || _app;
 import { db } from '../../../../../db/index'
-import { comments, organizations, clients, Expense } from '../../../../../db/schema'
+import { comments, organizations, clients, expenses } from '../../../../../db/schema'
 import { eq } from 'drizzle-orm'
 import { clearDatabase } from '../../../../utils/testDB'
 
 import * as fake from '../../../../../utils/fake'
 const fs = require('fs')
 
-let orgId, expenseId, strangerOrganizationId, strangerExpenseId, clientId
+let orgId, expenseId, (orgResults[1]?.id || orgResults[0].id), strangerexpenseId, clientId
 let fileContent, fileToAttachName
 beforeAll(async () => {
     const org = await db.select().from(organizations)
     orgId = org[0].id
-    strangerOrganizationId = org[1].id
+    const [strangerOrg] = await db.insert(organizations).values(fake.mockOrganizationData()).returning();
+    (orgResults[1]?.id || orgResults[0].id) = strangerOrg.id
 
-    const client = await db.insert(clients).values({
-        ...fake.mockClientData().returning().then(r => r[0]),
-        OrganizationId: orgId,
-    })
+    const [client] = await db.insert(clients).values({ ...fake.mockClientData(), organizationId: orgId, }).returning()
     clientId = client.id
 
-    const expense = await Expense.create({
+    const expense = await db.insert(expenses).values({
         ...fake.mockExpenseData(),
-        OrganizationId: orgId,
-        ClientId: clientId,
-    })
+        organizationId: orgId,
+        clientId: clientId,
+    }).returning().then(r => r[0])
     expenseId = expense.id
 
-    const strangerExpense = await Expense.create({
+    const strangerExpense = await db.insert(expenses).values({
         ...fake.mockExpenseData(),
-        OrganizationId: strangerOrganizationId,
-        ClientId: clientId,
-    })
-    strangerExpenseId = strangerExpense.id
+        organizationId: (orgResults[1]?.id || orgResults[0].id),
+        clientId: clientId,
+    }).returning().then(r => r[0])
+    strangerexpenseId = strangerExpense.id
 
     // create a file and get its absolute path
     fileContent = 'test'
@@ -51,8 +49,8 @@ describe('Delete comment for expense', () => {
         const commentData = fake.mockCommentData()
         const comment = await db.insert(comments).values({
             ...commentData,
-            ExpenseId: expenseId,
-            OrganizationId: orgId,
+            expenseId: expenseId,
+            organizationId: orgId,
         }).returning().then(r => r[0])
 
         const response = await request(app)
@@ -71,13 +69,13 @@ describe('Delete comment for expense', () => {
         const commentData = fake.mockCommentData()
         const comment = await db.insert(comments).values({
             ...commentData,
-            ExpenseId: strangerExpenseId,
-            OrganizationId: strangerOrganizationId,
+            expenseId: strangerexpenseId,
+            organizationId: (orgResults[1]?.id || orgResults[0].id),
         }).returning().then(r => r[0])
 
         const response = await request(app)
             .delete(
-                `/organizations/${orgId}/expenses/${strangerExpenseId}/comments/${comment.id}`
+                `/organizations/${orgId}/expenses/${strangerexpenseId}/comments/${comment.id}`
             )
             .expect(400)
 

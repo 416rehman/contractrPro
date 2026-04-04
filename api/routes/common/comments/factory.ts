@@ -3,7 +3,7 @@ import {
     createErrorResponse,
 } from '../../../utils/response'
 import { ErrorCode } from '../../../utils/errorCodes'
-import UUID from 'uuid'
+import { v4 as uuidv4 } from 'uuid'
 import { pick } from '../../../utils'
 import { db, comments, attachments } from '../../../db'
 import { isValidUUID } from '../../../utils/isValidUUID'
@@ -74,6 +74,7 @@ export const createCommentHandler = <K extends keyof DBQuery>({
                     (!files || files.length <= 0) &&
                     (!body.content || body.content.length === 0)
                 ) {
+                    console.error('Validation failed!', { files, body })
                     return res
                         .status(400)
                         .json(
@@ -81,6 +82,12 @@ export const createCommentHandler = <K extends keyof DBQuery>({
                                 ErrorCode.VALIDATION_FIELD_REQUIRED
                             )
                         )
+                }
+
+                if (body.content && body.content.length > 5000) {
+                    return res
+                        .status(400)
+                        .json(createErrorResponse(ErrorCode.VALIDATION_FIELD_REQUIRED))
                 }
 
                 const [comment] = await tx
@@ -95,7 +102,7 @@ export const createCommentHandler = <K extends keyof DBQuery>({
                 let createdAttachments = null
                 if (files && files.length > 0) {
                     const attachmentsData = files.map((file: any) => {
-                        file.key = UUID.v4()
+                        file.key = uuidv4()
                         const accessUrl = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_S3_REGION}.amazonaws.com/${file.key}`
                         return {
                             id: file.key,
@@ -114,7 +121,7 @@ export const createCommentHandler = <K extends keyof DBQuery>({
                         await s3.upload(file, file.key)
                     }
                 }
-                ;(comment as any).Attachments = createdAttachments
+                ;(comment as any).attachments = createdAttachments
                 return res.json(createSuccessResponse(comment))
             })
         } catch (error) {
@@ -280,7 +287,7 @@ export const updateCommentHandler = <K extends keyof DBQuery>({
 
                 if (files && files.length > 0) {
                     const attachmentsData = files.map((file: any) => {
-                        file.key = UUID.v4()
+                        file.key = uuidv4()
                         const accessUrl = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_S3_REGION}.amazonaws.com/${file.key}`
                         return {
                             id: file.key,

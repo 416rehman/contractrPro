@@ -1,5 +1,5 @@
 const request = require('supertest')
-const app = require('../../../../../server')
+const _app = require('../../../../../server'); const app = _app.default || _app;
 import { db } from '../../../../../db/index'
 import { comments, organizations, clients } from '../../../../../db/schema'
 import { eq } from 'drizzle-orm'
@@ -11,18 +11,13 @@ let orgId, clientId, strangerOrganizationId, strangerClientId
 beforeAll(async () => {
     const org = await db.select().from(organizations)
     orgId = org[0].id
-    strangerOrganizationId = org[1].id
+    const [strangerOrg] = await db.insert(organizations).values(fake.mockOrganizationData()).returning();
+    strangerOrganizationId = strangerOrg.id
 
-    const client = await db.insert(clients).values({
-        ...fake.mockClientData().returning().then(r => r[0]),
-        OrganizationId: orgId,
-    })
+    const [client] = await db.insert(clients).values({ ...fake.mockClientData(), organizationId: orgId, }).returning()
     clientId = client.id
 
-    const strangerClient = await db.insert(clients).values({
-        ...fake.mockClientData().returning().then(r => r[0]),
-        OrganizationId: strangerOrganizationId,
-    })
+    const [strangerClient] = await db.insert(clients).values({ ...fake.mockClientData(), organizationId: strangerOrganizationId, }).returning()
     strangerClientId = strangerClient.id
 })
 
@@ -36,8 +31,8 @@ describe('Delete comment for client', () => {
         const commentData = fake.mockCommentData()
         const comment = await db.insert(comments).values({
             ...commentData,
-            ClientId: clientId,
-            OrganizationId: orgId,
+            clientId: clientId,
+            organizationId: orgId,
         }).returning().then(r => r[0])
 
         const response = await request(app)
@@ -56,8 +51,8 @@ describe('Delete comment for client', () => {
         const commentData = fake.mockCommentData()
         const comment = await db.insert(comments).values({
             ...commentData,
-            ClientId: strangerClientId,
-            OrganizationId: strangerOrganizationId,
+            clientId: strangerClientId,
+            organizationId: strangerOrganizationId,
         }).returning().then(r => r[0])
 
         const response = await request(app)

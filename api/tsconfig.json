@@ -23,7 +23,7 @@
             "jsonwebtoken",
             "multer",
             "multer-s3",
-            "uuid",
+            "jest",
             "bcrypt"
         ],
         "baseUrl": ".",
@@ -45,7 +45,8 @@
         "middleware/**/*.ts",
         "routes/**/*.ts",
         "utils/**/*.ts",
-        "validators/**/*.ts"
+        "validators/**/*.ts",
+        "tests/**/*.ts"
     ],
-    "exclude": ["node_modules", "dist", "tests"]
+    "exclude": ["node_modules", "dist"]
 }

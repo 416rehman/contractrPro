@@ -1,7 +1,7 @@
 const request = require('supertest')
-const app = require('../../../../server')
+const _app = require('../../../../server'); const app = _app.default || _app;
 import { db } from '../../../../db/index'
-import { Expense, organizations } from '../../../../db/schema'
+import { expenses, organizations, expenseEntries } from '../../../../db/schema'
 import { eq } from 'drizzle-orm'
 import { clearDatabase } from '../../../utils/testDB'
 
@@ -12,10 +12,13 @@ let orgId, orgExpense
 beforeAll(async () => {
     const orgResults = await db.select().from(organizations)
     orgId = orgResults[0].id
-    orgExpense = await Expense.create({
+    orgExpense = await db.insert(expenses).values({
         ...fake.mockExpenseData(),
-        OrganizationId: orgId,
-        ExpenseEntries: [fake.mockExpenseEntryData()],
+        organizationId: orgId,
+    }).returning().then(r => r[0])
+    await db.insert(expenseEntries).values({
+        ...fake.mockExpenseEntryData(),
+        expenseId: orgExpense.id
     })
 })
 afterAll(async () => {
@@ -26,7 +29,7 @@ describe('Update expense', () => {
     it('should update the expense and return the updated expense with ExpenseEntries', async () => {
         const expenseId = orgExpense.id
 
-        const requestBody = fake.mockExpenseData()
+        const requestBody = fake.mockExpenseData() as any
         requestBody.ExpenseEntries = []
         requestBody.ExpenseEntries.push(fake.mockExpenseEntryData())
 
@@ -75,10 +78,10 @@ describe('Update expense', () => {
     })
 
     it('should return 400 if expense ID is invalid', async () => {
-        const invalidExpenseId = 'invalid-expense-id'
+        const invalidexpenseId = 'invalid-expense-id'
 
         const response = await request(app)
-            .put(`/organizations/${orgId}/expenses/${invalidExpenseId}`)
+            .put(`/organizations/${orgId}/expenses/${invalidexpenseId}`)
             .expect(400)
 
         const { status } = response.body
@@ -105,7 +108,7 @@ describe('Update expense', () => {
         const expenseId = orgExpense.id
         const requestBody = fake.mockExpenseData()
 
-        jest.spyOn(Expense.prototype, 'update').mockImplementationOnce(() => {
+        jest.spyOn(db, 'transaction').mockImplementationOnce(() => {
             throw new Error('Something went wrong')
         })
 

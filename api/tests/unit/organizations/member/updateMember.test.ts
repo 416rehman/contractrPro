@@ -1,5 +1,5 @@
 const request = require('supertest')
-const app = require('../../../../server')
+const _app = require('../../../../server'); const app = _app.default || _app;
 const db = require('../../../../db')
 import { db } from '../../../../db/index'
 import { organizations, OrganizationMember } from '../../../../db/schema'
@@ -13,9 +13,7 @@ beforeAll(async () => {
     const orgs = await db.select().from(organizations)
     orgId = orgs[0].id
 
-    const membersResult = await OrganizationMember.findAll({
-        where: { OrganizationId: orgId },
-    })
+    const membersResult = (await db.select().from(organizationMembers))
 
     orgMemberData = membersResult[0].dataValues
 })

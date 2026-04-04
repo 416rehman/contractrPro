@@ -1,5 +1,5 @@
 const request = require('supertest')
-const app = require('../../../../server')
+const _app = require('../../../../server'); const app = _app.default || _app;
 import { db } from '../../../../db/index'
 import { OrganizationMember, organizations } from '../../../../db/schema'
 import { eq } from 'drizzle-orm'
@@ -11,9 +11,7 @@ beforeAll(async () => {
     const orgs = await db.select().from(organizations)
     orgId = orgs[0].id
 
-    const membersResult = await OrganizationMember.findAll({
-        where: { OrganizationId: orgId },
-    })
+    const membersResult = (await db.select().from(organizationMembers))
 
     memberId = membersResult[0].id
 })

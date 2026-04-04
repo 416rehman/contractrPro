@@ -1,6 +1,8 @@
 /// <reference types="node" />
 import { db } from '../../db'
 import { sql } from 'drizzle-orm'
+import { organizations, users, organizationMembers } from '../../db/schema'
+import { mockOrganizationData, mockUserData } from '../../utils/fake'
 
 export const clearDatabase = async () => {
     if (process.env.NODE_ENV !== 'test') {
@@ -17,4 +19,24 @@ export const clearDatabase = async () => {
             END LOOP;
         END $$;
     `)
+    try {
+        const [org] = await db.insert(organizations).values(mockOrganizationData()).returning()
+        if (process.env.DEV_USER_UUID) {
+            const [user] = await db.insert(users).values({
+                ...mockUserData(),
+                id: process.env.DEV_USER_UUID,
+                username: process.env.DEV_USER_USERNAME || 'devuser'
+            }).returning()
+            
+            await db.insert(organizationMembers).values({
+                role: 'owner',
+                status: 'active',
+                organizationId: org.id,
+                userId: user.id
+            })
+        }
+    } catch (err: any) {
+        console.error('TESTDB SEED ERROR FULL:', err)
+        throw err;
+    }
 }

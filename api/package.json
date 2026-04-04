@@ -5,7 +5,7 @@
     "description": "Manage your contracts, jobs, expenses, invoices and much more",
     "main": "dist/index.js",
     "scripts": {
-        "test": "cross-env NODE_ENV=test LOG_LEVEL=error jest -c jest.config.js --maxWorkers=25 --forceExit --bail --",
+        "test": "cross-env NODE_ENV=test LOG_LEVEL=error jest -c jest.config.js --runInBand --forceExit --bail --",
         "test:verbose": "cross-env NODE_ENV=test LOG_LEVEL=debug jest -c jest.config.js --runInBand --forceExit --verbose=true --",
         "coverage": "cross-env NODE_ENV=test LOG_LEVEL=debug jest -c jest.config.js --runInBand --coverage",
         "lint": "eslint .",
@@ -42,12 +42,14 @@
         "postgres": "^3.4.7",
         "stripe": "^22.0.0",
         "swagger-jsdoc": "^6.2.8",
-        "uuid": "^13.0.0",
+        "uuid": "^9.0.1",
         "zod": "^4.1.13"
     },
     "devDependencies": {
         "@eslint/js": "^9.39.2",
         "@faker-js/faker": "^10.1.0",
+        "@swc/core": "^1.15.24",
+        "@swc/jest": "^0.2.39",
         "@types/bcrypt": "^6.0.0",
         "@types/body-parser": "^1.19.6",
         "@types/compression": "^1.8.1",

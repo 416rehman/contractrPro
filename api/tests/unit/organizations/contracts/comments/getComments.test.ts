@@ -1,5 +1,5 @@
 const request = require('supertest')
-const app = require('../../../../../server')
+const _app = require('../../../../../server'); const app = _app.default || _app;
 import { db } from '../../../../../db/index'
 import { comments, organizations, clients, contracts } from '../../../../../db/schema'
 import { eq } from 'drizzle-orm'
@@ -9,27 +9,21 @@ import * as fake from '../../../../../utils/fake'
 
 let orgId, contractId, comment, clientId
 beforeAll(async () => {
-    const org = await Organization.findAll({ limit: 1 })
+    const org = await db.select().from(organizations).limit(1)
     orgId = org[0].id
 
-    const client = await db.insert(clients).values({
-        ...fake.mockClientData().returning().then(r => r[0]),
-        OrganizationId: orgId,
-    })
+    const [client] = await db.insert(clients).values({ ...fake.mockClientData(), organizationId: orgId, }).returning()
     clientId = client.id
 
-    const contract = await db.insert(contracts).values({
-        ...fake.mockContractData().returning().then(r => r[0]),
-        OrganizationId: orgId,
-        ClientId: clientId,
-    })
+    const [contract] = await db.insert(contracts).values({ ...fake.mockContractData(), organizationId: orgId,
+        clientId: clientId, }).returning()
     contractId = contract.id
 
     comment = await db.insert(comments).values({
         ...fake.mockCommentData().returning().then(r => r[0]),
-        OrganizationId: orgId,
-        ContractId: contractId,
-        AuthorId: process.env.DEV_USER_UUID,
+        organizationId: orgId,
+        contractId: contractId,
+        authorId: process.env.DEV_USER_UUID,
     })
 })
 
@@ -99,7 +93,7 @@ describe('Get comments for contract', () => {
 
     it('should return 400 if an error occurs during the transaction', async () => {
         // Mock the transaction to throw an error
-        jest.spyOn(Comment, 'findAndCountAll').mockImplementation(() => {
+        jest.spyOn(db, 'select').mockImplementation(() => {
             throw new Error('Something went wrong')
         })
 

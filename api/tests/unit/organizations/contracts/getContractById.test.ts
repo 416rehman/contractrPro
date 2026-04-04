@@ -1,5 +1,5 @@
 const request = require('supertest')
-const app = require('../../../../server')
+const _app = require('../../../../server'); const app = _app.default || _app;
 import { db } from '../../../../db/index'
 import { contracts, organizations } from '../../../../db/schema'
 import { eq } from 'drizzle-orm'
@@ -13,13 +13,9 @@ beforeAll(async () => {
     const orgs = await db.select().from(organizations)
     orgID = orgs[0].id
 
-    contract = await Contract.findOne({
-        where: { OrganizationId: orgID },
-    })
+    contract = (await db.select().from(contracts).limit(1))[0]
 
-    strangerContract = await Contract.findOne({
-        where: { OrganizationId: { [Op.ne]: orgID } },
-    })
+    strangerContract = (await db.select().from(contracts).limit(1))[0]
 })
 
 afterAll(async () => {

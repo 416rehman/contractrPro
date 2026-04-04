@@ -1,5 +1,5 @@
 const request = require('supertest')
-const app = require('../../../../../server')
+const _app = require('../../../../../server'); const app = _app.default || _app;
 import { db } from '../../../../../db/index'
 import { comments, organizations, clients, attachments } from '../../../../../db/schema'
 import { eq } from 'drizzle-orm'
@@ -13,18 +13,13 @@ let fileToAttachPath, fileContent, fileToAttachName
 beforeAll(async () => {
     const org = await db.select().from(organizations)
     orgId = org[0].id
-    strangerOrganizationId = org[1].id
+    const [strangerOrg] = await db.insert(organizations).values(fake.mockOrganizationData()).returning();
+    strangerOrganizationId = strangerOrg.id
 
-    const client = await db.insert(clients).values({
-        ...fake.mockClientData().returning().then(r => r[0]),
-        OrganizationId: orgId,
-    })
+    const [client] = await db.insert(clients).values({ ...fake.mockClientData(), organizationId: orgId, }).returning()
     clientId = client.id
 
-    const strangerClient = await db.insert(clients).values({
-        ...fake.mockClientData().returning().then(r => r[0]),
-        OrganizationId: strangerOrganizationId,
-    })
+    const [strangerClient] = await db.insert(clients).values({ ...fake.mockClientData(), organizationId: strangerOrganizationId, }).returning()
     strangerClientId = strangerClient.id
 
     // create a file and get its absolute path
@@ -44,8 +39,8 @@ describe('Update comment for client', () => {
         const commentData = fake.mockCommentData()
         const comment = await db.insert(comments).values({
             ...commentData,
-            ClientId: clientId,
-            OrganizationId: orgId,
+            clientId: clientId,
+            organizationId: orgId,
         }).returning().then(r => r[0])
 
         const response = await request(app)
@@ -60,7 +55,7 @@ describe('Update comment for client', () => {
         expect(status).toBe('success')
 
         // get the updated comment
-        const updatedComment = await Comment.findByPk(comment.id)
+        const updatedComment = (await db.select().from(comments).where(eq(comments.id, comment.id)))[0]
         expect(updatedComment.content).toBe('new content')
     })
 
@@ -68,8 +63,8 @@ describe('Update comment for client', () => {
         const commentData = fake.mockCommentData()
         const comment = await db.insert(comments).values({
             ...commentData,
-            ClientId: strangerClientId,
-            OrganizationId: strangerOrganizationId,
+            clientId: strangerClientId,
+            organizationId: strangerOrganizationId,
         }).returning().then(r => r[0])
 
         const response = await request(app)
@@ -87,8 +82,8 @@ describe('Update comment for client', () => {
     it('should update a comment for a client with attachments', async () => {
         const comment = await db.insert(comments).values({
             content: 'Original content',
-            ClientId: clientId,
-            OrganizationId: orgId,
+            clientId: clientId,
+            organizationId: orgId,
         }).returning().then(r => r[0])
 
         const response = await request(app)
@@ -106,14 +101,8 @@ describe('Update comment for client', () => {
         await new Promise((resolve) => setTimeout(resolve, 2000))
 
         // Get the updated comment
-        const updatedComment = await Comment.findByPk(comment.id, {
-            include: [
-                {
-                    model: Attachment,
-                },
-            ],
-        })
+        const updatedComment = await db.query.comments.findFirst({ where: eq(comments.id, comment.id), with: { attachments: true } })
         expect(updatedComment.content).toBe('new content')
-        expect(updatedComment.Attachments.length).toBe(1)
+        expect(updatedComment.attachments.length).toBe(1)
     })
 })

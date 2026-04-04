@@ -1,41 +1,31 @@
 const request = require('supertest')
-const app = require('../../../../../server')
+const _app = require('../../../../../server'); const app = _app.default || _app;
 import { db } from '../../../../../db/index'
-import { ExpenseEntry, organizations, Expense } from '../../../../../db/schema'
+import { expenseEntries, organizations, expenses } from '../../../../../db/schema'
 import { eq } from 'drizzle-orm'
 import { clearDatabase } from '../../../../utils/testDB'
 
 import * as fake from '../../../../../utils/fake'
 
-let orgId, expenseId, strangerExpenseId, expenseEntryId
+let orgId, expenseId, strangerexpenseId, expenseEntryId
 
 beforeAll(async () => {
     const orgResults = await db.select().from(organizations)
     orgId = orgResults[0].id
 
-    const expense = await Expense.create(
-        {
-            ...fake.mockExpenseData(),
-            OrganizationId: orgId,
-            ExpenseEntries: [fake.mockExpenseEntryData()],
-        },
-        {
-            include: [ExpenseEntry],
-        }
-    )
+    const [expense] = await db.insert(expenses).values({
+...fake.mockExpenseData(),
+organizationId: orgId
+}).returning();
+const [entry] = await db.insert(expenseEntries).values({ ...fake.mockExpenseEntryData(), expenseId: expense ? expense.id : strangerExpense.id }).returning()
     expenseId = expense.id
 
-    const strangerExpense = await Expense.create(
-        {
-            ...fake.mockExpenseData(),
-            OrganizationId: orgResults[1].id,
-            ExpenseEntries: [fake.mockExpenseEntryData()],
-        },
-        {
-            include: [ExpenseEntry],
-        }
-    )
-    strangerExpenseId = strangerExpense.id
+    const [strangerExpense] = await db.insert(expenses).values({
+...fake.mockExpenseData(),
+organizationId: orgResults[1] ? orgResults[1].id : (orgResults[1]?.id || orgResults[0].id)
+}).returning();
+const [entry] = await db.insert(expenseEntries).values({ ...fake.mockExpenseEntryData(), expenseId: expense ? expense.id : strangerExpense.id }).returning()
+    strangerexpenseId = strangerExpense.id
 
     expenseEntryId = expense.ExpenseEntries[0].id
 })
@@ -58,11 +48,11 @@ describe('Delete expense entry', () => {
     })
 
     it('should return 400 if expense ID is invalid', async () => {
-        const invalidExpenseId = 'invalid-expense-id'
+        const invalidexpenseId = 'invalid-expense-id'
 
         const response = await request(app)
             .delete(
-                `/organizations/${orgId}/expenses/${invalidExpenseId}/entries/${expenseEntryId}`
+                `/organizations/${orgId}/expenses/${invalidexpenseId}/entries/${expenseEntryId}`
             )
             .expect(400)
 
@@ -102,7 +92,7 @@ describe('Delete expense entry', () => {
     it('should return 400 if expense entry does not belong to the organization', async () => {
         const response = await request(app)
             .delete(
-                `/organizations/${orgId}/expenses/${strangerExpenseId}/entries/${expenseEntryId}`
+                `/organizations/${orgId}/expenses/${strangerexpenseId}/entries/${expenseEntryId}`
             )
             .expect(400)
 
@@ -113,7 +103,7 @@ describe('Delete expense entry', () => {
 
     it('should return 400 if an exception occurs', async () => {
         // Mock an exception by throwing an error inside the transaction
-        jest.spyOn(ExpenseEntry, 'destroy').mockImplementationOnce(() => {
+        jest.spyOn(db, 'transaction').mockImplementationOnce(() => {
             throw new Error('Something went wrong')
         })
 

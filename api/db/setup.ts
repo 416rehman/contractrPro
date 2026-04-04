@@ -2,6 +2,8 @@ import { db } from './index'
 import logger from '../utils/logger'
 import { sql } from 'drizzle-orm'
 import { migrate } from 'drizzle-orm/postgres-js/migrator'
+import { organizations, users, organizationMembers } from './schema'
+import { mockOrganizationData, mockUserData } from '../utils/fake'
 
 export default async () => {
     try {
@@ -22,9 +24,25 @@ export default async () => {
                     END LOOP;
                 END $$;
             `)
+            const [org] = await db.insert(organizations).values(mockOrganizationData()).returning()
+            if (process.env.DEV_USER_UUID) {
+                const [user] = await db.insert(users).values({
+                    ...mockUserData(),
+                    id: process.env.DEV_USER_UUID,
+                    username: process.env.DEV_USER_USERNAME || 'devuser'
+                }).returning()
+                
+                await db.insert(organizationMembers).values({
+                    role: 'owner',
+                    status: 'active',
+                    organizationId: org.id,
+                    userId: user.id
+                })
+            }
             logger.info('Test database is clean and ready.')
         }
     } catch (err: any) {
+        console.error('SETUP ERROR FULL:', err);
         logger.error(
             `Unable to connect to the database: ${err.message}.\n Make sure the database server is running.`
         )
