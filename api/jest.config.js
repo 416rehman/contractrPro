@@ -11,6 +11,9 @@ console.log(
 module.exports = {
     verbose: true,
     testTimeout: 15000,
-    passWithNoTests: true,
+    globalSetup: '<rootDir>/db/setup.ts',
     openHandlesTimeout: 15000,
+    transform: {
+        '^.+\\.tsx?$': ['ts-jest', {}],
+    },
 };

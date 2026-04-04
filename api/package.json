@@ -68,10 +68,12 @@
         "esbuild": "^0.28.0",
         "esbuild-register": "^3.6.0",
         "eslint": "^9.39.2",
+        "glob": "^13.0.6",
         "jest": "^30.2.0",
         "nodemon": "^3.1.11",
         "prettier": "3.7.4",
         "supertest": "^7.1.4",
+        "ts-jest": "^29.4.9",
         "ts-node": "^10.9.2",
         "tsx": "^4.21.0",
         "typescript": "^5.9.3"
