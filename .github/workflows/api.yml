@@ -74,9 +74,26 @@ jobs:
   test:
     runs-on: ubuntu-latest
     environment: "Dev Env"
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+          POSTGRES_DB: contractrpro_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     defaults:
       run:
         working-directory: ./api
+    env:
+      DATABASE_URL: postgres://test_user:test_password@localhost:5432/contractrpro_test
+      NODE_ENV: test
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
