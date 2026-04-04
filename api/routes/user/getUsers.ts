@@ -1,17 +1,17 @@
-import { db, users } from '../../db';
+import { db, users } from '../../db'
 import {
     createSuccessResponse,
     createErrorResponse,
-} from '../../utils/response';
-import { ErrorCode } from '../../utils/errorCodes';
-import { count } from 'drizzle-orm';
+} from '../../utils/response'
+import { ErrorCode } from '../../utils/errorCodes'
+import { count } from 'drizzle-orm'
 
 // Retrieves all users with pagination
 export default async (req, res) => {
     try {
         const { page = 1, limit = 10 } = req.query
-        const limitNum = parseInt(limit);
-        const offsetNum = (parseInt(page) - 1) * limitNum;
+        const limitNum = parseInt(limit)
+        const offsetNum = (parseInt(page) - 1) * limitNum
 
         const userList = await db.query.users.findMany({
             limit: limitNum,
@@ -23,10 +23,10 @@ export default async (req, res) => {
                 createdAt: true,
                 updatedAt: true,
                 // avatarUrl: true, // TODO: verify in schema
-            }
-        });
+            },
+        })
 
-        const [totalCount] = await db.select({ count: count() }).from(users);
+        const [totalCount] = await db.select({ count: count() }).from(users)
 
         const totalPages = Math.ceil(totalCount.count / limitNum)
         const response = {
@@ -37,6 +37,8 @@ export default async (req, res) => {
 
         return res.status(200).json(createSuccessResponse(response))
     } catch (err) {
-        return res.status(400).json(createErrorResponse(ErrorCode.INTERNAL_ERROR, err))
+        return res
+            .status(400)
+            .json(createErrorResponse(ErrorCode.INTERNAL_ERROR, err))
     }
 }

@@ -1,8 +1,11 @@
-import { db, vendors } from '../../../db';
-import { createSuccessResponse, createErrorResponse } from '../../../utils/response';
-import { ErrorCode } from '../../../utils/errorCodes';
-import { isValidUUID } from '../../../utils/isValidUUID';
-import { eq, and } from 'drizzle-orm';
+import { db, vendors } from '../../../db'
+import {
+    createSuccessResponse,
+    createErrorResponse,
+} from '../../../utils/response'
+import { ErrorCode } from '../../../utils/errorCodes'
+import { isValidUUID } from '../../../utils/isValidUUID'
+import { eq, and } from 'drizzle-orm'
 
 /**
  * @openapi
@@ -31,24 +34,34 @@ export default async (req, res) => {
         const vendorId = req.params.vendor_id
 
         if (!orgId || !isValidUUID(orgId)) {
-            return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_ORG_ID_REQUIRED))
+            return res
+                .status(400)
+                .json(createErrorResponse(ErrorCode.VALIDATION_ORG_ID_REQUIRED))
         }
 
         if (!vendorId || !isValidUUID(vendorId)) {
-            return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_INVALID_UUID))
+            return res
+                .status(400)
+                .json(createErrorResponse(ErrorCode.VALIDATION_INVALID_UUID))
         }
 
         const vendor = await db.query.vendors.findFirst({
-            where: and(eq(vendors.organizationId, orgId), eq(vendors.id, vendorId))
+            where: and(
+                eq(vendors.organizationId, orgId),
+                eq(vendors.id, vendorId)
+            ),
         })
 
         if (!vendor) {
-            return res.status(400).json(createErrorResponse(ErrorCode.RESOURCE_NOT_FOUND))
+            return res
+                .status(400)
+                .json(createErrorResponse(ErrorCode.RESOURCE_NOT_FOUND))
         }
 
         return res.status(200).json(createSuccessResponse(vendor))
     } catch (error) {
-        res.status(400).json(createErrorResponse(ErrorCode.INTERNAL_ERROR, error))
+        res.status(400).json(
+            createErrorResponse(ErrorCode.INTERNAL_ERROR, error)
+        )
     }
 }
-

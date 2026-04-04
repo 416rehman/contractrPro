@@ -1,5 +1,5 @@
-import joinOrganization from './joinOrganization';
-import { Router } from 'express';
+import joinOrganization from './joinOrganization'
+import { Router } from 'express'
 const routes = Router({ mergeParams: true })
 
 /**

@@ -1,5 +1,8 @@
-import { createSuccessResponse, createErrorResponse } from '../../utils/response';
-import { ErrorCode } from '../../utils/errorCodes';
+import {
+    createSuccessResponse,
+    createErrorResponse,
+} from '../../utils/response'
+import { ErrorCode } from '../../utils/errorCodes'
 
 /**
  * @openapi
@@ -25,14 +28,15 @@ export default function logout(req, res) {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'none',
-            path: '/'
-        };
+            path: '/',
+        }
 
         res.clearCookie('accessToken', cookieOptions)
         res.clearCookie('refreshToken', cookieOptions)
         return res.status(200).json(createSuccessResponse(null))
     } catch (error) {
-        return res.status(500).json(createErrorResponse(ErrorCode.INTERNAL_ERROR, error))
+        return res
+            .status(500)
+            .json(createErrorResponse(ErrorCode.INTERNAL_ERROR, error))
     }
 }
-

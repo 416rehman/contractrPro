@@ -1,6 +1,6 @@
-import { createSuccessResponse } from '../../utils/response';
-import { getRolePermissions } from '../../utils/permissions';
-import { OrgRole } from '../../db/enums';
+import { createSuccessResponse } from '../../utils/response'
+import { getRolePermissions } from '../../utils/permissions'
+import { OrgRole } from '../../db/enums'
 
 /**
  * @openapi
@@ -21,8 +21,8 @@ import { OrgRole } from '../../db/enums';
 export default async (req, res) => {
     const roles = Object.values(OrgRole).map((role) => ({
         role: role,
-        permissions: getRolePermissions(role).toString()
-    }));
+        permissions: getRolePermissions(role).toString(),
+    }))
 
-    return res.json(createSuccessResponse(roles));
-};
+    return res.json(createSuccessResponse(roles))
+}

@@ -1,21 +1,18 @@
-import swaggerJsdoc from 'swagger-jsdoc';
-
-import { ErrorCode } from './utils/errorCodes';
+import swaggerJsdoc from 'swagger-jsdoc'
+import { ErrorCode } from './utils/errorCodes'
 
 const options: swaggerJsdoc.Options = {
     definition: {
         openapi: '3.0.0',
         info: {
             title: 'ContractrPro API',
-            version: '1.0.0',
-            description: 'API for contractors to manage projects, invoices, clients, etc.',
+            version: '2.0.0',
+            description:
+                'API for contractors to manage projects, invoices, payments, clients, and more.',
         },
-        servers: [
-            { url: '/', description: 'API Server' }
-        ],
+        servers: [{ url: '/', description: 'API Server' }],
         components: {
             schemas: {
-                // standard success response shape
                 SuccessResponse: {
                     type: 'object',
                     properties: {
@@ -23,7 +20,6 @@ const options: swaggerJsdoc.Options = {
                         data: { type: 'object' },
                     },
                 },
-                // standard error response shape
                 ErrorResponse: {
                     type: 'object',
                     properties: {
@@ -61,7 +57,11 @@ const options: swaggerJsdoc.Options = {
             },
             {
                 name: 'Contracts',
-                tags: ['Contracts', 'ContractComments'],
+                tags: [
+                    'Contracts',
+                    'ContractComments',
+                    'ContractProfitability',
+                ],
             },
             {
                 name: 'Jobs',
@@ -69,7 +69,12 @@ const options: swaggerJsdoc.Options = {
             },
             {
                 name: 'Invoices',
-                tags: ['Invoices', 'InvoiceEntries', 'InvoiceComments'],
+                tags: [
+                    'Invoices',
+                    'InvoiceEntries',
+                    'InvoiceComments',
+                    'InvoiceSend',
+                ],
             },
             {
                 name: 'Expenses',
@@ -79,10 +84,25 @@ const options: swaggerJsdoc.Options = {
                 name: 'Vendors',
                 tags: ['Vendors', 'VendorComments'],
             },
+            {
+                name: 'Payments',
+                tags: ['Payments'],
+            },
+            {
+                name: 'Finance Config',
+                tags: ['TaxRates', 'Stripe'],
+            },
+            {
+                name: 'Public',
+                tags: ['PublicInvoice'],
+            },
+            {
+                name: 'Webhooks',
+                tags: ['Webhooks'],
+            },
         ],
     },
-    // scan all route files for @openapi comments
     apis: ['./routes/**/*.ts', './routes/**/*.js'],
-};
+}
 
-export const swaggerSpec = swaggerJsdoc(options);
+export const swaggerSpec = swaggerJsdoc(options)

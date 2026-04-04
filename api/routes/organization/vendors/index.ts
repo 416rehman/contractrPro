@@ -1,12 +1,12 @@
-import getVendors from './getVendors';
-import getVendor from './getVendor';
-import createVendor from './createVendor';
-import updateVendor from './updateVendor';
-import deleteVendor from './deleteVendor';
-import comments from './comments';
-import { Router } from 'express';
-import { authorizeOrg } from '../../../middleware/permissions';
-import { OrgPermissions } from '../../../db/flags';
+import getVendors from './getVendors'
+import getVendor from './getVendor'
+import createVendor from './createVendor'
+import updateVendor from './updateVendor'
+import deleteVendor from './deleteVendor'
+import comments from './comments'
+import { Router } from 'express'
+import { authorizeOrg } from '../../../middleware/permissions'
+import { OrgPermissions } from '../../../db/flags'
 
 const routes = Router({ mergeParams: true })
 
@@ -34,12 +34,20 @@ routes.post('/', authorizeOrg(OrgPermissions.MANAGE_VENDORS), createVendor)
 /**
  * @api {put} /organizations/:org_id/vendors/:vendor_id Update organization vendor
  */
-routes.put('/:vendor_id', authorizeOrg(OrgPermissions.MANAGE_VENDORS), updateVendor)
+routes.put(
+    '/:vendor_id',
+    authorizeOrg(OrgPermissions.MANAGE_VENDORS),
+    updateVendor
+)
 
 /**
  * @api {delete} /organizations/:org_id/vendors/:vendor_id Remove from organization
  */
-routes.delete('/:vendor_id', authorizeOrg(OrgPermissions.MANAGE_VENDORS), deleteVendor)
+routes.delete(
+    '/:vendor_id',
+    authorizeOrg(OrgPermissions.MANAGE_VENDORS),
+    deleteVendor
+)
 
 /**
  * @api {use} /organizations/:org_id/vendors/:vendor_id/comments Invoice comments

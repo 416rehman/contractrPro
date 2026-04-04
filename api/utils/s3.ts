@@ -3,7 +3,7 @@ import {
     PutObjectCommand,
     DeleteObjectCommand,
     GetObjectCommand,
-} from '@aws-sdk/client-s3';
+} from '@aws-sdk/client-s3'
 
 export const s3Client = new S3Client({
     region: process.env.AWS_S3_REGION,
@@ -11,7 +11,7 @@ export const s3Client = new S3Client({
         accessKeyId: process.env.AWS_ACCESS_KEY || '',
         secretAccessKey: process.env.AWS_ACCESS_SECRET || '',
     },
-});
+})
 
 export const upload = async (file: any, key: string) => {
     const params = {
@@ -19,28 +19,28 @@ export const upload = async (file: any, key: string) => {
         Key: key,
         Body: file.buffer,
         ContentType: file.mimetype,
-    };
+    }
 
-    return await s3Client.send(new PutObjectCommand(params));
-};
+    return await s3Client.send(new PutObjectCommand(params))
+}
 
 export const deleteObject = async (key: string) => {
     const params = {
         Bucket: process.env.AWS_S3_BUCKET_NAME,
         Key: key,
-    };
+    }
 
-    return await s3Client.send(new DeleteObjectCommand(params));
-};
+    return await s3Client.send(new DeleteObjectCommand(params))
+}
 
 export const get = async (key: string) => {
     const params = {
         Bucket: process.env.AWS_S3_BUCKET_NAME,
         Key: key,
-    };
+    }
 
-    return await s3Client.send(new GetObjectCommand(params));
-};
+    return await s3Client.send(new GetObjectCommand(params))
+}
 
 export const getSignedUrl = async (key: string) => {
     // Note: getSignedUrlPromise might be missing in v3. It's usually getSignedUrl from @aws-sdk/s3-request-presigner
@@ -58,8 +58,8 @@ export const getSignedUrl = async (key: string) => {
     // Or assume it works.
 
     // For now I'll just export functions.
-    return ''; // Placeholder/Fix later if build fails on method.
-};
+    return '' // Placeholder/Fix later if build fails on method.
+}
 
 export default {
     upload,
@@ -67,4 +67,4 @@ export default {
     get,
     getSignedUrl,
     s3Client,
-};
+}

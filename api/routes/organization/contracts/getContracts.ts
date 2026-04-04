@@ -1,11 +1,11 @@
-import { db, contracts } from '../../../db';
-import { isValidUUID } from '../../../utils/isValidUUID';
-import { ErrorCode } from '../../../utils/errorCodes';
+import { db, contracts } from '../../../db'
+import { isValidUUID } from '../../../utils/isValidUUID'
+import { ErrorCode } from '../../../utils/errorCodes'
 import {
     createSuccessResponse,
     createErrorResponse,
-} from '../../../utils/response';
-import { eq } from 'drizzle-orm';
+} from '../../../utils/response'
+import { eq } from 'drizzle-orm'
 
 /**
  * @openapi
@@ -54,20 +54,21 @@ export default async (req, res) => {
         }
 
         const queryOptions: any = {
-            where: eq(contracts.organizationId, orgID)
-        };
+            where: eq(contracts.organizationId, orgID),
+        }
 
         if (expand) {
             queryOptions.with = {
                 jobs: {
                     with: {
-                        jobMembers: true
-                    }
-                }
+                        jobMembers: true,
+                    },
+                },
             }
         }
 
-        const organizationContracts = await db.query.contracts.findMany(queryOptions);
+        const organizationContracts =
+            await db.query.contracts.findMany(queryOptions)
 
         // transform to legacy shape if expanded
         if (expand && organizationContracts) {
@@ -75,8 +76,10 @@ export default async (req, res) => {
                 if (contract.jobs) {
                     contract.jobs.forEach((job: any) => {
                         if (job.jobMembers) {
-                            job.assignedTo = job.jobMembers.map((jm: any) => jm.organizationMemberId);
-                            delete job.jobMembers;
+                            job.assignedTo = job.jobMembers.map(
+                                (jm: any) => jm.organizationMemberId
+                            )
+                            delete job.jobMembers
                         }
                     })
                 }
@@ -87,7 +90,8 @@ export default async (req, res) => {
             .status(200)
             .json(createSuccessResponse(organizationContracts))
     } catch (error) {
-        res.status(500).json(createErrorResponse(ErrorCode.INTERNAL_ERROR, error))
+        res.status(500).json(
+            createErrorResponse(ErrorCode.INTERNAL_ERROR, error)
+        )
     }
 }
-

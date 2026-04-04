@@ -1,5 +1,5 @@
-import { vendors } from '../../../../db';
-import { createCommentHandler } from '../../../common/comments/factory';
+import { vendors } from '../../../../db'
+import { createCommentHandler } from '../../../common/comments/factory'
 
 /**
  * @openapi
@@ -15,5 +15,5 @@ export default createCommentHandler({
     resourceTable: vendors,
     dbQueryKey: 'vendors',
     resourceIdParam: 'vendor_id',
-    foreignKeyField: 'vendorId'
-});
+    foreignKeyField: 'vendorId',
+})

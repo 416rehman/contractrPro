@@ -1,5 +1,5 @@
-import { contracts } from '../../../../db';
-import { createCommentHandler } from '../../../common/comments/factory';
+import { contracts } from '../../../../db'
+import { createCommentHandler } from '../../../common/comments/factory'
 
 /**
  * @openapi
@@ -15,5 +15,5 @@ export default createCommentHandler({
     resourceTable: contracts,
     dbQueryKey: 'contracts',
     resourceIdParam: 'contract_id',
-    foreignKeyField: 'contractId'
-});
+    foreignKeyField: 'contractId',
+})

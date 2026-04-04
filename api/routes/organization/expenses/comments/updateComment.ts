@@ -1,5 +1,5 @@
-import { expenses } from '../../../../db';
-import { updateCommentHandler } from '../../../common/comments/factory';
+import { expenses } from '../../../../db'
+import { updateCommentHandler } from '../../../common/comments/factory'
 
 /**
  * @openapi
@@ -15,5 +15,5 @@ export default updateCommentHandler({
     resourceTable: expenses,
     dbQueryKey: 'expenses',
     resourceIdParam: 'expense_id',
-    foreignKeyField: 'expenseId'
-});
+    foreignKeyField: 'expenseId',
+})

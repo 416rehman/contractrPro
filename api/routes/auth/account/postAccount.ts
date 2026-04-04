@@ -1,12 +1,12 @@
 import {
     createSuccessResponse,
     createErrorResponse,
-} from '../../../utils/response';
-import { ErrorCode } from '../../../utils/errorCodes';
-import { db, users } from '../../../db';
-import { pick } from '../../../utils';
-import bcrypt from 'bcrypt';
-import { z } from 'zod';
+} from '../../../utils/response'
+import { ErrorCode } from '../../../utils/errorCodes'
+import { db, users } from '../../../db'
+import { pick } from '../../../utils'
+import bcrypt from 'bcrypt'
+import { z } from 'zod'
 
 const schema = z.object({
     body: z.object({
@@ -18,7 +18,7 @@ const schema = z.object({
         phoneNumber: z.string().optional(),
         avatarUrl: z.string().optional(),
     }),
-});
+})
 
 /**
  * @openapi
@@ -27,9 +27,9 @@ const schema = z.object({
  *     summary: Register a new user account
  *     description: |
  *       Creates a new user account with the provided details.
- *       
+ *
  *       **Rate Limit**: 5 requests per 15 minutes.
- *       
+ *
  *     tags: [Auth]
  *     security: []
  *     requestBody:
@@ -87,23 +87,28 @@ const handler = async (req, res) => {
     ])
 
     try {
-        const hashedPassword = await bcrypt.hash(body.password, 10);
+        const hashedPassword = await bcrypt.hash(body.password, 10)
 
         await db.transaction(async (tx) => {
-            const [newUser] = await tx.insert(users).values({
-                ...body,
-                password: hashedPassword,
-            }).returning();
+            const [newUser] = await tx
+                .insert(users)
+                .values({
+                    ...body,
+                    password: hashedPassword,
+                })
+                .returning()
 
             if (newUser && newUser.password) {
-                (newUser as any).password = undefined;
+                ;(newUser as any).password = undefined
             }
 
             return res.status(201).json(createSuccessResponse(newUser))
         })
     } catch (err) {
-        return res.status(400).json(createErrorResponse(ErrorCode.INTERNAL_ERROR, err))
+        return res
+            .status(400)
+            .json(createErrorResponse(ErrorCode.INTERNAL_ERROR, err))
     }
 }
 
-export default { schema, handler };
+export default { schema, handler }

@@ -1,10 +1,10 @@
-import getOrganizationInvites from './getOrganizationInvites';
-import getOrganizationInvite from './getOrganizationInvite';
-import createOrganizationInvite from './createOrganizationInvite';
-import deleteOrganizationInvite from './deleteOrganizationInvite';
-import { Router } from 'express';
-import { authorizeOrg } from '../../../middleware/permissions';
-import { OrgPermissions } from '../../../db/flags';
+import getOrganizationInvites from './getOrganizationInvites'
+import getOrganizationInvite from './getOrganizationInvite'
+import createOrganizationInvite from './createOrganizationInvite'
+import deleteOrganizationInvite from './deleteOrganizationInvite'
+import { Router } from 'express'
+import { authorizeOrg } from '../../../middleware/permissions'
+import { OrgPermissions } from '../../../db/flags'
 
 const routes = Router({ mergeParams: true })
 
@@ -27,11 +27,19 @@ routes.get('/:invite_id', getOrganizationInvite)
 /**
  * @api {post} /organizations/:org_id/invites Create organization invite
  */
-routes.post('/', authorizeOrg(OrgPermissions.MANAGE_MEMBERS), createOrganizationInvite)
+routes.post(
+    '/',
+    authorizeOrg(OrgPermissions.MANAGE_MEMBERS),
+    createOrganizationInvite
+)
 
 /**
  * @api {delete} /organizations/:org_id/invites/:invite_id Delete organization invite
  */
-routes.delete('/:invite_id', authorizeOrg(OrgPermissions.MANAGE_MEMBERS), deleteOrganizationInvite)
+routes.delete(
+    '/:invite_id',
+    authorizeOrg(OrgPermissions.MANAGE_MEMBERS),
+    deleteOrganizationInvite
+)
 
 export default routes

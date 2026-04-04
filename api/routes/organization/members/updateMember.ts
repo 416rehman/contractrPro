@@ -1,11 +1,14 @@
-import { createSuccessResponse, createErrorResponse } from '../../../utils/response';
-import { ErrorCode } from '../../../utils/errorCodes';
-import { isValidUUID } from '../../../utils/isValidUUID';
-import { pick } from '../../../utils';
-import { db, organizationMembers } from '../../../db';
-import { eq, and } from 'drizzle-orm';
-import { OrgRole } from '../../../db/enums';
-import { canAssignRole } from '../../../utils/permissions';
+import {
+    createSuccessResponse,
+    createErrorResponse,
+} from '../../../utils/response'
+import { ErrorCode } from '../../../utils/errorCodes'
+import { isValidUUID } from '../../../utils/isValidUUID'
+import { pick } from '../../../utils'
+import { db, organizationMembers } from '../../../db'
+import { eq, and } from 'drizzle-orm'
+import { OrgRole } from '../../../db/enums'
+import { canAssignRole } from '../../../utils/permissions'
 
 /**
  * @openapi
@@ -53,42 +56,75 @@ export default async (req, res) => {
         const orgId = req.params.org_id
         const memberId = req.params.member_id
         if (!orgId || !isValidUUID(orgId)) {
-            return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_ORG_ID_REQUIRED))
+            return res
+                .status(400)
+                .json(createErrorResponse(ErrorCode.VALIDATION_ORG_ID_REQUIRED))
         }
         if (!memberId || !isValidUUID(memberId)) {
-            return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_INVALID_UUID))
+            return res
+                .status(400)
+                .json(createErrorResponse(ErrorCode.VALIDATION_INVALID_UUID))
         }
 
         const updates: any = {
-            ...pick(req.body, ['name', 'email', 'phone', 'website', 'description']),
+            ...pick(req.body, [
+                'name',
+                'email',
+                'phone',
+                'website',
+                'description',
+            ]),
             updatedByUserId: req.auth.id,
         }
 
         if (req.body.role) {
-            const role = req.body.role as OrgRole;
+            const role = req.body.role as OrgRole
             if (!Object.values(OrgRole).includes(role)) {
-                return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_INVALID_VALUE, "Invalid role"));
+                return res
+                    .status(400)
+                    .json(
+                        createErrorResponse(
+                            ErrorCode.VALIDATION_INVALID_VALUE,
+                            'Invalid role'
+                        )
+                    )
             }
 
-            const requesterRole = (req as any).orgMember.role as OrgRole;
+            const requesterRole = (req as any).orgMember.role as OrgRole
             if (!canAssignRole(requesterRole, role)) {
-                return res.status(403).json(createErrorResponse(ErrorCode.AUTH_UNAUTHORIZED, "Insufficient permissions to assign this role"));
+                return res
+                    .status(403)
+                    .json(
+                        createErrorResponse(
+                            ErrorCode.AUTH_UNAUTHORIZED,
+                            'Insufficient permissions to assign this role'
+                        )
+                    )
             }
-            updates.role = role;
+            updates.role = role
         }
 
-        const [updatedMember] = await db.update(organizationMembers)
+        const [updatedMember] = await db
+            .update(organizationMembers)
             .set(updates)
-            .where(and(eq(organizationMembers.id, memberId), eq(organizationMembers.organizationId, orgId)))
-            .returning();
+            .where(
+                and(
+                    eq(organizationMembers.id, memberId),
+                    eq(organizationMembers.organizationId, orgId)
+                )
+            )
+            .returning()
 
         if (!updatedMember) {
-            return res.status(400).json(createErrorResponse(ErrorCode.RESOURCE_NOT_FOUND))
+            return res
+                .status(400)
+                .json(createErrorResponse(ErrorCode.RESOURCE_NOT_FOUND))
         }
 
         return res.status(200).json(createSuccessResponse(updatedMember))
     } catch (error) {
-        return res.status(400).json(createErrorResponse(ErrorCode.INTERNAL_ERROR, error))
+        return res
+            .status(400)
+            .json(createErrorResponse(ErrorCode.INTERNAL_ERROR, error))
     }
 }
-

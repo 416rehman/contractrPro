@@ -1,5 +1,5 @@
-import { vendors } from '../../../../db';
-import { deleteCommentHandler } from '../../../common/comments/factory';
+import { vendors } from '../../../../db'
+import { deleteCommentHandler } from '../../../common/comments/factory'
 
 /**
  * @openapi
@@ -15,5 +15,5 @@ export default deleteCommentHandler({
     resourceTable: vendors,
     dbQueryKey: 'vendors',
     resourceIdParam: 'vendor_id',
-    foreignKeyField: 'vendorId'
-});
+    foreignKeyField: 'vendorId',
+})

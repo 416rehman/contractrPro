@@ -1,11 +1,11 @@
-import getJobMembers from './getJobMembers';
-import getJobMember from './getJobMember';
-import createJobMember from './createJobMember';
-import deleteJobMember from './deleteJobMember';
-import updateJobMember from './updateJobMember';
-import { Router } from 'express';
-import { authorizeOrg } from '../../../../../middleware/permissions';
-import { OrgPermissions } from '../../../../../db/flags';
+import getJobMembers from './getJobMembers'
+import getJobMember from './getJobMember'
+import createJobMember from './createJobMember'
+import deleteJobMember from './deleteJobMember'
+import updateJobMember from './updateJobMember'
+import { Router } from 'express'
+import { authorizeOrg } from '../../../../../middleware/permissions'
+import { OrgPermissions } from '../../../../../db/flags'
 
 const routes = Router({ mergeParams: true })
 
@@ -33,11 +33,19 @@ routes.post('/', authorizeOrg(OrgPermissions.MANAGE_JOBS), createJobMember)
 /**
  * @api {delete} /organizations/:org_id/contracts/:contract_id/jobs/:job_id/members Remove member from organization contract job
  */
-routes.delete('/:member_id', authorizeOrg(OrgPermissions.MANAGE_JOBS), deleteJobMember)
+routes.delete(
+    '/:member_id',
+    authorizeOrg(OrgPermissions.MANAGE_JOBS),
+    deleteJobMember
+)
 
 /**
  * @api {put} /organizations/:org_id/contracts/:contract_id/jobs/:job_id/members/:member_id Update organization contract job member
  */
-routes.put('/:member_id', authorizeOrg(OrgPermissions.MANAGE_JOBS), updateJobMember)
+routes.put(
+    '/:member_id',
+    authorizeOrg(OrgPermissions.MANAGE_JOBS),
+    updateJobMember
+)
 
 export default routes

@@ -1,10 +1,10 @@
-import getUser from './getUser';
-import changeEmail from './changeEmail';
-import changePhone from './changePhone';
-import changeAvatar from './changeAvatar';
-import changeName from './changeName';
-import { Router } from 'express';
-const routes = Router();
+import getUser from './getUser'
+import changeEmail from './changeEmail'
+import changePhone from './changePhone'
+import changeAvatar from './changeAvatar'
+import changeName from './changeName'
+import { Router } from 'express'
+const routes = Router()
 
 routes.use((req, res, next) => {
     const path = __filename.split('/').slice(-1)[0].split('\\').slice(-1)[0]

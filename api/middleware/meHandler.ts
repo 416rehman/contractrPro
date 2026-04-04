@@ -4,9 +4,9 @@ const meHandler = (req: any, res: any, next: any) => {
         req.params.user_id === '@me' ||
         req.params.user_id === 'me/'
     ) {
-        req.params.user_id = req.auth.id;
+        req.params.user_id = req.auth.id
     }
-    next();
-};
+    next()
+}
 
-export default meHandler;
+export default meHandler

@@ -1,15 +1,15 @@
-import { validate } from '../../middleware/validation';
-import postLogin from './postLogin';
-import token from './token';
-import logout from './logout';
-import forgot from './forgot';
-import resetPassword from './resetPassword';
-import verifyEmail from './verifyEmail';
-import verifyPhone from './verifyPhone';
-import account from './account';
-import { authLimiter, tokenLimiter } from '../../middleware/rateLimit';
-import { Router } from 'express';
-const routes = Router();
+import { validate } from '../../middleware/validation'
+import postLogin from './postLogin'
+import token from './token'
+import logout from './logout'
+import forgot from './forgot'
+import resetPassword from './resetPassword'
+import verifyEmail from './verifyEmail'
+import verifyPhone from './verifyPhone'
+import account from './account'
+import { authLimiter, tokenLimiter } from '../../middleware/rateLimit'
+import { Router } from 'express'
+const routes = Router()
 
 routes.use((req, res, next) => {
     const path = __filename.split('/').slice(-1)[0].split('\\').slice(-1)[0]
@@ -76,19 +76,11 @@ routes.post('/logout', logout)
 /**
  * @api {post} /auth/forgot Sends a password reset token to the signedInUser's email
  */
-routes.post(
-    '/forgot',
-    authLimiter,
-    validate(forgot.schema),
-    forgot.handler
-)
+routes.post('/forgot', authLimiter, validate(forgot.schema), forgot.handler)
 
 /**
  * @api {use} /auth/account Uses the account router
  */
-routes.use(
-    '/account',
-    account
-)
+routes.use('/account', account)
 
 export default routes

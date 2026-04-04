@@ -1,8 +1,11 @@
-import { db, organizations } from '../../db';
-import { createErrorResponse, createSuccessResponse } from '../../utils/response';
-import { ErrorCode } from '../../utils/errorCodes';
-import { pick } from '../../utils';
-import { eq } from 'drizzle-orm';
+import { db, organizations } from '../../db'
+import {
+    createErrorResponse,
+    createSuccessResponse,
+} from '../../utils/response'
+import { ErrorCode } from '../../utils/errorCodes'
+import { pick } from '../../utils'
+import { eq } from 'drizzle-orm'
 
 /**
  * @openapi
@@ -27,26 +30,39 @@ import { eq } from 'drizzle-orm';
 export default async (req, res) => {
     try {
         const body = {
-            ...pick(req.body, ['name', 'description', 'email', 'phone', 'website', 'logoUrl']),
+            ...pick(req.body, [
+                'name',
+                'description',
+                'email',
+                'phone',
+                'website',
+                'logoUrl',
+            ]),
         }
 
         const orgId = req.params.org_id
         if (!orgId) {
-            return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_ORG_ID_REQUIRED))
+            return res
+                .status(400)
+                .json(createErrorResponse(ErrorCode.VALIDATION_ORG_ID_REQUIRED))
         }
 
-        const [updatedOrg] = await db.update(organizations)
+        const [updatedOrg] = await db
+            .update(organizations)
             .set(body)
             .where(eq(organizations.id, orgId))
-            .returning();
+            .returning()
 
         if (!updatedOrg) {
-            return res.status(404).json(createErrorResponse(ErrorCode.ORG_NOT_FOUND))
+            return res
+                .status(404)
+                .json(createErrorResponse(ErrorCode.ORG_NOT_FOUND))
         }
 
         return res.status(200).json(createSuccessResponse(updatedOrg))
     } catch (error) {
-        return res.status(400).json(createErrorResponse(ErrorCode.INTERNAL_ERROR, error))
+        return res
+            .status(400)
+            .json(createErrorResponse(ErrorCode.INTERNAL_ERROR, error))
     }
 }
-

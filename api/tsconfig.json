@@ -28,30 +28,14 @@
         ],
         "baseUrl": ".",
         "paths": {
-            "pg-protocol": [
-                "utils/empty.ts"
-            ],
-            "http-errors": [
-                "utils/empty.ts"
-            ],
-            "qs": [
-                "utils/empty.ts"
-            ],
-            "range-parser": [
-                "utils/empty.ts"
-            ],
-            "send": [
-                "utils/empty.ts"
-            ],
-            "cookiejar": [
-                "utils/empty.ts"
-            ],
-            "validator": [
-                "utils/empty.ts"
-            ],
-            "punycode": [
-                "utils/empty.ts"
-            ]
+            "pg-protocol": ["utils/empty.ts"],
+            "http-errors": ["utils/empty.ts"],
+            "qs": ["utils/empty.ts"],
+            "range-parser": ["utils/empty.ts"],
+            "send": ["utils/empty.ts"],
+            "cookiejar": ["utils/empty.ts"],
+            "validator": ["utils/empty.ts"],
+            "punycode": ["utils/empty.ts"]
         }
     },
     "include": [
@@ -63,9 +47,5 @@
         "utils/**/*.ts",
         "validators/**/*.ts"
     ],
-    "exclude": [
-        "node_modules",
-        "dist",
-        "tests"
-    ]
+    "exclude": ["node_modules", "dist", "tests"]
 }

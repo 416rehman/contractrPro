@@ -14,4 +14,6 @@ RUN pnpm install --frozen-lockfile
 
 COPY . .
 
+RUN pnpm build
+
 ENTRYPOINT ["pnpm", "run", "start"]

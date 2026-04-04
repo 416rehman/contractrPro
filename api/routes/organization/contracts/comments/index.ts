@@ -1,10 +1,10 @@
-import getComments from './getComments';
-import createComment from './createComment';
-import updateComment from './updateComment';
-import deleteComment from './deleteComment';
-import attachments from './attachments';
-import attachmentsMiddleware from '../../../../middleware/attachmentsMiddleware';
-import { Router } from 'express';
+import getComments from './getComments'
+import createComment from './createComment'
+import updateComment from './updateComment'
+import deleteComment from './deleteComment'
+import attachments from './attachments'
+import attachmentsMiddleware from '../../../../middleware/attachmentsMiddleware'
+import { Router } from 'express'
 const routes = Router({ mergeParams: true })
 
 routes.use((req, res, next) => {

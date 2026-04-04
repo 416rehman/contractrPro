@@ -1,12 +1,12 @@
-import getClients from './getClients';
-import getClient from './getClient';
-import createClient from './createClient';
-import updateClient from './updateClient';
-import deleteClient from './deleteClient';
-import comments from './comments';
-import { Router } from 'express';
-import { authorizeOrg } from '../../../middleware/permissions';
-import { OrgPermissions } from '../../../db/flags';
+import getClients from './getClients'
+import getClient from './getClient'
+import createClient from './createClient'
+import updateClient from './updateClient'
+import deleteClient from './deleteClient'
+import comments from './comments'
+import { Router } from 'express'
+import { authorizeOrg } from '../../../middleware/permissions'
+import { OrgPermissions } from '../../../db/flags'
 
 const routes = Router({ mergeParams: true })
 
@@ -34,12 +34,20 @@ routes.post('/', authorizeOrg(OrgPermissions.MANAGE_CLIENTS), createClient)
 /**
  * @api {put} /organizations/:org_id/clients/:client_id Update organization client
  */
-routes.put('/:client_id', authorizeOrg(OrgPermissions.MANAGE_CLIENTS), updateClient)
+routes.put(
+    '/:client_id',
+    authorizeOrg(OrgPermissions.MANAGE_CLIENTS),
+    updateClient
+)
 
 /**
  * @api {delete} /organizations/:org_id/clients/:client_id Remove from organization
  */
-routes.delete('/:client_id', authorizeOrg(OrgPermissions.MANAGE_CLIENTS), deleteClient)
+routes.delete(
+    '/:client_id',
+    authorizeOrg(OrgPermissions.MANAGE_CLIENTS),
+    deleteClient
+)
 
 /**
  * @api {use} /organizations/:org_id/clients/:client_id/comments Client comments

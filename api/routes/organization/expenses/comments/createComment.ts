@@ -1,5 +1,5 @@
-import { expenses } from '../../../../db';
-import { createCommentHandler } from '../../../common/comments/factory';
+import { expenses } from '../../../../db'
+import { createCommentHandler } from '../../../common/comments/factory'
 
 /**
  * @openapi
@@ -15,5 +15,5 @@ export default createCommentHandler({
     resourceTable: expenses,
     dbQueryKey: 'expenses',
     resourceIdParam: 'expense_id',
-    foreignKeyField: 'expenseId'
-});
+    foreignKeyField: 'expenseId',
+})

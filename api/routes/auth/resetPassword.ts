@@ -1,17 +1,20 @@
-import { createSuccessResponse, createErrorResponse } from '../../utils/response';
-import { ErrorCode } from '../../utils/errorCodes';
-import { db, tokens, users } from '../../db';
-import { tokenFlags } from '../../db/flags';
-import { eq, and } from 'drizzle-orm';
-import bcrypt from 'bcrypt';
-import { z } from 'zod';
+import {
+    createSuccessResponse,
+    createErrorResponse,
+} from '../../utils/response'
+import { ErrorCode } from '../../utils/errorCodes'
+import { db, tokens, users } from '../../db'
+import { tokenFlags } from '../../db/flags'
+import { eq, and } from 'drizzle-orm'
+import bcrypt from 'bcrypt'
+import { z } from 'zod'
 
 const schema = z.object({
     body: z.object({
         token: z.string(),
-        password: z.string().min(8, "Password must be at least 8 characters"),
+        password: z.string().min(8, 'Password must be at least 8 characters'),
     }),
-});
+})
 
 /**
  * @openapi
@@ -20,9 +23,9 @@ const schema = z.object({
  *     summary: Reset password
  *     description: |
  *       Resets the user's password using a valid reset token obtained via email.
- *       
+ *
  *       **Rate Limit**: 5 requests per 15 minutes.
- *       
+ *
  *     tags: [Auth]
  *     security: []
  *     requestBody:
@@ -48,45 +51,54 @@ const schema = z.object({
  */
 const handler = async (req, res) => {
     try {
-        const { token, password } = req.body;
+        const { token, password } = req.body
 
         await db.transaction(async (tx) => {
             const tokenInstance = await tx.query.tokens.findFirst({
                 where: and(
                     eq(tokens.value, token),
                     eq(tokens.flags, tokenFlags.USER_PASSWORD_RESET_TOKEN)
-                )
-            });
+                ),
+            })
 
             if (!tokenInstance) {
-                return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_INVALID_TOKEN));
+                return res
+                    .status(400)
+                    .json(
+                        createErrorResponse(ErrorCode.VALIDATION_INVALID_TOKEN)
+                    )
             }
 
             const user = await tx.query.users.findFirst({
-                where: eq(users.id, tokenInstance.userId!)
-            });
+                where: eq(users.id, tokenInstance.userId!),
+            })
 
             if (!user) {
-                return res.status(400).json(createErrorResponse(ErrorCode.AUTH_USER_NOT_FOUND));
+                return res
+                    .status(400)
+                    .json(createErrorResponse(ErrorCode.AUTH_USER_NOT_FOUND))
             }
 
-            const hashedPassword = await bcrypt.hash(password, 10);
+            const hashedPassword = await bcrypt.hash(password, 10)
 
-            await tx.update(users)
+            await tx
+                .update(users)
                 .set({ password: hashedPassword })
-                .where(eq(users.id, user.id));
+                .where(eq(users.id, user.id))
 
             // Consume the token
-            await tx.delete(tokens).where(eq(tokens.id, tokenInstance.id));
+            await tx.delete(tokens).where(eq(tokens.id, tokenInstance.id))
 
-            return res.json(createSuccessResponse(null));
-        });
+            return res.json(createSuccessResponse(null))
+        })
     } catch (error) {
         // If headers already sent (e.g. from inside transaction logic if it failed subtly?), avoid crashing.
         if (!res.headersSent) {
-            return res.status(500).json(createErrorResponse(ErrorCode.INTERNAL_ERROR, error));
+            return res
+                .status(500)
+                .json(createErrorResponse(ErrorCode.INTERNAL_ERROR, error))
         }
     }
 }
 
-export default { schema, handler };
+export default { schema, handler }

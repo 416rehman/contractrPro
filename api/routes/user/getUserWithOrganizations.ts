@@ -1,8 +1,11 @@
-import { db, users } from '../../db';
-import { createSuccessResponse, createErrorResponse } from '../../utils/response';
-import { ErrorCode } from '../../utils/errorCodes';
-import { isValidUUID } from '../../utils/isValidUUID';
-import { eq } from 'drizzle-orm';
+import { db, users } from '../../db'
+import {
+    createSuccessResponse,
+    createErrorResponse,
+} from '../../utils/response'
+import { ErrorCode } from '../../utils/errorCodes'
+import { isValidUUID } from '../../utils/isValidUUID'
+import { eq } from 'drizzle-orm'
 
 /**
  * @openapi
@@ -25,7 +28,11 @@ export default async (req, res) => {
         const userID = req.params.user_id
 
         if (!userID || !isValidUUID(userID)) {
-            return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_USER_ID_REQUIRED))
+            return res
+                .status(400)
+                .json(
+                    createErrorResponse(ErrorCode.VALIDATION_USER_ID_REQUIRED)
+                )
         }
 
         const userOrganizations = await db.query.users.findFirst({
@@ -38,18 +45,21 @@ export default async (req, res) => {
                 organizationMemberships: {
                     with: {
                         organization: true,
-                    }
-                }
-            }
-        });
+                    },
+                },
+            },
+        })
 
         if (!userOrganizations) {
-            return res.status(400).json(createErrorResponse(ErrorCode.AUTH_USER_NOT_FOUND))
+            return res
+                .status(400)
+                .json(createErrorResponse(ErrorCode.AUTH_USER_NOT_FOUND))
         }
 
         return res.status(200).json(createSuccessResponse(userOrganizations))
     } catch (error) {
-        res.status(400).json(createErrorResponse(ErrorCode.INTERNAL_ERROR, error))
+        res.status(400).json(
+            createErrorResponse(ErrorCode.INTERNAL_ERROR, error)
+        )
     }
 }
-

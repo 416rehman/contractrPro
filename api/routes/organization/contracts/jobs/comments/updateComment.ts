@@ -1,7 +1,10 @@
-import { createSuccessResponse, createErrorResponse } from '../../../../../utils/response';
-import { ErrorCode } from '../../../../../utils/errorCodes';
-import { db, jobs, comments } from '../../../../../db';
-import { updateCommentHandler } from '../../../../common/comments/factory';
+import {
+    createSuccessResponse,
+    createErrorResponse,
+} from '../../../../../utils/response'
+import { ErrorCode } from '../../../../../utils/errorCodes'
+import { db, jobs, comments } from '../../../../../db'
+import { updateCommentHandler } from '../../../../common/comments/factory'
 
 /**
  * @openapi
@@ -17,5 +20,5 @@ export default updateCommentHandler({
     resourceTable: jobs,
     dbQueryKey: 'jobs',
     resourceIdParam: 'job_id',
-    foreignKeyField: 'jobId'
-});
+    foreignKeyField: 'jobId',
+})

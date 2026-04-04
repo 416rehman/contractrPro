@@ -1,16 +1,15 @@
 name: ContractrPro API CI
 
 on:
-  # Runs the inside pull requests to the main and dev branches
   pull_request:
     branches: [ main, dev ]
     paths:
       - "api/**"
-  # Runs the inside pushes to the main and dev branches
   push:
     branches: [ main, dev ]
     paths:
       - "api/**"
+
 env:
   PORT: ${{ vars.PORT }}
   DB_DATABASE: ${{ vars.DB_DATABASE }}
@@ -29,12 +28,10 @@ env:
   DEV_USER_USERNAME: ${{ vars.DEV_USER_USERNAME }}
 
 jobs:
-  format-api:
-    # Only runs if the triggering actor is not the GitHub Actions bot
+  lint-and-format:
     if: github.triggering_actor != 'github-actions[bot]'
     permissions:
       contents: write
-    # Uses a Ubuntu Docker VM to run the application on
     runs-on: ubuntu-latest
     environment: "Dev Env"
     defaults:
@@ -42,30 +39,39 @@ jobs:
         working-directory: ./api
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
           token: ${{ secrets.PAT }}
-      - name: Setup Node for API
-        uses: actions/setup-node@v3
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
         with:
-          node-version: "18.16.0"
-          cache: "npm"
-          cache-dependency-path: ./api/package-lock.json
+          version: latest
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+          cache-dependency-path: ./api/pnpm-lock.yaml
+
       - name: Install Dependencies
-        run: npm ci --no-optional
-      - name: Check for bugs
-        run: npm run lint
-      - name: Check for code formatting
-        run: npm run prettier
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Format
+        run: pnpm prettier
+
       - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v4
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: Apply formatting changes
           branch: ${{ github.head_ref }}
 
-  test-api:
-    # Uses a Ubuntu Docker VM to run the application on
+  test:
     runs-on: ubuntu-latest
     environment: "Dev Env"
     defaults:
@@ -73,24 +79,31 @@ jobs:
         working-directory: ./api
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
           token: ${{ secrets.PAT }}
-      - name: Setup Node for API
-        uses: actions/setup-node@v3
-        with:
-          node-version: "18.16.0"
-          cache: "npm"
-          cache-dependency-path: ./api/package-lock.json
-      - name: Install Dependencies
-        run: npm ci --no-optional
-      - name: Run tests
-        run: npm run test
 
-  build-dev-api:
-    # Builds the API and pushes it to the Docker Hub
-    needs: [ test-api ]
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+          cache-dependency-path: ./api/pnpm-lock.yaml
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run tests
+        run: pnpm test
+
+  build-and-deploy:
+    needs: [ test ]
     runs-on: ubuntu-latest
     environment: "Dev Env"
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev'
@@ -99,32 +112,39 @@ jobs:
         working-directory: ./api
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
           token: ${{ secrets.PAT }}
-      - name: Setup Node for API
-        uses: actions/setup-node@v3
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
         with:
-          node-version: "18.16.0"
-          cache: "npm"
-          cache-dependency-path: ./api/package-lock.json
+          version: latest
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+          cache-dependency-path: ./api/pnpm-lock.yaml
+
       - name: Install Dependencies
-        run: npm ci --no-optional
+        run: pnpm install --frozen-lockfile
+
       - name: Login to Docker Hub
-        uses: docker/login-action@v1
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
+
       - name: Push API to Docker Hub
-        #                Push to ${username}/contractrpro-api:latest
         run: |
           docker build -t ${{ secrets.DOCKER_USERNAME }}/contractrpro-api:dev .
           docker push ${{ secrets.DOCKER_USERNAME }}/contractrpro-api:dev
 
-  deploy-dev-api:
-    # Sends a webhook to Portainer to deploy the API stack. URL is stored in the secret PORTAINER_WEBHOOK_URL
-    needs: [ build-dev-api ]
+  deploy-dev:
+    needs: [ build-and-deploy ]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/dev'
     environment: "Dev Env"

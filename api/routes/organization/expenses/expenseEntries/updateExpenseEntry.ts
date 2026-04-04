@@ -1,9 +1,12 @@
-import { createSuccessResponse, createErrorResponse } from '../../../../utils/response';
-import { ErrorCode } from '../../../../utils/errorCodes';
-import { db, expenses, expenseEntries } from '../../../../db';
-import { isValidUUID } from '../../../../utils/isValidUUID';
-import { pick } from '../../../../utils';
-import { eq, and } from 'drizzle-orm';
+import {
+    createSuccessResponse,
+    createErrorResponse,
+} from '../../../../utils/response'
+import { ErrorCode } from '../../../../utils/errorCodes'
+import { db, expenses, expenseEntries } from '../../../../db'
+import { isValidUUID } from '../../../../utils/isValidUUID'
+import { pick } from '../../../../utils'
+import { eq, and } from 'drizzle-orm'
 
 /**
  * @openapi
@@ -21,26 +24,59 @@ export default async (req, res) => {
         const expenseEntryId = req.params.entry_id
         const orgId = req.params.org_id
 
-        if (!orgId || !isValidUUID(orgId)) return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_ORG_ID_REQUIRED))
-        if (!expenseId || !isValidUUID(expenseId)) return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_INVALID_UUID))
-        if (!expenseEntryId || !isValidUUID(expenseEntryId)) return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_INVALID_UUID))
+        if (!orgId || !isValidUUID(orgId))
+            return res
+                .status(400)
+                .json(createErrorResponse(ErrorCode.VALIDATION_ORG_ID_REQUIRED))
+        if (!expenseId || !isValidUUID(expenseId))
+            return res
+                .status(400)
+                .json(createErrorResponse(ErrorCode.VALIDATION_INVALID_UUID))
+        if (!expenseEntryId || !isValidUUID(expenseEntryId))
+            return res
+                .status(400)
+                .json(createErrorResponse(ErrorCode.VALIDATION_INVALID_UUID))
 
         await db.transaction(async (tx) => {
             const expense = await tx.query.expenses.findFirst({
-                where: and(eq(expenses.id, expenseId), eq(expenses.organizationId, orgId))
+                where: and(
+                    eq(expenses.id, expenseId),
+                    eq(expenses.organizationId, orgId)
+                ),
             })
-            if (!expense) return res.status(400).json(createErrorResponse(ErrorCode.RESOURCE_NOT_FOUND))
+            if (!expense)
+                return res
+                    .status(400)
+                    .json(createErrorResponse(ErrorCode.RESOURCE_NOT_FOUND))
 
-            const [updatedExpenseEntry] = await tx.update(expenseEntries)
-                .set({ ...pick(req.body, ['name', 'description', 'unitCost', 'quantity']) })
-                .where(and(eq(expenseEntries.expenseId, expenseId), eq(expenseEntries.id, expenseEntryId)))
-                .returning();
+            const [updatedExpenseEntry] = await tx
+                .update(expenseEntries)
+                .set({
+                    ...pick(req.body, [
+                        'name',
+                        'description',
+                        'unitCost',
+                        'quantity',
+                    ]),
+                })
+                .where(
+                    and(
+                        eq(expenseEntries.expenseId, expenseId),
+                        eq(expenseEntries.id, expenseEntryId)
+                    )
+                )
+                .returning()
 
-            if (!updatedExpenseEntry) return res.status(400).json(createErrorResponse(ErrorCode.RESOURCE_NOT_FOUND))
+            if (!updatedExpenseEntry)
+                return res
+                    .status(400)
+                    .json(createErrorResponse(ErrorCode.RESOURCE_NOT_FOUND))
 
             res.status(200).json(createSuccessResponse(updatedExpenseEntry))
         })
     } catch (err) {
-        return res.status(400).json(createErrorResponse(ErrorCode.INTERNAL_ERROR, err))
+        return res
+            .status(400)
+            .json(createErrorResponse(ErrorCode.INTERNAL_ERROR, err))
     }
 }

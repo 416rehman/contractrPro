@@ -1,5 +1,5 @@
-import { jobs } from '../../../../../db';
-import { getCommentsHandler } from '../../../../common/comments/factory';
+import { jobs } from '../../../../../db'
+import { getCommentsHandler } from '../../../../common/comments/factory'
 
 /**
  * @openapi
@@ -15,5 +15,5 @@ export default getCommentsHandler({
     resourceTable: jobs,
     dbQueryKey: 'jobs',
     resourceIdParam: 'job_id',
-    foreignKeyField: 'jobId'
-});
+    foreignKeyField: 'jobId',
+})

@@ -4,12 +4,13 @@ export const tokenFlags = {
     USER_PASSWORD_RESET_TOKEN: 4,
     ORG_DELETE_TOKEN: 8,
     USER_ACCOUNT_DELETE_TOKEN: 16,
-};
+}
 
 export const UserFlags = {
     VERIFIED_EMAIL: 1,
     VERIFIED_PHONE: 2,
-};
+    BANNED: 4,
+}
 
 export const OrgPermissions = {
     VIEW_ORG: 1n << 0n,
@@ -22,5 +23,7 @@ export const OrgPermissions = {
     MANAGE_FINANCES: 1n << 7n,
     VIEW_FINANCES: 1n << 8n,
     MANAGE_VENDORS: 1n << 9n,
-    ADMINISTRATOR: 1n << 60n, // High bit for "All Permissions"
-};
+    MANAGE_PAYMENTS: 1n << 10n,
+    MANAGE_TIME_ENTRIES: 1n << 11n,
+    ADMINISTRATOR: 1n << 60n,
+}

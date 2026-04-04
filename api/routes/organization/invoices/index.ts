@@ -1,13 +1,13 @@
-import getInvoices from './getInvoices';
-import getInvoice from './getInvoice';
-import createInvoice from './createInvoice';
-import updateInvoice from './updateInvoice';
-import deleteInvoice from './deleteInvoice';
-import invoiceEntries from './invoiceEntries';
-import comments from './comments';
-import { Router } from 'express';
-import { authorizeOrg } from '../../../middleware/permissions';
-import { OrgPermissions } from '../../../db/flags';
+import getInvoices from './getInvoices'
+import getInvoice from './getInvoice'
+import createInvoice from './createInvoice'
+import updateInvoice from './updateInvoice'
+import deleteInvoice from './deleteInvoice'
+import invoiceEntries from './invoiceEntries'
+import comments from './comments'
+import { Router } from 'express'
+import { authorizeOrg } from '../../../middleware/permissions'
+import { OrgPermissions } from '../../../db/flags'
 
 const routes = Router({ mergeParams: true })
 routes.use((req, res, next) => {
@@ -34,12 +34,20 @@ routes.post('/', authorizeOrg(OrgPermissions.MANAGE_FINANCES), createInvoice)
 /**
  * @api {put} /organizations/:org_id/invoices/:invoice_id Update organization invoice
  */
-routes.put('/:invoice_id', authorizeOrg(OrgPermissions.MANAGE_FINANCES), updateInvoice)
+routes.put(
+    '/:invoice_id',
+    authorizeOrg(OrgPermissions.MANAGE_FINANCES),
+    updateInvoice
+)
 
 /**
  * @api {delete} /organizations/:org_id/invoices/:invoice_id Remove from organization
  */
-routes.delete('/:invoice_id', authorizeOrg(OrgPermissions.MANAGE_FINANCES), deleteInvoice)
+routes.delete(
+    '/:invoice_id',
+    authorizeOrg(OrgPermissions.MANAGE_FINANCES),
+    deleteInvoice
+)
 
 /**
  * @api {use} /organizations/:org_id/invoices/:invoice_id/entries Invoice entries
@@ -50,5 +58,12 @@ routes.use('/:invoice_id/entries', invoiceEntries)
  * @api {use} /organizations/:org_id/invoices/:invoice_id/comments Invoice comments
  */
 routes.use('/:invoice_id/comments', comments)
+
+import sendInvoice from './sendInvoice'
+routes.post(
+    '/:invoice_id/send',
+    authorizeOrg(OrgPermissions.MANAGE_FINANCES),
+    sendInvoice
+)
 
 export default routes

@@ -1,9 +1,12 @@
-import { createSuccessResponse, createErrorResponse } from '../../../utils/response';
-import { ErrorCode } from '../../../utils/errorCodes';
-import { isValidUUID } from '../../../utils/isValidUUID';
-import { pick } from '../../../utils';
-import { db, vendors } from '../../../db';
-import { eq, and } from 'drizzle-orm';
+import {
+    createSuccessResponse,
+    createErrorResponse,
+} from '../../../utils/response'
+import { ErrorCode } from '../../../utils/errorCodes'
+import { isValidUUID } from '../../../utils/isValidUUID'
+import { pick } from '../../../utils'
+import { db, vendors } from '../../../db'
+import { eq, and } from 'drizzle-orm'
 
 /**
  * @openapi
@@ -32,28 +35,44 @@ export default async (req, res) => {
         const vendorId = req.params.vendor_id
 
         if (!orgId || !isValidUUID(orgId)) {
-            return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_ORG_ID_REQUIRED))
+            return res
+                .status(400)
+                .json(createErrorResponse(ErrorCode.VALIDATION_ORG_ID_REQUIRED))
         }
         if (!vendorId || !isValidUUID(vendorId)) {
-            return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_INVALID_UUID))
+            return res
+                .status(400)
+                .json(createErrorResponse(ErrorCode.VALIDATION_INVALID_UUID))
         }
         const body = {
-            ...pick(req.body, ['name', 'phone', 'email', 'website', 'description']),
+            ...pick(req.body, [
+                'name',
+                'phone',
+                'email',
+                'website',
+                'description',
+            ]),
             updatedByUserId: req.auth.id,
         }
 
-        const [updatedVendor] = await db.update(vendors)
+        const [updatedVendor] = await db
+            .update(vendors)
             .set(body)
-            .where(and(eq(vendors.id, vendorId), eq(vendors.organizationId, orgId)))
-            .returning();
+            .where(
+                and(eq(vendors.id, vendorId), eq(vendors.organizationId, orgId))
+            )
+            .returning()
 
         if (!updatedVendor) {
-            return res.status(400).json(createErrorResponse(ErrorCode.RESOURCE_NOT_FOUND))
+            return res
+                .status(400)
+                .json(createErrorResponse(ErrorCode.RESOURCE_NOT_FOUND))
         }
 
         return res.status(200).json(createSuccessResponse(updatedVendor))
     } catch (error) {
-        return res.status(400).json(createErrorResponse(ErrorCode.INTERNAL_ERROR, error))
+        return res
+            .status(400)
+            .json(createErrorResponse(ErrorCode.INTERNAL_ERROR, error))
     }
 }
-

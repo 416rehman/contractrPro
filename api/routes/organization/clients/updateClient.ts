@@ -1,9 +1,12 @@
-import { db, clients } from '../../../db';
-import { createErrorResponse, createSuccessResponse } from '../../../utils/response';
-import { ErrorCode } from '../../../utils/errorCodes';
-import { isValidUUID } from '../../../utils/isValidUUID';
-import { pick } from '../../../utils';
-import { eq, and } from 'drizzle-orm';
+import { db, clients } from '../../../db'
+import {
+    createErrorResponse,
+    createSuccessResponse,
+} from '../../../utils/response'
+import { ErrorCode } from '../../../utils/errorCodes'
+import { isValidUUID } from '../../../utils/isValidUUID'
+import { pick } from '../../../utils'
+import { eq, and } from 'drizzle-orm'
 
 /**
  * @openapi
@@ -33,29 +36,45 @@ export default async (req, res) => {
         const orgId = req.params.org_id
         const clientId = req.params.client_id
         if (!orgId || !isValidUUID(orgId)) {
-            return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_ORG_ID_REQUIRED))
+            return res
+                .status(400)
+                .json(createErrorResponse(ErrorCode.VALIDATION_ORG_ID_REQUIRED))
         }
         if (!clientId || !isValidUUID(clientId)) {
-            return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_INVALID_UUID))
+            return res
+                .status(400)
+                .json(createErrorResponse(ErrorCode.VALIDATION_INVALID_UUID))
         }
 
         const body = {
-            ...pick(req.body, ['name', 'email', 'phone', 'website', 'description']),
+            ...pick(req.body, [
+                'name',
+                'email',
+                'phone',
+                'website',
+                'description',
+            ]),
             updatedByUserId: req.auth.id,
         }
 
-        const [updatedClient] = await db.update(clients)
+        const [updatedClient] = await db
+            .update(clients)
             .set(body)
-            .where(and(eq(clients.id, clientId), eq(clients.organizationId, orgId)))
-            .returning();
+            .where(
+                and(eq(clients.id, clientId), eq(clients.organizationId, orgId))
+            )
+            .returning()
 
         if (!updatedClient) {
-            return res.status(400).json(createErrorResponse(ErrorCode.RESOURCE_NOT_FOUND))
+            return res
+                .status(400)
+                .json(createErrorResponse(ErrorCode.RESOURCE_NOT_FOUND))
         }
 
         res.status(200).json(createSuccessResponse(updatedClient))
     } catch (error) {
-        res.status(400).json(createErrorResponse(ErrorCode.INTERNAL_ERROR, error))
+        res.status(400).json(
+            createErrorResponse(ErrorCode.INTERNAL_ERROR, error)
+        )
     }
 }
-

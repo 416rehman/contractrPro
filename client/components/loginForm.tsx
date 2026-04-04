@@ -13,6 +13,7 @@ import { Link } from "@heroui/link";
 import { Card, CardBody } from "@heroui/card";
 import { useTranslation } from "@/utils/useTranslation";
 
+// Form component for user login
 export default function LoginForm(props: any) {
   const { t, tError } = useTranslation();
   const addToast = useToastsStore((state) => state.addToast);

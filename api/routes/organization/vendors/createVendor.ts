@@ -1,8 +1,11 @@
-import { db, vendors } from '../../../db';
-import { createErrorResponse, createSuccessResponse } from '../../../utils/response';
-import { ErrorCode } from '../../../utils/errorCodes';
-import { pick } from '../../../utils';
-import { isValidUUID } from '../../../utils/isValidUUID';
+import { db, vendors } from '../../../db'
+import {
+    createErrorResponse,
+    createSuccessResponse,
+} from '../../../utils/response'
+import { ErrorCode } from '../../../utils/errorCodes'
+import { pick } from '../../../utils'
+import { isValidUUID } from '../../../utils/isValidUUID'
 
 /**
  * @openapi
@@ -25,19 +28,28 @@ export default async (req, res) => {
         const orgId = req.params.org_id
 
         if (!orgId || !isValidUUID(orgId)) {
-            return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_ORG_ID_REQUIRED))
+            return res
+                .status(400)
+                .json(createErrorResponse(ErrorCode.VALIDATION_ORG_ID_REQUIRED))
         }
 
         const body = {
-            ...pick(req.body, ['name', 'phone', 'email', 'website', 'description']),
+            ...pick(req.body, [
+                'name',
+                'phone',
+                'email',
+                'website',
+                'description',
+            ]),
             organizationId: orgId,
             updatedByUserId: req.auth.id,
         }
 
-        const [vendor] = await db.insert(vendors).values(body).returning();
+        const [vendor] = await db.insert(vendors).values(body).returning()
         res.status(201).json(createSuccessResponse(vendor))
     } catch (error) {
-        res.status(400).json(createErrorResponse(ErrorCode.INTERNAL_ERROR, error))
+        res.status(400).json(
+            createErrorResponse(ErrorCode.INTERNAL_ERROR, error)
+        )
     }
 }
-

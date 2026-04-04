@@ -43,7 +43,7 @@ export default function ContractJobsTable({ jobs, isEditing, onEntryChanged, onE
     switch (columnKey) {
       case "name":
         return <Input aria-label={"Name"}
-          key={job.id} value={cellValue}
+          key={job.id} value={String(cellValue ?? "")}
           placeholder="Name" variant={"underlined"}
           isReadOnly={!editMode}
           size={"sm"}
@@ -53,7 +53,7 @@ export default function ContractJobsTable({ jobs, isEditing, onEntryChanged, onE
           onChange={(e) => onEntryChanged(columnKey, e.target.value, job.id)} />;
       case "description":
         return <Input aria-label={"Description"}
-          key={job.id} value={cellValue} placeholder="Description"
+          key={job.id} value={String(cellValue ?? "")} placeholder="Description"
           variant={"underlined"}
           size={"sm"}
           isReadOnly={!editMode}
@@ -84,7 +84,7 @@ export default function ContractJobsTable({ jobs, isEditing, onEntryChanged, onE
 
       case "payout":
         return <Input aria-label={"Payout"}
-          key={job.id} value={cellValue} type="number" placeholder="Quantity"
+          key={job.id} value={String(cellValue ?? "")} type="number" placeholder="Quantity"
           variant={"underlined"}
           size={"sm"}
           isReadOnly={!editMode}
@@ -101,7 +101,7 @@ export default function ContractJobsTable({ jobs, isEditing, onEntryChanged, onE
               onEntryChanged(columnKey, changedMembers?.map((member) => member.id), job.id);
             }
           }}
-          selectedMemberIds={cellValue}
+          selectedMemberIds={cellValue as string[] | undefined}
         />;
       case "status":
         const isTouched = columns.some((column) => {
@@ -109,7 +109,7 @@ export default function ContractJobsTable({ jobs, isEditing, onEntryChanged, onE
         });
 
         return <div className="relative flex justify-end items-center gap-2">
-          <JobStatusSelector value={cellValue} onChange={(value) => onEntryChanged(columnKey, value, job.id)} />
+          <JobStatusSelector value={cellValue as number} onChange={(value) => onEntryChanged(columnKey, value, job.id)} />
           {editMode && isTouched && <Dropdown>
             <DropdownTrigger>
               <Button isIconOnly size="sm" variant="light">

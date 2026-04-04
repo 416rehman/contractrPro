@@ -1,8 +1,8 @@
-import getUsers from './getUsers';
-import getOrganizations from './getOrganizations';
-import updateUsers from './updateUsers';
-import { Router } from 'express';
-const routes = Router();
+import getUsers from './getUsers'
+import getOrganizations from './getOrganizations'
+import updateUsers from './updateUsers'
+import { Router } from 'express'
+const routes = Router()
 
 // /admin/users - Retrieves all users in the system
 routes.get('/users', getUsers)

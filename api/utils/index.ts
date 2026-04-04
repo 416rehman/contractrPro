@@ -1,5 +1,5 @@
-import crypto from 'crypto';
-import jwt from 'jsonwebtoken';
+import crypto from 'crypto'
+import jwt from 'jsonwebtoken'
 
 /**
  * @returns {string} - Returns a random refresh token
@@ -27,10 +27,15 @@ export const signJWT = function (payload: any, secret: string) {
     return new Promise((resolve, reject) => {
         try {
             //15 minutes
-            jwt.sign(payload, secret, { expiresIn: 15 * 60 }, (err: any, token: any) => {
-                if (err) reject(err)
-                else resolve(token)
-            })
+            jwt.sign(
+                payload,
+                secret,
+                { expiresIn: 15 * 60 },
+                (err: any, token: any) => {
+                    if (err) reject(err)
+                    else resolve(token)
+                }
+            )
         } catch (e) {
             reject(e)
         }

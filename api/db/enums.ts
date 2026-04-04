@@ -5,14 +5,61 @@ export enum OrgMemberStatus {
 }
 
 export enum OrgRole {
-    // Owner has full access to the organization
+    // full access to the organization
     Owner = 'owner',
-    // Manager are office admins, dispatchers, or project managers who run operations and finances
+    // office admins, dispatchers, project managers who run operations and finances
     Manager = 'manager',
-    // Supervisor are field supervisors who oversee workers and subcontractors
+    // field supervisors who oversee workers and subcontractors
     Supervisor = 'supervisor',
-    // Worker are field workers who perform tasks and manage their own time
+    // field workers who perform tasks and manage their own time
     Worker = 'worker',
-    // Subcontractor are external contractors with limited access to specific jobs only
+    // external contractors with limited access to specific jobs only
     Subcontractor = 'subcontractor',
+}
+
+export enum InvoiceStatus {
+    Draft = 'draft',
+    Sent = 'sent',
+    Viewed = 'viewed',
+    Partial = 'partial',
+    Paid = 'paid',
+    Overdue = 'overdue',
+    Void = 'void',
+}
+
+export enum PaymentType {
+    Deposit = 'deposit',
+    Withdrawal = 'withdrawal',
+}
+
+export enum PaymentMethod {
+    Cash = 'cash',
+    Check = 'check',
+    Card = 'card',
+    BankTransfer = 'bank_transfer',
+    Stripe = 'stripe',
+    Other = 'other',
+}
+
+export enum ExpenseStatus {
+    Pending = 'pending',
+    Approved = 'approved',
+    Rejected = 'rejected',
+    Paid = 'paid',
+}
+
+export enum ContractStatus {
+    Draft = 'draft',
+    Active = 'active',
+    Completed = 'completed',
+    Cancelled = 'cancelled',
+    OnHold = 'on_hold',
+}
+
+export enum JobStatus {
+    Pending = 'pending',
+    InProgress = 'in_progress',
+    Completed = 'completed',
+    Cancelled = 'cancelled',
+    OnHold = 'on_hold',
 }

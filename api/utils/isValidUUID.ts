@@ -4,10 +4,10 @@ export const isValidUUID = (uuid: string) => {
             /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/
         )
     ) {
-        return true;
+        return true
     } else {
-        return false;
+        return false
     }
-};
+}
 
-export default { isValidUUID };
+export default { isValidUUID }

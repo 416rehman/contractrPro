@@ -1,5 +1,5 @@
-import getBlob from './getBlob';
-import { Router } from 'express';
+import getBlob from './getBlob'
+import { Router } from 'express'
 const routes = Router({ mergeParams: true })
 
 routes.get('/:blob_id', getBlob)

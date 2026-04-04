@@ -1,5 +1,5 @@
-import { clients } from '../../../../../db';
-import { deleteAttachmentHandler } from '../../../../common/comments/factory';
+import { clients } from '../../../../../db'
+import { deleteAttachmentHandler } from '../../../../common/comments/factory'
 
 /**
  * @openapi
@@ -15,5 +15,5 @@ export default deleteAttachmentHandler({
     resourceTable: clients,
     dbQueryKey: 'clients',
     resourceIdParam: 'client_id',
-    foreignKeyField: 'clientId' // needed? factories signature says no, but let's check definition
-});
+    foreignKeyField: 'clientId', // needed? factories signature says no, but let's check definition
+})

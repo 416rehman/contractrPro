@@ -1,24 +1,26 @@
 import {
     createSuccessResponse,
     createErrorResponse,
-} from '../../utils/response';
-import { ErrorCode } from '../../utils/errorCodes';
-import { db, users } from '../../db';
-import { eq, or } from 'drizzle-orm';
-import bcrypt from 'bcrypt';
-import { pick } from '../../utils';
-import { z } from 'zod';
+} from '../../utils/response'
+import { ErrorCode } from '../../utils/errorCodes'
+import { db, users } from '../../db'
+import { eq, or } from 'drizzle-orm'
+import bcrypt from 'bcrypt'
+import { pick } from '../../utils'
+import { z } from 'zod'
 
 const schema = z.object({
-    body: z.object({
-        username: z.string().optional(),
-        email: z.string().email().optional(),
-        password: z.string().min(1, "Password is required"),
-    }).refine((data) => data.username || data.email, {
-        message: "Either username or email is required",
-        path: ["username"],
-    }),
-});
+    body: z
+        .object({
+            username: z.string().optional(),
+            email: z.string().email().optional(),
+            password: z.string().min(1, 'Password is required'),
+        })
+        .refine((data) => data.username || data.email, {
+            message: 'Either username or email is required',
+            path: ['username'],
+        }),
+})
 
 /**
  * @openapi
@@ -27,9 +29,9 @@ const schema = z.object({
  *     summary: Authenticate user and retrieve access tokens
  *     description: |
  *       Authenticates a user using either username or email and password.
- *       
+ *
  *       **Rate Limit**: 5 requests per 15 minutes.
- *       
+ *
  *     tags: [Auth]
  *     security: []
  *     requestBody:
@@ -57,9 +59,9 @@ const schema = z.object({
  *     responses:
  *       200:
  *         description: Authentication successful
- *         headers: 
+ *         headers:
  *           Set-Cookie:
- *             schema: 
+ *             schema:
  *               type: string
  *               example: refreshToken=abcde12345; Path=/; HttpOnly; Secure; SameSite=None
  *         content:
@@ -67,7 +69,7 @@ const schema = z.object({
  *             schema:
  *               type: object
  *               properties:
- *                 status: 
+ *                 status:
  *                   type: string
  *                   example: success
  *                 data:
@@ -103,17 +105,21 @@ const handler = async (req, res) => {
             where: or(
                 body.username ? eq(users.username, body.username) : undefined,
                 body.email ? eq(users.email, body.email) : undefined
-            )
+            ),
         })
         if (!user)
-            return res.status(400).json(createErrorResponse(ErrorCode.AUTH_USER_NOT_FOUND))
+            return res
+                .status(400)
+                .json(createErrorResponse(ErrorCode.AUTH_USER_NOT_FOUND))
 
         const isValidPass = await bcrypt.compareSync(
             body.password,
             user.password
         )
         if (!isValidPass) {
-            return res.status(400).json(createErrorResponse(ErrorCode.AUTH_INVALID_PASSWORD))
+            return res
+                .status(400)
+                .json(createErrorResponse(ErrorCode.AUTH_INVALID_PASSWORD))
         }
 
         return res
@@ -122,7 +128,7 @@ const handler = async (req, res) => {
                 secure: process.env.NODE_ENV === 'production',
                 sameSite: 'none',
                 path: '/',
-                maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+                maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
             })
             .json(
                 createSuccessResponse({
@@ -130,9 +136,11 @@ const handler = async (req, res) => {
                 })
             )
     } catch (error) {
-        console.error(error);
-        return res.status(500).json(createErrorResponse(ErrorCode.INTERNAL_ERROR, error))
+        console.error(error)
+        return res
+            .status(500)
+            .json(createErrorResponse(ErrorCode.INTERNAL_ERROR, error))
     }
 }
 
-export default { schema, handler };
+export default { schema, handler }

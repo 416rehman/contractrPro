@@ -37,6 +37,34 @@ export enum ErrorCode {
     ORG_NOT_FOUND = 'org.not_found',
     USER_NOT_FOUND = 'user.not_found',
 
+    // rate limiting
+    RATE_LIMIT_EXCEEDED = 'rate_limit.exceeded',
+
+    // payments
+    PAYMENT_NOT_FOUND = 'payment.not_found',
+    PAYMENT_FAILED = 'payment.failed',
+    PAYMENT_INVALID_AMOUNT = 'payment.invalid_amount',
+
+    // invoices
+    INVOICE_NOT_FOUND = 'invoice.not_found',
+    INVOICE_ALREADY_PAID = 'invoice.already_paid',
+    INVOICE_NOT_SENDABLE = 'invoice.not_sendable',
+    INVOICE_INVALID_STATUS = 'invoice.invalid_status',
+
+    // stripe
+    STRIPE_NOT_CONFIGURED = 'stripe.not_configured',
+    STRIPE_WEBHOOK_INVALID = 'stripe.webhook_invalid',
+    STRIPE_ACCOUNT_NOT_ONBOARDED = 'stripe.account_not_onboarded',
+
+    // tax rates
+    TAX_RATE_NOT_FOUND = 'tax_rate.not_found',
+
+    // time entries
+    TIME_ENTRY_NOT_FOUND = 'time_entry.not_found',
+
+    // expenses
+    EXPENSE_NOT_FOUND = 'expense.not_found',
+
     // generic
     INTERNAL_ERROR = 'error.internal',
 }

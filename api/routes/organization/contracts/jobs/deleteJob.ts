@@ -1,8 +1,11 @@
-import { db, jobs } from '../../../../db';
-import { createSuccessResponse, createErrorResponse } from '../../../../utils/response';
-import { ErrorCode } from '../../../../utils/errorCodes';
-import { isValidUUID } from '../../../../utils/isValidUUID';
-import { eq, and } from 'drizzle-orm';
+import { db, jobs } from '../../../../db'
+import {
+    createSuccessResponse,
+    createErrorResponse,
+} from '../../../../utils/response'
+import { ErrorCode } from '../../../../utils/errorCodes'
+import { isValidUUID } from '../../../../utils/isValidUUID'
+import { eq, and } from 'drizzle-orm'
 
 /**
  * @openapi
@@ -21,32 +24,44 @@ export default async (req, res) => {
         const jobId = req.params.job_id
 
         if (!orgID || !isValidUUID(orgID)) {
-            return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_ORG_ID_REQUIRED))
+            return res
+                .status(400)
+                .json(createErrorResponse(ErrorCode.VALIDATION_ORG_ID_REQUIRED))
         }
 
         if (!contractID || !isValidUUID(contractID)) {
-            return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_INVALID_UUID))
+            return res
+                .status(400)
+                .json(createErrorResponse(ErrorCode.VALIDATION_INVALID_UUID))
         }
 
         if (!jobId || !isValidUUID(jobId)) {
-            return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_INVALID_UUID))
+            return res
+                .status(400)
+                .json(createErrorResponse(ErrorCode.VALIDATION_INVALID_UUID))
         }
 
-        const deletedRows = await db.delete(jobs)
-            .where(and(
-                eq(jobs.id, jobId),
-                eq(jobs.contractId, contractID),
-                eq(jobs.organizationId, orgID)
-            ))
-            .returning();
+        const deletedRows = await db
+            .delete(jobs)
+            .where(
+                and(
+                    eq(jobs.id, jobId),
+                    eq(jobs.contractId, contractID),
+                    eq(jobs.organizationId, orgID)
+                )
+            )
+            .returning()
 
         if (!deletedRows.length) {
-            return res.status(400).json(createErrorResponse(ErrorCode.RESOURCE_NOT_FOUND))
+            return res
+                .status(400)
+                .json(createErrorResponse(ErrorCode.RESOURCE_NOT_FOUND))
         }
 
         return res.status(200).json(createSuccessResponse(null))
     } catch (error) {
-        return res.status(500).json(createErrorResponse(ErrorCode.INTERNAL_ERROR, error))
+        return res
+            .status(500)
+            .json(createErrorResponse(ErrorCode.INTERNAL_ERROR, error))
     }
 }
-

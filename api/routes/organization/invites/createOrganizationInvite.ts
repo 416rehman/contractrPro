@@ -1,9 +1,12 @@
-import { db, invites } from '../../../db';
-import { createSuccessResponse, createErrorResponse } from '../../../utils/response';
-import { ErrorCode } from '../../../utils/errorCodes';
-import { pick } from '../../../utils';
-import { isValidUUID } from '../../../utils/isValidUUID';
-import { OrgRole } from '../../../db/enums';
+import { db, invites } from '../../../db'
+import {
+    createSuccessResponse,
+    createErrorResponse,
+} from '../../../utils/response'
+import { ErrorCode } from '../../../utils/errorCodes'
+import { pick } from '../../../utils'
+import { isValidUUID } from '../../../utils/isValidUUID'
+import { OrgRole } from '../../../db/enums'
 
 /**
  * @openapi
@@ -53,20 +56,38 @@ export default async (req, res) => {
         const reservedMemberId = req.body.reservedMemberId
 
         if (!orgID || !isValidUUID(orgID)) {
-            return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_ORG_ID_REQUIRED))
+            return res
+                .status(400)
+                .json(createErrorResponse(ErrorCode.VALIDATION_ORG_ID_REQUIRED))
         }
 
         if (reservedMemberId && !isValidUUID(reservedMemberId)) {
-            return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_INVALID_UUID))
+            return res
+                .status(400)
+                .json(createErrorResponse(ErrorCode.VALIDATION_INVALID_UUID))
         }
 
         if (req.body.token && req.body.token.length < 7) {
-            return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_INVALID_VALUE, "Invalid token"));
+            return res
+                .status(400)
+                .json(
+                    createErrorResponse(
+                        ErrorCode.VALIDATION_INVALID_VALUE,
+                        'Invalid token'
+                    )
+                )
         }
 
-        const role = req.body.role;
+        const role = req.body.role
         if (role && !Object.values(OrgRole).includes(role)) {
-            return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_INVALID_VALUE, "Invalid role"));
+            return res
+                .status(400)
+                .json(
+                    createErrorResponse(
+                        ErrorCode.VALIDATION_INVALID_VALUE,
+                        'Invalid role'
+                    )
+                )
         }
 
         const body = {
@@ -76,14 +97,15 @@ export default async (req, res) => {
             email: req.body.email,
             token: req.body.token || Math.random().toString(36).substring(7),
             reservedMemberId: reservedMemberId,
-            role: role || OrgRole.Worker
+            role: role || OrgRole.Worker,
         }
 
-        const [invite] = await db.insert(invites).values(body).returning();
+        const [invite] = await db.insert(invites).values(body).returning()
 
         return res.status(201).json(createSuccessResponse(invite))
     } catch (err) {
-        return res.status(500).json(createErrorResponse(ErrorCode.INTERNAL_ERROR, err))
+        return res
+            .status(500)
+            .json(createErrorResponse(ErrorCode.INTERNAL_ERROR, err))
     }
 }
-

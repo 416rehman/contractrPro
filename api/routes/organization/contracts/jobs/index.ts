@@ -1,13 +1,13 @@
-import getJobs from './getJobs';
-import getJob from './getJob';
-import postJob from './postJob';
-import updateJob from './updateJob';
-import deleteJob from './deleteJob';
-import jobMembers from './jobMembers';
-import comments from './comments';
-import { Router } from 'express';
-import { authorizeOrg } from '../../../../middleware/permissions';
-import { OrgPermissions } from '../../../../db/flags';
+import getJobs from './getJobs'
+import getJob from './getJob'
+import postJob from './postJob'
+import updateJob from './updateJob'
+import deleteJob from './deleteJob'
+import jobMembers from './jobMembers'
+import comments from './comments'
+import { Router } from 'express'
+import { authorizeOrg } from '../../../../middleware/permissions'
+import { OrgPermissions } from '../../../../db/flags'
 
 const routes = Router({ mergeParams: true })
 

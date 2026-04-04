@@ -1,10 +1,10 @@
-import { Readable } from 'stream';
-import { createErrorResponse } from '../../../utils/response';
-import { ErrorCode } from '../../../utils/errorCodes';
-import { db, attachments, comments } from '../../../db';
-import s3 from '../../../utils/s3';
-import { isValidUUID } from '../../../utils/isValidUUID';
-import { eq, and } from 'drizzle-orm';
+import { Readable } from 'stream'
+import { createErrorResponse } from '../../../utils/response'
+import { ErrorCode } from '../../../utils/errorCodes'
+import { db, attachments, comments } from '../../../db'
+import s3 from '../../../utils/s3'
+import { isValidUUID } from '../../../utils/isValidUUID'
+import { eq, and } from 'drizzle-orm'
 
 /**
  * @openapi
@@ -39,16 +39,23 @@ export default async (req, res) => {
         const blobId = req.params.blob_id
         const { download } = req.query
 
-        if (!isValidUUID(orgId)) return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_ORG_ID_REQUIRED))
-        if (!isValidUUID(blobId)) return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_INVALID_UUID))
+        if (!isValidUUID(orgId))
+            return res
+                .status(400)
+                .json(createErrorResponse(ErrorCode.VALIDATION_ORG_ID_REQUIRED))
+        if (!isValidUUID(blobId))
+            return res
+                .status(400)
+                .json(createErrorResponse(ErrorCode.VALIDATION_INVALID_UUID))
 
-        const [attachment] = await db.select({
-            id: attachments.id,
-            name: attachments.name,
-            type: attachments.type,
-            size: attachments.size,
-            accessUrl: attachments.accessUrl
-        })
+        const [attachment] = await db
+            .select({
+                id: attachments.id,
+                name: attachments.name,
+                type: attachments.type,
+                size: attachments.size,
+                accessUrl: attachments.accessUrl,
+            })
             .from(attachments)
             .innerJoin(comments, eq(attachments.commentId, comments.id))
             .where(
@@ -57,17 +64,21 @@ export default async (req, res) => {
                     eq(comments.organizationId, orgId)
                 )
             )
-            .limit(1);
+            .limit(1)
 
         if (!attachment) {
-            return res.status(400).json(createErrorResponse(ErrorCode.RESOURCE_NOT_FOUND))
+            return res
+                .status(400)
+                .json(createErrorResponse(ErrorCode.RESOURCE_NOT_FOUND))
         }
 
         const actualFileName = attachment.name
 
         const data = await s3.get(blobId)
         if (!data) {
-            return res.status(400).json(createErrorResponse(ErrorCode.RESOURCE_NOT_FOUND))
+            return res
+                .status(400)
+                .json(createErrorResponse(ErrorCode.RESOURCE_NOT_FOUND))
         }
 
         res.writeHead(200, {
@@ -80,10 +91,11 @@ export default async (req, res) => {
         if (data.Body instanceof Readable) {
             data.Body.pipe(res)
         } else {
-            res.end(data.Body);
+            res.end(data.Body)
         }
     } catch (error) {
-        res.status(500).json(createErrorResponse(ErrorCode.INTERNAL_ERROR, error))
+        res.status(500).json(
+            createErrorResponse(ErrorCode.INTERNAL_ERROR, error)
+        )
     }
 }
-

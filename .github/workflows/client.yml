@@ -1,4 +1,4 @@
-name: ContractrPro Client
+name: ContractrPro Client CI
 
 on:
   pull_request:
@@ -7,48 +7,18 @@ on:
       - "docs/**"
       - "client/**"
       - ".github/workflows/**"
-  # Runs the inside pushes to the main and dev branches
   push:
     branches: [ main, dev ]
     paths:
       - "docs/**"
       - "client/**"
       - ".github/workflows/**"
+
 jobs:
-  generate-markdown:
-    # Only runs if the triggering actor is not the GitHub Actions bot
+  lint-and-build:
     if: github.triggering_actor != 'github-actions[bot]'
     permissions:
       contents: write
-    # Uses a Ubuntu Docker VM to run the application on
-    runs-on: ubuntu-latest
-    environment: "Dev Env"
-    defaults:
-      run:
-        working-directory: .github/scripts
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ github.head_ref }}
-          token: ${{ secrets.PAT }}
-      - name: Setup Node for API
-        uses: actions/setup-node@v3
-        with:
-          node-version: "18.16.0"
-      - name: Generate Markdown docs for components
-        run: node commentsToMarkdown.js
-      - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: Generated markdown docs
-          branch: ${{ github.head_ref }}
-  build:
-    # Only runs if the triggering actor is not the GitHub Actions bot and is a push to the main or dev branch
-    if: github.triggering_actor != 'github-actions[bot]' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev')
-    permissions:
-      contents: write
-    # Uses a Ubuntu Docker VM to run the application on
     runs-on: ubuntu-latest
     environment: "Dev Env"
     defaults:
@@ -56,32 +26,110 @@ jobs:
         working-directory: ./client
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
           token: ${{ secrets.PAT }}
-      - name: Setup Node for API
-        uses: actions/setup-node@v3
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
         with:
-          node-version: "18.16.0"
-          cache: "npm"
-          cache-dependency-path: ./client/package-lock.json
+          version: latest
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+          cache-dependency-path: ./client/pnpm-lock.yaml
+
       - name: Install Dependencies
-        run: npm ci --no-optional
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Build
+        run: pnpm build
+
+  generate-docs:
+    if: github.triggering_actor != 'github-actions[bot]'
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    environment: "Dev Env"
+    defaults:
+      run:
+        working-directory: .github/scripts
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          token: ${{ secrets.PAT }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Generate Markdown docs
+        run: node commentsToMarkdown.js
+
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: Generated markdown docs
+          branch: ${{ github.head_ref }}
+
+  build-and-deploy:
+    needs: [ lint-and-build ]
+    if: github.triggering_actor != 'github-actions[bot]' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev')
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    environment: "Dev Env"
+    defaults:
+      run:
+        working-directory: ./client
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          token: ${{ secrets.PAT }}
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
+          cache-dependency-path: ./client/pnpm-lock.yaml
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
       - name: Login to Docker Hub
-        uses: docker/login-action@v1
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Build Docker image
-        run: docker build -t watchdogsrox/contractrpro-client:latest .
-      - name: Push Docker image
-        run: docker push watchdogsrox/contractrpro-client:latest
-  deploy:
-    # Sends a webhook to Portainer to deploy the client stack. URL is stored in the secret PORTAINER_CLIENT_WEBHOOK_URL
-    needs: [ build ]
+
+      - name: Build and push Docker image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/contractrpro-client:dev .
+          docker push ${{ secrets.DOCKER_USERNAME }}/contractrpro-client:dev
+
+  deploy-dev:
+    needs: [ build-and-deploy ]
     environment: "Dev Env"
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/dev'
     steps:
       - name: Invoke Portainer deploy webhook
         uses: distributhor/workflow-webhook@v3

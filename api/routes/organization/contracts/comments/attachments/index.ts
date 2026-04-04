@@ -1,5 +1,5 @@
-import deleteAttachment from './deleteAttachment';
-import { Router } from 'express';
+import deleteAttachment from './deleteAttachment'
+import { Router } from 'express'
 const routes = Router({ mergeParams: true })
 
 /**

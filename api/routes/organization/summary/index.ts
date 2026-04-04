@@ -1,5 +1,5 @@
-import getSummary from './getSummary';
-import { Router } from 'express';
+import getSummary from './getSummary'
+import { Router } from 'express'
 const routes = Router({ mergeParams: true })
 
 routes.use((req, res, next) => {

@@ -1,10 +1,13 @@
-import { db, organizationMembers } from '../../../db';
-import { createErrorResponse, createSuccessResponse } from '../../../utils/response';
-import { ErrorCode } from '../../../utils/errorCodes';
-import { pick } from '../../../utils';
-import { isValidUUID } from '../../../utils/isValidUUID';
-import { OrgRole } from '../../../db/enums';
-import { canAssignRole } from '../../../utils/permissions';
+import { db, organizationMembers } from '../../../db'
+import {
+    createErrorResponse,
+    createSuccessResponse,
+} from '../../../utils/response'
+import { ErrorCode } from '../../../utils/errorCodes'
+import { pick } from '../../../utils'
+import { isValidUUID } from '../../../utils/isValidUUID'
+import { OrgRole } from '../../../db/enums'
+import { canAssignRole } from '../../../utils/permissions'
 
 /**
  * @openapi
@@ -46,36 +49,62 @@ export default async (req, res) => {
     try {
         const orgId = req.params.org_id
         if (!orgId || !isValidUUID(orgId)) {
-            return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_ORG_ID_REQUIRED))
+            return res
+                .status(400)
+                .json(createErrorResponse(ErrorCode.VALIDATION_ORG_ID_REQUIRED))
         }
 
-        const role = req.body.role || OrgRole.Worker;
+        const role = req.body.role || OrgRole.Worker
         if (!Object.values(OrgRole).includes(role)) {
-            return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_INVALID_VALUE, "Invalid role"));
+            return res
+                .status(400)
+                .json(
+                    createErrorResponse(
+                        ErrorCode.VALIDATION_INVALID_VALUE,
+                        'Invalid role'
+                    )
+                )
         }
 
-        const requesterRole = (req as any).orgMember.role as OrgRole;
+        const requesterRole = (req as any).orgMember.role as OrgRole
         if (!canAssignRole(requesterRole, role)) {
-            return res.status(403).json(createErrorResponse(ErrorCode.AUTH_UNAUTHORIZED, "Insufficient permissions to assign this role"));
+            return res
+                .status(403)
+                .json(
+                    createErrorResponse(
+                        ErrorCode.AUTH_UNAUTHORIZED,
+                        'Insufficient permissions to assign this role'
+                    )
+                )
         }
 
         const body = {
-            ...pick(req.body, ['name', 'email', 'phone', 'permissions', 'UserId']),
+            ...pick(req.body, [
+                'name',
+                'email',
+                'phone',
+                'permissions',
+                'UserId',
+            ]),
             organizationId: orgId,
             updatedByUserId: req.auth.id,
-            role: role
+            role: role,
         }
 
         if (body.UserId) {
-            (body as any).userId = body.UserId;
-            delete (body as any).UserId;
+            ;(body as any).userId = body.UserId
+            delete (body as any).UserId
         }
 
-        const [member] = await db.insert(organizationMembers).values(body).returning();
+        const [member] = await db
+            .insert(organizationMembers)
+            .values(body)
+            .returning()
 
         res.status(201).json(createSuccessResponse(member))
     } catch (error) {
-        res.status(400).json(createErrorResponse(ErrorCode.INTERNAL_ERROR, error))
+        res.status(400).json(
+            createErrorResponse(ErrorCode.INTERNAL_ERROR, error)
+        )
     }
 }
-

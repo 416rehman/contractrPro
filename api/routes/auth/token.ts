@@ -1,11 +1,11 @@
-import { signJWT } from '../../utils';
+import { signJWT } from '../../utils'
 import {
     createErrorResponse,
     createSuccessResponse,
-} from '../../utils/response';
-import { ErrorCode } from '../../utils/errorCodes';
-import { db, users } from '../../db';
-import { eq } from 'drizzle-orm';
+} from '../../utils/response'
+import { ErrorCode } from '../../utils/errorCodes'
+import { db, users } from '../../db'
+import { eq } from 'drizzle-orm'
 
 /**
  * @openapi
@@ -15,9 +15,9 @@ import { eq } from 'drizzle-orm';
  *     description: |
  *       Regenerates an access token using a valid refresh token.
  *       The refresh token can be provided via cookie (preferred) or request body.
- *       
+ *
  *       **Rate Limit**: 30 requests per 15 minutes.
- *       
+ *
  *     tags: [Auth]
  *     security: []
  *     requestBody:
@@ -31,9 +31,9 @@ import { eq } from 'drizzle-orm';
  *     responses:
  *       200:
  *         description: Access token refreshed successfully
- *         headers: 
+ *         headers:
  *           Set-Cookie:
- *             schema: 
+ *             schema:
  *               type: string
  *               example: accessToken=...; Path=/; HttpOnly; Secure
  *         content:
@@ -60,7 +60,10 @@ import { eq } from 'drizzle-orm';
 export default async (req, res) => {
     try {
         // Prefer cookie, then body, then query
-        const refreshToken = req.cookies?.refreshToken || req.body?.refreshToken || req.query?.refreshToken;
+        const refreshToken =
+            req.cookies?.refreshToken ||
+            req.body?.refreshToken ||
+            req.query?.refreshToken
 
         if (!refreshToken || refreshToken.length < 1) {
             return res
@@ -69,11 +72,13 @@ export default async (req, res) => {
         }
 
         const user = await db.query.users.findFirst({
-            where: eq(users.refreshToken, refreshToken)
-        });
+            where: eq(users.refreshToken, refreshToken),
+        })
 
         if (!user)
-            return res.status(400).json(createErrorResponse(ErrorCode.AUTH_USER_NOT_FOUND))
+            return res
+                .status(400)
+                .json(createErrorResponse(ErrorCode.AUTH_USER_NOT_FOUND))
 
         const token = await signJWT(
             {
@@ -104,7 +109,8 @@ export default async (req, res) => {
             })
             .json(createSuccessResponse({ token }))
     } catch (error) {
-        return res.status(500).json(createErrorResponse(ErrorCode.INTERNAL_ERROR, error))
+        return res
+            .status(500)
+            .json(createErrorResponse(ErrorCode.INTERNAL_ERROR, error))
     }
 }
-

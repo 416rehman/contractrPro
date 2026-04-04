@@ -1,11 +1,11 @@
-import getUsers from './getUsers';
-import me from './me';
-import getUser from './me/getUser';
-import getUserWithOrganizations from './getUserWithOrganizations';
-import leaveOrganization from './leaveOrganization';
-import meHandler from '../../middleware/meHandler';
-import { Router } from 'express';
-const routes = Router();
+import getUsers from './getUsers'
+import me from './me'
+import getUser from './me/getUser'
+import getUserWithOrganizations from './getUserWithOrganizations'
+import leaveOrganization from './leaveOrganization'
+import meHandler from '../../middleware/meHandler'
+import { Router } from 'express'
+const routes = Router()
 
 routes.use((req, res, next) => {
     const path = __filename.split('/').slice(-1)[0].split('\\').slice(-1)[0]
@@ -31,19 +31,11 @@ routes.get('/:user_id', meHandler, getUser)
 /**
  * @api {get} /users/:user_id/organizations Get organizations of a signedInUser
  */
-routes.get(
-    '/:user_id/organizations',
-    meHandler,
-    getUserWithOrganizations
-)
+routes.get('/:user_id/organizations', meHandler, getUserWithOrganizations)
 
 /**
  * @api {delete} /users/:user_id/organizations/:org_id leave the organization
  */
-routes.delete(
-    '/:user_id/organizations/:org_id',
-    meHandler,
-    leaveOrganization
-)
+routes.delete('/:user_id/organizations/:org_id', meHandler, leaveOrganization)
 
 export default routes

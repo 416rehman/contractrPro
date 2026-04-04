@@ -1,9 +1,9 @@
-import getExpenseEntries from './getExpenseEntries';
-import getExpenseEntry from './getExpenseEntry';
-import createExpenseEntry from './createExpenseEntry';
-import updateExpenseEntry from './updateExpenseEntry';
-import deleteExpenseEntry from './deleteExpenseEntry';
-import { Router } from 'express';
+import getExpenseEntries from './getExpenseEntries'
+import getExpenseEntry from './getExpenseEntry'
+import createExpenseEntry from './createExpenseEntry'
+import updateExpenseEntry from './updateExpenseEntry'
+import deleteExpenseEntry from './deleteExpenseEntry'
+import { Router } from 'express'
 const routes = Router({ mergeParams: true })
 routes.use((req, res, next) => {
     const path = __filename.split('/').slice(-1)[0].split('\\').slice(-1)[0]

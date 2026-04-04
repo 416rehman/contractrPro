@@ -1,15 +1,18 @@
-import { createSuccessResponse, createErrorResponse } from '../../utils/response';
-import { ErrorCode } from '../../utils/errorCodes';
-import { db, tokens, users } from '../../db';
-import { tokenFlags, UserFlags } from '../../db/flags';
-import { eq, and } from 'drizzle-orm';
-import { z } from 'zod';
+import {
+    createSuccessResponse,
+    createErrorResponse,
+} from '../../utils/response'
+import { ErrorCode } from '../../utils/errorCodes'
+import { db, tokens, users } from '../../db'
+import { tokenFlags, UserFlags } from '../../db/flags'
+import { eq, and } from 'drizzle-orm'
+import { z } from 'zod'
 
 const schema = z.object({
     body: z.object({
-        token: z.string().min(1, "Token is required"),
+        token: z.string().min(1, 'Token is required'),
     }),
-});
+})
 
 /**
  * @openapi
@@ -19,9 +22,9 @@ const schema = z.object({
  *     description: |
  *       Verifies the user's phone number using the token received via SMS.
  *       Updates the user's phone number and verification status.
- *       
+ *
  *       **Rate Limit**: 5 requests per 15 minutes.
- *       
+ *
  *     tags: [Auth]
  *     security: []
  *     requestBody:
@@ -43,51 +46,67 @@ const schema = z.object({
  */
 const handler = async (req, res) => {
     try {
-        const { token } = req.body;
+        const { token } = req.body
 
         await db.transaction(async (tx) => {
             const tokenInstance = await tx.query.tokens.findFirst({
                 where: and(
                     eq(tokens.value, token),
                     eq(tokens.flags, tokenFlags.USER_PHONE_VERIFY_TOKEN)
-                )
-            });
+                ),
+            })
 
             if (!tokenInstance) {
-                return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_INVALID_TOKEN));
+                return res
+                    .status(400)
+                    .json(
+                        createErrorResponse(ErrorCode.VALIDATION_INVALID_TOKEN)
+                    )
             }
 
             const user = await tx.query.users.findFirst({
-                where: eq(users.id, tokenInstance.userId!)
-            });
+                where: eq(users.id, tokenInstance.userId!),
+            })
 
             if (!user) {
-                return res.status(400).json(createErrorResponse(ErrorCode.AUTH_USER_NOT_FOUND));
+                return res
+                    .status(400)
+                    .json(createErrorResponse(ErrorCode.AUTH_USER_NOT_FOUND))
             }
 
-            const phoneData = tokenInstance.meta as any;
-            if (!phoneData || !phoneData.phoneCountry || !phoneData.phoneNumber) {
-                return res.status(400).json(createErrorResponse(ErrorCode.VALIDATION_FIELD_REQUIRED));
+            const phoneData = tokenInstance.meta as any
+            if (
+                !phoneData ||
+                !phoneData.phoneCountry ||
+                !phoneData.phoneNumber
+            ) {
+                return res
+                    .status(400)
+                    .json(
+                        createErrorResponse(ErrorCode.VALIDATION_FIELD_REQUIRED)
+                    )
             }
 
-            await tx.update(users)
+            await tx
+                .update(users)
                 .set({
                     phoneCountry: phoneData.phoneCountry,
                     phoneNumber: phoneData.phoneNumber,
-                    flags: (user.flags || 0) | UserFlags.VERIFIED_PHONE
+                    flags: (user.flags || 0) | UserFlags.VERIFIED_PHONE,
                 })
-                .where(eq(users.id, user.id));
+                .where(eq(users.id, user.id))
 
-            await tx.delete(tokens).where(eq(tokens.id, tokenInstance.id));
+            await tx.delete(tokens).where(eq(tokens.id, tokenInstance.id))
 
-            return res.json(createSuccessResponse(null));
-        });
-
+            return res.json(createSuccessResponse(null))
+        })
     } catch (error) {
         if (!res.headersSent) {
-            return res.status(500).json(createErrorResponse(ErrorCode.INTERNAL_ERROR, error));
+            return res
+                .status(500)
+                .json(createErrorResponse(ErrorCode.INTERNAL_ERROR, error))
         }
     }
 }
 
-export default { schema, handler };
+export default { schema, handler }

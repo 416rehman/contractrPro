@@ -1,19 +1,19 @@
 import {
     createSuccessResponse,
     createErrorResponse,
-} from '../../utils/response';
-import { ErrorCode } from '../../utils/errorCodes';
-import { db, users, tokens } from '../../db';
-import { tokenFlags } from '../../db/flags';
-import { eq, and } from 'drizzle-orm';
-import { randomUUID } from 'crypto';
-import { z } from 'zod';
+} from '../../utils/response'
+import { ErrorCode } from '../../utils/errorCodes'
+import { db, users, tokens } from '../../db'
+import { tokenFlags } from '../../db/flags'
+import { eq, and } from 'drizzle-orm'
+import { randomUUID } from 'crypto'
+import { z } from 'zod'
 
 const schema = z.object({
     body: z.object({
         email: z.string().email(),
     }),
-});
+})
 
 /**
  * @openapi
@@ -23,9 +23,9 @@ const schema = z.object({
  *     description: |
  *       Initiates the password reset process. If the email is associated with an account, a reset link will be sent.
  *       The response is always successful to prevent email enumeration.
- *       
+ *
  *       **Rate Limit**: 5 requests per 15 minutes.
- *       
+ *
  *     tags: [Auth]
  *     security: []
  *     requestBody:
@@ -60,35 +60,45 @@ const handler = async (req, res) => {
                 where: eq(users.email, email),
                 columns: {
                     id: true,
-                }
+                },
             })
 
             if (user) {
                 // Invalidate any existing password reset tokens for this user
-                await tx.delete(tokens).where(and(
-                    eq(tokens.userId, user.id),
-                    eq(tokens.flags, tokenFlags.USER_PASSWORD_RESET_TOKEN)
-                ));
+                await tx
+                    .delete(tokens)
+                    .where(
+                        and(
+                            eq(tokens.userId, user.id),
+                            eq(
+                                tokens.flags,
+                                tokenFlags.USER_PASSWORD_RESET_TOKEN
+                            )
+                        )
+                    )
 
                 const tokenBody = {
                     userId: user.id,
                     type: 'password_reset',
                     value: randomUUID(),
-                    flags: tokenFlags.USER_PASSWORD_RESET_TOKEN
+                    flags: tokenFlags.USER_PASSWORD_RESET_TOKEN,
                 }
                 // Mock email sending
-                console.log(`[Mock Email] Password reset token for ${email}: ${tokenBody.value}`)
+                console.log(
+                    `[Mock Email] Password reset token for ${email}: ${tokenBody.value}`
+                )
 
-                await tx.insert(tokens).values(tokenBody);
+                await tx.insert(tokens).values(tokenBody)
             }
 
             // Ambiguous response to prevent email enumeration
             return res.json(createSuccessResponse(null))
         })
     } catch (error) {
-        return res.status(500).json(createErrorResponse(ErrorCode.INTERNAL_ERROR, error))
+        return res
+            .status(500)
+            .json(createErrorResponse(ErrorCode.INTERNAL_ERROR, error))
     }
 }
 
-export default { schema, handler };
-
+export default { schema, handler }
